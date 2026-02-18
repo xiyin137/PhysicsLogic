@@ -1,0 +1,13 @@
+-- ModularPhysics/Core/ClassicalMechanics.lean
+-- Aggregator file for Classical Mechanics module
+
+import PhysicsLogic.ClassicalMechanics.PhaseSpace
+import PhysicsLogic.ClassicalMechanics.Lagrangian
+import PhysicsLogic.ClassicalMechanics.Hamiltonian
+import PhysicsLogic.ClassicalMechanics.CanonicalTransforms
+import PhysicsLogic.ClassicalMechanics.Constraints
+import PhysicsLogic.ClassicalMechanics.Symmetries
+import PhysicsLogic.ClassicalMechanics.HamiltonJacobi
+import PhysicsLogic.ClassicalMechanics.Integrable
+import PhysicsLogic.ClassicalMechanics.Perturbation
+import PhysicsLogic.ClassicalMechanics.Chaos

@@ -1,0 +1,6 @@
+import PhysicsLogic.FluidMechanics.Basic
+import PhysicsLogic.FluidMechanics.Conservation
+import PhysicsLogic.FluidMechanics.Euler
+import PhysicsLogic.FluidMechanics.NavierStokes
+import PhysicsLogic.FluidMechanics.Vorticity
+import PhysicsLogic.FluidMechanics.Compressible

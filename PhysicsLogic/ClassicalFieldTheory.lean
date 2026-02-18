@@ -1,0 +1,10 @@
+-- Legacy aggregator file
+import PhysicsLogic.ClassicalFieldTheory.Fields
+import PhysicsLogic.ClassicalFieldTheory.Action
+import PhysicsLogic.ClassicalFieldTheory.EulerLagrange
+import PhysicsLogic.ClassicalFieldTheory.Noether
+import PhysicsLogic.ClassicalFieldTheory.EnergyMomentum
+import PhysicsLogic.ClassicalFieldTheory.Scalar
+import PhysicsLogic.ClassicalFieldTheory.Electromagnetic
+import PhysicsLogic.ClassicalFieldTheory.YangMills
+import PhysicsLogic.ClassicalFieldTheory.Solitons

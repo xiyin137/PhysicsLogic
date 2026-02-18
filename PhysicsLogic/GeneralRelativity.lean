@@ -1,0 +1,12 @@
+-- ModularPhysics/Core/GeneralRelativity.lean
+-- Aggregator file for General Relativity module
+
+import PhysicsLogic.GeneralRelativity.EinsteinEquations
+import PhysicsLogic.GeneralRelativity.EnergyConditions
+import PhysicsLogic.GeneralRelativity.Schwarzschild
+import PhysicsLogic.GeneralRelativity.ReissnerNordstrom
+import PhysicsLogic.GeneralRelativity.Kerr
+import PhysicsLogic.GeneralRelativity.BlackHoles
+import PhysicsLogic.GeneralRelativity.Singularities
+import PhysicsLogic.GeneralRelativity.GravitationalWaves
+import PhysicsLogic.GeneralRelativity.Cosmology
