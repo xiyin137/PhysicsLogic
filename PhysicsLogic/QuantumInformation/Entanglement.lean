@@ -19,8 +19,8 @@ structure EntanglementTheory {H1 H2 : Type _}
   squashedEntanglement : DensityOperator T.carrier → ℝ
   /-- Logarithmic negativity -/
   logarithmicNegativity : DensityOperator T.carrier → ℝ
-  /-- Product states are separable -/
-  product_separable : ∃ (rho : DensityOperator T.carrier), Separable rho
+  /-- The set of separable states is nonempty -/
+  separable_nonempty : ∃ (rho : DensityOperator T.carrier), Separable rho
   /-- Separable states have zero EoF -/
   separable_zero_entanglement : ∀ (rho : DensityOperator T.carrier),
     Separable rho → entanglementOfFormation rho = 0
@@ -35,19 +35,22 @@ structure LOCCTheory {H1 H2 : Type _}
   /-- Apply LOCC operation -/
   applyLOCC : LOCC → DensityOperator T.carrier → DensityOperator T.carrier
 
-/-- Structure for qubit entanglement theory with special properties -/
-structure QubitEntanglementTheory
+/-- Separable states can have nonzero quantum discord.
+
+    This is a fundamental distinction: discord ≠ entanglement. Werner states
+    provide explicit examples of separable states with nonzero discord. -/
+theorem separable_discord_nonzero
     (et : EntanglementTheory qubitTensorProduct)
-    (bc : BipartiteCorrelations qubitTensorProduct (cm : CorrelationMeasures QubitPair)) where
-  /-- Separable states can have nonzero discord -/
-  separable_discord_nonzero :
+    (bc : BipartiteCorrelations qubitTensorProduct (cm : CorrelationMeasures QubitPair)) :
     ∃ (rho : DensityOperator QubitPair),
-      et.Separable rho ∧ bc.quantumDiscord rho > 0
-  /-- Bound entangled states exist (undistillable but entangled) -/
-  bound_entanglement_exists :
-    ∃ (rho : DensityOperator QubitPair),
-      et.entanglementOfFormation rho > 0 ∧
-      et.entanglementOfDistillation rho = 0
+      et.Separable rho ∧ bc.quantumDiscord rho > 0 := by
+  sorry
+
+-- Note: Bound entanglement does NOT exist for 2×2 systems (qubit pairs).
+-- The PPT criterion is necessary and sufficient for 2×2 and 2×3 systems
+-- (Horodecki 1996), so all PPT states are separable and all entangled states
+-- are distillable. Bound entanglement requires higher-dimensional systems
+-- (e.g., 3×3, see Horodecki 1998).
 
 variable {H1 H2 : Type _} [QuantumStateSpace H1] [QuantumStateSpace H2]
 

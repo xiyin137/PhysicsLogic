@@ -94,8 +94,10 @@ structure NoetherCurrentData (F : Type*) (M : Type*) (d : ℕ) where
   symmetry : ContinuousSymmetry F (ActionFunctional.mk (fun _ => 0))
   /-- The conserved current J^μ(x) for a given field configuration -/
   current : F → M → (Fin d → ℝ)
-  /-- Current is conserved on-shell: ∂_μ J^μ = 0 -/
-  conservation : ∀ (φ : F), True  -- precise statement needs derivative structure
+  /-- Divergence operator for checking conservation -/
+  divergence : (M → (Fin d → ℝ)) → (M → ℝ)
+  /-- Current is conserved on-shell: ∂_μ J^μ(x) = 0 for all x -/
+  conservation : ∀ (φ : F) (x : M), divergence (current φ) x = 0
 
 /- ============= GAUGE SYMMETRY ============= -/
 
@@ -135,14 +137,22 @@ structure SpontaneouslyBrokenSymmetry (F : Type*)
     gives a massless boson (Nambu-Goldstone boson).
 
     Number of Goldstone bosons = dim(G) - dim(H)
-    where G is the full symmetry group and H is the unbroken subgroup. -/
+    where G is the full symmetry group and H is the unbroken subgroup.
+
+    Formalized as: for a spontaneously broken continuous symmetry, there exists
+    a field configuration (the Goldstone mode) that is a zero-energy excitation
+    about the symmetry-breaking vacuum. -/
 theorem goldstone_theorem {F : Type*}
     (S : ActionFunctional F)
     (sbs : SpontaneouslyBrokenSymmetry F S)
-    (h_continuous : True) :
-    -- Each broken generator gives a massless excitation
-    ∃ (goldstone_mode : F), True := by
-  exact ⟨sbs.vacuum_not_invariant.choose, trivial⟩
+    (cs : ContinuousSymmetry F S)
+    (h_family_breaks : ∃ t : ℝ, t ≠ 0 ∧
+      (cs.family t).transform = sbs.toSymmetryTransform.transform) :
+    -- The symmetry-rotated vacuum has the same action (massless excitation)
+    ∃ (φ_vac : F), sbs.toSymmetryTransform.transform φ_vac ≠ φ_vac ∧
+      S.eval (sbs.toSymmetryTransform.transform φ_vac) = S.eval φ_vac := by
+  obtain ⟨φ_vac, h_neq⟩ := sbs.vacuum_not_invariant
+  exact ⟨φ_vac, h_neq, sbs.action_invariant φ_vac⟩
 
 /- ============= ANOMALIES ============= -/
 

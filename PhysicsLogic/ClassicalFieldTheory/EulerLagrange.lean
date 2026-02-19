@@ -9,10 +9,13 @@ structure EquationsOfMotion (F : Type*) (actionTheory : ActionTheory F) where
   eulerLagrange : ClassicalField F → Prop
   /-- Hamilton's equations: φ̇ = δH/δπ, π̇ = -δH/δφ -/
   hamiltonEquations : ClassicalField F → Prop
-  /-- Field satisfies EL equations iff action is stationary -/
-  euler_lagrange_stationary : ∀ (phi : ClassicalField F),
-    eulerLagrange phi ↔
-    ∀ (_ : ClassicalField F), True  -- Simplified: variations preserve action
+  /-- Field satisfies EL equations iff the action is stationary under all variations.
+      For any one-parameter family of fields φ(ε) with φ(0) = φ,
+      the derivative d/dε S[φ(ε)]|_{ε=0} = 0. -/
+  euler_lagrange_stationary : ∀ (phi : ClassicalField F)
+    (variation : ℝ → ClassicalField F),
+    variation 0 = phi →
+    (eulerLagrange phi ↔ deriv (fun ε => actionTheory.Action (variation ε)) 0 = 0)
   /-- Equivalence of Lagrangian and Hamiltonian formulations -/
   lagrangian_hamiltonian_equivalence : ∀ (phi : ClassicalField F),
     eulerLagrange phi ↔ hamiltonEquations phi

@@ -59,10 +59,13 @@ def tTransform : ModularTransform where
 structure ModularGroupTheory where
   /-- Composition of modular transformations -/
   compose : ModularTransform → ModularTransform → ModularTransform
-  /-- S and T generate SL(2,ℤ): any element can be written as a word in S and T -/
+  /-- S and T generate SL(2,ℤ): any element can be written as a word in S and T.
+      The word encodes a sequence of elementary transformations (True = S, False = T)
+      that composes to give the modular transformation m. -/
   modular_generators : ∀ (m : ModularTransform),
-    ∃ (word : List Bool),  -- True = S, False = T
-      word.length > 0
+    ∃ (word : List Bool),
+      word.foldl (fun acc b => compose acc (if b then sTransform else tTransform))
+        (ModularTransform.mk 1 0 0 1 (by norm_num)) = m
   /-- Partition function is modular invariant:
       Z(τ,τ̄) = Z((aτ+b)/(cτ+d), (aτ̄+b̄)/(cτ̄+d̄)) -/
   modular_invariance : ∀ (tpf : TorusPartitionFunctionTheory)
@@ -107,24 +110,30 @@ structure HigherGenusTheory where
   /-- Mapping class group Mod_{g,n} -/
   MappingClassGroup : (g n : ℕ) → Type
   /-- Hatcher-Thurston theorem (1980): Any two pants decompositions
-      can be related by a sequence of elementary moves (S-moves and F-moves) -/
-  hatcher_thurston : ∀ (g n : ℕ)
-    (decomp1 decomp2 : PantsDecomposition g n),
-    ∃ (moves : List ElementaryMove), moves.length ≥ 0  -- sequence always exists
+      can be related by a sequence of elementary moves (S-moves and F-moves).
+      The moves map takes a pair of decompositions to the connecting sequence. -/
+  hatcher_thurston_moves : (g n : ℕ) →
+    PantsDecomposition g n → PantsDecomposition g n → List ElementaryMove
+  /-- Partition function on genus g surface computed via a pants decomposition -/
+  genusGPartition : (c : VirasoroCentralCharge) → (g n : ℕ) →
+    RiemannSurface g n → PantsDecomposition g n → ℂ
   /-- Lego-Teichmüller consistency: if the CFT is consistent on the torus
-      (modular covariance) and on the sphere (crossing symmetry), then it is
-      consistent on every Riemann surface via Hatcher-Thurston. -/
+      (modular covariance) and on the sphere (crossing symmetry), then the
+      partition function is independent of the choice of pants decomposition. -/
   lego_teichmuller_consistency : ∀ (c : VirasoroCentralCharge) (g n : ℕ)
     (h_torus_covariant : TorusOnePointTheory)
     (h_sphere_crossing : CrossingSymmetry2DTheory)
+    (surface : RiemannSurface g n)
     (decomp1 decomp2 : PantsDecomposition g n),
-    ∃ (partition1 partition2 : ℂ), partition1 = partition2
-  /-- Partition function on genus g surface -/
-  genusGPartition : (c : VirasoroCentralCharge) → (g n : ℕ) →
-    RiemannSurface g n → ℂ
+    genusGPartition c g n surface decomp1 = genusGPartition c g n surface decomp2
+  /-- Mapping class group action on surfaces -/
+  mappingClassAction : (g n : ℕ) → MappingClassGroup g n →
+    RiemannSurface g n → RiemannSurface g n
   /-- Mapping class invariance: partition function is invariant under mapping class group -/
   mapping_class_invariance : ∀ (c : VirasoroCentralCharge) (g n : ℕ)
-    (surface : RiemannSurface g n) (γ : MappingClassGroup g n),
-    ∃ (Z_original Z_transformed : ℂ), Z_original = Z_transformed
+    (surface : RiemannSurface g n) (decomp : PantsDecomposition g n)
+    (γ : MappingClassGroup g n),
+    genusGPartition c g n surface decomp =
+    genusGPartition c g n (mappingClassAction g n γ surface) decomp
 
 end PhysicsLogic.QFT.CFT.TwoDimensional

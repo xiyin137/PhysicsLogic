@@ -72,10 +72,10 @@ structure KerrEnergyExtraction (consts : GRConstants) (kt : KerrTheory consts M 
 structure KerrSingularity (consts : GRConstants) (kt : KerrTheory consts M a) where
   /-- Ring singularity location -/
   ringLocation : Set SpaceTimePoint
-  /-- All points in ring are singular -/
+  /-- All points in ring are singular: curvature invariants diverge.
+      NOTE: In Lean, 1/0 = 0, so we use proper unboundedness definition. -/
   ring_is_singular : ∀ x ∈ ringLocation,
-    ∃ μ ν ρ σ, |kt.curvature.riemannTensor x μ ν ρ σ| = 1/0 ∨
-               Filter.Tendsto (fun r => kt.curvature.riemannTensor x μ ν ρ σ)
-                              (nhds 0) Filter.atTop
+    ∀ C : ℝ, ∀ ε > 0, ∃ y : SpaceTimePoint, ‖y - x‖ < ε ∧
+      ∃ μ ν ρ σ, |kt.curvature.riemannTensor y μ ν ρ σ| > C
 
 end PhysicsLogic.GeneralRelativity

@@ -169,9 +169,8 @@ structure CallanSymanzikData {d : ℕ} (rg : RGFramework d) where
   gamma : ℝ → ℝ
   /-- The n-point Green's function depends on coupling and scale -/
   green_at : (n : ℕ) → ℝ → RenormScale → GreenFunction n
-  /-- The CS equation is satisfied: renormalized Green's functions
-      are invariant under simultaneous change of μ, g, and field rescaling -/
-  cs_equation_satisfied : Prop
+  -- The CS equation [μ∂/∂μ + β∂/∂g + nγ]G^(n) = 0 relates beta, gamma,
+  -- and green_at. Its differential form requires derivatives not available here.
 
 /-- RG-improved perturbation theory: replace μ with running scale
 
@@ -223,8 +222,8 @@ structure CSOperatorMixing {d : ℕ} (rg : RGFramework d) where
   operators : List rg.Operator
   /-- Anomalous dimension matrix γ_ij(g) -/
   gamma_matrix : rg.Operator → rg.Operator → ℝ → ℝ
-  /-- The CS equation with mixing is satisfied -/
-  equation_satisfied : Prop
+  -- The CS equation with mixing [μ∂/∂μ + β∂/∂g + γ_ij]⟨O_i O_j⟩ = 0
+  -- requires derivatives not available in this formalization.
 
 /- ============= QCD EXAMPLE ============= -/
 

@@ -54,14 +54,18 @@ structure FlowRegimeTheory where
   isLaminar : VelocityField → Prop
   /-- Turbulent flow classification -/
   isTurbulent : VelocityField → Prop
+  /-- Reynolds number of a flow (depends on velocity, characteristic length, viscosity) -/
+  reynoldsNumber : VelocityField → ℝ
   /-- Critical Reynolds number for laminar-turbulent transition -/
   transitionReynolds : ℝ
   /-- Laminar and turbulent are mutually exclusive -/
   laminar_turbulent_exclusive : ∀ (v : VelocityField),
     isLaminar v → ¬isTurbulent v
   /-- Flow below critical Re is laminar -/
-  subcritical_is_laminar : ∀ (v : VelocityField) (Re : ℝ),
-    Re < transitionReynolds → isLaminar v ∨ isTurbulent v  -- at least one regime
+  subcritical_is_laminar : ∀ (v : VelocityField),
+    reynoldsNumber v < transitionReynolds → isLaminar v
+  /-- Reynolds number is non-negative -/
+  reynolds_nonneg : ∀ (v : VelocityField), reynoldsNumber v ≥ 0
   /-- Transition Reynolds is positive -/
   transition_reynolds_positive : transitionReynolds > 0
 

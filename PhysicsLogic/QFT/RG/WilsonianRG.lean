@@ -64,8 +64,10 @@ structure PolchinskiFlow {d : ℕ} (rg : RGFramework d) where
   actions : Scale → WilsonianAction rg
   /-- Cutoff function used -/
   regulator : CutoffFunction
-  /-- The flow satisfies the Polchinski equation -/
-  satisfies_equation : Prop
+  /-- The cutoff of the action at each scale matches the scale.
+      (The full Polchinski equation -Λ ∂S_Λ/∂Λ = ... requires functional
+      derivatives not available in this formalization.) -/
+  cutoff_consistent : ∀ t, (actions t).cutoff.Λ = t
 
 /-- Wetterich equation (alternative exact RG)
 
@@ -76,8 +78,10 @@ structure WetterichFlow {d : ℕ} (rg : RGFramework d) where
   effective_action : Scale → FieldConfig → ℝ
   /-- Regulator function R_k -/
   regulator : Scale → ℝ → ℝ
-  /-- Satisfies the Wetterich equation -/
-  satisfies_equation : Prop
+  /-- The regulator vanishes in the IR limit k → 0.
+      (The full Wetterich equation ∂_t Γ_k = ... requires functional
+      derivatives not available in this formalization.) -/
+  regulator_ir_vanish : ∀ (p : ℝ), regulator 0 p = 0
 
 /- ============= LOCALITY AND DERIVATIVE EXPANSION ============= -/
 
@@ -96,14 +100,11 @@ structure DerivativeExpansion (d : ℕ) where
 structure LPA (d : ℕ) where
   /-- The potential at each scale -/
   potential : Scale → (ℝ → ℝ)
-  /-- Flow equation for V -/
-  flow_equation : Prop
 
 /-- LPA' approximation: LPA plus running Z(k) -/
 structure LPAprime (d : ℕ) where
   potential : Scale → (ℝ → ℝ)
   Z : Scale → ℝ
-  flow_equation : Prop
 
 /- ============= INTEGRATING OUT ============= -/
 

@@ -77,14 +77,12 @@ structure RNSingularityTheory (consts : GRConstants) (M Q : ℝ) (rn : RNTheory 
   naked_singularity_if_overcharged :
     Q^2 > (consts.G * M / consts.c^2)^2 →
     ∃ x, CurvatureSingularity rn.curvature x
-  /-- Cauchy horizon is unstable (mass inflation) -/
+  /-- Cauchy horizon is unstable (mass inflation):
+      The curvature becomes unbounded near the inner horizon for
+      sub-extremal black holes. This is a consequence of blue-shift
+      instability: perturbations are infinitely amplified at the Cauchy horizon. -/
   cauchy_horizon_instability :
-    Q^2 = (consts.G * M / consts.c^2)^2 →
-    True  -- Placeholder for instability statement
-
-/-- No magnetic charge hypothesis -/
-structure NoMagneticMonopole where
-  /-- Magnetic monopoles not observed -/
-  no_monopole : True
+    Q^2 < (consts.G * M / consts.c^2)^2 →
+    ∃ x, CurvatureSingularity rn.curvature x
 
 end PhysicsLogic.GeneralRelativity

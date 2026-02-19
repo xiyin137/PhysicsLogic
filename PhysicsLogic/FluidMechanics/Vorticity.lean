@@ -27,10 +27,14 @@ structure VorticityTheory (ops : DifferentialOperators) (md : MaterialDerivative
     (∀ x t, v x t 2 = 0) →
     (∀ x t j, vorticity ops v x t j * ops.gradient (fun y s => v y s 0) x t j +
               vorticity ops v x t j * ops.gradient (fun y s => v y s 1) x t j = 0)
-  /-- Helmholtz first theorem: vortex lines move with fluid -/
+  /-- Helmholtz first theorem: for inviscid incompressible flow, the
+      vorticity is frozen into the fluid. Formally, if ω satisfies
+      the vorticity transport equation with ν = 0, then Dω/Dt = ω·∇v,
+      i.e., vorticity is advected and stretched by the flow. -/
   helmholtz_first_theorem : ∀ (v : VelocityField) (ω : VectorField3D),
     ω = vorticity ops v →
     isIncompressible ops v →
-    True  -- Placeholder for the formal statement
+    ∀ x t i, md.materialDerivativeVector v ω x t i =
+      ∑ j : Fin 3, ω x t j * ops.gradient (fun y s => v y s i) x t j
 
 end PhysicsLogic.FluidMechanics

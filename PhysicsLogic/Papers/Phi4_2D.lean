@@ -1248,8 +1248,6 @@ noncomputable def phi4Theory2D (phys : PhysicalParameters) : QFT 2 where
   translation_invariant := by
     intro n points a
     exact continuum_limit_translation_invariant phys n a points
-  euclidean_invariant := True
-  reflection_positive := True
   permutation_symmetric := by
     intro n points σ
     exact continuum_limit_permutation_symmetric phys n σ points
@@ -1360,7 +1358,7 @@ theorem phi4_reflection_positive
       calc |coeffs i * coeffs j| * |latticeSchwingerFunction params (subseq k) 2 (reflection_config i j) -
                                      continuumLimit phys 2 (reflection_config i j)|
           < |coeffs i * coeffs j| * ε' := by
-            apply mul_lt_mul_of_pos_left h_bound h_pos
+            nlinarith [h_bound, h_pos]
         _ = |coeffs i * coeffs j| * (ε / |coeffs i * coeffs j|) := rfl
         _ = ε := by field_simp
 

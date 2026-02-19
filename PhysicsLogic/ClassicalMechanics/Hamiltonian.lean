@@ -40,9 +40,16 @@ structure HamiltonianSystem (n : ℕ) where
   /-- {pᵢ, pⱼ} = 0 -/
   canonical_poisson_pp : ∀ i j x,
     poissonBracket (fun y => y.2 i) (fun y => y.2 j) x = 0
-  /-- Time evolution via Poisson bracket: df/dt = {f,H} + ∂f/∂t -/
-  poisson_time_evolution : ∀ (f : PhaseSpace n → ℝ → ℝ) (H_func : PhaseSpace n → ℝ → ℝ) x t,
-    deriv (fun s => f x s) t = poissonBracket (f · t) (H_func · t) x + deriv (f x) t
+  /-- Time evolution via Poisson bracket: df/dt|_trajectory = {f,H} + ∂f/∂t.
+      The total time derivative of f along a Hamiltonian trajectory γ equals the
+      Poisson bracket with H plus the explicit time partial derivative. -/
+  poisson_time_evolution : ∀ (f : PhaseSpace n → ℝ → ℝ) (γ : ℝ → PhaseSpace n) (t : ℝ),
+    -- γ is a Hamiltonian trajectory
+    (∀ i s, trajectoryDerivative (fun r => (γ r).1) s i = partialH_p (γ s).1 (γ s).2 s i) →
+    (∀ i s, deriv (fun r => (γ r).2 i) s = -partialH_q (γ s).1 (γ s).2 s i) →
+    -- Total time derivative along trajectory = Poisson bracket + explicit time derivative
+    deriv (fun s => f (γ s) s) t =
+      poissonBracket (f · t) (fun x => H x.1 x.2 t) (γ t) + deriv (fun s => f (γ t) s) t
   /-- Liouville's theorem: phase space volume is conserved -/
   liouville_theorem : ∀ (flow : ℝ → PhaseSpace n → PhaseSpace n)
     (volume : Set (PhaseSpace n) → ℝ) (U : Set (PhaseSpace n)) t,

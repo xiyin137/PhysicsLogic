@@ -138,8 +138,9 @@ structure OddSymplecticForm where
   pairing : ExtendedFieldSpace → ExtendedFieldSpace → ℝ
   /-- Graded antisymmetry: ω(v,w) = -(-1)^{ε(v)ε(w)+1} ω(w,v) -/
   graded_antisym : ∀ s₁ s₂, pairing s₁ s₂ = -pairing s₂ s₁  -- simplified for even base
-  /-- Non-degeneracy: if ω(v,w) = 0 for all w, then v = 0 -/
-  nondegenerate : ∀ s, (∀ s', pairing s s' = 0) → s = s
+  /-- Non-degeneracy (separating): the pairing distinguishes elements.
+      If two elements pair the same with everything, they are equal. -/
+  nondegenerate : ∀ s₁ s₂, (∀ s', pairing s₁ s' = pairing s₂ s') → s₁ = s₂
 
 /- ============= LAGRANGIAN SUBMANIFOLDS ============= -/
 
@@ -160,8 +161,13 @@ structure LagrangianSubmanifoldBV where
   constraint : ExtendedFieldSpace → Prop
   /-- ω vanishes on L: ω(v,w) = 0 for tangent vectors v, w to L -/
   isotropic : ∀ s₁ s₂, constraint s₁ → constraint s₂ → omega.pairing s₁ s₂ = 0
-  /-- Maximality: L has half the dimension (encoded abstractly) -/
-  maximal : True  -- Would need dimension theory to state precisely
+  /-- Maximality: L is non-empty and not properly contained in any isotropic subspace.
+      Full statement (dim L = ½ dim M) requires dimension theory. -/
+  nonempty : ∃ s, constraint s
+  maximal_isotropic : ∀ (constraint' : ExtendedFieldSpace → Prop),
+    (∀ s, constraint s → constraint' s) →
+    (∀ s₁ s₂, constraint' s₁ → constraint' s₂ → omega.pairing s₁ s₂ = 0) →
+    (∀ s, constraint' s → constraint s)
 
 /- ============= ANTIBRACKET ============= -/
 
@@ -360,8 +366,10 @@ structure BVGaugeFixing where
   ghost_constraint : psi.ghost_number = ⟨-1⟩
   /-- Fermionic -/
   parity_constraint : psi.parity = GrassmannParity.odd
-  /-- Ψ depends only on fields, not antifields (implicit in BV formalism) -/
-  field_dependent : True  -- Would need more structure to state precisely
+  /-- Ψ depends only on fields, not antifields: configurations with the
+      same fields but different antifields give the same value. -/
+  field_dependent : ∀ s₁ s₂ : ExtendedFieldSpace,
+    s₁.fields = s₂.fields → psi.functional s₁ = psi.functional s₂
 
 /-- Lagrangian submanifold from gauge-fixing fermion
 
@@ -443,16 +451,19 @@ structure BVLaplacian where
     (laplacian F).ghost_number.value = F.ghost_number.value + 1
   /-- Odd parity -/
   flips_parity : ∀ F : BVFunctional, (laplacian F).parity = F.parity.flip
-  /-- Compatibility of Δ and (,): the failure to be a derivation
-      Δ(F,G) = (ΔF, G) + (-1)^(ε_F+1)(F, ΔG) + (-1)^ε_F {F, G} -/
+  /-- Second-order bracket {F,G} (the "BV bracket" or "derived bracket").
+      This measures the failure of Δ to be a derivation of the antibracket. -/
+  secondOrderBracket : BVFunctional → BVFunctional → BVFunctional
+  /-- Compatibility of Δ and (,): the failure to be a derivation.
+      Δ(F,G) = (ΔF, G) + (-1)^(ε_F+1)(F, ΔG) + (-1)^ε_F {F, G}
+      where {F,G} is the second-order bracket (derived bracket). -/
   delta_antibracket_relation : ∀ (ab : Antibracket) (F G : BVFunctional),
-    ∃ deviation : BVFunctional,  -- The {F,G} term
-      (laplacian (ab.bracket F G)).functional = fun s =>
-        (ab.bracket (laplacian F) G).functional s +
-        (let sign := match F.parity with | .even => 1 | .odd => -1
-         sign * (ab.bracket F (laplacian G)).functional s) +
-        (let sign := match F.parity with | .even => 1 | .odd => -1
-         sign * deviation.functional s)
+    (laplacian (ab.bracket F G)).functional = fun s =>
+      (ab.bracket (laplacian F) G).functional s +
+      (let sign := match F.parity with | .even => 1 | .odd => -1
+       sign * (ab.bracket F (laplacian G)).functional s) +
+      (let sign := match F.parity with | .even => 1 | .odd => -1
+       sign * (secondOrderBracket F G).functional s)
 
 /-- Quantum master equation
 
@@ -632,10 +643,10 @@ structure BRSTFromBV where
   ab : Antibracket
   /-- Classical master equation holds -/
   cme : ClassicalMasterEquation ab bv_action
-  /-- The BV action is at most linear in antifields (irreducibility condition) -/
-  linear_in_antifields : Prop
-  /-- The gauge algebra closes off-shell with field-INDEPENDENT structure constants -/
-  field_independent_structure : Prop
+  -- The BV action is at most linear in antifields (irreducibility condition),
+  -- and the gauge algebra closes off-shell with field-independent structure
+  -- constants. These conditions ensure BV reduces to BRST but require a
+  -- notion of polynomial degree in antifields to state precisely.
 
 /-- Extract BRST operator from BV
 
@@ -677,7 +688,7 @@ structure TrivialLagrangian where
     S_BRST[φ,c,c̄,B] = S_BV[φ,c,c̄,B, φ*=0, c*=0, c̄*=0, B*=0] -/
 noncomputable def brst_action_from_bv (bv : BRSTFromBV) (L₀ : TrivialLagrangian) :
     ExtendedFieldSpace → ℝ :=
-  gaugeFixedBVAction bv.bv_action ⟨L₀.omega, ⟨⟨fun _ => 0, ⟨-1⟩, .odd⟩, rfl, rfl, trivial⟩,
-    L₀.constraint, L₀.isotropic⟩
+  gaugeFixedBVAction bv.bv_action ⟨L₀.omega, ⟨⟨fun _ => 0, ⟨-1⟩, .odd⟩, rfl, rfl,
+    fun _ _ _ => rfl⟩, L₀.constraint, L₀.isotropic⟩
 
 end PhysicsLogic.QFT.BV

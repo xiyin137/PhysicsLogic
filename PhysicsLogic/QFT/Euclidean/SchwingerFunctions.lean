@@ -19,28 +19,21 @@ noncomputable def euclideanDistance {d : ℕ} (x y : EuclideanPoint d) : ℝ :=
 noncomputable def radialDistance {d : ℕ} (x : EuclideanPoint d) : ℝ :=
   euclideanDistance x (euclideanOrigin d)
 
-/-- A quantum field theory in d dimensions, characterized by its Schwinger functions
-    satisfying the Osterwalder-Schrader axioms.
+/-- A quantum field theory in d dimensions, characterized by its Schwinger functions.
 
     The Schwinger functions S_n(x₁,...,xₙ) = ⟨φ(x₁)...φ(xₙ)⟩_E are the Euclidean
     correlation functions that define the theory. All physical observables can be
     extracted from these functions.
 
-    NOTE: Some properties (euclidean_invariant, reflection_positive) are stored as Prop
-    fields rather than proof obligations. This is because:
-    1. Full formalization would require defining rotation matrices, time reflection, etc.
-    2. In practice, these are verified separately for specific theories (e.g., φ⁴)
-    3. The structure focuses on the functional data (schwinger) with basic constraints -/
+    The remaining Osterwalder-Schrader axioms (Euclidean covariance, reflection positivity,
+    cluster property, growth bound) are formulated in OsterwalderSchrader.lean as the
+    OSAxioms structure, which provides the proper content for these properties. -/
 structure QFT (d : ℕ) where
   /-- The n-point Schwinger functions ⟨φ(x₁)...φ(xₙ)⟩_E -/
   schwinger : (n : ℕ) → (Fin n → EuclideanPoint d) → ℝ
   /-- Translation invariance: correlations depend only on differences -/
   translation_invariant : ∀ n (points : Fin n → EuclideanPoint d) (a : EuclideanPoint d),
     schwinger n points = schwinger n (fun i μ => points i μ + a μ)
-  /-- Euclidean (rotation) invariance - verified separately for specific theories -/
-  euclidean_invariant : Prop
-  /-- Reflection positivity (OS axiom ensuring unitarity) - verified separately -/
-  reflection_positive : Prop
   /-- Permutation symmetry (bosonic fields) -/
   permutation_symmetric : ∀ n (points : Fin n → EuclideanPoint d) (σ : Equiv.Perm (Fin n)),
     schwinger n points = schwinger n (points ∘ σ)

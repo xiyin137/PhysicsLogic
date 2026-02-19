@@ -38,11 +38,15 @@ structure CPTSymmetry (H : Type*) where
   P : Parity
   T : TimeReversal H
 
-/-- CPT theorem: all Lorentz-invariant local QFTs respect CPT -/
+/-- CPT theorem data: a Lorentz-invariant local QFT admits a CPT symmetry
+    such that the combined CPT operation Θ = CPT is antiunitary and involutive.
+
+    The full PCT theorem for Wightman QFT (with proper Wightman function
+    transformation law) is stated in QFT/Wightman/Theorems.lean. -/
 structure CPTTheorem (H : Type*) where
   /-- CPT symmetry instance -/
   cpt : CPTSymmetry H
-  /-- All physical observables are invariant under CPT -/
-  cpt_invariance : True  -- Statement that Lorentz-invariant local QFTs respect CPT
+  /-- Combined CPT is involutive: (CPT)² = id -/
+  cpt_involutive : ∀ (ψ : H), cpt.C.op (cpt.T.op (cpt.C.op (cpt.T.op ψ))) = ψ
 
 end PhysicsLogic.Symmetries

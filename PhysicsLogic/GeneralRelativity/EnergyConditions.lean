@@ -35,13 +35,16 @@ def StrongEnergyCondition (metric : SpacetimeMetric) (T : TensorField 4 4) : Pro
 
 /-- Dominant energy condition: energy doesn't flow faster than light
 
-    WEC + energy flux is timelike or null (simplified version)
+    WEC + for any future-directed timelike t^μ, the energy-momentum flux
+    j^μ = g^{μρ} T_{ρν} t^ν is causal (timelike or null): g_μν j^μ j^ν ≤ 0
 -/
 def DominantEnergyCondition (metric : SpacetimeMetric) (T : TensorField 4 4) : Prop :=
   WeakEnergyCondition metric T ∧
   ∀ (x : SpaceTimePoint) (t : Fin 4 → ℝ),
     (∑ μ : Fin 4, ∑ ν : Fin 4, metric.g x μ ν * t μ * t ν) < 0 →
-    True  -- Simplified: full condition requires energy flux to be timelike
+    let j : Fin 4 → ℝ := fun μ => ∑ ρ : Fin 4, ∑ ν : Fin 4,
+      metric.inverseMetric x μ ρ * T x ρ ν * t ν
+    (∑ μ : Fin 4, ∑ ν : Fin 4, metric.g x μ ν * j μ * j ν) ≤ 0
 
 /-- Perfect fluid satisfies all standard energy conditions (if ρ ≥ 0, ρ + p ≥ 0).
 

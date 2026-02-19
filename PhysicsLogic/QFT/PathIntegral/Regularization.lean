@@ -66,10 +66,15 @@ structure ContinuumLimitData (F : Type*) where
   lattice_theories : LatticeRegularization → LatticePathIntegralData F
   /-- Bare couplings as function of lattice spacing -/
   bare_couplings : LatticeRegularization → List ℝ
-  /-- The couplings approach a fixed point as a → 0 -/
-  approaches_fixed_point : ∀ ε > 0, ∃ a₀ > 0,
+  /-- A fixed point of the couplings (limit as a → 0) -/
+  fixed_point_couplings : List ℝ
+  /-- The couplings converge to the fixed point as lattice spacing → 0:
+      for each coupling component i, |g_i(a) - g_i*| → 0 as a → 0 -/
+  approaches_fixed_point : ∀ (i : ℕ) (hi : i < fixed_point_couplings.length) (ε : ℝ),
+    ε > 0 → ∃ a₀ > 0,
     ∀ (a : LatticeRegularization), a.spacing < a₀ →
-    (bare_couplings a).length > 0
+    i < (bare_couplings a).length ∧
+    |(bare_couplings a)[i]! - fixed_point_couplings[i]!| < ε
 
 /-- Dimensional regularization: analytically continue spacetime dimension d → d - ε.
     Poles in 1/ε capture UV divergences.
@@ -94,17 +99,6 @@ structure PauliVillarsRegularization where
 
 /- ============= RENORMALIZATION ============= -/
 
-/-- Naive continuum limit fails: without RG tuning, observables diverge.
-    This is the fundamental reason renormalization is necessary.
-
-    With fixed (cutoff-independent) couplings, correlation functions
-    diverge as the cutoff is removed. -/
-theorem naive_continuum_limit_fails {F : Type*}
-    (pid : PathIntegralData F)
-    (h_divergent : ∀ (M : ℝ), ∃ (Λ : UVCutoff), True) :
-    -- The unrenormalized path integral has no finite limit
-    True := trivial
-
 /-- Counterterm structure: to cancel divergences, add counterterms to the action.
     S_renormalized = S_bare + δS where δS cancels UV divergences.
 
@@ -123,73 +117,8 @@ structure CountertermData (F : Type*) where
 
 /- ============= MEASURE THEORY FOR PATH INTEGRALS ============= -/
 
-/-- Minlos theorem (Bochner-Minlos): rigorous construction of Gaussian measure.
-
-    Given a positive definite bilinear form C (the covariance),
-    there exists a unique Borel probability measure μ on the space of
-    tempered distributions S'(ℝᵈ) such that:
-    ∫ exp(iφ(f)) dμ(φ) = exp(-½⟨f, Cf⟩)
-
-    This is the rigorous foundation for free scalar field path integrals. -/
-structure MinlosData (d : ℕ) where
-  /-- The covariance operator C (e.g., (-Δ + m²)⁻¹ for free massive scalar) -/
-  CovarianceOperator : Type*
-  /-- C is positive definite -/
-  covariance_positive : Prop
-  /-- The resulting measure satisfies the characteristic functional relation -/
-  characteristic_functional : Prop
-
-/-- Osterwalder-Schrader reconstruction: Euclidean QFT → Minkowski QFT.
-
-    Given a Euclidean QFT satisfying:
-    - OS0: Temperedness
-    - OS1: Euclidean covariance
-    - OS2: Reflection positivity (the crucial condition!)
-    - OS3: Permutation symmetry
-    - OS4: Cluster decomposition
-
-    One can reconstruct a relativistic QFT satisfying Wightman axioms.
-    This justifies using Euclidean path integrals to define physical QFTs. -/
-structure OsterwalderSchraderData (d : ℕ) where
-  /-- Euclidean correlation functions (Schwinger functions) -/
-  SchwingerFunctions : ℕ → Type*
-  /-- OS0: Temperedness -/
-  temperedness : Prop
-  /-- OS1: Euclidean covariance -/
-  euclidean_covariance : Prop
-  /-- OS2: Reflection positivity (the crucial condition) -/
-  reflection_positivity : Prop
-  /-- OS3: Permutation symmetry -/
-  permutation_symmetry : Prop
-  /-- OS4: Cluster decomposition -/
-  cluster_decomposition : Prop
-
-/-- OS reconstruction theorem: OS axioms imply existence of a Wightman QFT -/
-theorem osterwalder_schrader_reconstruction {d : ℕ}
-    (os_data : OsterwalderSchraderData d)
-    (h_os0 : os_data.temperedness)
-    (h_os1 : os_data.euclidean_covariance)
-    (h_os2 : os_data.reflection_positivity)
-    (h_os3 : os_data.permutation_symmetry)
-    (h_os4 : os_data.cluster_decomposition) :
-    -- Reconstructs Wightman functions satisfying relativistic axioms
-    ∃ (WightmanFunctions : ℕ → Type*), True := by
-  sorry
-
-/-- Nelson's axioms: alternative to OS for Euclidean QFT.
-    Nelson showed that a Euclidean-invariant measure satisfying certain
-    Markov properties gives rise to a relativistic QFT.
-
-    Nelson's axioms are sometimes easier to verify than OS axioms
-    for concrete models (e.g., P(φ)₂ theories). -/
-structure NelsonAxioms (d : ℕ) where
-  /-- The Euclidean measure on field space -/
-  EuclideanMeasure : Type*
-  /-- Euclidean invariance -/
-  euclidean_invariance : Prop
-  /-- Markov property -/
-  markov_property : Prop
-  /-- Regularity conditions -/
-  regularity : Prop
+-- NOTE: The proper Osterwalder-Schrader axioms with full mathematical content
+-- are defined in QFT/Euclidean/OsterwalderSchrader.lean as the OSAxioms structure.
+-- The OS reconstruction theorem is stated in QFT/Euclidean/WickRotation.lean.
 
 end PhysicsLogic.QFT.PathIntegral

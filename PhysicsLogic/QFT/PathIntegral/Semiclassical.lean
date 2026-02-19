@@ -64,8 +64,8 @@ noncomputable def loopExpansion (ℏ : ℝ) (S_cl : ℝ) : ℝ := ℏ / S_cl
 structure Instanton (F : Type*) (S_E : EuclideanAction F) where
   /-- The instanton field configuration -/
   config : F
-  /-- Instanton satisfies the Euclidean equations of motion -/
-  is_critical : Prop
+  -- The instanton satisfies δS_E/δφ = 0 (Euclidean equations of motion).
+  -- This criticality condition requires functional derivatives to state precisely.
   /-- Instanton has finite Euclidean action (bounded by some constant) -/
   action_bound : ℝ
   finite_action : S_E.eval config ≤ action_bound

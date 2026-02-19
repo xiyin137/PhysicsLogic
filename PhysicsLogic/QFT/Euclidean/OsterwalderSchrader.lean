@@ -54,22 +54,27 @@ structure OSAxioms {d : ℕ} [NeZero d] (theory : QFT d) where
     theory.schwinger n (fun i μ => translation μ + ∑ ν, rotation μ ν * points i ν)
   /-- OS Axiom E2: Reflection positivity (crucial for unitarity!)
 
-      For any finite set of test functions {fᵢ} with support in the upper half-space
-      (x₀ ≥ 0), the quadratic form must be non-negative:
-      ∑ᵢⱼ f̄ᵢ(xᵢ) fⱼ(xⱼ) S(xᵢ, θ(xⱼ)) ≥ 0
+      For any finite collection of point configurations {(nᵢ, pointsᵢ)} with all
+      points in the upper half-space (x₀ ≥ 0), and any real coefficients cᵢ,
+      the quadratic form must be non-negative:
+      ∑ᵢⱼ cᵢ cⱼ S_{nᵢ+nⱼ}(θ(pointsᵢ), pointsⱼ) ≥ 0
 
-      where θ is time reflection: θ(x₀, x) = (-x₀, x).
+      where θ is time reflection: θ(x₀, x⃗) = (-x₀, x⃗).
 
-      SIMPLIFICATION: This formulation only checks the 2-point function S₂(xᵢ, θxⱼ).
-      The full OS axiom requires positivity for all n-point functions with arbitrary
-      field insertions in the upper half-space. -/
-  reflection_positivity : ∀ (n : ℕ)
-    (points : Fin n → EuclideanPoint d)
-    (h_upper : ∀ i, points i 0 ≥ 0)
-    (coeffs : Fin n → ℝ),
-    ∑ i : Fin n, ∑ j : Fin n,
+      This tests ALL n-point Schwinger functions, not just the 2-point function.
+      The full positivity is essential for the OS reconstruction theorem to produce
+      a Hilbert space with positive-definite inner product (unitarity). -/
+  reflection_positivity : ∀ (N : ℕ)
+    (configs : Fin N → (Σ n : ℕ, Fin n → EuclideanPoint d))
+    (h_upper : ∀ i j, (configs i).2 j 0 ≥ 0)
+    (coeffs : Fin N → ℝ),
+    ∑ i : Fin N, ∑ j : Fin N,
       coeffs i * coeffs j *
-      theory.schwinger 2 (fun k => if k = 0 then points i else timeReflection (points j)) ≥ 0
+      theory.schwinger ((configs i).1 + (configs j).1)
+        (fun k => if h : k.val < (configs i).1
+          then timeReflection ((configs i).2 ⟨k.val, h⟩)
+          else (configs j).2 ⟨k.val - (configs i).1,
+            Nat.sub_lt_left_of_lt_add (Nat.not_lt.mp h) k.isLt⟩) ≥ 0
   /-- OS Axiom E4: Cluster property (factorization at large separation) -/
   cluster_property : ∀ (n m : ℕ)
     (points_x : Fin n → EuclideanPoint d)

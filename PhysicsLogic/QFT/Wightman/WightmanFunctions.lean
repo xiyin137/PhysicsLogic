@@ -45,8 +45,11 @@ structure ClusterDecomposition (H : Type _) [QuantumStateSpace H] (d : ℕ)
     (separation : Fin d → ℝ) (ε : ℝ), ε > 0 →
     ∃ R : ℝ, ∀ a > R,
       let shifted_y := fun i μ => points_y i μ + a * separation μ
-      ∃ (combined : ℂ),
-      ‖combined - wft.wightmanFunction phi n points_x * wft.wightmanFunction phi m shifted_y‖ < ε
+      let combined_points : Fin (n + m) → (Fin d → ℝ) :=
+        fun i => if h : i.val < n then points_x ⟨i.val, h⟩
+                 else shifted_y ⟨i.val - n, Nat.sub_lt_left_of_lt_add (Nat.not_lt.mp h) i.isLt⟩
+      ‖wft.wightmanFunction phi (n + m) combined_points -
+       wft.wightmanFunction phi n points_x * wft.wightmanFunction phi m shifted_y‖ < ε
 
 /-- 2-point Wightman function W₂(x,y) = ⟨0|φ(x)φ(y)|0⟩ -/
 noncomputable def twoPointWightman {H : Type _} [QuantumStateSpace H] {d : ℕ}

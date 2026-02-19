@@ -67,9 +67,11 @@ structure GaugeFieldSpace (M : Type*) (G : Type*) where
   GaugeTransformation : Type*
   /-- Gauge group acts on connections: A ↦ g · A -/
   gauge_action : GaugeTransformation → ConnectionSpace → ConnectionSpace
-  /-- Gauge action is a group action (identity acts trivially) -/
-  gauge_action_id : ∀ (e : GaugeTransformation) (A : ConnectionSpace),
-    True → gauge_action e A = A -- requires group identity
+  /-- Identity element of the gauge group -/
+  gauge_identity : GaugeTransformation
+  /-- Gauge action identity: the identity transformation acts trivially -/
+  gauge_action_id : ∀ (A : ConnectionSpace),
+    gauge_action gauge_identity A = A
   /-- Physical configurations: orbits under gauge action -/
   PhysicalSpace : Type*
 

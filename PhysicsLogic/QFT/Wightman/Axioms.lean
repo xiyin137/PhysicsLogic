@@ -31,17 +31,17 @@ structure TestFunctionSupportOps (d : ℕ) where
   testFunctionSupport : SchwartzFunction d → Set (Fin d → ℝ)
 
 /-- Wightman Axiom W1: Relativistic covariance (Poincaré invariance).
-    There exists a strongly continuous unitary representation U(Λ,a) of the Poincaré group
-    such that U(Λ,a) φ(x) U†(Λ,a) = φ(Λx + a).
+    The Wightman functions are Poincaré invariant:
+    W_n(Λx₁+a,...,Λxₙ+a) = W_n(x₁,...,xₙ)
 
-    This means: W_n(Λx₁+a,...,Λxₙ+a) = W_n(x₁,...,xₙ) -/
+    The existence of the unitary representation U(Λ,a) implementing this symmetry
+    is part of the vacuum axiom (W4), which provides a specific Poincaré representation.
+    Here we state the consequence for Wightman functions directly. -/
 structure RelativisticCovariance (H : Type _) [QuantumStateSpace H] (d : ℕ) [NeZero d]
     (wft : WightmanFunctionTheory H d) where
-  /-- For any Lorentz transformation and translation, there exists a unitary
-      implementing the covariance -/
+  /-- Wightman functions are Poincaré invariant -/
   relativistic_covariance : ∀ (phi : FieldDistribution H d)
     (Lambda : LorentzTransformGen d) (a : Fin d → ℝ),
-    ∃ (U : Quantum.UnitaryOp H),
     ∀ (n : ℕ) (points : Fin n → (Fin d → ℝ)),
       wft.wightmanFunction phi n (fun i μ => ∑ ν, Lambda.matrix μ ν * points i ν + a μ) =
       wft.wightmanFunction phi n points
@@ -64,15 +64,22 @@ structure SpectrumCondition (H : Type _) [QuantumStateSpace H] (d : ℕ) [NeZero
     [φ(f), ψ(g)] = 0 when supp(f) and supp(g) are spacelike separated.
 
     This is the mathematical expression of Einstein causality: measurements at
-    spacelike separation cannot influence each other. -/
+    spacelike separation cannot influence each other.
+
+    The commutator relation holds on a dense invariant domain D ⊂ H, since
+    field operators are generally unbounded. -/
 structure Locality (H : Type _) [QuantumStateSpace H] (d : ℕ) [NeZero d]
     (ops : FieldOperatorOps H d) (supportOps : TestFunctionSupportOps d) where
-  /-- Fields at spacelike separation commute -/
+  /-- The dense domain on which field operators are well-defined -/
+  domain : Set H
+  /-- Domain is nonempty -/
+  domain_nonempty : domain.Nonempty
+  /-- Fields at spacelike separation commute on the domain -/
   locality : ∀ (phi psi : SmearedFieldOperator H d)
     (f g : SchwartzFunction d)
     (h_spacelike : spacelikeSeparated (supportOps.testFunctionSupport f)
                                       (supportOps.testFunctionSupport g))
-    (state : H),
+    (state : H) (h_domain : state ∈ domain),
     ops.smear phi f (ops.smear psi g state) =
     ops.smear psi g (ops.smear phi f state)
 
@@ -85,19 +92,33 @@ structure VacuumFieldOps (H : Type _) [QuantumStateSpace H] (d : ℕ) where
   applyFieldsToVacuum : SmearedFieldOperator H d → (n : ℕ) → (Fin n → SchwartzFunction d) → H
 
 /-- Wightman Axiom W4: Vacuum properties.
-    - Uniqueness: |0⟩ is the unique Poincaré-invariant state (up to phase)
-    - Cyclicity: {φ(f₁)...φ(fₙ)|0⟩ : n ∈ ℕ, fᵢ ∈ S(ℝᵈ)} is dense in H
+    - There is a unitary representation of the Poincaré group
+    - |0⟩ is invariant under this representation
+    - |0⟩ is the unique time-translation-invariant state (up to phase)
+    - {φ(f₁)...φ(fₙ)|0⟩ : n ∈ ℕ, fᵢ ∈ S(ℝᵈ)} is dense in H
 
     This ensures the vacuum is the "ground state" and that all states can be
     created by applying field operators to the vacuum. -/
-structure VacuumPropertiesAxiom (H : Type _) [QuantumStateSpace H] (d : ℕ)
+structure VacuumPropertiesAxiom (H : Type _) [QuantumStateSpace H] (d : ℕ) [NeZero d]
     (vfo : VacuumFieldOps H d) where
+  /-- The Poincaré representation: a specific family of unitaries implementing
+      the Poincaré symmetry, parameterized by (Lorentz transform, translation). -/
+  poincareUnitary : LorentzTransformGen d → (Fin d → ℝ) → Quantum.UnitaryOp H
   /-- Vacuum is normalized -/
   vacuum_normalized : ‖vfo.vacuum‖ = 1
-  /-- Uniqueness: vacuum is Poincaré invariant (for all Poincaré unitaries) -/
-  vacuum_poincare_invariant : ∀ (U : Quantum.UnitaryOp H), applyUnitary U vfo.vacuum = vfo.vacuum
-  /-- Cyclicity: polynomial algebra of fields acting on vacuum is dense -/
-  vacuum_cyclicity : ∀ (phi : SmearedFieldOperator H d) (state : H) (ε : ℝ), ε > 0 →
+  /-- Vacuum is invariant under the Poincaré representation -/
+  vacuum_poincare_invariant : ∀ (Λ : LorentzTransformGen d) (a : Fin d → ℝ),
+    (poincareUnitary Λ a).op vfo.vacuum = vfo.vacuum
+  /-- Uniqueness: any time-translation-invariant state is proportional to the vacuum.
+      This ensures the vacuum is unique up to a phase. -/
+  vacuum_unique : ∀ (ψ : H),
+    (∀ (t : ℝ), (poincareUnitary (LorentzTransformGen.id d)
+      (fun μ => if μ = 0 then t else 0)).op ψ = ψ) →
+    ∃ (c : ℂ), ψ = c • vfo.vacuum
+  /-- Cyclicity: there exists a field whose polynomial algebra on vacuum is dense in H.
+      The span of {φ(f₁)...φ(fₙ)|0⟩ : n ∈ ℕ, fᵢ ∈ S(ℝᵈ)} is dense in H. -/
+  vacuum_cyclicity : ∃ (phi : SmearedFieldOperator H d),
+    ∀ (state : H) (ε : ℝ), ε > 0 →
     ∃ (n : ℕ) (test_funcs : Fin n → SchwartzFunction d),
       ‖state - vfo.applyFieldsToVacuum phi n test_funcs‖ < ε
 
@@ -119,7 +140,7 @@ structure WightmanQFT (H : Type _) [QuantumStateSpace H] (d : ℕ) [NeZero d] wh
   spectrum : SpectrumCondition H d
   /-- W3: Locality -/
   locality : Locality H d ops supportOps
-  /-- W4: Vacuum properties -/
+  /-- W4: Vacuum properties (includes Poincaré representation) -/
   vacuumProps : VacuumPropertiesAxiom H d vacuumFieldOps
   /-- Wightman positivity -/
   positivity : WightmanPositivity H d wft

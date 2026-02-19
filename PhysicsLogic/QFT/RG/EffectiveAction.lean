@@ -310,8 +310,8 @@ structure MomentumDecomposition (F : FieldConfigurationSpace) (Λ : Cutoff) wher
 structure RegularizedMeasure (F : FieldConfigurationSpace) where
   /-- UV cutoff -/
   cutoff : Cutoff
-  /-- The regularized measure exists (structural axiom) -/
-  measure_exists : Prop
+  -- The existence of the regularized measure is guaranteed by the cutoff.
+  -- Concrete construction (e.g., lattice regularization) provides the measure.
 
 /-- The Wilsonian effective action S_Λ[φ]
 
@@ -433,17 +433,17 @@ structure WilsonianFromPathIntegral (F : Type _) where
   /-- The effective action at scale Λ ≤ uv_cutoff (implicitly defined) -/
   effective_at_scale : UVCutoff → (F → ℝ)
 
-/-- The 1PI effective action from PathIntegral.
-    The effective action Γ[φ_cl] is the Legendre transform of W[J] = -iℏ log Z[J].
+/- The 1PI effective action Γ[φ_cl] is defined as the Legendre transform of W[J] = -iℏ log Z[J].
 
-    The relationship is:
-    - The generating functional Z[J] = ∫ Dφ e^{iS[φ] + i∫J·φ} defines W[J]
-    - The classical field φ_cl = δW/δJ
-    - Γ[φ_cl] = W[J] - ∫ J·φ_cl
-    - OnePIEffectiveAction provides this Legendre transform structure -/
-noncomputable def onePIFromPathIntegral {F : Type _} (S : ActionFunctional F) (μ : FieldMeasure F) :
-    ActionFunctional F where
-  eval := fun φ_cl => sorry  -- Legendre transform of connected generating functional
+   The relationship is:
+   - The generating functional Z[J] = ∫ Dφ e^{iS[φ] + i∫J·φ} defines W[J]
+   - The classical field φ_cl = δW/δJ
+   - Γ[φ_cl] = W[J] - ∫ J·φ_cl
+
+   Computing Γ from S and μ requires evaluating the path integral Z[J],
+   which is a formal object (not computable from action + measure alone).
+   The perturbative computation is captured by the LoopExpansion structure above.
+   The non-perturbative structure is captured by OnePIEffectiveAction. -/
 
 /- Connection to Semiclassical.lean:
 

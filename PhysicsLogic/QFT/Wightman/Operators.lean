@@ -6,7 +6,8 @@ namespace PhysicsLogic.QFT.Wightman
 open SpaceTime Quantum
 
 /-- Structure for Schwartz space test functions on d-dimensional Minkowski spacetime.
-    These are smooth rapidly decreasing functions used to smear field operators. -/
+    These are smooth rapidly decreasing functions used to smear field operators.
+    In a full formalization, this would use SchwartzMap from Mathlib. -/
 structure SchwartzFunctionTheory (d : ℕ) where
   /-- Type of Schwartz functions -/
   SchwartzFunctionType : Type _
@@ -19,17 +20,22 @@ structure SchwartzFunctionTheory (d : ℕ) where
   /-- Complex conjugate -/
   conj : SchwartzFunctionType → SchwartzFunctionType
 
-/-- Schwartz space test function on d-dimensional Minkowski spacetime.
-    These are smooth rapidly decreasing functions used to smear field operators. -/
+/-- Placeholder type for Schwartz space test functions on d-dimensional Minkowski spacetime.
+    In a full formalization, this would be SchwartzMap (Fin d → ℝ) ℂ from Mathlib.
+    The data : Unit means all instances are definitionally equal — this type serves
+    only as a type-level marker in the axiom signatures. -/
 structure SchwartzFunction (d : ℕ) where
-  /-- Underlying data -/
+  /-- Placeholder -/
   data : Unit
 
 /-- Smeared quantum field operator φ(f) = ∫ d^d x f(x) φ(x).
     The integral is over Minkowski spacetime with measure d^d x.
-    This is a well-defined bounded operator on the Hilbert space. -/
+    This is generally an UNBOUNDED operator, defined on a dense invariant domain D ⊂ H.
+    Smearing against a Schwartz function ensures the operator is well-defined on D,
+    but does not make it bounded in general.
+    Placeholder type: data : Unit carries no information. -/
 structure SmearedFieldOperator (H : Type _) [QuantumStateSpace H] (d : ℕ) where
-  /-- Underlying data -/
+  /-- Placeholder -/
   data : Unit
 
 /-- Structure for quantum field operator operations -/
@@ -43,10 +49,11 @@ structure FieldOperatorOps (H : Type _) [QuantumStateSpace H] (d : ℕ) where
     innerProduct ψ (smear phi f χ) = innerProduct (smear (fieldAdjoint phi) f ψ) χ
 
 /-- Formal notation: φ(x) as operator-valued distribution.
-    This is NOT a function but a distribution - only makes sense when integrated
-    against test functions. W_n(x₁,...,xₙ) = ⟨0|φ(x₁)...φ(xₙ)|0⟩ are tempered distributions. -/
+    This is NOT a function but a distribution — only makes sense when integrated
+    against test functions. W_n(x₁,...,xₙ) = ⟨0|φ(x₁)...φ(xₙ)|0⟩ are tempered distributions.
+    Placeholder type: data : Unit carries no information. -/
 structure FieldDistribution (H : Type _) [QuantumStateSpace H] (d : ℕ) where
-  /-- Underlying data -/
+  /-- Placeholder -/
   data : Unit
 
 /-- Structure relating distributions to smeared operators -/

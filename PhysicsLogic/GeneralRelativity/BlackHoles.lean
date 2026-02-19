@@ -20,12 +20,12 @@ structure BlackHole (consts : GRConstants) where
 /-- Event horizon: boundary of causal past of future null infinity -/
 def EventHorizon (consts : GRConstants) (bh : BlackHole consts)
     (asymp : AsymptoticStructure bh.metric) : Set SpaceTimePoint :=
-  {x | ¬∃ (γ : Curve), NullGeodesic bh.metric γ ∧
+  {x | ¬∃ (γ : Curve), NullGeodesic bh.connection γ ∧
        γ 0 = x ∧ ∃ (t : ℝ), t > 0 ∧ γ t ∈ asymp.futureNullInfinity}
 
-/-- Trapped surface: both null expansions negative -/
-def TrappedSurface (_metric : SpacetimeMetric) (S : Set SpaceTimePoint) : Prop :=
-  NullHypersurface S ∧
+/-- Trapped surface: closed 2-surface where both null expansions are negative.
+    Both outgoing and ingoing families of null geodesics orthogonal to S converge. -/
+def TrappedSurface (metric : SpacetimeMetric) (S : Set SpaceTimePoint) : Prop :=
   ∀ p ∈ S, ∃ (θ_out θ_in : ℝ), θ_out < 0 ∧ θ_in < 0
 
 /-- Apparent horizon: outermost trapped surface at given time -/
@@ -36,7 +36,7 @@ def ApparentHorizon (consts : GRConstants) (bh : BlackHole consts) (t : ℝ) : S
 /-- Black hole region: points that cannot reach infinity -/
 def BlackHoleRegion (consts : GRConstants) (bh : BlackHole consts)
     (asymp : AsymptoticStructure bh.metric) : Set SpaceTimePoint :=
-  {x | ¬∃ (γ : Curve), TimelikeGeodesic bh.metric γ ∧
+  {x | ¬∃ (γ : Curve), TimelikeGeodesic bh.connection γ ∧
        γ 0 = x ∧ ∃ (t : ℝ), t > 0 ∧ γ t ∈ asymp.futureNullInfinity}
 
 /-- Structure for black hole thermodynamics -/
@@ -48,26 +48,32 @@ structure BlackHoleThermodynamics (consts : GRConstants) (bh : BlackHole consts)
   bekensteinHawkingEntropy : ℝ
   /-- Hawking temperature: T_H = ℏκ/(2πk_B c) -/
   hawkingTemperature : ℝ → ℝ  -- function of κ
-  /-- First law: dM = κ/(8πG) dA + Ω dJ + Φ dQ -/
-  first_law_holds : True  -- Placeholder for differential relation
-  /-- Hawking area theorem: horizon area never decreases (classical) -/
+  /-- Horizon area as a function of time -/
+  horizonArea : ℝ → ℝ
+  /-- First law: positive surface gravity implies positive Hawking temperature.
+      Full first law dM = (κ/8πG)dA + ΩdJ + ΦdQ requires variational calculus. -/
+  first_law : ∀ (ξ : SpaceTimePoint → Fin 4 → ℝ) (h : TimelikeKilling bh.connection ξ),
+    surfaceGravity ξ h > 0 → hawkingTemperature (surfaceGravity ξ h) > 0
+  /-- Hawking area theorem: horizon area never decreases (classical, assuming NEC) -/
   hawking_area_theorem : ∀ (T : TensorField 4 4),
     NullEnergyCondition bh.metric T →
-    ∀ (t₁ t₂ : ℝ), t₁ ≤ t₂ → True  -- Placeholder: A(t₂) ≥ A(t₁)
+    ∀ (t₁ t₂ : ℝ), t₁ ≤ t₂ → horizonArea t₁ ≤ horizonArea t₂
 
 /-- Structure for singularity theorems -/
 structure SingularityTheorems where
-  /-- Penrose singularity theorem: trapped surface → singularity -/
-  penrose_theorem : ∀ (metric : SpacetimeMetric)
+  /-- Penrose singularity theorem: trapped surface + NEC → geodesic incompleteness.
+      Some causal geodesic cannot be extended to arbitrary parameter values. -/
+  penrose_theorem : ∀ (metric : SpacetimeMetric) (ct : ConnectionTheory metric)
     (T : TensorField 4 4),
     NullEnergyCondition metric T →
     (∃ S, TrappedSurface metric S) →
-    True  -- Geodesic incompleteness
-  /-- Hawking-Penrose singularity theorem -/
-  hawking_penrose_theorem : ∀ (metric : SpacetimeMetric)
+    ∃ (γ : Curve), Geodesic ct γ ∧ ∃ t_max, ∀ t > t_max, γ t = γ t_max
+  /-- Hawking-Penrose singularity theorem: SEC + global hyperbolicity → some
+      causal geodesic is incomplete (cannot be extended indefinitely). -/
+  hawking_penrose_theorem : ∀ (metric : SpacetimeMetric) (ct : ConnectionTheory metric)
     (T : TensorField 4 4),
     StrongEnergyCondition metric T →
     GloballyHyperbolic metric →
-    ¬∃ (γ : Curve), TimelikeGeodesic metric γ ∧ ∀ (t : ℝ), ∃ (t' : ℝ), t' > t
+    ∃ (γ : Curve), Geodesic ct γ ∧ ∃ t_max, ∀ t > t_max, γ t = γ t_max
 
 end PhysicsLogic.GeneralRelativity

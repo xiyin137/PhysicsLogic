@@ -22,10 +22,10 @@ structure ConformalBlock2D where
 
 /-- Conformal block properties -/
 structure ConformalBlock2DTheory where
-  /-- Conformal blocks are holomorphic functions of z in their domain -/
+  /-- Conformal blocks are holomorphic: differentiable at z ∈ ℂ \ {0,1} -/
   conformal_block_holomorphic : ∀ (block : ConformalBlock2D)
     (z : ℂ) (hz : z ≠ 0 ∧ z ≠ 1),
-    ∃ (f_deriv : ℂ), True  -- block.eval is differentiable at z
+    DifferentiableAt ℂ block.eval z
   /-- Four-point function decomposes into conformal blocks:
       ⟨φ₁(0) φ₂(z,z̄) φ₃(1) φ₄(∞)⟩ = ∑_p C_{12p} C_{34p} F_p(z) F̄_p(z̄)
       This is the fundamental structure: correlation functions factorize into
@@ -101,13 +101,10 @@ structure CrossingSymmetry2DTheory where
     (z : ℂ),
     ∃ (kernel : ℕ → ℕ → ℂ) (blocks_t : List ConformalBlock2D),
       blocks_t.length > 0
-  /-- Crossing kernel relates s-channel to t-channel blocks
-      Fₚˢ(z) = ∑_q F_{pq}(c, {h_i}) F_qᵗ(1-z) -/
-  crossing_kernel : ∀
-    (c : VirasoroCentralCharge)
-    (h_ext : Fin 4 → ℝ)
-    (p q : ℕ),
-    ∃ (F_pq : ℂ), True  -- kernel entry exists
+  /-- Crossing kernel F_{pq} relates s-channel to t-channel blocks:
+      Fₚˢ(z) = ∑_q F_{pq}(c, {h_i}) F_qᵗ(1-z)
+      The kernel entry is a function of (c, h_ext, p, q). -/
+  crossing_kernel : VirasoroCentralCharge → (Fin 4 → ℝ) → ℕ → ℕ → ℂ
 
 /- ============= NORMALIZATION ============= -/
 

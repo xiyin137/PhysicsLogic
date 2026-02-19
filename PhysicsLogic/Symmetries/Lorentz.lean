@@ -11,9 +11,15 @@ noncomputable def lorentzCompose (Λ₁ Λ₂ : LorentzTransform) : LorentzTrans
   matrix := fun μ ν => ∑ κ, Λ₁.matrix μ κ * Λ₂.matrix κ ν
   preserves_metric := by sorry
 
-/-- Lorentz inverse -/
+/-- Lorentz inverse: Λ⁻¹ = η Λᵀ η
+
+    For a Lorentz transformation satisfying Λᵀ η Λ = η, the inverse is:
+    (Λ⁻¹)^μ_ν = η^{μμ} Λ^ν_μ η_{νν} = sign(μ) · Λ^ν_μ · sign(ν) -/
 noncomputable def lorentzInverse (Λ : LorentzTransform) : LorentzTransform where
-  matrix := fun μ ν => sorry  -- Matrix inverse with metric
+  matrix := fun μ ν =>
+    let s_μ : ℝ := if μ = (0 : Fin 4) then -1 else 1
+    let s_ν : ℝ := if ν = (0 : Fin 4) then -1 else 1
+    s_μ * Λ.matrix ν μ * s_ν
   preserves_metric := by sorry
 
 /-- Lorentz group structure -/

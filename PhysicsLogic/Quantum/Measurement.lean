@@ -41,8 +41,8 @@ structure Observable (H : Type*) [QuantumStateSpace H] where
   apply : H → H
   /-- Observables are linear -/
   linear : ∀ (a : ℂ) (ψ φ : H), apply (a • ψ + φ) = a • apply ψ + apply φ
-  /-- Hermiticity: ⟨ψ|A|φ⟩ = ⟨Aψ|φ⟩* for real inner product -/
-  hermitian : ∀ (ψ φ : H), @inner ℂ H _ ψ (apply φ) = starRingEnd ℂ (@inner ℂ H _ (apply ψ) φ)
+  /-- Self-adjointness: ⟨ψ|Aφ⟩ = ⟨Aψ|φ⟩ (no conjugation needed in Mathlib's convention) -/
+  hermitian : ∀ (ψ φ : H), @inner ℂ H _ ψ (apply φ) = @inner ℂ H _ (apply ψ) φ
 
 /-- Apply observable to a state -/
 def apply_observable {H : Type*} [QuantumStateSpace H] (A : Observable H) (ψ : H) : H :=

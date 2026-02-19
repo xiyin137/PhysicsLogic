@@ -45,12 +45,24 @@ def Stationary (ct : ConnectionTheory metric) : Prop :=
 /-- Static spacetime (stationary + hypersurface orthogonal)
 
     Stronger than stationary: the timelike Killing vector is
-    orthogonal to a family of spacelike hypersurfaces
--/
+    orthogonal to a family of spacelike hypersurfaces.
+
+    Hypersurface orthogonality is equivalent to Frobenius' condition:
+    ξ_{[μ} ∇_ν ξ_{ρ]} = 0  (totally antisymmetric part vanishes).
+
+    This means ξ = f dτ for some scalar functions f and τ, so the
+    integral curves of ξ are orthogonal to the τ = const hypersurfaces. -/
 def Static (ct : ConnectionTheory metric) : Prop :=
   Stationary ct ∧
   ∃ ξ, TimelikeKilling ct ξ ∧
-    ∀ x μ ν, ξ x μ * ξ x ν = 0 → μ = ν
+    ∀ x μ ν ρ,
+      let ξ_low : Fin 4 → ℝ := fun α => ∑ β, metric.g x α β * ξ x β
+      ξ_low μ * ct.covariantDerivativeCovector ξ ν x ρ -
+      ξ_low μ * ct.covariantDerivativeCovector ξ ρ x ν +
+      ξ_low ν * ct.covariantDerivativeCovector ξ ρ x μ -
+      ξ_low ν * ct.covariantDerivativeCovector ξ μ x ρ +
+      ξ_low ρ * ct.covariantDerivativeCovector ξ μ x ν -
+      ξ_low ρ * ct.covariantDerivativeCovector ξ ν x μ = 0
 
 /-- Isometry: diffeomorphism preserving metric -/
 structure Isometry (metric : SpacetimeMetric) where

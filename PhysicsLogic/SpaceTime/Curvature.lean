@@ -62,8 +62,10 @@ noncomputable def einsteinTensor (ct : CurvatureTheory metric) (x : SpaceTimePoi
 def isFlat (ct : CurvatureTheory metric) : Prop :=
   ∀ x μ ν ρ σ, ct.riemannTensor x μ ν ρ σ = 0
 
-/-- Minkowski spacetime is flat -/
-theorem minkowski_is_flat (ct : CurvatureTheory minkowskiMetric) (h : isFlat ct) :
-    isFlat ct := h
+/-- Minkowski spacetime is flat: the Riemann tensor vanishes identically.
+    This follows from the Christoffel symbols being zero for a constant metric. -/
+theorem minkowski_is_flat (ct : CurvatureTheory minkowskiMetric) :
+    isFlat ct := by
+  sorry
 
 end PhysicsLogic.SpaceTime

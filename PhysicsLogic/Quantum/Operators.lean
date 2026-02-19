@@ -14,8 +14,11 @@ structure DensityOperator (H : Type _) [QuantumStateSpace H] where
   self_adjoint : ∀ (ψ φ : H), @inner ℂ H _ ψ (op φ) = @inner ℂ H _ (op ψ) φ
   /-- Positive semi-definite: ⟨ψ|ρ|ψ⟩ ≥ 0 -/
   positive : ∀ (ψ : H), 0 ≤ (@inner ℂ H _ ψ (op ψ)).re
-  /-- Trace is 1 (for finite dimensional, this is tr(ρ) = 1) -/
-  trace_one : True  -- Placeholder: proper trace requires finite dimension
+  /-- Trace is 1: for any orthonormal basis {eᵢ}, Σᵢ ⟨eᵢ|ρ|eᵢ⟩ = 1 -/
+  trace_one : ∀ (basis : ℕ → H),
+    (∀ i, ‖basis i‖ = 1) →
+    (∀ i j, i ≠ j → @inner ℂ H _ (basis i) (basis j) = 0) →
+    HasSum (fun i => (@inner ℂ H _ (basis i) (op (basis i))).re) 1
 
 /-- Convert pure state to density operator: ρ = |ψ⟩⟨ψ| -/
 noncomputable def pureToDensity {H : Type _} [QuantumStateSpace H] (ψ : PureState H) :
@@ -33,7 +36,9 @@ noncomputable def pureToDensity {H : Type _} [QuantumStateSpace H] (ψ : PureSta
     intro φ
     simp only [inner_smul_right]
     sorry  -- |⟨ψ|φ⟩|² ≥ 0
-  trace_one := trivial
+  trace_one := by
+    intro basis h_norm h_orth
+    sorry  -- Tr(|ψ⟩⟨ψ|) = ‖ψ‖² = 1
 
 /-- Unitary operator preserves inner products.
     U is unitary if ⟨Uψ|Uφ⟩ = ⟨ψ|φ⟩ for all ψ, φ. -/

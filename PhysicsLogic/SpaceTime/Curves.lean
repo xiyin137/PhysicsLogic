@@ -23,6 +23,13 @@ def NullCurve (metric : SpacetimeMetric) (γ : Curve) : Prop :=
 def SpacelikeCurve (metric : SpacetimeMetric) (γ : Curve) : Prop :=
   ∀ t, innerProduct metric (γ t) (tangentVector γ t) (tangentVector γ t) > 0
 
+/-- Inextendible curve: has no future or past endpoint.
+    For a curve γ : ℝ → M, inextendibility means γ does not converge
+    to a limit as the parameter approaches +∞ or -∞. -/
+def Inextendible (γ : Curve) : Prop :=
+  (∀ p : SpaceTimePoint, ∃ ε > 0, ∀ T : ℝ, ∃ t, t > T ∧ ‖γ t - p‖ ≥ ε) ∧
+  (∀ p : SpaceTimePoint, ∃ ε > 0, ∀ T : ℝ, ∃ t, t < T ∧ ‖γ t - p‖ ≥ ε)
+
 /-- Worldline (synonym for curve, emphasizing physical interpretation) -/
 abbrev Worldline := Curve
 

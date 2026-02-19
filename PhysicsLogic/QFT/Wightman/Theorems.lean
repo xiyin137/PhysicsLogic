@@ -6,55 +6,90 @@ namespace PhysicsLogic.QFT.Wightman
 open SpaceTime Quantum
 
 /-- PCT theorem (Pauli-Lüders theorem): Every Lorentz-invariant QFT admits an
-    antiunitary PCT operator Θ such that Θ φ(x) Θ† = φ(-x) (up to phase).
+    antiunitary PCT operator Θ such that the Wightman functions satisfy:
+    W_n(-xₙ,...,-x₁) = conj(W_n(x₁,...,xₙ))
 
-    P = parity (x → -x), C = charge conjugation (particle ↔ antiparticle),
+    The key features are:
+    - Point negation (from P and T combined)
+    - Reversal of operator ordering (from T)
+    - Complex conjugation (from the anti-unitary nature of Θ)
+
+    P = parity (x⃗ → -x⃗), C = charge conjugation (particle ↔ antiparticle),
     T = time reversal (t → -t).
-
-    This is a fundamental consequence of Lorentz invariance + locality + spectrum condition.
 
     This is a THEOREM (provable from W1-W4), not an axiom itself. -/
 theorem pct_theorem {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
   (qft : WightmanQFT H d)
-  (phi : FieldDistribution H d) :
-  ∃ (Theta : H → H),  -- Antiunitary PCT operator
-  ∀ (n : ℕ) (points : Fin n → (Fin d → ℝ)),
-    qft.wft.wightmanFunction phi n (fun i μ => -points i μ) =
-    qft.wft.wightmanFunction phi n points := by  -- Simplified: actual statement involves operator conjugation
+  (phi : FieldDistribution H d)
+  (n : ℕ) (hn : n > 0) (points : Fin n → (Fin d → ℝ)) :
+  -- PCT: W_n(-xₙ,...,-x₁) = conj(W_n(x₁,...,xₙ))
+  qft.wft.wightmanFunction phi n
+    (fun i μ => -points (⟨n - 1 - i.val, by omega⟩) μ) =
+  (starRingEnd ℂ) (qft.wft.wightmanFunction phi n points) := by
   sorry
 
-/-- Spin-statistics theorem: Fields transforming under integer spin representations
-    must satisfy Bose statistics (commutation), while half-integer spin fields
-    must satisfy Fermi statistics (anticommutation).
+/-- Spin-statistics theorem: In a Wightman QFT, fields of integer spin must
+    satisfy Bose commutation relations (commute) at spacelike separation,
+    while fields of half-integer spin must satisfy Fermi anticommutation
+    relations (anticommute) at spacelike separation.
 
-    Integer spin (s ∈ ℤ): [φ(x), φ(y)] = 0 for spacelike separation
-    Half-integer spin (s ∈ ℤ + 1/2): {ψ(x), ψ(y)} = 0 for spacelike separation
+    Integer spin (s ∈ ℤ): [φ(f), φ(g)] = 0 for spacelike-separated supports
+    Half-integer spin (s ∈ ℤ + 1/2): {φ(f), φ(g)} = 0 for spacelike-separated supports
 
-    This is a deep consequence of relativity + quantum mechanics preventing
-    violations of causality.
+    This is a deep consequence of Lorentz covariance + locality + spectrum condition.
 
     This is a THEOREM (provable from W1-W3), not an axiom itself. -/
-theorem spin_statistics {H : Type _} [QuantumStateSpace H] {d : ℕ}
+theorem spin_statistics {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
+  (qft : WightmanQFT H d)
+  (phi : SmearedFieldOperator H d)
   (spin : ℚ)  -- Spin as rational number (0, 1/2, 1, 3/2, ...)
-  (h_nonneg : spin ≥ 0) :
-  ∃ (statistics : Bool),  -- true = Bose, false = Fermi
-  (spin.den = 1 → statistics = true) ∧  -- Integer spin → bosons
-  (spin.den = 2 → statistics = false) := by    -- Half-integer spin → fermions
+  (h_nonneg : spin ≥ 0)
+  (f g : SchwartzFunction d)
+  (h_spacelike : spacelikeSeparated (qft.supportOps.testFunctionSupport f)
+                                    (qft.supportOps.testFunctionSupport g)) :
+  -- Integer spin → bosonic commutation at spacelike separation
+  (spin.den = 1 →
+    ∀ state ∈ qft.locality.domain,
+      qft.ops.smear phi f (qft.ops.smear phi g state) =
+      qft.ops.smear phi g (qft.ops.smear phi f state)) ∧
+  -- Half-integer spin → fermionic anticommutation at spacelike separation
+  (spin.den = 2 →
+    ∀ state ∈ qft.locality.domain,
+      qft.ops.smear phi f (qft.ops.smear phi g state) =
+      -(qft.ops.smear phi g (qft.ops.smear phi f state))) := by
   sorry
 
-/-- Haag's theorem: In relativistic QFT with interactions, the interaction picture
-    does not exist in a mathematically rigorous sense.
+/-- Haag's theorem: In relativistic QFT, the free and interacting field theories
+    cannot be unitarily equivalent in a way that preserves both the vacuum and
+    the field operator correlations.
 
-    The "free" vacuum |0⟩_free and "interacting" vacuum |0⟩_int live in unitarily
-    inequivalent Hilbert spaces. This is why perturbation theory is formal.
+    More precisely: if the free and interacting theories have distinct Wightman
+    functions, there is no unitary map V : H_free → H_int that simultaneously:
+    (1) preserves inner products (is unitary)
+    (2) maps the free vacuum to the interacting vacuum
+    (3) makes the Wightman functions agree
+
+    This is why naive interaction-picture perturbation theory is formal:
+    the free and interacting Hilbert spaces are unitarily inequivalent.
 
     This is a THEOREM (provable from W1-W4), not an axiom itself. -/
 theorem haag_theorem {H_free H_int : Type _}
-  [QuantumStateSpace H_free] [QuantumStateSpace H_int] {d : ℕ}
+  [QuantumStateSpace H_free] [QuantumStateSpace H_int] {d : ℕ} [NeZero d]
+  (qft_free : WightmanQFT H_free d)
+  (qft_int : WightmanQFT H_int d)
   (phi_free : FieldDistribution H_free d)
   (phi_int : FieldDistribution H_int d)
-  (h_interaction : True) :  -- Simplified: presence of nontrivial interaction
-  ¬∃ (U : H_free → H_int), True := by  -- No unitary equivalence
+  (h_distinct : qft_free.wft.wightmanFunction phi_free ≠
+                qft_int.wft.wightmanFunction phi_int) :
+  ¬∃ (V : H_free → H_int),
+    -- V is unitary (inner product preserving)
+    (∀ ψ φ : H_free, innerProduct (V ψ) (V φ) = innerProduct ψ φ) ∧
+    -- V maps free vacuum to interacting vacuum
+    V qft_free.vacuumFieldOps.vacuum = qft_int.vacuumFieldOps.vacuum ∧
+    -- V intertwines the Wightman functions (makes them agree)
+    (∀ (n : ℕ) (points : Fin n → (Fin d → ℝ)),
+      qft_free.wft.wightmanFunction phi_free n points =
+      qft_int.wft.wightmanFunction phi_int n points) := by
   sorry
 
 end PhysicsLogic.QFT.Wightman
