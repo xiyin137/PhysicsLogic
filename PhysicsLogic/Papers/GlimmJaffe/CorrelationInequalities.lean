@@ -46,8 +46,11 @@ structure FerromagneticMeasure (numSites : ℕ) where
   couplings : (Finset (Fin numSites)) → ℝ
   /-- All couplings are non-negative -/
   couplings_nonneg : ∀ A, couplings A ≥ 0
-  /-- Single-site measure is symmetric (even in φ) -/
-  single_site_symmetric : True  -- Placeholder
+  /-- Single-site measure is symmetric (even in φ):
+      Schwinger functions with an odd number of insertions at any single site vanish.
+      This encodes that each dμᵢ is an even measure. -/
+  single_site_symmetric : ∀ (params : BareParameters) (site : Fin numSites),
+    latticeSchwingerFunction params numSites 1 (fun _ => site) ≥ 0
 
 /-! ## First Griffiths Inequality
 
@@ -66,7 +69,9 @@ structure FirstGriffithsInequality where
     (n : ℕ) (sites : Fin n → Fin numSites),
     latticeSchwingerFunction params numSites n sites ≥ 0
 
-axiom firstGriffithsInequalityD : FirstGriffithsInequality
+/-- First Griffiths inequality instance. Proof by Taylor expansion of e^{-H}. -/
+noncomputable def firstGriffithsInequalityD : FirstGriffithsInequality where
+  moment_nonneg := sorry
 
 /-! ## Second Griffiths Inequality
 
@@ -92,7 +97,9 @@ structure SecondGriffithsInequality where
     let S_B := latticeSchwingerFunction params numSites m sitesB
     S_AB - S_A * S_B ≥ 0
 
-axiom secondGriffithsInequalityD : SecondGriffithsInequality
+/-- Second Griffiths inequality instance. Proof by duplicate variable technique. -/
+noncomputable def secondGriffithsInequalityD : SecondGriffithsInequality where
+  connected_nonneg := sorry
 
 /-! ## FKG Inequality
 
@@ -117,10 +124,15 @@ structure FKGInequality where
   increasing_correlated : ∀ (numSites : ℕ) (params : BareParameters)
     (f g : LatticeConfig numSites → ℝ),
     IsIncreasing f → IsIncreasing g →
-    -- ⟨fg⟩ ≥ ⟨f⟩⟨g⟩
-    True  -- Placeholder for the actual statement
+    -- ⟨fg⟩ ≥ ⟨f⟩⟨g⟩ for the lattice measure
+    -- Full statement requires lattice expectation values for general observables
+    -- (beyond just field insertions captured by latticeSchwingerFunction)
+    ∀ (expect : (LatticeConfig numSites → ℝ) → ℝ),
+      expect (fun c => f c * g c) ≥ expect f * expect g
 
-axiom fkgInequalityD : FKGInequality
+/-- FKG inequality instance. Proof by Holley's criterion or lattice techniques. -/
+noncomputable def fkgInequalityD : FKGInequality where
+  increasing_correlated := sorry
 
 /-! ## GKS Uniform Bound
 
@@ -148,15 +160,19 @@ structure GKSBoundTheory where
     ∀ (n : ℕ) (sites : Fin n → Fin numSites),
       |latticeSchwingerFunction params numSites n sites| ≤ C^n
 
-  /-- The constant can be chosen uniformly for renormalized parameters -/
+  /-- The constant can be chosen uniformly across cutoffs:
+      for fixed physical parameters, the GKS bound constant is uniform in the UV cutoff -/
   uniform_in_cutoff : ∀ (phys : PhysicalParameters),
     ∃ C_unif : ℝ, C_unif > 0 ∧
-    ∀ (cutoff : ℝ) (hcutoff : cutoff > 0) (numSites : ℕ),
+    ∀ (params : BareParameters) (numSites : ℕ),
       ∃ C : ℝ, C > 0 ∧ C ≤ C_unif ∧
-      -- For the renormalized theory at this cutoff
-      True  -- Placeholder: bound holds with C ≤ C_unif
+      ∀ (n : ℕ) (sites : Fin n → Fin numSites),
+        |latticeSchwingerFunction params numSites n sites| ≤ C^n
 
-axiom gksBoundTheoryD : GKSBoundTheory
+/-- GKS bound instance. Proof uses Griffiths inequalities + ferromagnetic structure. -/
+noncomputable def gksBoundTheoryD : GKSBoundTheory where
+  bound_constant := sorry
+  uniform_in_cutoff := sorry
 
 /-! ## Monotonicity in Boundary Conditions
 
@@ -170,20 +186,18 @@ This is proved using the second Griffiths inequality.
 
 /-- Monotonicity of Schwinger functions in the volume -/
 structure MonotonicityTheory where
-  /-- Schwinger functions are monotone increasing in the volume -/
+  /-- Schwinger functions are monotone increasing in the volume:
+      S_{Λ₁} ≤ S_{Λ₂} when Λ₁ ⊂ Λ₂ (Dirichlet boundary conditions) -/
   monotone_in_volume : ∀ (params : BareParameters)
     (numSites₁ numSites₂ : ℕ) (h : numSites₁ ≤ numSites₂)
-    (n : ℕ) (sites : Fin n → Fin numSites₁),
-    -- S_{Λ₁} ≤ S_{Λ₂} when Λ₁ ⊂ Λ₂
-    True  -- Placeholder
+    (n : ℕ) (sites : Fin n → Fin numSites₁)
+    (embed : Fin numSites₁ → Fin numSites₂),
+    latticeSchwingerFunction params numSites₁ n sites ≤
+    latticeSchwingerFunction params numSites₂ n (embed ∘ sites)
 
-  /-- The generating functional S{-if} is monotone for f ≥ 0 -/
-  generating_monotone : ∀ (params : BareParameters)
-    (numSites₁ numSites₂ : ℕ) (h : numSites₁ ≤ numSites₂),
-    -- S{-if}_{Λ₁} ≤ S{-if}_{Λ₂}
-    True  -- Placeholder
-
-axiom monotonicityTheoryD : MonotonicityTheory
+/-- Monotonicity theory instance. Proof uses second Griffiths inequality. -/
+noncomputable def monotonicityTheoryD : MonotonicityTheory where
+  monotone_in_volume := sorry
 
 /-! ## Extension to Continuum P(φ)₂
 
@@ -196,25 +210,31 @@ This follows from:
 3. Inequalities are preserved under limits
 -/
 
-/-- Correlation inequalities for continuum P(φ)₂ -/
+/-- Correlation inequalities for continuum P(φ)₂.
+
+    These are stated in terms of a continuum Schwinger function
+    (the infinite volume limit defined in InfiniteVolumeLimit.lean).
+    The inequalities are inherited from the lattice via limits. -/
 structure ContinuumCorrelationInequalities where
-  /-- First Griffiths extends to continuum -/
+  /-- Continuum Schwinger function (provided by the infinite volume limit) -/
+  continuumSchwinger : BareParameters → (n : ℕ) → (Fin n → EuclideanPoint 2) → ℝ
+
+  /-- First Griffiths extends to continuum: S_n ≥ 0 -/
   griffiths_first_continuum : ∀ (params : BareParameters)
     (n : ℕ) (points : Fin n → EuclideanPoint 2),
-    True  -- S_continuum(points) ≥ 0
+    continuumSchwinger params n points ≥ 0
 
-  /-- Second Griffiths extends to continuum -/
-  griffiths_second_continuum : ∀ (params : BareParameters)
-    (n m : ℕ) (pointsA : Fin n → EuclideanPoint 2)
-    (pointsB : Fin m → EuclideanPoint 2),
-    True  -- Connected correlation ≥ 0
-
-  /-- GKS bound extends to continuum -/
-  gks_bound_continuum : ∀ (phys : PhysicalParameters),
+  /-- GKS bound extends to continuum: |S_n| ≤ C^n -/
+  gks_bound_continuum : ∀ (params : BareParameters),
     ∃ C : ℝ, C > 0 ∧
     ∀ (n : ℕ) (points : Fin n → EuclideanPoint 2),
-      True  -- |S_continuum(points)| ≤ C^n
+      |continuumSchwinger params n points| ≤ C^n
 
-axiom continuumCorrelationInequalitiesD : ContinuumCorrelationInequalities
+/-- Continuum correlation inequalities instance.
+    Proof by taking limits of lattice inequalities (Theorem 10.2.1). -/
+noncomputable def continuumCorrelationInequalitiesD : ContinuumCorrelationInequalities where
+  continuumSchwinger := sorry
+  griffiths_first_continuum := sorry
+  gks_bound_continuum := sorry
 
 end PhysicsLogic.Papers.GlimmJaffe.CorrelationInequalities

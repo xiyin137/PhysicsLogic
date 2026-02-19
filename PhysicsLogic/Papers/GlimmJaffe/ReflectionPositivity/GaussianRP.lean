@@ -45,9 +45,10 @@ structure TimeReflection (n : ℕ) where
   θ : Fin n → Fin n
   involution : ∀ i, θ (θ i) = i
 
-/-- A site is in the positive half (t ≥ 0) -/
+/-- A site is in the positive half-space: it moves under time reflection.
+    Sites fixed by Θ lie on the boundary (t = 0 hyperplane). -/
 def IsPositiveSite (Θ : TimeReflection n) (i : Fin n) : Prop :=
-  Θ.θ i ≠ i ∨ True  -- Placeholder; real definition uses position
+  Θ.θ i ≠ i
 
 /-- The positive half-space sites -/
 def positiveSites (Θ : TimeReflection n) : Finset (Fin n) :=
@@ -152,10 +153,11 @@ structure HeatKernel (n : ℕ) where
   semigroup : ∀ s t x y, s > 0 → t > 0 →
     K (s + t) x y = ∑ z, K s x z * K t z y
 
-/-- Covariance from heat kernel: C = ∫₀^∞ e^{-m²t} K_t dt -/
-noncomputable def covarianceFromHeatKernel (H : HeatKernel n) (m_sq : ℝ) :
+/-- Covariance from heat kernel: C_{ij} = ∑_{t=1}^{N} e^{-m²t} K_t(i,j)
+    (finite-time approximation to C = ∫₀^∞ e^{-m²t} K_t dt) -/
+noncomputable def covarianceFromHeatKernel (H : HeatKernel n) (m_sq : ℝ) (N : ℕ) :
     Matrix (Fin n) (Fin n) ℝ :=
-  Matrix.of (fun i j => 1)  -- Placeholder; actual is integral
+  Matrix.of (fun i j => ∑ t : Fin N, Real.exp (-m_sq * (t.val + 1)) * H.K (t.val + 1) i j)
 
 /-- Key lemma: If K_t(i, Θj) = ∑_k K_{t/2}(i, k) K_{t/2}(Θj, k),
     then the covariance is reflection positive.

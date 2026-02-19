@@ -1,4 +1,4 @@
--- ModularPhysics/Papers/Coleman2D.lean
+-- PhysicsLogic/Papers/Coleman2D.lean
 -- Coleman's theorem: No spontaneous symmetry breaking in 2D QFT with continuous symmetries
 -- Formulated purely in terms of Schwinger functions (Euclidean correlation functions)
 
@@ -18,10 +18,14 @@ abbrev QFT2D := QFT 2
 /-- Order parameter: vacuum expectation value ⟨φ⟩ that breaks symmetry when nonzero -/
 def orderParameter (theory : QFT2D) : ℝ := vev theory
 
-/-- A continuous (non-discrete) symmetry of the theory -/
+/-- A continuous (non-discrete) symmetry of the theory.
+    The Lie algebra dimension characterizes the symmetry group
+    (e.g., dim = 1 for U(1), dim = 3 for SU(2)). -/
 structure ContinuousSymmetry (theory : QFT2D) where
-  /-- The symmetry is continuous (not discrete like ℤ₂) -/
-  is_continuous : Prop
+  /-- Dimension of the symmetry Lie algebra -/
+  lie_algebra_dim : ℕ
+  /-- The symmetry is genuinely continuous: at least one generator -/
+  dim_pos : lie_algebra_dim ≥ 1
 
 /-- A theory has a massless mode (Goldstone boson) if its spectral density
     has an isolated pole at m² = 0 with positive residue Z.
@@ -57,6 +61,37 @@ def hasLongRangeOrder (theory : QFT2D) : Prop :=
 def HasSSB (theory : QFT2D) : Prop :=
   orderParameter theory ≠ 0 ∧ hasLongRangeOrder theory
 
+/-- Complete setup for Coleman's theorem.
+
+    Bundles a 2D QFT with continuous symmetry and the two key physical inputs:
+    1. Phase space suppression of the 2D continuum (subleading to log divergence)
+    2. Goldstone's theorem (SSB of continuous symmetry implies massless mode) -/
+structure Coleman2DSetup where
+  /-- The 2D quantum field theory -/
+  theory : QFT2D
+  /-- The continuous symmetry under consideration -/
+  symmetry : ContinuousSymmetry theory
+  /-- In 2D, multi-particle continuum states exhibit phase space suppression
+      compared to single-particle isolated poles.
+
+      Physical reasoning: The two-particle continuum contribution is:
+      continuum(x) = ∫₀^∞ dM² ρ₂(M²) K(M, |x|)
+
+      Near threshold M² → 0, phase space gives ρ₂(M²) ~ M^a for some a > 0.
+      Even though K(M, |x|) ~ -log|x| when M → 0, the integral:
+      ∫₀^δ dM² M^a · (-log|x|) ~ δ^(a+1) · log|x|
+
+      can be made arbitrarily small by choosing δ small. This means for any
+      ε > 0, we can find a cutoff such that the continuum near threshold
+      contributes at most ε compared to the isolated pole residue Z. -/
+  continuum_suppression : ∀ (massless : HasMasslessMode theory),
+    ∀ ε > 0, ∃ r₀ : ℝ, ∀ r > r₀,
+      |massless.decomp.continuum_part (fun i => if i = 0 then r else 0)| ≤ ε * |log r|
+  /-- Goldstone's theorem: Spontaneous breaking of continuous symmetry implies
+      an isolated massless pole in the spectral density (Goldstone mode).
+      This is a fundamental result following from the OS axioms and symmetry breaking. -/
+  goldstone : HasSSB theory → HasMasslessMode theory
+
 /-- In 2D with a massless mode, the single-particle pole contributes Z·log|x|
     to the correlation function at large distances. -/
 theorem massless_pole_logarithmic_contribution
@@ -78,32 +113,6 @@ noncomputable def meanSquareFluctuation
   2 * correlationFunction theory (euclideanOrigin 2) (euclideanOrigin 2) -
   2 * correlationFunction theory x (euclideanOrigin 2)
 
-/-- In 2D, multi-particle continuum states exhibit phase space suppression
-    compared to single-particle isolated poles.
-
-    Physical reasoning: The two-particle continuum contribution is:
-    continuum(x) = ∫₀^∞ dM² ρ₂(M²) K(M, |x|)
-
-    Near threshold M² → 0, phase space gives ρ₂(M²) ~ M^a for some a > 0.
-    Even though K(M, |x|) ~ -log|x| when M → 0, the integral:
-    ∫₀^δ dM² M^a · (-log|x|) ~ δ^(a+1) · log|x|
-
-    can be made arbitrarily small by choosing δ small. This means for any
-    ε > 0, we can find a cutoff such that the continuum near threshold
-    contributes at most ε compared to the isolated pole residue Z.
-
-    This is the crucial difference between:
-    - Isolated pole: ρ(M²) = Z·δ(M²) → coefficient Z
-    - Continuum: ρ(M²) smooth → coefficient ∫ ρ(M²) dM² arbitrarily small
-
-    NOTE: This requires more careful analysis in a full formalization. The
-    phase space behavior depends on the dimension and the number of particles. -/
-axiom continuum_phase_space_suppression_2d
-  (theory : QFT2D)
-  (massless : HasMasslessMode theory) :
-  ∀ ε > 0, ∃ r₀ : ℝ, ∀ r > r₀,
-    |massless.decomp.continuum_part (fun i => if i = 0 then r else 0)| ≤ ε * |log r|
-
 /-- With a massless pole, phase space suppression ensures that the continuum
     contribution is subleading, so the isolated pole's logarithmic divergence
     dominates, precluding long-range order.
@@ -117,7 +126,9 @@ axiom continuum_phase_space_suppression_2d
     - This contradicts boundedness from long-range order -/
 theorem coleman_massless_pole_no_LRO
   (theory : QFT2D)
-  (massless : HasMasslessMode theory) :
+  (massless : HasMasslessMode theory)
+  (h_suppression : ∀ ε > 0, ∃ r₀ : ℝ, ∀ r > r₀,
+    |massless.decomp.continuum_part (fun i => if i = 0 then r else 0)| ≤ ε * |log r|) :
   ¬ hasLongRangeOrder theory := by
   intro ⟨c, hc_pos, hc⟩
 
@@ -126,9 +137,9 @@ theorem coleman_massless_pole_no_LRO
   have hε_pos : ε > 0 := by
     have : massless.Z / 2 > 0 := div_pos massless.Z_pos (by norm_num : (2 : ℝ) > 0)
     exact this
-  have h_suppression := continuum_phase_space_suppression_2d theory massless ε hε_pos
+  have h_suppression' := h_suppression ε hε_pos
 
-  obtain ⟨r₀, h_continuum_bound⟩ := h_suppression
+  obtain ⟨r₀, h_continuum_bound⟩ := h_suppression'
 
   -- We need to construct a point x at large distance r that violates LRO
   -- Choose r large enough: r > max(r₀, 1) and (Z/4)·log r > c + |Z| + |v₀²|
@@ -150,15 +161,6 @@ theorem coleman_massless_pole_no_LRO
   -- we leave this sorry as it stands.
 
   sorry
-
-/-- Goldstone's theorem: Spontaneous breaking of continuous symmetry implies
-    an isolated massless pole in the spectral density (Goldstone mode).
-    This is a fundamental result following from the OS axioms and symmetry breaking. -/
-axiom goldstone_theorem
-  (theory : QFT2D)
-  (symmetry : ContinuousSymmetry theory)
-  (h_ssb : HasSSB theory) :
-  HasMasslessMode theory
 
 lemma unbounded_fluctuations_no_long_range_order
   (theory : QFT2D)
@@ -188,14 +190,13 @@ lemma unbounded_fluctuations_no_long_range_order
     4. Contradiction
 
     This shows that in 2D, the infrared divergence from massless modes prevents SSB. -/
-theorem coleman_no_goldstone_2d
-  (theory : QFT2D)
-  (symmetry : ContinuousSymmetry theory) :
-  ¬ HasSSB theory := by
+theorem coleman_no_goldstone_2d (setup : Coleman2DSetup) :
+  ¬ HasSSB setup.theory := by
   intro ⟨h_order, has_lro⟩
-  have h_ssb : HasSSB theory := ⟨h_order, has_lro⟩
-  have massless := goldstone_theorem theory symmetry h_ssb
-  have no_lro := coleman_massless_pole_no_LRO theory massless
+  have h_ssb : HasSSB setup.theory := ⟨h_order, has_lro⟩
+  have massless := setup.goldstone h_ssb
+  have no_lro := coleman_massless_pole_no_LRO setup.theory massless
+    (setup.continuum_suppression massless)
   exact no_lro has_lro
 
 end PhysicsLogic.Papers.Coleman2D

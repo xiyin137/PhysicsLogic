@@ -17,140 +17,144 @@ set_option autoImplicit false
    Reference: Vafa & Witten, Nucl. Phys. B 234 (1984) 173
    ═══════════════════════════════════════════════════════════════════════════ -/
 
-/- ============= GAUGE THEORY SETUP ============= -/
-
-axiom GaugeFieldConfig (G : Type _) : Type _
-axiom GaugeTransform (G : Type _) : Type _
-axiom gaugeAction {G : Type _} : GaugeTransform G → GaugeFieldConfig G → GaugeFieldConfig G
-axiom yangMillsAction {G : Type _} : ActionFunctional (GaugeFieldConfig G)
-
-/- ============= DIRAC OPERATOR ============= -/
-
-axiom DiracOperator {G : Type _} : GaugeFieldConfig G → Type _
-
 abbrev FermionMass : Type := ℝ
 
-axiom DiracOperatorWithMass {G : Type _} :
-  GaugeFieldConfig G → FermionMass → Type _
-
-axiom fermionDeterminant {G : Type _}
-  (A : GaugeFieldConfig G)
-  (_D : DiracOperator A) : ℂ
-
-axiom fermionDeterminantMassive {G : Type _}
-  (A : GaugeFieldConfig G)
-  (m : FermionMass)
-  (_D_m : DiracOperatorWithMass A m) : ℂ
-
-/- ============= FLAVOR SYMMETRY ============= -/
-
+/-- Flavor index a = 1, ..., N_f² - 1 labeling generators of SU(N_f) -/
 def FlavorIndex (Nf : ℕ) : Type := Fin (Nf^2 - 1)
 
-/- ============= EUCLIDEAN REFLECTION ============= -/
-
-axiom EuclideanReflection : Type _
-
-axiom reflectionOnGaugeField {G : Type _} :
-  EuclideanReflection → GaugeFieldConfig G → GaugeFieldConfig G
-
-axiom reflection_involution {G : Type _} (R : EuclideanReflection) :
-  ∀ (A : GaugeFieldConfig G),
-    reflectionOnGaugeField R (reflectionOnGaugeField R A) = A
-
-/- ============= PATH INTEGRAL ============= -/
-
-axiom gaugeExpectationValueMassive {G : Type _}
-  (O : GaugeFieldConfig G → ℝ)
-  (S_YM : ActionFunctional (GaugeFieldConfig G))
-  (m : FermionMass) : ℝ
-
-axiom path_integral_measure_reflection_invariant {G : Type _}
-  (R : EuclideanReflection)
-  (O : GaugeFieldConfig G → ℝ)
-  (S_YM : ActionFunctional (GaugeFieldConfig G))
-  (m : FermionMass) :
-  gaugeExpectationValueMassive O S_YM m =
-  gaugeExpectationValueMassive (fun A => O (reflectionOnGaugeField R A)) S_YM m
-
-axiom expectation_value_linear {G : Type _}
-  (O : GaugeFieldConfig G → ℝ)
-  (c : ℝ)
-  (S_YM : ActionFunctional (GaugeFieldConfig G))
-  (m : FermionMass) :
-  gaugeExpectationValueMassive (fun A => c * O A) S_YM m =
-  c * gaugeExpectationValueMassive O S_YM m
-
-axiom gaugeExpectationValue {G : Type _}
-  (O : GaugeFieldConfig G → ℝ)
-  (S_YM : ActionFunctional (GaugeFieldConfig G)) : ℝ
-
-/- ============= REFLECTION POSITIVITY ============= -/
-
+/-- Complex conjugation (synonym for star) -/
 def conjComplex (z : ℂ) : ℂ := star z
 
-axiom reflection_positivity_of_determinant_massive {G : Type _}
-  (A : GaugeFieldConfig G)
-  (m : FermionMass)
-  (D_m : DiracOperatorWithMass A m)
-  (R : EuclideanReflection)
-  (D_m_R : DiracOperatorWithMass (reflectionOnGaugeField R A) m)
-  (h_positive_mass : m > 0) :
-  (fermionDeterminantMassive (reflectionOnGaugeField R A) m D_m_R =
-   conjComplex (fermionDeterminantMassive A m D_m)) ∧
-  (∃ r : ℝ, r > 0 ∧ fermionDeterminantMassive A m D_m = r)
+/- ═══════════════════════════════════════════════════════════════════════════
+   GAUGE THEORY SETUP
 
-/- ============= OBSERVABLES ============= -/
+   All gauge theory data is bundled in VafaWittenSetup: field configurations,
+   gauge transforms, Dirac operators, Euclidean reflection, path integral,
+   and condensate observables.
+   ═══════════════════════════════════════════════════════════════════════════ -/
 
-structure OrderParameter (G : Type _) where
-  observable : GaugeFieldConfig G → ℝ
-  gauge_invariant : ∀ (g : GaugeTransform G) (A : GaugeFieldConfig G),
-    observable (gaugeAction g A) = observable A
+/-- Complete setup for the Vafa-Witten theorem.
 
-axiom condensateNonSinglet {G : Type _} (Nf : ℕ) (a : FlavorIndex Nf) : OrderParameter G
+    Bundles a vector-like gauge theory with:
+    - Gauge field configuration space and gauge transformations
+    - Dirac operators and fermion determinants (massless and massive)
+    - Euclidean reflection with involution property
+    - Path integral (expectation values) with reflection invariance and linearity
+    - Reflection positivity of massive fermion determinant
+    - Non-singlet condensate observables that are gauge-invariant and reflection-odd
+    - Continuity of the massless limit m → 0 -/
+structure VafaWittenSetup where
+  -- Gauge theory data
+  /-- Configuration space of gauge fields A_μ -/
+  FieldConfig : Type
+  /-- Gauge transformation group -/
+  Transform : Type
+  /-- Action of gauge transforms on gauge field configurations -/
+  gaugeAction : Transform → FieldConfig → FieldConfig
 
-axiom condensate_nonsinglet_reflection_odd {G : Type _} {Nf : ℕ}
-  (R : EuclideanReflection) (a : FlavorIndex Nf) :
-  ∀ (A : GaugeFieldConfig G),
-    (condensateNonSinglet (G := G) Nf a).observable (reflectionOnGaugeField R A) =
-    -(condensateNonSinglet (G := G) Nf a).observable A
+  -- Dirac operator data
+  /-- Dirac operator (massless) associated to a gauge configuration -/
+  DiracOp : FieldConfig → Type
+  /-- Massive Dirac operator D + m -/
+  DiracOpMassive : FieldConfig → FermionMass → Type
+  /-- Fermion determinant det(D) in the massless case -/
+  determinant : (A : FieldConfig) → DiracOp A → ℂ
+  /-- Fermion determinant det(D + m) in the massive case -/
+  determinantMassive : (A : FieldConfig) → (m : FermionMass) → DiracOpMassive A m → ℂ
 
-/- ============= GLOBAL SYMMETRIES ============= -/
+  -- Euclidean reflection
+  /-- Type of Euclidean reflections (e.g., time reflection x₄ → -x₄) -/
+  Reflection : Type
+  /-- Action of Euclidean reflection on gauge field configurations -/
+  reflectField : Reflection → FieldConfig → FieldConfig
+  /-- Reflection is an involution: R² = id -/
+  reflect_involution : ∀ (R : Reflection) (A : FieldConfig),
+    reflectField R (reflectField R A) = A
 
-structure GlobalFlavorSymmetry (G : Type _) where
-  transformGauge : GaugeFieldConfig G → GaugeFieldConfig G
+  -- Path integral (expectation values)
+  /-- Massive gauge expectation value: ⟨O⟩_m = ∫ DA O(A) |det(D+m)| e^{-S[A]} / Z_m -/
+  expectMassive : (FieldConfig → ℝ) → FermionMass → ℝ
+  /-- Massless gauge expectation value: ⟨O⟩ = lim_{m→0} ⟨O⟩_m -/
+  expect : (FieldConfig → ℝ) → ℝ
+  /-- Path integral measure is invariant under Euclidean reflection -/
+  measure_reflection_inv : ∀ (R : Reflection) (O : FieldConfig → ℝ) (m : FermionMass),
+    expectMassive O m = expectMassive (fun A => O (reflectField R A)) m
+  /-- Linearity of expectation value: ⟨c·O⟩ = c·⟨O⟩ -/
+  expect_linear : ∀ (O : FieldConfig → ℝ) (c : ℝ) (m : FermionMass),
+    expectMassive (fun A => c * O A) m = c * expectMassive O m
 
-structure VectorSymmetry (G : Type _) (Nf : ℕ) extends GlobalFlavorSymmetry G where
-  commutes_with_reflection : ∀ (R : EuclideanReflection) (A : GaugeFieldConfig G),
-    reflectionOnGaugeField R (transformGauge A) =
-    transformGauge (reflectionOnGaugeField R A)
-  rotates_nonsinglet : ∀ (A : GaugeFieldConfig G) (a : FlavorIndex Nf),
-    ∃ (b : FlavorIndex Nf),
-    (condensateNonSinglet (G := G) Nf a).observable (transformGauge A) =
-    (condensateNonSinglet (G := G) Nf b).observable A
+  -- Reflection positivity of massive fermion determinant
+  /-- For m > 0, det(D+m) satisfies:
+      1. det(D_R + m) = det(D+m)* (conjugation under reflection)
+      2. det(D+m) is real and positive
+      This ensures the path integral measure is positive for m > 0. -/
+  rp_massive : ∀ (A : FieldConfig) (m : FermionMass)
+    (D_m : DiracOpMassive A m) (R : Reflection)
+    (D_m_R : DiracOpMassive (reflectField R A) m),
+    m > 0 →
+    (determinantMassive (reflectField R A) m D_m_R =
+     conjComplex (determinantMassive A m D_m)) ∧
+    (∃ r : ℝ, r > 0 ∧ determinantMassive A m D_m = r)
 
-structure AxialSymmetry (G : Type _) (Nf : ℕ) extends GlobalFlavorSymmetry G where
-  broken_by_mass : ∀ (m : FermionMass), m ≠ (0 : ℝ) → True
+  -- Flavor and condensate data
+  /-- Number of quark flavors -/
+  Nf : ℕ
+  /-- Non-singlet condensate observable O_a(A) for each flavor index a.
+      These are bilinears like ψ̄ λ_a ψ where λ_a are SU(N_f) generators. -/
+  condensate : FlavorIndex Nf → FieldConfig → ℝ
+  /-- Condensate is gauge invariant: O_a(A^g) = O_a(A) -/
+  condensate_gauge_inv : ∀ (a : FlavorIndex Nf) (g : Transform) (A : FieldConfig),
+    condensate a (gaugeAction g A) = condensate a A
+  /-- Condensate is odd under Euclidean reflection: O_a(RA) = -O_a(A).
+      This is the key property: non-singlet condensates are parity-odd. -/
+  condensate_reflection_odd : ∀ (R : Reflection) (a : FlavorIndex Nf) (A : FieldConfig),
+    condensate a (reflectField R A) = -(condensate a A)
 
-axiom massless_limit_continuous {G : Type _} {Nf : ℕ}
-  (V : VectorSymmetry G Nf)
-  (a : FlavorIndex Nf)
-  (S_YM : ActionFunctional (GaugeFieldConfig G))
-  (h : ∀ m : FermionMass, m > 0 →
-    gaugeExpectationValueMassive (condensateNonSinglet (G := G) Nf a).observable S_YM m = 0) :
-  gaugeExpectationValue (condensateNonSinglet (G := G) Nf a).observable S_YM = 0
+  -- Massless limit
+  /-- Continuity of the massless limit: if ⟨O_a⟩_m = 0 for all m > 0,
+      then ⟨O_a⟩ = 0 in the massless theory. -/
+  massless_limit : ∀ (a : FlavorIndex Nf),
+    (∀ m : FermionMass, m > 0 → expectMassive (condensate a) m = 0) →
+    expect (condensate a) = 0
+
+/- ============= OBSERVABLES AND SYMMETRIES ============= -/
+
+/-- A gauge-invariant order parameter -/
+structure OrderParameter (setup : VafaWittenSetup) where
+  observable : setup.FieldConfig → ℝ
+  gauge_invariant : ∀ (g : setup.Transform) (A : setup.FieldConfig),
+    observable (setup.gaugeAction g A) = observable A
+
+/-- Non-singlet condensate as an order parameter -/
+def condensateNonSinglet (setup : VafaWittenSetup) (a : FlavorIndex setup.Nf) :
+    OrderParameter setup :=
+  ⟨setup.condensate a, setup.condensate_gauge_inv a⟩
+
+/-- Vector flavor symmetry: commutes with reflection, rotates condensates -/
+structure VectorSymmetry (setup : VafaWittenSetup) where
+  /-- Flavor transformation acting on gauge fields -/
+  transformGauge : setup.FieldConfig → setup.FieldConfig
+  /-- Vector symmetry commutes with Euclidean reflection -/
+  commutes_with_reflection : ∀ (R : setup.Reflection) (A : setup.FieldConfig),
+    setup.reflectField R (transformGauge A) =
+    transformGauge (setup.reflectField R A)
+  /-- Vector symmetry rotates non-singlet condensates among themselves -/
+  rotates_nonsinglet : ∀ (A : setup.FieldConfig) (a : FlavorIndex setup.Nf),
+    ∃ (b : FlavorIndex setup.Nf),
+    setup.condensate a (transformGauge A) = setup.condensate b A
 
 /- ============= SPONTANEOUS SYMMETRY BREAKING ============= -/
 
-def hasSpontaneousSymmetryBreaking {G : Type _}
-  (O : OrderParameter G)
-  (S_YM : ActionFunctional (GaugeFieldConfig G)) : Prop :=
-  gaugeExpectationValue O.observable S_YM ≠ 0
+/-- SSB in the massless theory: ⟨O⟩ ≠ 0 -/
+def hasSpontaneousSymmetryBreaking (setup : VafaWittenSetup)
+  (O : OrderParameter setup) : Prop :=
+  setup.expect O.observable ≠ 0
 
-def hasSpontaneousSymmetryBreakingMassive {G : Type _}
-  (O : OrderParameter G)
-  (S_YM : ActionFunctional (GaugeFieldConfig G))
+/-- SSB in the massive theory: ⟨O⟩_m ≠ 0 -/
+def hasSpontaneousSymmetryBreakingMassive (setup : VafaWittenSetup)
+  (O : OrderParameter setup)
   (m : FermionMass) : Prop :=
-  gaugeExpectationValueMassive O.observable S_YM m ≠ 0
+  setup.expectMassive O.observable m ≠ 0
 
 /- ═══════════════════════════════════════════════════════════════════════════
    THE VAFA-WITTEN THEOREM
@@ -158,54 +162,66 @@ def hasSpontaneousSymmetryBreakingMassive {G : Type _}
 
 lemma eq_neg_self_iff_eq_zero {x : ℝ} (h : x = -x) : x = 0 := by linarith
 
-/-- MAIN THEOREM: No vector SSB for m > 0 -/
-theorem vafaWitten_no_vector_SSB_nonsinglet_massive {G : Type _} {Nf : ℕ}
-  (_V : VectorSymmetry G Nf)
-  (a : FlavorIndex Nf)
-  (S_YM : ActionFunctional (GaugeFieldConfig G))
+/-- MAIN THEOREM (massive case): No vector SSB for non-singlet condensates.
+
+    Proof: The condensate O_a is parity-odd (O_a(RA) = -O_a(A)),
+    so by reflection invariance of the measure:
+      ⟨O_a⟩ = ⟨O_a ∘ R⟩ = ⟨-O_a⟩ = -⟨O_a⟩
+    Therefore ⟨O_a⟩ = 0 and there is no SSB. -/
+theorem vafaWitten_no_vector_SSB_nonsinglet_massive (setup : VafaWittenSetup)
+  (_V : VectorSymmetry setup)
+  (a : FlavorIndex setup.Nf)
   (m : FermionMass)
   (_h_positive_mass : m > (0 : ℝ))
-  (R : EuclideanReflection)
-  (_h_YM_reflection_invariant : ∀ (A : GaugeFieldConfig G),
-    (yangMillsAction (G := G)).eval (reflectionOnGaugeField R A) =
-    (yangMillsAction (G := G)).eval A) :
-  ¬hasSpontaneousSymmetryBreakingMassive (condensateNonSinglet (G := G) Nf a) S_YM m := by
+  (R : setup.Reflection) :
+  ¬hasSpontaneousSymmetryBreakingMassive setup (condensateNonSinglet setup a) m := by
   unfold hasSpontaneousSymmetryBreakingMassive
   intro h_SSB
 
-  let O := (condensateNonSinglet (G := G) Nf a).observable
-  let x := gaugeExpectationValueMassive O S_YM m
+  let O := setup.condensate a
+  let x := setup.expectMassive O m
 
-  have h_reflection_inv := path_integral_measure_reflection_invariant R O S_YM m
-  have h_odd : ∀ A, O (reflectionOnGaugeField R A) = -O A :=
-    condensate_nonsinglet_reflection_odd (G := G) R a
-  have h_linear := expectation_value_linear O (-1) S_YM m
+  have h_reflection_inv := setup.measure_reflection_inv R O m
+  have h_odd : ∀ A, O (setup.reflectField R A) = -O A :=
+    setup.condensate_reflection_odd R a
+  have h_linear := setup.expect_linear O (-1) m
 
   have h_self_neg : x = -x := by
-    calc x = gaugeExpectationValueMassive O S_YM m := rfl
-         _ = gaugeExpectationValueMassive (fun A => O (reflectionOnGaugeField R A)) S_YM m := h_reflection_inv
-         _ = gaugeExpectationValueMassive (fun A => -O A) S_YM m := by
+    calc x = setup.expectMassive O m := rfl
+         _ = setup.expectMassive (fun A => O (setup.reflectField R A)) m := h_reflection_inv
+         _ = setup.expectMassive (fun A => -O A) m := by
              congr 1; funext A; exact h_odd A
-         _ = gaugeExpectationValueMassive (fun A => (-1) * O A) S_YM m := by
+         _ = setup.expectMassive (fun A => (-1) * O A) m := by
              congr 1; funext A; ring
-         _ = (-1) * gaugeExpectationValueMassive O S_YM m := h_linear
+         _ = (-1) * setup.expectMassive O m := h_linear
          _ = -x := by ring
 
   have h_zero : x = 0 := eq_neg_self_iff_eq_zero h_self_neg
   exact h_SSB h_zero
 
-/-- CHIRAL LIMIT: No vector SSB at m = 0
+/-- CHIRAL LIMIT: No vector SSB at m = 0.
 
-    This follows from the massive theorem + limit continuity,
-    but universe level issues prevent direct proof in Lean. -/
-axiom vafaWitten_no_vector_SSB_nonsinglet_chiral_limit {G : Type _} {Nf : ℕ}
-  (V : VectorSymmetry G Nf)
-  (a : FlavorIndex Nf)
-  (S_YM : ActionFunctional (GaugeFieldConfig G))
-  (R : EuclideanReflection)
-  (h_inv : ∀ (A : GaugeFieldConfig G),
-    (yangMillsAction (G := G)).eval (reflectionOnGaugeField R A) =
-    (yangMillsAction (G := G)).eval A) :
-  ¬hasSpontaneousSymmetryBreaking (condensateNonSinglet (G := G) Nf a) S_YM
+    Proof: The massive theorem shows ⟨O_a⟩_m = 0 for all m > 0.
+    By continuity of the massless limit, ⟨O_a⟩ = lim_{m→0} ⟨O_a⟩_m = 0. -/
+theorem vafaWitten_no_vector_SSB_nonsinglet_chiral_limit (setup : VafaWittenSetup)
+  (V : VectorSymmetry setup)
+  (a : FlavorIndex setup.Nf)
+  (R : setup.Reflection) :
+  ¬hasSpontaneousSymmetryBreaking setup (condensateNonSinglet setup a) := by
+  unfold hasSpontaneousSymmetryBreaking condensateNonSinglet
+  simp only
+  -- Show: setup.expect (setup.condensate a) = 0
+  -- Use massless_limit: if ⟨O_a⟩_m = 0 for all m > 0, then ⟨O_a⟩ = 0
+  have h_massive_zero : ∀ m : FermionMass, m > 0 →
+      setup.expectMassive (setup.condensate a) m = 0 := by
+    intro m hm
+    have h := vafaWitten_no_vector_SSB_nonsinglet_massive setup V a m hm R
+    unfold hasSpontaneousSymmetryBreakingMassive condensateNonSinglet at h
+    simp only at h
+    push_neg at h
+    exact h
+  have h_zero := setup.massless_limit a h_massive_zero
+  rw [h_zero]
+  simp
 
 end PhysicsLogic.Paper.VafaWitten

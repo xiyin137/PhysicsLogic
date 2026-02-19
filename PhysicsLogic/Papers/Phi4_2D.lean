@@ -97,6 +97,8 @@ The axioms in this file are substantiated by the following detailed proof module
 
 set_option linter.unusedVariables false
 
+section Phi4Construction
+
 /- ============= PARAMETERS (from GlimmJaffe.Basic) ============= -/
 
 -- We use BareParameters and PhysicalParameters from GlimmJaffe.Basic
@@ -111,15 +113,15 @@ noncomputable def bareParametersToMass (params : BareParameters) : ℝ := params
 -- For finite-dimensional integration, we use lebesgueIntegrationTheoryD from GlimmJaffe
 -- For spatial integrals, we define wrappers for the continuum
 
-/-- Spatial integral over volume V (wrapper for continuum integrals) -/
-axiom spatialIntegral (V : ℝ) (f : EuclideanPoint 2 → ℝ) : ℝ
-axiom spatialIntegral_mono (V : ℝ) (hV : V > 0) (f g : EuclideanPoint 2 → ℝ)
-  (h : ∀ x, f x ≥ g x) : spatialIntegral V f ≥ spatialIntegral V g
-axiom spatialIntegral_const (V c : ℝ) (hV : V > 0) :
-  spatialIntegral V (fun _ => c) = c * V
-axiom spatialIntegral_linear (V : ℝ) (hV : V > 0) (a b : ℝ) (f g : EuclideanPoint 2 → ℝ) :
-  spatialIntegral V (fun x => a * f x + b * g x) = a * spatialIntegral V f + b * spatialIntegral V g
-axiom gradientAt (φ : EuclideanPoint 2 → ℝ) (x : EuclideanPoint 2) (μ : Fin 2) : ℝ
+-- Spatial integral over volume V (wrapper for continuum integrals)
+variable (spatialIntegral : ℝ → (EuclideanPoint 2 → ℝ) → ℝ)
+variable (spatialIntegral_mono : ∀ (V : ℝ), V > 0 → ∀ (f g : EuclideanPoint 2 → ℝ),
+  (∀ x, f x ≥ g x) → spatialIntegral V f ≥ spatialIntegral V g)
+variable (spatialIntegral_const : ∀ (V c : ℝ), V > 0 →
+  spatialIntegral V (fun _ => c) = c * V)
+variable (spatialIntegral_linear : ∀ (V : ℝ), V > 0 → ∀ (a b : ℝ) (f g : EuclideanPoint 2 → ℝ),
+  spatialIntegral V (fun x => a * f x + b * g x) = a * spatialIntegral V f + b * spatialIntegral V g)
+variable (gradientAt : (EuclideanPoint 2 → ℝ) → EuclideanPoint 2 → Fin 2 → ℝ)
 
 /- ============= EUCLIDEAN ACTION ============= -/
 
@@ -127,11 +129,11 @@ noncomputable def gradientSquared (φ : EuclideanPoint 2 → ℝ) (x : Euclidean
   ∑ μ : Fin 2, (gradientAt φ x μ)^2
 
 lemma gradientSquared_nonneg (φ : EuclideanPoint 2 → ℝ) (x : EuclideanPoint 2) :
-  gradientSquared φ x ≥ 0 := by
+  gradientSquared gradientAt φ x ≥ 0 := by
   unfold gradientSquared; apply Finset.sum_nonneg; intro μ _; exact sq_nonneg _
 
 noncomputable def gradientTerm (φ : EuclideanPoint 2 → ℝ) (V : ℝ) : ℝ :=
-  (1/2) * spatialIntegral V (gradientSquared φ)
+  (1/2) * spatialIntegral V (gradientSquared gradientAt φ)
 
 noncomputable def massTerm (m₀ : ℝ) (φ : EuclideanPoint 2 → ℝ) (V : ℝ) : ℝ :=
   (1/2) * m₀^2 * spatialIntegral V (fun x => (φ x)^2)
@@ -141,7 +143,7 @@ noncomputable def interactionTerm (lambda : ℝ) (φ : EuclideanPoint 2 → ℝ)
 
 /-- S[φ] = ∫ d²x [½(∂φ)² + ½m₀²φ² + (λ/4!)φ⁴] -/
 noncomputable def euclideanAction (params : BareParameters) (V : ℝ) (φ : EuclideanPoint 2 → ℝ) : ℝ :=
-  gradientTerm φ V + massTerm params.m₀ φ V + interactionTerm params.lambda φ V
+  gradientTerm spatialIntegral gradientAt φ V + massTerm spatialIntegral params.m₀ φ V + interactionTerm spatialIntegral params.lambda φ V
 
 /-- For a > 0: aφ⁴ - bφ² ≥ -b²/(4a) by completing the square -/
 lemma quartic_dominates_quadratic (a b : ℝ) (ha : a > 0) :
@@ -175,15 +177,23 @@ lemma potential_bounded_below (m₀ lambda : ℝ) (h_lambda : lambda > 0) :
         have h2 : (|m₀^2|)^2 = m₀^4 := by rw [sq_abs]; ring
         rw [h1, h2]; field_simp; ring
 
-axiom spatialIntegral_nonneg (V : ℝ) (hV : V > 0) (f : EuclideanPoint 2 → ℝ)
-  (h : ∀ x, f x ≥ 0) : spatialIntegral V f ≥ 0
+variable (spatialIntegral_nonneg : ∀ (V : ℝ), V > 0 → ∀ (f : EuclideanPoint 2 → ℝ),
+  (∀ x, f x ≥ 0) → spatialIntegral V f ≥ 0)
 
 theorem action_stability
+  (h_si_nonneg : ∀ (V : ℝ), V > 0 → ∀ (f : EuclideanPoint 2 → ℝ),
+    (∀ x, f x ≥ 0) → spatialIntegral V f ≥ 0)
+  (h_si_linear : ∀ (V : ℝ), V > 0 → ∀ (a b : ℝ) (f g : EuclideanPoint 2 → ℝ),
+    spatialIntegral V (fun x => a * f x + b * g x) = a * spatialIntegral V f + b * spatialIntegral V g)
+  (h_si_mono : ∀ (V : ℝ), V > 0 → ∀ (f g : EuclideanPoint 2 → ℝ),
+    (∀ x, f x ≥ g x) → spatialIntegral V f ≥ spatialIntegral V g)
+  (h_si_const : ∀ (V c : ℝ), V > 0 →
+    spatialIntegral V (fun _ => c) = c * V)
   (params : BareParameters)
   (V : ℝ)
   (hV : V > 0) :
   ∃ C : ℝ, ∀ φ : EuclideanPoint 2 → ℝ,
-    euclideanAction params V φ ≥ -C * V := by
+    euclideanAction spatialIntegral gradientAt params V φ ≥ -C * V := by
   use (3/2) * params.m₀^4 / params.lambda
   intro φ
   unfold euclideanAction gradientTerm massTerm interactionTerm
@@ -191,10 +201,10 @@ theorem action_stability
   --      = ½∫(∂φ)² + ∫[½m₀²φ² + (λ/24)φ⁴]
   --      = ½∫(∂φ)² + ∫V_potential(φ)
   -- Since ½∫(∂φ)² ≥ 0 and V_potential(φ) ≥ -(3/2)m₀⁴/λ at each point:
-  have h_gradient_nonneg : (1/2) * spatialIntegral V (gradientSquared φ) ≥ 0 := by
+  have h_gradient_nonneg : (1/2) * spatialIntegral V (gradientSquared gradientAt φ) ≥ 0 := by
     apply mul_nonneg; linarith
-    apply spatialIntegral_nonneg V hV
-    intro x; exact gradientSquared_nonneg φ x
+    apply h_si_nonneg V hV
+    intro x; exact gradientSquared_nonneg gradientAt φ x
   have h_pot_lower : ∀ x, potential params.m₀ params.lambda (φ x) ≥ -((3/2) * params.m₀^4 / params.lambda) := by
     intro x
     exact potential_bounded_below params.m₀ params.lambda params.lambda_pos (φ x)
@@ -204,26 +214,26 @@ theorem action_stability
                    (params.lambda / 24) * spatialIntegral V (fun x => (φ x)^4) =
                    spatialIntegral V (fun x => potential params.m₀ params.lambda (φ x)) := by
     unfold potential
-    exact (spatialIntegral_linear V hV (1/2 * params.m₀^2) (params.lambda / 24)
+    exact (h_si_linear V hV (1/2 * params.m₀^2) (params.lambda / 24)
             (fun x => (φ x)^2) (fun x => (φ x)^4)).symm
 
   -- Apply lower bound to potential integral
   have h_potential_integral_lower :
     spatialIntegral V (fun x => potential params.m₀ params.lambda (φ x)) ≥
     spatialIntegral V (fun _ => -((3/2) * params.m₀^4 / params.lambda)) := by
-    apply spatialIntegral_mono V hV
+    apply h_si_mono V hV
     exact h_pot_lower
 
   -- Integral of constant
   have h_const_integral :
     spatialIntegral V (fun _ => -((3/2) * params.m₀^4 / params.lambda)) =
     -((3/2) * params.m₀^4 / params.lambda) * V := by
-    exact spatialIntegral_const V (-((3/2) * params.m₀^4 / params.lambda)) hV
+    exact h_si_const V (-((3/2) * params.m₀^4 / params.lambda)) hV
 
-  calc (1/2) * spatialIntegral V (gradientSquared φ) +
+  calc (1/2) * spatialIntegral V (gradientSquared gradientAt φ) +
        (1/2) * params.m₀^2 * spatialIntegral V (fun x => (φ x)^2) +
        (params.lambda / 24) * spatialIntegral V (fun x => (φ x)^4)
-      = (1/2) * spatialIntegral V (gradientSquared φ) +
+      = (1/2) * spatialIntegral V (gradientSquared gradientAt φ) +
         spatialIntegral V (fun x => potential params.m₀ params.lambda (φ x)) := by
           rw [← h_combine]
           ring
@@ -239,8 +249,8 @@ def LatticeConfiguration (numSites : ℕ) := Fin numSites → ℝ
 
 noncomputable def latticeSpacing (cutoff : ℝ) : ℝ := 1 / cutoff
 
-axiom latticeDifference (numSites : ℕ) (config : LatticeConfiguration numSites)
-  (site : Fin numSites) (direction : Fin 2) : ℝ
+variable (latticeDifference : ∀ (numSites : ℕ), LatticeConfiguration numSites →
+  Fin numSites → Fin 2 → ℝ)
 
 /-- Lattice action: S = ∑ᵢ [½∑_μ(∇_μφᵢ)² + ½a²m₀²φᵢ² + a²(λ/24)φᵢ⁴] -/
 noncomputable def latticeAction
@@ -262,7 +272,7 @@ theorem lattice_action_stability
   (params : BareParameters)
   (numSites : ℕ) :
   ∃ C : ℝ, ∀ config : LatticeConfiguration numSites,
-    latticeAction params numSites config ≥ -C * (numSites : ℝ) * (latticeSpacing params.cutoff)^2 := by
+    latticeAction latticeDifference params numSites config ≥ -C * (numSites : ℝ) * (latticeSpacing params.cutoff)^2 := by
   -- Use the same constant as continuum action_stability
   use (3/2) * params.m₀^4 / params.lambda
   intro config
@@ -359,29 +369,29 @@ theorem integral_of_positive_is_positive {n : ℕ} (f : (Fin n → ℝ) → ℝ)
 
     The full proof requires careful tracking of constants. -/
 theorem exp_neg_lattice_action_integrable (params : BareParameters) (numSites : ℕ) :
-    IsIntegrable numSites (fun config => exp (-latticeAction params numSites config)) := by
+    IsIntegrable numSites (fun config => exp (-latticeAction latticeDifference params numSites config)) := by
   -- Use IsIntegrable definition: need C, M > 0 with |f x| ≤ C * exp(-M * ∑(x i)²)
   -- The quartic term provides the necessary decay at infinity
   sorry
 
 /-- Z = ∫ dφ exp(-S[φ]) -/
 noncomputable def latticePartitionFunction (params : BareParameters) (numSites : ℕ) : ℝ :=
-  lebesgueIntegralRN (fun config => exp (- latticeAction params numSites config))
+  lebesgueIntegralRN (fun config => exp (- latticeAction latticeDifference params numSites config))
 
 theorem lattice_partition_positive (params : BareParameters) (numSites : ℕ) :
-    latticePartitionFunction params numSites > 0 := by
+    latticePartitionFunction latticeDifference params numSites > 0 := by
   unfold latticePartitionFunction
   apply integral_of_positive_is_positive
-  · exact exp_neg_lattice_action_integrable params numSites
+  · exact exp_neg_lattice_action_integrable latticeDifference params numSites
   · intro φ; exact exp_pos _
 
-/-- Maps a continuum point to its nearest lattice site.
-    SOUNDNESS NOTE: This axiom is only physically meaningful when numSites > 0.
-    When numSites = 0, Fin 0 is empty so this axiom is vacuously consistent
-    (no such function can exist, but False → anything is provable).
-    All theorems using this should have numSites > 0 in their context.
-    For a proper formalization, this should include the lattice geometry. -/
-axiom roundToLatticeSite (numSites : ℕ) (x : EuclideanPoint 2) : Fin numSites
+-- Maps a continuum point to its nearest lattice site.
+--    SOUNDNESS NOTE: This variable is only physically meaningful when numSites > 0.
+--    When numSites = 0, Fin 0 is empty so this variable is vacuously consistent
+--    (no such function can exist, but False → anything is provable).
+--    All theorems using this should have numSites > 0 in their context.
+--    For a proper formalization, this should include the lattice geometry.
+variable (roundToLatticeSite : ∀ (numSites : ℕ), EuclideanPoint 2 → Fin numSites)
 
 noncomputable def latticeFieldInsertion (numSites : ℕ) (n : ℕ)
   (points : Fin n → EuclideanPoint 2) (config : LatticeConfiguration numSites) : ℝ :=
@@ -390,9 +400,9 @@ noncomputable def latticeFieldInsertion (numSites : ℕ) (n : ℕ)
 /-- S_n(x₁,...,xₙ) = (1/Z)∫ φ(x₁)...φ(xₙ) e^{-S} dφ -/
 noncomputable def latticeSchwingerFunction (params : BareParameters) (numSites : ℕ)
   (n : ℕ) (points : Fin n → EuclideanPoint 2) : ℝ :=
-  let Z := latticePartitionFunction params numSites
+  let Z := latticePartitionFunction latticeDifference params numSites
   let integrand := fun config =>
-    latticeFieldInsertion numSites n points config * exp (- latticeAction params numSites config)
+    latticeFieldInsertion roundToLatticeSite numSites n points config * exp (- latticeAction latticeDifference params numSites config)
   (lebesgueIntegralRN integrand) / Z
 
 /- ============= GKS INEQUALITIES (from GlimmJaffe.CorrelationInequalities) ============= -/
@@ -412,7 +422,7 @@ noncomputable def latticeSchwingerFunction (params : BareParameters) (numSites :
     to convert continuum points to lattice sites. -/
 theorem lattice_schwinger_gks_bound (params : BareParameters) (numSites : ℕ) :
     ∃ C : ℝ, C > 0 ∧ ∀ (n : ℕ) (points : Fin n → EuclideanPoint 2),
-      |latticeSchwingerFunction params numSites n points| ≤ C^n := by
+      |latticeSchwingerFunction latticeDifference roundToLatticeSite params numSites n points| ≤ C^n := by
   -- Use the GKS bound from GlimmJaffe.CorrelationInequalities
   -- gksBoundTheoryD.bound_constant gives bound for lattice site functions
   -- Since latticeSchwingerFunction uses roundToLatticeSite internally,
@@ -431,30 +441,33 @@ theorem lattice_schwinger_gks_bound (params : BareParameters) (numSites : ℕ) :
 
 lemma field_insertion_symmetric (numSites : ℕ) (n : ℕ) (σ : Equiv.Perm (Fin n))
   (points : Fin n → EuclideanPoint 2) (config : LatticeConfiguration numSites) :
-  latticeFieldInsertion numSites n points config =
-  latticeFieldInsertion numSites n (points ∘ σ) config := by
+  latticeFieldInsertion roundToLatticeSite numSites n points config =
+  latticeFieldInsertion roundToLatticeSite numSites n (points ∘ σ) config := by
   unfold latticeFieldInsertion
   conv_lhs => rw [← Equiv.prod_comp σ]
   simp only [Function.comp]
 
-axiom integral_congr {n : ℕ} (f g : (Fin n → ℝ) → ℝ) (h : ∀ x, f x = g x) :
-  lebesgueIntegralRN f = lebesgueIntegralRN g
+variable (integral_congr : ∀ {n : ℕ} (f g : (Fin n → ℝ) → ℝ), (∀ x, f x = g x) →
+  lebesgueIntegralRN f = lebesgueIntegralRN g)
 
 /-- Permutation symmetry: S_n(x₁,...,xₙ) = S_n(x_{σ(1)},...,x_{σ(n)}) -/
-theorem lattice_schwinger_symmetric (params : BareParameters) (numSites : ℕ)
+theorem lattice_schwinger_symmetric
+  (h_integral_congr : ∀ {n : ℕ} (f g : (Fin n → ℝ) → ℝ), (∀ x, f x = g x) →
+    lebesgueIntegralRN f = lebesgueIntegralRN g)
+  (params : BareParameters) (numSites : ℕ)
   (n : ℕ) (σ : Equiv.Perm (Fin n)) (points : Fin n → EuclideanPoint 2) :
-  latticeSchwingerFunction params numSites n points =
-    latticeSchwingerFunction params numSites n (points ∘ σ) := by
+  latticeSchwingerFunction latticeDifference roundToLatticeSite params numSites n points =
+    latticeSchwingerFunction latticeDifference roundToLatticeSite params numSites n (points ∘ σ) := by
   unfold latticeSchwingerFunction
   apply congr_arg₂ (· / ·)
-  · apply integral_congr; intro config; rw [field_insertion_symmetric]
+  · apply h_integral_congr; intro config; rw [field_insertion_symmetric]
   · rfl
 
-axiom lattice_action_discrete_translation_invariant (params : BareParameters)
+variable (lattice_action_discrete_translation_invariant : ∀ (params : BareParameters)
   (numSites : ℕ) (h_pos : 0 < numSites) (config : LatticeConfiguration numSites)
-  (shift : Fin numSites) :
-  latticeAction params numSites config =
-  latticeAction params numSites (fun i => config ⟨(i.val + shift.val) % numSites, Nat.mod_lt _ h_pos⟩)
+  (shift : Fin numSites),
+  latticeAction latticeDifference params numSites config =
+  latticeAction latticeDifference params numSites (fun i => config ⟨(i.val + shift.val) % numSites, Nat.mod_lt _ h_pos⟩))
 
 /-
   NOTE: lattice_translation_symmetry_breaking was REMOVED (unsound).
@@ -462,46 +475,46 @@ axiom lattice_action_discrete_translation_invariant (params : BareParameters)
   Correct approach: use smeared Schwinger functions (Glimm-Jaffe Ch 11-12).
 -/
 
-axiom cluster_expansion_parameter (params : BareParameters) (latticeSpacing : ℝ)
-  (h_spacing : latticeSpacing > 0) :
-  ∃ ξ : ℝ, ξ > 0 ∧ latticeSpacing^2 / ξ^2 < 1
+variable (cluster_expansion_parameter : ∀ (params : BareParameters) (latticeSpacing : ℝ),
+  latticeSpacing > 0 →
+  ∃ ξ : ℝ, ξ > 0 ∧ latticeSpacing^2 / ξ^2 < 1)
 
-/-- Equicontinuity of lattice Schwinger functions (for Arzelà-Ascoli)
-    NONTRIVIAL: Requires cluster expansion to show correlations decay exponentially.
-    The decay rate ξ⁻¹ (correlation length) controls the modulus of continuity.
-    See: Glimm-Jaffe (1987) Ch 18, polymer expansion methods.
-
-    **Substantiated by:** `GlimmJaffe.ClusterExpansion.Basic`
-    - `KoteckyPreissCriterion`: ∑_{γ∋x} |z(γ)| e^{|γ|} ≤ a < 1
-    - `cluster_expansion_convergence`: Kotecký-Preiss criterion ⟹ absolute convergence
-    - `exponential_decay`: Truncated correlations decay as C·e^{-m·dist(x,y)} -/
-axiom lattice_schwinger_equicontinuous (params : BareParameters) (n : ℕ)
-  (ε : ℝ) (hε : ε > 0) (K : ℝ) (hK : K > 0) :
+-- Equicontinuity of lattice Schwinger functions (for Arzelà-Ascoli)
+--    NONTRIVIAL: Requires cluster expansion to show correlations decay exponentially.
+--    The decay rate ξ⁻¹ (correlation length) controls the modulus of continuity.
+--    See: Glimm-Jaffe (1987) Ch 18, polymer expansion methods.
+--
+--    **Substantiated by:** `GlimmJaffe.ClusterExpansion.Basic`
+--    - `KoteckyPreissCriterion`: ∑_{γ∋x} |z(γ)| e^{|γ|} ≤ a < 1
+--    - `cluster_expansion_convergence`: Kotecký-Preiss criterion ⟹ absolute convergence
+--    - `exponential_decay`: Truncated correlations decay as C·e^{-m·dist(x,y)}
+variable (lattice_schwinger_equicontinuous : ∀ (params : BareParameters) (n : ℕ)
+  (ε : ℝ), ε > 0 → ∀ (K : ℝ), K > 0 →
   ∃ δ : ℝ, δ > 0 ∧ ∀ (numSites₁ numSites₂ : ℕ) (points₁ points₂ : Fin n → EuclideanPoint 2),
     (∀ i, ‖points₁ i‖ ≤ K ∧ ‖points₂ i‖ ≤ K) → (∀ i, ‖points₁ i - points₂ i‖ < δ) →
-    |latticeSchwingerFunction params numSites₁ n points₁ -
-     latticeSchwingerFunction params numSites₂ n points₂| < ε
+    |latticeSchwingerFunction latticeDifference roundToLatticeSite params numSites₁ n points₁ -
+     latticeSchwingerFunction latticeDifference roundToLatticeSite params numSites₂ n points₂| < ε)
 
-/-- Arzelà-Ascoli: convergent subsequence exists
-    NONTRIVIAL: Combines GKS uniform bounds + equicontinuity from cluster expansion.
-    This extracts a convergent subsequence but doesn't show the full sequence converges.
-    Full convergence requires the Cauchy property from super-renormalizability. -/
-axiom arzela_ascoli_lattice_limit (params : BareParameters) (n : ℕ) :
+-- Arzelà-Ascoli: convergent subsequence exists
+--    NONTRIVIAL: Combines GKS uniform bounds + equicontinuity from cluster expansion.
+--    This extracts a convergent subsequence but doesn't show the full sequence converges.
+--    Full convergence requires the Cauchy property from super-renormalizability.
+variable (arzela_ascoli_lattice_limit : ∀ (params : BareParameters) (n : ℕ),
   ∃ (S_limit : (Fin n → EuclideanPoint 2) → ℝ) (subsequence : ℕ → ℕ),
     ∀ (points : Fin n → EuclideanPoint 2) (ε : ℝ), ε > 0 →
       ∃ N : ℕ, ∀ k ≥ N,
-        |latticeSchwingerFunction params (subsequence k) n points - S_limit points| < ε
+        |latticeSchwingerFunction latticeDifference roundToLatticeSite params (subsequence k) n points - S_limit points| < ε)
 
-/-- Renormalized Schwinger functions are Cauchy
-    NONTRIVIAL: The core super-renormalizability result. In 2D, [λ]=2>0 means only
-    finitely many diagrams diverge (mass and coupling). Once these are renormalized,
-    the sequence converges. Proof requires detailed RG analysis + power counting.
-    See: Glimm-Jaffe (1987) Ch 8-9, 18-19. -/
-axiom renormalized_schwinger_cauchy (params : BareParameters) (n : ℕ)
-  (points : Fin n → EuclideanPoint 2) :
+-- Renormalized Schwinger functions are Cauchy
+--    NONTRIVIAL: The core super-renormalizability result. In 2D, [λ]=2>0 means only
+--    finitely many diagrams diverge (mass and coupling). Once these are renormalized,
+--    the sequence converges. Proof requires detailed RG analysis + power counting.
+--    See: Glimm-Jaffe (1987) Ch 8-9, 18-19.
+variable (renormalized_schwinger_cauchy : ∀ (params : BareParameters) (n : ℕ)
+  (points : Fin n → EuclideanPoint 2),
   ∀ ε > 0, ∃ N₀ : ℕ, ∀ N₁ N₂ : ℕ, N₁ ≥ N₀ → N₂ ≥ N₀ →
-    |latticeSchwingerFunction params N₁ n points -
-     latticeSchwingerFunction params N₂ n points| < ε
+    |latticeSchwingerFunction latticeDifference roundToLatticeSite params N₁ n points -
+     latticeSchwingerFunction latticeDifference roundToLatticeSite params N₂ n points| < ε)
 
 /-- N = ⌊(Λ√V)²⌋ lattice sites for cutoff Λ and volume V -/
 noncomputable def cutoffToNumSites (cutoff V : ℝ) : ℕ := Nat.floor ((cutoff * Real.sqrt V)^2)
@@ -523,43 +536,41 @@ lemma cutoffToNumSites_unbounded (V : ℝ) (hV : V > 0) :
       rw [this, Nat.floor_natCast]
     rw [h_floor]; omega
 
-/-- Partition function limit exists (thermodynamic limit)
-    NONTRIVIAL: Requires showing log(Z_N)/N converges (free energy density exists).
-    Uses subadditivity arguments + lower bound from action stability. -/
-axiom partitionFunction_limit_exists (params : BareParameters) (V : ℝ) (hV : V > 0) :
+-- Partition function limit exists (thermodynamic limit)
+--    NONTRIVIAL: Requires showing log(Z_N)/N converges (free energy density exists).
+--    Uses subadditivity arguments + lower bound from action stability.
+variable (partitionFunction_limit_exists : ∀ (params : BareParameters) (V : ℝ), V > 0 →
   ∃ Z_limit : ℝ, Z_limit > 0 ∧ ∀ ε > 0, ∃ N₀ : ℕ, ∀ N ≥ N₀,
-    |latticePartitionFunction params N - Z_limit| < ε
+    |latticePartitionFunction latticeDifference params N - Z_limit| < ε)
 
 noncomputable def partitionFunction (params : BareParameters) (V : ℝ) (hV : V > 0) : ℝ :=
   Classical.choose (partitionFunction_limit_exists params V hV)
 
 theorem partition_function_positive (params : BareParameters) (V : ℝ) (hV : V > 0) :
-  partitionFunction params V hV > 0 := by
+  partitionFunction latticeDifference partitionFunction_limit_exists params V hV > 0 := by
   unfold partitionFunction
   exact (Classical.choose_spec (partitionFunction_limit_exists params V hV)).1
 
 /- ============= SCHWINGER FUNCTIONS (EUCLIDEAN CORRELATIONS) ============= -/
 
-/-- Schwinger n-point function with UV cutoff: S_n^Λ(x₁,...,xₙ) = ⟨φ(x₁)...φ(xₙ)⟩_Λ -/
-axiom schwingerFunctionCutoff
-  (params : BareParameters)
-  (V : ℝ)
-  (hV : V > 0)
-  (n : ℕ) :
-  (Fin n → EuclideanPoint 2) → ℝ
+-- Schwinger n-point function with UV cutoff: S_n^Λ(x₁,...,xₙ) = ⟨φ(x₁)...φ(xₙ)⟩_Λ
+variable (schwingerFunctionCutoff : ∀ (params : BareParameters) (V : ℝ), V > 0 →
+  ∀ (n : ℕ), (Fin n → EuclideanPoint 2) → ℝ)
 
-/-- Cutoff Schwinger equals lattice Schwinger on numSites = (Λ·√V)² sites -/
-axiom schwinger_cutoff_equals_lattice
-  (params : BareParameters)
-  (V : ℝ)
-  (hV : V > 0)
-  (n : ℕ)
-  (points : Fin n → EuclideanPoint 2) :
+-- Cutoff Schwinger equals lattice Schwinger on numSites = (Λ·√V)² sites
+variable (schwinger_cutoff_equals_lattice : ∀ (params : BareParameters) (V : ℝ) (hV : V > 0)
+  (n : ℕ) (points : Fin n → EuclideanPoint 2),
   schwingerFunctionCutoff params V hV n points =
-    latticeSchwingerFunction params (cutoffToNumSites params.cutoff V) n points
+    latticeSchwingerFunction latticeDifference roundToLatticeSite params (cutoffToNumSites params.cutoff V) n points)
 
 /-- Schwinger functions with cutoff satisfy permutation symmetry -/
 theorem schwinger_cutoff_symmetric
+  (h_schwinger_cutoff_equals_lattice : ∀ (params : BareParameters) (V : ℝ) (hV : V > 0)
+    (n : ℕ) (points : Fin n → EuclideanPoint 2),
+    schwingerFunctionCutoff params V hV n points =
+      latticeSchwingerFunction latticeDifference roundToLatticeSite params (cutoffToNumSites params.cutoff V) n points)
+  (h_integral_congr : ∀ {n : ℕ} (f g : (Fin n → ℝ) → ℝ), (∀ x, f x = g x) →
+    lebesgueIntegralRN f = lebesgueIntegralRN g)
   (params : BareParameters)
   (V : ℝ)
   (hV : V > 0)
@@ -568,16 +579,9 @@ theorem schwinger_cutoff_symmetric
   (points : Fin n → EuclideanPoint 2) :
   schwingerFunctionCutoff params V hV n points =
     schwingerFunctionCutoff params V hV n (points ∘ σ) := by
-  -- By schwinger_cutoff_equals_lattice:
-  --   schwingerFunctionCutoff params V hV n points
-  --     = latticeSchwingerFunction params (cutoffToNumSites params.cutoff V) n points
-  rw [schwinger_cutoff_equals_lattice]
-  rw [schwinger_cutoff_equals_lattice]
-
-  -- By lattice_schwinger_symmetric:
-  --   latticeSchwingerFunction params numSites n points
-  --     = latticeSchwingerFunction params numSites n (points ∘ σ)
-  exact lattice_schwinger_symmetric params (cutoffToNumSites params.cutoff V) n σ points
+  rw [h_schwinger_cutoff_equals_lattice]
+  rw [h_schwinger_cutoff_equals_lattice]
+  exact lattice_schwinger_symmetric latticeDifference roundToLatticeSite h_integral_congr params (cutoffToNumSites params.cutoff V) n σ points
 
 /-- Approximate translation invariance at finite cutoff (O(a²) errors).
     Full proof requires smeared functions as in Glimm-Jaffe. -/
@@ -601,14 +605,20 @@ inductive LatticeRotation2D
   | rot180  -- 180°
   | rot270  -- 270° counterclockwise
 
-/-- Lattice Schwinger functions are invariant under discrete 90° rotations -/
-axiom lattice_schwinger_discrete_rotation_invariant
-  (params : BareParameters)
-  (numSites : ℕ)
-  (n : ℕ)
-  (rotation : LatticeRotation2D)
-  (points : Fin n → EuclideanPoint 2) :
-  True  -- Placeholder: lattice correlation invariant under discrete rotations
+-- Lattice Schwinger functions are invariant under discrete 90° rotations.
+--    Note: This requires smeared test functions for a proper formulation,
+--    since roundToLatticeSite breaks pointwise rotation invariance.
+--    See Glimm-Jaffe Ch 11-12 for the smeared version.
+variable (lattice_schwinger_discrete_rotation_invariant : ∀ (params : BareParameters)
+  (numSites : ℕ) (n : ℕ) (rotation : LatticeRotation2D)
+  (points : Fin n → EuclideanPoint 2),
+  latticeSchwingerFunction latticeDifference roundToLatticeSite params numSites n points =
+    latticeSchwingerFunction latticeDifference roundToLatticeSite params numSites n (fun i μ =>
+      match rotation with
+      | .rot0   => points i μ
+      | .rot90  => if μ = 0 then -(points i 1) else points i 0
+      | .rot180 => -(points i μ)
+      | .rot270 => if μ = 0 then points i 1 else -(points i 0)))
 
 -- (Removed: lattice_rotation_symmetry_breaking - requires smeared functions)
 
@@ -631,12 +641,22 @@ structure RenormalizationTheory where
   bareParams : (phys : PhysicalParameters) → (Λ : ℝ) → (hΛ : Λ > 0) → BareParameters
   /-- The cutoff is preserved -/
   preserves_cutoff : ∀ (phys : PhysicalParameters) (Λ : ℝ) (hΛ : Λ > 0), (bareParams phys Λ hΛ).cutoff = Λ
-  /-- The renormalized mass converges to physical mass -/
-  mass_converges : ∀ (phys : PhysicalParameters), True  -- Placeholder: detailed mass renormalization
-  /-- The renormalized coupling converges to physical coupling -/
-  coupling_converges : ∀ (phys : PhysicalParameters), True  -- Placeholder: detailed coupling renormalization
+  /-- The renormalized mass converges to physical mass as Λ → ∞:
+      the pole of the 2-point function approaches m_phys.
+      Requires: solving the implicit equation m₀²(Λ) = m_phys² + δm²(Λ)
+      where δm² is the mass counterterm from self-energy diagrams. -/
+  mass_converges : ∀ (phys : PhysicalParameters) (ε : ℝ), ε > 0 →
+    ∃ Λ₀ : ℝ, Λ₀ > 0 ∧ ∀ Λ ≥ Λ₀, (hΛ : Λ > 0) →
+      |(bareParams phys Λ hΛ).m₀ - phys.m_phys| < ε
+  /-- The renormalized coupling converges to physical coupling as Λ → ∞:
+      the 4-point scattering amplitude approaches λ_phys.
+      Requires: solving λ₀(Λ) = λ_phys + δλ(Λ) where δλ is the
+      coupling counterterm from vertex corrections. -/
+  coupling_converges : ∀ (phys : PhysicalParameters) (ε : ℝ), ε > 0 →
+    ∃ Λ₀ : ℝ, Λ₀ > 0 ∧ ∀ Λ ≥ Λ₀, (hΛ : Λ > 0) →
+      |(bareParams phys Λ hΛ).lambda - phys.lambda_phys| < ε
 
-axiom renormalizationTheoryD : RenormalizationTheory
+variable (renormalizationTheoryD : RenormalizationTheory)
 
 /-- Renormalization condition: for each Λ, choose m₀(Λ), λ(Λ) to fix physical mass and coupling
     NONTRIVIAL: Existence of such bare parameters is the content of renormalization theory.
@@ -655,66 +675,56 @@ theorem renormalization_preserves_cutoff
   (phys : PhysicalParameters)
   (cutoff_val : ℝ)
   (h_cutoff : cutoff_val > 0) :
-  (renormalizationCondition phys cutoff_val h_cutoff).cutoff = cutoff_val :=
+  (renormalizationCondition renormalizationTheoryD phys cutoff_val h_cutoff).cutoff = cutoff_val :=
   renormalizationTheoryD.preserves_cutoff phys cutoff_val h_cutoff
 
-/-- Renormalized Schwinger functions are Cauchy as Λ → ∞
-    NONTRIVIAL: Same as renormalized_schwinger_cauchy but parameterized by cutoff.
-    This is the main super-renormalizability theorem: after renormalization,
-    Schwinger functions converge as Λ → ∞. See: Glimm-Jaffe Ch 18-19. -/
-axiom renormalized_schwinger_cauchy_in_cutoff
-  (phys : PhysicalParameters)
-  (V : ℝ)
-  (hV : V > 0)
-  (n : ℕ)
-  (points : Fin n → EuclideanPoint 2) :
+-- Renormalized Schwinger functions are Cauchy as Λ → ∞
+--    NONTRIVIAL: Same as renormalized_schwinger_cauchy but parameterized by cutoff.
+--    This is the main super-renormalizability theorem: after renormalization,
+--    Schwinger functions converge as Λ → ∞. See: Glimm-Jaffe Ch 18-19.
+variable (renormalized_schwinger_cauchy_in_cutoff : ∀ (phys : PhysicalParameters)
+  (V : ℝ) (hV : V > 0) (n : ℕ) (points : Fin n → EuclideanPoint 2),
   ∀ ε > 0, ∃ Λ₀ : ℝ, Λ₀ > 0 ∧ ∀ Λ₁ Λ₂ : ℝ,
     Λ₁ ≥ Λ₀ → Λ₂ ≥ Λ₀ → (hΛ₁ : Λ₁ > 0) → (hΛ₂ : Λ₂ > 0) →
-    |schwingerFunctionCutoff (renormalizationCondition phys Λ₁ hΛ₁) V hV n points -
-     schwingerFunctionCutoff (renormalizationCondition phys Λ₂ hΛ₂) V hV n points| < ε
+    |schwingerFunctionCutoff (renormalizationCondition renormalizationTheoryD phys Λ₁ hΛ₁) V hV n points -
+     schwingerFunctionCutoff (renormalizationCondition renormalizationTheoryD phys Λ₂ hΛ₂) V hV n points| < ε)
 
-/-- GKS bound is uniform for renormalized parameters (from GlimmJaffe.CorrelationInequalities)
-    NONTRIVIAL: The GKS constant C must be bounded uniformly in the cutoff.
-    Requires showing renormalization keeps the effective coupling bounded,
-    which follows from [λ]=2>0 (coupling flows to zero at short distances).
-
-    This is the key result gksBoundTheoryD.uniform_in_cutoff from
-    GlimmJaffe.CorrelationInequalities. The uniform bound is essential for:
-    1. Arzelà-Ascoli argument (equicontinuity)
-    2. Growth bound (OS1/E5 axiom)
-    3. Control of the continuum limit -/
-axiom gks_bound_uniform_for_renormalized_params
-  (phys : PhysicalParameters) :
+-- GKS bound is uniform for renormalized parameters (from GlimmJaffe.CorrelationInequalities)
+--    NONTRIVIAL: The GKS constant C must be bounded uniformly in the cutoff.
+--    Requires showing renormalization keeps the effective coupling bounded,
+--    which follows from [λ]=2>0 (coupling flows to zero at short distances).
+--
+--    This is the key result gksBoundTheoryD.uniform_in_cutoff from
+--    GlimmJaffe.CorrelationInequalities. The uniform bound is essential for:
+--    1. Arzelà-Ascoli argument (equicontinuity)
+--    2. Growth bound (OS1/E5 axiom)
+--    3. Control of the continuum limit
+variable (gks_bound_uniform_for_renormalized_params : ∀ (phys : PhysicalParameters),
   ∃ C_unif : ℝ, C_unif > 0 ∧
     ∀ (cutoff : ℝ) (hcutoff : cutoff > 0) (numSites : ℕ),
       ∃ C : ℝ, C > 0 ∧ C ≤ C_unif ∧
         ∀ (n : ℕ) (points : Fin n → EuclideanPoint 2),
-          |latticeSchwingerFunction (renormalizationCondition phys cutoff hcutoff) numSites n points| ≤ C^n
+          |latticeSchwingerFunction latticeDifference roundToLatticeSite (renormalizationCondition renormalizationTheoryD phys cutoff hcutoff) numSites n points| ≤ C^n)
 
-/-- The φ⁴ interaction generates 4-point vertices: S₄ depends on λ from interactionTerm -/
-axiom interaction_generates_four_point
-  (params₁ params₂ : BareParameters)
-  (V : ℝ)
-  (hV : V > 0)
+-- The φ⁴ interaction generates 4-point vertices: S₄ depends on λ from interactionTerm
+variable (interaction_generates_four_point : ∀ (params₁ params₂ : BareParameters)
+  (V : ℝ) (hV : V > 0)
   (h_same_cutoff : params₁.cutoff = params₂.cutoff)
   (h_same_mass : params₁.m₀ = params₂.m₀)
-  (x₁ x₂ x₃ x₄ : EuclideanPoint 2) :
+  (x₁ x₂ x₃ x₄ : EuclideanPoint 2),
   |schwingerFunctionCutoff params₁ V hV 4 (fun i =>
       if i = 0 then x₁ else if i = 1 then x₂ else if i = 2 then x₃ else x₄) -
    schwingerFunctionCutoff params₂ V hV 4 (fun i =>
       if i = 0 then x₁ else if i = 1 then x₂ else if i = 2 then x₃ else x₄)| ≤
-  |params₁.lambda - params₂.lambda| * (1 + params₁.lambda + params₂.lambda)
+  |params₁.lambda - params₂.lambda| * (1 + params₁.lambda + params₂.lambda))
 
-/-- The gradient term determines the propagator G₀(x-y) in the 2-point function -/
-axiom gradient_determines_propagator
-  (params : BareParameters)
-  (V : ℝ)
-  (hV : V > 0)
-  (x y : EuclideanPoint 2) :
+-- The gradient term determines the propagator G₀(x-y) in the 2-point function
+variable (gradient_determines_propagator : ∀ (params : BareParameters)
+  (V : ℝ) (hV : V > 0) (x y : EuclideanPoint 2),
   ∃ m_eff : ℝ, m_eff > 0 ∧
     ∀ r : ℝ, r > 0 →
       |schwingerFunctionCutoff params V hV 2 (fun i => if i = 0 then x else y)| ≤
-      Real.exp (-m_eff * r) / r
+      Real.exp (-m_eff * r) / r)
 
 /-- Power inequality for positive reals -/
 lemma pow_le_pow_of_le_one_left (a b : ℝ) (n : ℕ) (ha : 0 ≤ a) (hab : a ≤ b) : a^n ≤ b^n := by
@@ -730,28 +740,38 @@ lemma pow_le_pow_of_le_one_left (a b : ℝ) (n : ℕ) (ha : 0 ≤ a) (hab : a �
 
 /-- GKS correlation bound: |S_n(x₁,...,xₙ)| ≤ C^n for renormalized parameters -/
 theorem gks_correlation_bound_renormalized
+  (h_gks_uniform : ∀ (phys : PhysicalParameters),
+    ∃ C_unif : ℝ, C_unif > 0 ∧
+      ∀ (cutoff : ℝ) (hcutoff : cutoff > 0) (numSites : ℕ),
+        ∃ C : ℝ, C > 0 ∧ C ≤ C_unif ∧
+          ∀ (n : ℕ) (points : Fin n → EuclideanPoint 2),
+            |latticeSchwingerFunction latticeDifference roundToLatticeSite (renormalizationCondition renormalizationTheoryD phys cutoff hcutoff) numSites n points| ≤ C^n)
+  (h_schwinger_cutoff_equals_lattice : ∀ (params : BareParameters) (V : ℝ) (hV : V > 0)
+    (n : ℕ) (points : Fin n → EuclideanPoint 2),
+    schwingerFunctionCutoff params V hV n points =
+      latticeSchwingerFunction latticeDifference roundToLatticeSite params (cutoffToNumSites params.cutoff V) n points)
   (phys : PhysicalParameters)
   (cutoff : ℝ)
   (hcutoff : cutoff > 0) :
   ∃ C > 0, ∀ (n : ℕ) (V : ℝ) (hV : V > 0) (points : Fin n → EuclideanPoint 2),
-    |schwingerFunctionCutoff (renormalizationCondition phys cutoff hcutoff) V hV n points| ≤ C^n := by
+    |schwingerFunctionCutoff (renormalizationCondition renormalizationTheoryD phys cutoff hcutoff) V hV n points| ≤ C^n := by
   -- From gks_bound_uniform_for_renormalized_params
-  obtain ⟨C_unif, hC_unif_pos, h_unif⟩ := gks_bound_uniform_for_renormalized_params phys
+  obtain ⟨C_unif, hC_unif_pos, h_unif⟩ := h_gks_uniform phys
 
   use C_unif
   constructor
   · exact hC_unif_pos
   · intro n V hV points
-    let params := renormalizationCondition phys cutoff hcutoff
+    let params := renormalizationCondition renormalizationTheoryD phys cutoff hcutoff
     -- Get the bound for this specific cutoff and lattice size
     obtain ⟨C, hC_pos, hC_le, hC_bound⟩ := h_unif cutoff hcutoff (cutoffToNumSites cutoff V)
     -- schwingerFunctionCutoff equals latticeSchwingerFunction
-    rw [schwinger_cutoff_equals_lattice]
+    rw [h_schwinger_cutoff_equals_lattice]
     -- Use renormalization_preserves_cutoff: params.cutoff = cutoff
-    have h_cutoff_eq : params.cutoff = cutoff := renormalization_preserves_cutoff phys cutoff hcutoff
+    have h_cutoff_eq : params.cutoff = cutoff := renormalization_preserves_cutoff renormalizationTheoryD phys cutoff hcutoff
     rw [h_cutoff_eq]
     -- Apply the lattice bound
-    calc |latticeSchwingerFunction params (cutoffToNumSites cutoff V) n points|
+    calc |latticeSchwingerFunction latticeDifference roundToLatticeSite params (cutoffToNumSites cutoff V) n points|
         ≤ C^n := hC_bound n points
       _ ≤ C_unif^n := by
           -- Since 0 ≤ C ≤ C_unif, we have C^n ≤ C_unif^n
@@ -976,26 +996,6 @@ lemma limit_preserves_positivity
   -- From |f_N(x) - L| < ε = -L/2, we get:
   -- -ε < f_N(x) - L < ε
   -- L - ε < f_N(x) < L + ε
-  have h_lower : L - ε < f N x := by
-    have := abs_sub_lt_iff.mp h_close
-    linarith
-  -- But L - ε = L - (-L/2) = 3L/2
-  have h_eq : L - ε = 3 * L / 2 := by unfold ε; ring
-  rw [h_eq] at h_lower
-  -- Since L < 0, we have 3L/2 < 0
-  have h_3L_neg : 3 * L / 2 < 0 := by linarith
-  -- But we also have 3L/2 < f_N(x) and 0 ≤ f_N(x)
-  -- This implies 3L/2 < 0 ≤ f_N(x), so 3L/2 < 0
-  -- But we already know 3L/2 < 0, and 0 ≤ f_N(x), and 3L/2 < f_N(x)
-  -- From 3L/2 < f_N(x) and f_N(x) ≥ 0 and 3L/2 < 0, we need to derive a contradiction
-  -- Actually, this is consistent! The issue is we need a tighter bound.
-  -- From |f_N(x) - L| < -L/2:
-  -- -(-L/2) < f_N(x) - L < -L/2
-  -- L/2 < f_N(x) - L < -L/2
-  -- This is impossible since L/2 > 0 when L < 0 is false
-  -- Let me reconsider: if L < 0, then -L > 0, so -L/2 > 0
-  -- From |f_N(x) - L| < -L/2, we get L + L/2 < f_N(x) < L - L/2
-  -- Wait, that's backwards. Let me be more careful:
   have h_bounds := abs_sub_lt_iff.mp h_close
   -- h_bounds: -(ε) < f N x - L ∧ f N x - L < ε
   -- So: L - ε < f N x < L + ε
@@ -1061,24 +1061,23 @@ theorem phi4_2d_super_renormalizable :
   · decide  -- couplingDimension2D = 2 > 0
   · rfl     -- numBareParameters2D = 2
 
-/-- Cluster expansion: correlations decay exponentially
-    NONTRIVIAL: The polymer/cluster expansion converges when a²/ξ² < 1.
-    Proof requires: (1) expanding e^{-V} as sum over polymers, (2) showing each polymer
-    contributes O(e^{-m·diameter}), (3) bounding the number of polymers combinatorially.
-    This is the technical heart of constructive QFT. See: Glimm-Jaffe Ch 18.
-
-    **Substantiated by:** `GlimmJaffe.ClusterExpansion.Basic`
-    - `Polymer`, `PolymerConfig`: Hard-core polymer model structure
-    - `ursell_bound`: |φ(cluster)| ≤ n! × ∏|z(γ)|
-    - `exponential_decay`: ∃ C,m > 0, |truncated corr| ≤ C·e^{-m·dist}
-    - `phi4_polymer_bound`: For small λ, φ⁴ activities satisfy Kotecký-Preiss -/
-axiom cluster_expansion_2d
-  (phys : PhysicalParameters) :
+-- Cluster expansion: correlations decay exponentially
+--    NONTRIVIAL: The polymer/cluster expansion converges when a²/ξ² < 1.
+--    Proof requires: (1) expanding e^{-V} as sum over polymers, (2) showing each polymer
+--    contributes O(e^{-m·diameter}), (3) bounding the number of polymers combinatorially.
+--    This is the technical heart of constructive QFT. See: Glimm-Jaffe Ch 18.
+--
+--    **Substantiated by:** `GlimmJaffe.ClusterExpansion.Basic`
+--    - `Polymer`, `PolymerConfig`: Hard-core polymer model structure
+--    - `ursell_bound`: |φ(cluster)| ≤ n! × ∏|z(γ)|
+--    - `exponential_decay`: ∃ C,m > 0, |truncated corr| ≤ C·e^{-m·dist}
+--    - `phi4_polymer_bound`: For small λ, φ⁴ activities satisfy Kotecký-Preiss
+variable (cluster_expansion_2d : ∀ (phys : PhysicalParameters),
   ∃ m > 0, ∃ C > 0, ∀ (params : BareParameters) (V : ℝ) (hV : V > 0) (x y : EuclideanPoint 2),
     |schwingerFunctionCutoff params V hV 2 (fun i => if i = 0 then x else y) -
      (schwingerFunctionCutoff params V hV 1 (fun _ => x)) *
      (schwingerFunctionCutoff params V hV 1 (fun _ => y))| ≤
-    C * Real.exp (-m * radialDistance x) * Real.exp (-m * radialDistance y)
+    C * Real.exp (-m * radialDistance x) * Real.exp (-m * radialDistance y))
 
 /-- Continuum limit in 2D: defined via Arzelà-Ascoli on lattice Schwinger functions.
     Properties (symmetry, bounds) are PROVEN from lattice, not axiomatized. -/
@@ -1086,14 +1085,14 @@ noncomputable def continuumLimit
   (phys : PhysicalParameters)
   (n : ℕ)
   (points : Fin n → EuclideanPoint 2) : ℝ :=
-  let params := renormalizationCondition phys 1 (by norm_num : (1 : ℝ) > 0)
+  let params := renormalizationCondition renormalizationTheoryD phys 1 (by norm_num : (1 : ℝ) > 0)
   Classical.choose (arzela_ascoli_lattice_limit params n) points
 
 /-- Subsequence witnessing convergence to continuum limit -/
 noncomputable def continuumLimitSubsequence
   (phys : PhysicalParameters)
   (n : ℕ) : ℕ → ℕ :=
-  let params := renormalizationCondition phys 1 (by norm_num : (1 : ℝ) > 0)
+  let params := renormalizationCondition renormalizationTheoryD phys 1 (by norm_num : (1 : ℝ) > 0)
   Classical.choose (Classical.choose_spec (arzela_ascoli_lattice_limit params n))
 
 /-- Lattice Schwinger functions converge pointwise to continuumLimit -/
@@ -1104,46 +1103,48 @@ theorem continuum_limit_convergence_property
   (ε : ℝ)
   (hε : ε > 0) :
   ∃ N : ℕ, ∀ k ≥ N,
-    |latticeSchwingerFunction
-      (renormalizationCondition phys 1 (by norm_num))
-      (continuumLimitSubsequence phys n k) n points -
-     continuumLimit phys n points| < ε := by
-  let params := renormalizationCondition phys 1 (by norm_num : (1 : ℝ) > 0)
+    |latticeSchwingerFunction latticeDifference roundToLatticeSite
+      (renormalizationCondition renormalizationTheoryD phys 1 (by norm_num))
+      (continuumLimitSubsequence latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n k) n points -
+     continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n points| < ε := by
+  let params := renormalizationCondition renormalizationTheoryD phys 1 (by norm_num : (1 : ℝ) > 0)
   let h_arzela := arzela_ascoli_lattice_limit params n
   let h_conv := Classical.choose_spec (Classical.choose_spec h_arzela)
   exact h_conv points ε hε
 
 /-- Continuum limit inherits permutation symmetry from lattice -/
 theorem continuum_limit_permutation_symmetric
+  (h_integral_congr : ∀ {n : ℕ} (f g : (Fin n → ℝ) → ℝ), (∀ x, f x = g x) →
+    lebesgueIntegralRN f = lebesgueIntegralRN g)
   (phys : PhysicalParameters)
   (n : ℕ)
   (σ : Equiv.Perm (Fin n))
   (points : Fin n → EuclideanPoint 2) :
-  continuumLimit phys n points = continuumLimit phys n (points ∘ σ) := by
+  continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n points = continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n (points ∘ σ) := by
   -- The lattice functions are exactly permutation symmetric
   -- So the sequences S_k(points) and S_k(points ∘ σ) are equal term by term
   -- Hence their limits are equal
-  let params := renormalizationCondition phys 1 (by norm_num : (1 : ℝ) > 0)
-  let subseq := continuumLimitSubsequence phys n
+  let params := renormalizationCondition renormalizationTheoryD phys 1 (by norm_num : (1 : ℝ) > 0)
+  let subseq := continuumLimitSubsequence latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n
 
   -- Get convergence for both sequences
-  have h_conv := fun pts ε (hε : ε > 0) => continuum_limit_convergence_property phys n pts ε hε
+  have h_conv := fun pts ε (hε : ε > 0) => continuum_limit_convergence_property latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n pts ε hε
 
   -- At each k, the lattice functions are equal by permutation symmetry
   have h_lattice_sym : ∀ k,
-      latticeSchwingerFunction params (subseq k) n points =
-      latticeSchwingerFunction params (subseq k) n (points ∘ σ) := by
+      latticeSchwingerFunction latticeDifference roundToLatticeSite params (subseq k) n points =
+      latticeSchwingerFunction latticeDifference roundToLatticeSite params (subseq k) n (points ∘ σ) := by
     intro k
-    exact lattice_schwinger_symmetric params (subseq k) n σ points
+    exact lattice_schwinger_symmetric latticeDifference roundToLatticeSite h_integral_congr params (subseq k) n σ points
 
   -- Use equal_sequences_equal_limits to conclude the limits are equal
   exact equal_sequences_equal_limits
-    (fun k (_ : Unit) => latticeSchwingerFunction params (subseq k) n points)
-    (fun k (_ : Unit) => latticeSchwingerFunction params (subseq k) n (points ∘ σ))
+    (fun k (_ : Unit) => latticeSchwingerFunction latticeDifference roundToLatticeSite params (subseq k) n points)
+    (fun k (_ : Unit) => latticeSchwingerFunction latticeDifference roundToLatticeSite params (subseq k) n (points ∘ σ))
     (fun k _ => h_lattice_sym k)
     ()
-    (continuumLimit phys n points)
-    (continuumLimit phys n (points ∘ σ))
+    (continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n points)
+    (continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n (points ∘ σ))
     (fun ε hε => h_conv points ε hε)
     (fun ε hε => h_conv (points ∘ σ) ε hε)
 
@@ -1165,8 +1166,8 @@ theorem continuum_limit_euclidean_invariant
   (hR : IsOrthogonal R)
   (a : EuclideanPoint 2)
   (points : Fin n → EuclideanPoint 2) :
-  (continuumLimit phys n) points =
-    (continuumLimit phys n) (fun i μ => a μ + ∑ ν, R μ ν * points i ν) := by
+  (continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n) points =
+    (continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n) (fun i μ => a μ + ∑ ν, R μ ν * points i ν) := by
   -- From os2EuclideanInvarianceD.rotation_invariant and translation_invariant:
   -- The infinite volume Schwinger functions are invariant under the full
   -- Euclidean group E(2) = O(2) ⋉ R².
@@ -1193,8 +1194,8 @@ theorem continuum_limit_translation_invariant
   (n : ℕ)
   (a : EuclideanPoint 2)
   (points : Fin n → EuclideanPoint 2) :
-  (continuumLimit phys n) points =
-    (continuumLimit phys n) (fun i μ => points i μ + a μ) := by
+  (continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n) points =
+    (continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n) (fun i μ => points i μ + a μ) := by
   -- From os2EuclideanInvarianceD.translation_invariant:
   -- infiniteVolumeSchwinger params n points =
   -- infiniteVolumeSchwinger params n (fun i => translate a (points i))
@@ -1202,13 +1203,15 @@ theorem continuum_limit_translation_invariant
 
 /-- Wrapper for compatibility -/
 theorem continuum_limit_permutation_symmetric'
+  (h_integral_congr : ∀ {n : ℕ} (f g : (Fin n → ℝ) → ℝ), (∀ x, f x = g x) →
+    lebesgueIntegralRN f = lebesgueIntegralRN g)
   (phys : PhysicalParameters)
   (n : ℕ)
   (σ : Equiv.Perm (Fin n))
   (points : Fin n → EuclideanPoint 2) :
-  (continuumLimit phys n) points =
-    (continuumLimit phys n) (points ∘ σ) :=
-  continuum_limit_permutation_symmetric phys n σ points
+  (continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n) points =
+    (continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n) (points ∘ σ) :=
+  continuum_limit_permutation_symmetric latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD h_integral_congr phys n σ points
 
 /-- Cutoff Schwinger functions converge to continuum limit as Λ → ∞
 
@@ -1229,8 +1232,8 @@ theorem continuum_limit_convergence
   (ε : ℝ)
   (hε : ε > 0) :
   ∃ Λ₀ : ℝ, ∀ Λ ≥ Λ₀, (hΛ : Λ > 0) →
-    |schwingerFunctionCutoff (renormalizationCondition phys Λ hΛ) 1 (by norm_num) n points -
-     continuumLimit phys n points| < ε := by
+    |schwingerFunctionCutoff (renormalizationCondition renormalizationTheoryD phys Λ hΛ) 1 (by norm_num) n points -
+     continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n points| < ε := by
   -- From infiniteVolumeLimitExistsD.limit_exists:
   -- The limit L = lim_{Λ↑R²} S_Λ{f} exists for all test functions f.
   --
@@ -1243,102 +1246,106 @@ theorem continuum_limit_convergence
 /- ============= OSTERWALDER-SCHRADER AXIOMS ============= -/
 
 /-- The continuum Schwinger functions form a QFT satisfying OS axioms -/
-noncomputable def phi4Theory2D (phys : PhysicalParameters) : QFT 2 where
-  schwinger := continuumLimit phys
+noncomputable def phi4Theory2D
+  (h_integral_congr : ∀ {n : ℕ} (f g : (Fin n → ℝ) → ℝ), (∀ x, f x = g x) →
+    lebesgueIntegralRN f = lebesgueIntegralRN g)
+  (phys : PhysicalParameters) : QFT 2 where
+  schwinger := continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys
   translation_invariant := by
     intro n points a
-    exact continuum_limit_translation_invariant phys n a points
+    exact continuum_limit_translation_invariant latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n a points
   permutation_symmetric := by
     intro n points σ
-    exact continuum_limit_permutation_symmetric phys n σ points
+    exact continuum_limit_permutation_symmetric latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD h_integral_congr phys n σ points
 
 /-- E1: Euclidean covariance (rotation + translation) -/
 theorem phi4_euclidean_covariant
   (phys : PhysicalParameters) :
   ∀ (n : ℕ) (R : Fin 2 → Fin 2 → ℝ) (a : EuclideanPoint 2), IsOrthogonal R →
-    ∀ points, (phi4Theory2D phys).schwinger n points =
-      (phi4Theory2D phys).schwinger n (fun i μ => a μ + ∑ ν, R μ ν * points i ν) := by
+    ∀ points, (phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger n points =
+      (phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger n (fun i μ => a μ + ∑ ν, R μ ν * points i ν) := by
   intro n R a hR points
   unfold phi4Theory2D
   simp only []
-  exact continuum_limit_euclidean_invariant phys n R hR a points
+  exact continuum_limit_euclidean_invariant latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n R hR a points
 
 
-/-- Lattice reflection positivity (from GlimmJaffe.ReflectionPositivity)
-    NONTRIVIAL: Must show the quadratic form ∑ᵢⱼ cᵢcⱼ S(xᵢ, Θxⱼ) ≥ 0.
-    Proof: (1) Gaussian measure is reflection positive (Θ flips the time coordinate),
-    (2) e^{-λ∫φ⁴} preserves positivity since λ>0 and φ⁴≥0,
-    (3) Combine via Trotter product formula. See: Osterwalder-Schrader (1973), Glimm-Jaffe Ch 6.
-
-    **Substantiated by:** `GlimmJaffe.ReflectionPositivity.GaussianRP`
-    - `TimeReflection`: Involution Θ on lattice sites
-    - `IsReflectionSymmetric`: C(Θi, j) = C(i, Θj)
-    - `heat_kernel_rp`: K_t(i,Θj) = ∑_k K_{t/2}(i,k) K_{t/2}(Θj,k) ⟹ RP
-    - `rpInnerProduct_nonneg`: RP quadratic form ≥ 0
-
-    This connects to latticeReflectionPositivityD from GlimmJaffe.ReflectionPositivity. -/
-axiom lattice_reflection_positive
-  (params : BareParameters)
-  (V : ℝ)
-  (hV : V > 0) :
+-- Lattice reflection positivity (from GlimmJaffe.ReflectionPositivity)
+--    NONTRIVIAL: Must show the quadratic form ∑ᵢⱼ cᵢcⱼ S(xᵢ, Θxⱼ) ≥ 0.
+--    Proof: (1) Gaussian measure is reflection positive (Θ flips the time coordinate),
+--    (2) e^{-λ∫φ⁴} preserves positivity since λ>0 and φ⁴≥0,
+--    (3) Combine via Trotter product formula. See: Osterwalder-Schrader (1973), Glimm-Jaffe Ch 6.
+--
+--    **Substantiated by:** `GlimmJaffe.ReflectionPositivity.GaussianRP`
+--    - `TimeReflection`: Involution Θ on lattice sites
+--    - `IsReflectionSymmetric`: C(Θi, j) = C(i, Θj)
+--    - `heat_kernel_rp`: K_t(i,Θj) = ∑_k K_{t/2}(i,k) K_{t/2}(Θj,k) ⟹ RP
+--    - `rpInnerProduct_nonneg`: RP quadratic form ≥ 0
+--
+--    This connects to latticeReflectionPositivityD from GlimmJaffe.ReflectionPositivity.
+variable (lattice_reflection_positive : ∀ (params : BareParameters) (V : ℝ) (hV : V > 0),
   ∀ (n : ℕ) (points : Fin n → EuclideanPoint 2) (coeffs : Fin n → ℝ),
     (∀ i, points i 0 ≥ 0) →
     ∑ i : Fin n, ∑ j : Fin n, coeffs i * coeffs j *
       schwingerFunctionCutoff params V hV 2
-        (fun k => if k = 0 then points i else timeReflection (points j)) ≥ 0
+        (fun k => if k = 0 then points i else timeReflection (points j)) ≥ 0)
 
-/-- Lattice Schwinger reflection positivity (direct version)
-    Same as lattice_reflection_positive but for latticeSchwingerFunction directly.
-
-    This is the direct connection to latticeReflectionPositivityD.lattice_rp
-    from GlimmJaffe.ReflectionPositivity. The GlimmJaffe version uses the same
-    structure: quadratic form ∑ᵢⱼ cᵢcⱼ S₂(xᵢ, Θxⱼ) ≥ 0 for points in Π₊. -/
-axiom lattice_schwinger_reflection_positive
-  (params : BareParameters)
-  (numSites : ℕ) :
+-- Lattice Schwinger reflection positivity (direct version)
+--    Same as lattice_reflection_positive but for latticeSchwingerFunction directly.
+--
+--    This is the direct connection to latticeReflectionPositivityD.lattice_rp
+--    from GlimmJaffe.ReflectionPositivity. The GlimmJaffe version uses the same
+--    structure: quadratic form ∑ᵢⱼ cᵢcⱼ S₂(xᵢ, Θxⱼ) ≥ 0 for points in Π₊.
+variable (lattice_schwinger_reflection_positive : ∀ (params : BareParameters) (numSites : ℕ),
   ∀ (n : ℕ) (points : Fin n → EuclideanPoint 2) (coeffs : Fin n → ℝ),
     (∀ i, points i 0 ≥ 0) →
     ∑ i : Fin n, ∑ j : Fin n, coeffs i * coeffs j *
-      latticeSchwingerFunction params numSites 2
-        (fun k => if k = 0 then points i else timeReflection (points j)) ≥ 0
+      latticeSchwingerFunction latticeDifference roundToLatticeSite params numSites 2
+        (fun k => if k = 0 then points i else timeReflection (points j)) ≥ 0)
 
 /-- E2: Reflection positivity (implies unitarity via GNS) -/
 theorem phi4_reflection_positive
+  (h_lattice_rp : ∀ (params : BareParameters) (numSites : ℕ),
+    ∀ (n : ℕ) (points : Fin n → EuclideanPoint 2) (coeffs : Fin n → ℝ),
+      (∀ i, points i 0 ≥ 0) →
+      ∑ i : Fin n, ∑ j : Fin n, coeffs i * coeffs j *
+        latticeSchwingerFunction latticeDifference roundToLatticeSite params numSites 2
+          (fun k => if k = 0 then points i else timeReflection (points j)) ≥ 0)
   (phys : PhysicalParameters) :
   ∀ (n : ℕ) (points : Fin n → EuclideanPoint 2) (coeffs : Fin n → ℝ),
     (∀ i, points i 0 ≥ 0) →
     ∑ i : Fin n, ∑ j : Fin n, coeffs i * coeffs j *
-      (phi4Theory2D phys).schwinger 2 (fun k => if k = 0 then points i else timeReflection (points j)) ≥ 0 := by
+      (phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger 2 (fun k => if k = 0 then points i else timeReflection (points j)) ≥ 0 := by
   intro n points coeffs h_positive_time
   -- Lattice Q_k ≥ 0, converges to continuum Q, so Q ≥ 0 by limit_preserves_positivity
-  let params := renormalizationCondition phys 1 (by norm_num : (1 : ℝ) > 0)
-  let subseq := continuumLimitSubsequence phys 2
+  let params := renormalizationCondition renormalizationTheoryD phys 1 (by norm_num : (1 : ℝ) > 0)
+  let subseq := continuumLimitSubsequence latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys 2
 
   let reflection_config := fun (i j : Fin n) =>
     (fun k : Fin 2 => if k = 0 then points i else timeReflection (points j))
 
   have h_lattice_positive : ∀ k : ℕ,
       ∑ i : Fin n, ∑ j : Fin n, coeffs i * coeffs j *
-        latticeSchwingerFunction params (subseq k) 2 (reflection_config i j) ≥ 0 := by
+        latticeSchwingerFunction latticeDifference roundToLatticeSite params (subseq k) 2 (reflection_config i j) ≥ 0 := by
     intro k
-    exact lattice_schwinger_reflection_positive params (subseq k) n points coeffs h_positive_time
+    exact h_lattice_rp params (subseq k) n points coeffs h_positive_time
 
   let Q_seq : ℕ → Unit → ℝ := fun k _ =>
     ∑ i : Fin n, ∑ j : Fin n, coeffs i * coeffs j *
-      latticeSchwingerFunction params (subseq k) 2 (reflection_config i j)
+      latticeSchwingerFunction latticeDifference roundToLatticeSite params (subseq k) 2 (reflection_config i j)
 
   let Q_limit : ℝ := ∑ i : Fin n, ∑ j : Fin n, coeffs i * coeffs j *
-    continuumLimit phys 2 (reflection_config i j)
+    continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys 2 (reflection_config i j)
 
   have h_term_converges : ∀ (i j : Fin n) (ε : ℝ), ε > 0 →
-      ∃ N, ∀ k ≥ N, |latticeSchwingerFunction params (subseq k) 2 (reflection_config i j) -
-                     continuumLimit phys 2 (reflection_config i j)| < ε := by
+      ∃ N, ∀ k ≥ N, |latticeSchwingerFunction latticeDifference roundToLatticeSite params (subseq k) 2 (reflection_config i j) -
+                     continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys 2 (reflection_config i j)| < ε := by
     intro i j ε hε
-    exact continuum_limit_convergence_property phys 2 (reflection_config i j) ε hε
+    exact continuum_limit_convergence_property latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys 2 (reflection_config i j) ε hε
 
   have h_weighted_converges : ∀ (i j : Fin n) (ε : ℝ), ε > 0 →
-      ∃ N, ∀ k ≥ N, |coeffs i * coeffs j * latticeSchwingerFunction params (subseq k) 2 (reflection_config i j) -
-                     coeffs i * coeffs j * continuumLimit phys 2 (reflection_config i j)| < ε := by
+      ∃ N, ∀ k ≥ N, |coeffs i * coeffs j * latticeSchwingerFunction latticeDifference roundToLatticeSite params (subseq k) 2 (reflection_config i j) -
+                     coeffs i * coeffs j * continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys 2 (reflection_config i j)| < ε := by
     intro i j ε hε
     by_cases h_zero : coeffs i * coeffs j = 0
     · use 0; intro k _; simp [h_zero]; exact hε
@@ -1349,14 +1356,14 @@ theorem phi4_reflection_positive
       obtain ⟨N, hN⟩ := h_term_converges i j ε' hε'
       use N
       intro k hk
-      have h_factor : coeffs i * coeffs j * latticeSchwingerFunction params (subseq k) 2 (reflection_config i j) -
-                      coeffs i * coeffs j * continuumLimit phys 2 (reflection_config i j) =
-                      coeffs i * coeffs j * (latticeSchwingerFunction params (subseq k) 2 (reflection_config i j) -
-                                              continuumLimit phys 2 (reflection_config i j)) := by ring
+      have h_factor : coeffs i * coeffs j * latticeSchwingerFunction latticeDifference roundToLatticeSite params (subseq k) 2 (reflection_config i j) -
+                      coeffs i * coeffs j * continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys 2 (reflection_config i j) =
+                      coeffs i * coeffs j * (latticeSchwingerFunction latticeDifference roundToLatticeSite params (subseq k) 2 (reflection_config i j) -
+                                              continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys 2 (reflection_config i j)) := by ring
       rw [h_factor, abs_mul]
       have h_bound := hN k hk
-      calc |coeffs i * coeffs j| * |latticeSchwingerFunction params (subseq k) 2 (reflection_config i j) -
-                                     continuumLimit phys 2 (reflection_config i j)|
+      calc |coeffs i * coeffs j| * |latticeSchwingerFunction latticeDifference roundToLatticeSite params (subseq k) 2 (reflection_config i j) -
+                                     continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys 2 (reflection_config i j)|
           < |coeffs i * coeffs j| * ε' := by
             nlinarith [h_bound, h_pos]
         _ = |coeffs i * coeffs j| * (ε / |coeffs i * coeffs j|) := rfl
@@ -1365,8 +1372,8 @@ theorem phi4_reflection_positive
   have h_Q_converges : ∀ ε > 0, ∃ N, ∀ k ≥ N, |Q_seq k () - Q_limit| < ε := by
     intro ε hε
     exact limit_distributes_over_double_sum
-      (fun k i j => coeffs i * coeffs j * latticeSchwingerFunction params (subseq k) 2 (reflection_config i j))
-      (fun i j => coeffs i * coeffs j * continuumLimit phys 2 (reflection_config i j))
+      (fun k i j => coeffs i * coeffs j * latticeSchwingerFunction latticeDifference roundToLatticeSite params (subseq k) 2 (reflection_config i j))
+      (fun i j => coeffs i * coeffs j * continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys 2 (reflection_config i j))
       h_weighted_converges ε hε
 
   have h_seq_nonneg : ∀ k (_: Unit), Q_seq k () ≥ 0 := fun k _ => h_lattice_positive k
@@ -1379,22 +1386,42 @@ theorem phi4_permutation_symmetric
   (n : ℕ)
   (σ : Equiv.Perm (Fin n))
   (points : Fin n → EuclideanPoint 2) :
-  (phi4Theory2D phys).schwinger n points =
-    (phi4Theory2D phys).schwinger n (points ∘ σ) :=
-  (phi4Theory2D phys).permutation_symmetric n points σ
+  (phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger n points =
+    (phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger n (points ∘ σ) :=
+  (phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).permutation_symmetric n points σ
 
-/-- E4: Cluster decomposition -/
-theorem phi4_cluster_property (phys : PhysicalParameters) : True := trivial
+/-- E4: Cluster decomposition — correlations factor at large distances.
+    As two groups of points are separated, S_{n+m} → S_n · S_m.
+    Proof requires: exponential decay from cluster expansion (Glimm-Jaffe Ch 18)
+    combined with the infinite volume limit. -/
+theorem phi4_cluster_property
+  (phys : PhysicalParameters)
+  (n m : ℕ)
+  (x : Fin n → EuclideanPoint 2)
+  (y : Fin m → EuclideanPoint 2) :
+  ∀ ε > 0, ∃ R > 0, ∀ (a : EuclideanPoint 2), ‖a‖ > R →
+    |(phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger (n + m)
+        (fun i => if h : i.val < n then x ⟨i.val, h⟩
+                  else fun μ => y ⟨i.val - n, by omega⟩ μ + a μ) -
+     (phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger n x *
+     (phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger m y| < ε := by
+  sorry
 
 /-- E5: Growth bound (needed for GNS construction, added in OS 1975) -/
 theorem phi4_growth_bound
+  (h_gks_uniform : ∀ (phys : PhysicalParameters),
+    ∃ C_unif : ℝ, C_unif > 0 ∧
+      ∀ (cutoff : ℝ) (hcutoff : cutoff > 0) (numSites : ℕ),
+        ∃ C : ℝ, C > 0 ∧ C ≤ C_unif ∧
+          ∀ (n : ℕ) (points : Fin n → EuclideanPoint 2),
+            |latticeSchwingerFunction latticeDifference roundToLatticeSite (renormalizationCondition renormalizationTheoryD phys cutoff hcutoff) numSites n points| ≤ C^n)
   (phys : PhysicalParameters) :
   ∃ (C α β : ℝ), C > 0 ∧ ∀ (n : ℕ) (points : Fin n → EuclideanPoint 2),
-    |(phi4Theory2D phys).schwinger n points| ≤
+    |(phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger n points| ≤
       Real.rpow C (n : ℝ) * Real.rpow (Nat.factorial n : ℝ) α *
       Real.rpow (1 + ∑ i, ‖points i‖) β := by
   -- GKS gives C_unif with all lattice approximations bounded by C_unif^n
-  have h_unif := gks_bound_uniform_for_renormalized_params phys
+  have h_unif := h_gks_uniform phys
   obtain ⟨C_unif, hC_unif_pos, h_unif_bound⟩ := h_unif
   use C_unif, 0, 0
   constructor
@@ -1419,19 +1446,19 @@ theorem phi4_growth_bound
     have h_pow_eq : C_unif^n = Real.rpow C_unif (n : ℝ) := (Real.rpow_natCast C_unif n).symm
     rw [← h_pow_eq]
     unfold continuumLimit
-    let params := renormalizationCondition phys 1 (by norm_num : (1 : ℝ) > 0)
+    let params := renormalizationCondition renormalizationTheoryD phys 1 (by norm_num : (1 : ℝ) > 0)
     have h_arzela := arzela_ascoli_lattice_limit params n
     let S_limit := Classical.choose h_arzela
     let subsequence := Classical.choose (Classical.choose_spec h_arzela)
     have h_conv : ∀ (config : Fin n → EuclideanPoint 2) (ε : ℝ), ε > 0 →
-        ∃ N, ∀ k ≥ N, |latticeSchwingerFunction params (subsequence k) n config - S_limit config| < ε :=
+        ∃ N, ∀ k ≥ N, |latticeSchwingerFunction latticeDifference roundToLatticeSite params (subsequence k) n config - S_limit config| < ε :=
       Classical.choose_spec (Classical.choose_spec h_arzela)
-    let f_seq : ℕ → Unit → ℝ := fun k _ => latticeSchwingerFunction params (subsequence k) n points
+    let f_seq : ℕ → Unit → ℝ := fun k _ => latticeSchwingerFunction latticeDifference roundToLatticeSite params (subsequence k) n points
     have h_lattice_bound : ∀ k (_ : Unit), |f_seq k ()| ≤ C_unif^n := by
       intro k _; unfold f_seq
       have h_k_bound := h_unif_bound 1 (by norm_num : (1 : ℝ) > 0) (subsequence k)
       obtain ⟨C_k, hC_k_pos, hC_k_le_unif, h_k_bound_all⟩ := h_k_bound
-      calc |latticeSchwingerFunction params (subsequence k) n points|
+      calc |latticeSchwingerFunction latticeDifference roundToLatticeSite params (subsequence k) n points|
           ≤ C_k^n := h_k_bound_all n points
         _ ≤ C_unif^n := pow_le_pow_of_le_one_left C_k C_unif n (le_of_lt hC_k_pos) hC_k_le_unif
     have h_conv_unit : ∀ ε > 0, ∃ N, ∀ k ≥ N, |f_seq k () - S_limit points| < ε :=
@@ -1443,28 +1470,51 @@ theorem phi4_growth_bound
 /-- MAIN THEOREM: 2D φ⁴ satisfies OS axioms E1-E5.
     First rigorous construction of interacting QFT (Glimm-Jaffe 1970s). -/
 theorem phi4_satisfies_OS_axioms
+  (h_lattice_rp : ∀ (params : BareParameters) (numSites : ℕ),
+    ∀ (n : ℕ) (points : Fin n → EuclideanPoint 2) (coeffs : Fin n → ℝ),
+      (∀ i, points i 0 ≥ 0) →
+      ∑ i : Fin n, ∑ j : Fin n, coeffs i * coeffs j *
+        latticeSchwingerFunction latticeDifference roundToLatticeSite params numSites 2
+          (fun k => if k = 0 then points i else timeReflection (points j)) ≥ 0)
+  (h_gks_uniform : ∀ (phys : PhysicalParameters),
+    ∃ C_unif : ℝ, C_unif > 0 ∧
+      ∀ (cutoff : ℝ) (hcutoff : cutoff > 0) (numSites : ℕ),
+        ∃ C : ℝ, C > 0 ∧ C ≤ C_unif ∧
+          ∀ (n : ℕ) (points : Fin n → EuclideanPoint 2),
+            |latticeSchwingerFunction latticeDifference roundToLatticeSite (renormalizationCondition renormalizationTheoryD phys cutoff hcutoff) numSites n points| ≤ C^n)
   (phys : PhysicalParameters) :
   -- E1: Euclidean covariance
   (∀ (n : ℕ) (R : Fin 2 → Fin 2 → ℝ) (a : EuclideanPoint 2), IsOrthogonal R →
-    ∀ points, (phi4Theory2D phys).schwinger n points =
-      (phi4Theory2D phys).schwinger n (fun i μ => a μ + ∑ ν, R μ ν * points i ν)) ∧
+    ∀ points, (phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger n points =
+      (phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger n (fun i μ => a μ + ∑ ν, R μ ν * points i ν)) ∧
   -- E2: Reflection positivity
   (∀ (n : ℕ) (points : Fin n → EuclideanPoint 2) (coeffs : Fin n → ℝ),
     (∀ i, points i 0 ≥ 0) →
     ∑ i : Fin n, ∑ j : Fin n, coeffs i * coeffs j *
-      (phi4Theory2D phys).schwinger 2 (fun k => if k = 0 then points i else timeReflection (points j)) ≥ 0) ∧
+      (phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger 2 (fun k => if k = 0 then points i else timeReflection (points j)) ≥ 0) ∧
   -- E3: Permutation symmetry
   (∀ (n : ℕ) (σ : Equiv.Perm (Fin n)) (points : Fin n → EuclideanPoint 2),
-    (phi4Theory2D phys).schwinger n points =
-      (phi4Theory2D phys).schwinger n (points ∘ σ)) ∧
+    (phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger n points =
+      (phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger n (points ∘ σ)) ∧
   -- E4: Cluster decomposition
-  True ∧
+  (∀ (n m : ℕ) (x : Fin n → EuclideanPoint 2) (y : Fin m → EuclideanPoint 2),
+    ∀ ε > 0, ∃ R > 0, ∀ (a : EuclideanPoint 2), ‖a‖ > R →
+      |(phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger (n + m)
+          (fun i => if h : i.val < n then x ⟨i.val, h⟩
+                    else fun μ => y ⟨i.val - n, by omega⟩ μ + a μ) -
+       (phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger n x *
+       (phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger m y| < ε) ∧
   -- E5: Growth bound
   (∃ (C α β : ℝ), C > 0 ∧ ∀ (n : ℕ) (points : Fin n → EuclideanPoint 2),
-    |(phi4Theory2D phys).schwinger n points| ≤
+    |(phi4Theory2D latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD integral_congr phys).schwinger n points| ≤
       Real.rpow C (n : ℝ) * Real.rpow (Nat.factorial n : ℝ) α *
       Real.rpow (1 + ∑ i, ‖points i‖) β) := by
-  exact ⟨phi4_euclidean_covariant phys, phi4_reflection_positive phys,
-         phi4_permutation_symmetric phys, trivial, phi4_growth_bound phys⟩
+  exact ⟨phi4_euclidean_covariant latticeDifference roundToLatticeSite integral_congr arzela_ascoli_lattice_limit renormalizationTheoryD phys,
+         phi4_reflection_positive latticeDifference roundToLatticeSite integral_congr arzela_ascoli_lattice_limit renormalizationTheoryD h_lattice_rp phys,
+         phi4_permutation_symmetric latticeDifference roundToLatticeSite integral_congr arzela_ascoli_lattice_limit renormalizationTheoryD phys,
+         phi4_cluster_property latticeDifference roundToLatticeSite integral_congr arzela_ascoli_lattice_limit renormalizationTheoryD phys,
+         phi4_growth_bound latticeDifference roundToLatticeSite integral_congr arzela_ascoli_lattice_limit renormalizationTheoryD h_gks_uniform phys⟩
+
+end Phi4Construction
 
 end PhysicsLogic.Papers.Phi4_2D

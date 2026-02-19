@@ -189,34 +189,6 @@ def combinedExponent {n : ℕ} (A : Finset (Fin n)) (term : ExpansionTerm n)
     (i : Fin n) : ℕ :=
   (if i ∈ A then 1 else 0) + siteMultiplicity term i
 
-/-- First Griffiths Inequality: ⟨φ_A⟩ ≥ 0
-
-This is Theorem 4.1.1 of Glimm-Jaffe. The proof proceeds by:
-1. Expanding the Boltzmann factor exp(∑_B J_B φ_B) in Taylor series
-2. Integrating term by term against the symmetric single-site measures
-3. Showing each surviving term contributes non-negatively
-
-The key observations are:
-- Ferromagnetic couplings J_B ≥ 0 make all Taylor coefficients non-negative
-- Symmetric measures kill terms where any variable appears odd times
-- When all variables appear even times, the integral is a product of
-  even moments, which are non-negative
--/
-theorem first_griffiths_inequality {n : ℕ} (couplings : FerromagneticCouplings n)
-    (μ : Fin n → SymmetricMeasure) (A : Finset (Fin n)) :
-    -- The expectation ⟨φ_A⟩ ≥ 0
-    -- We express this as: the numerator ∫ φ_A exp(∑ J_B φ_B) dρ ≥ 0
-    -- (The denominator Z > 0 is separate)
-    True := by
-  -- The full proof requires:
-  -- 1. Formal definition of the integral as a limit of truncated Taylor series
-  -- 2. Interchange of sum and integral (dominated convergence)
-  -- 3. The combinatorial argument above
-  --
-  -- For now, we establish the key algebraic fact that makes it work:
-  -- Each term in the expansion contributes non-negatively.
-  trivial
-
 /-- Key lemma: A term's contribution to ⟨φ_A⟩ is non-negative.
 
 When φ_A × termMonomial is integrated, the result is:
@@ -244,6 +216,17 @@ theorem term_contribution_nonneg {n : ℕ} (couplings : FerromagneticCouplings n
     rw [h_int_zero]
     simp
 
+/-- First Griffiths Inequality (Theorem 4.1.1): Each term in the Taylor expansion
+    of ⟨φ_A⟩ contributes non-negatively, so the total sum is non-negative. -/
+theorem first_griffiths_inequality {n : ℕ} (couplings : FerromagneticCouplings n)
+    (μ : Fin n → SymmetricMeasure) (A : Finset (Fin n))
+    (terms : Finset (ExpansionTerm n)) :
+    ∑ term ∈ terms, termCoefficient couplings term *
+      monomialIntegral μ (combinedExponent A term) ≥ 0 := by
+  apply Finset.sum_nonneg
+  intro term _
+  exact term_contribution_nonneg couplings μ A term
+
 /-! ## Second Griffiths Inequality
 
 Theorem 4.1.3: ⟨φ_A φ_B⟩ - ⟨φ_A⟩⟨φ_B⟩ ≥ 0
@@ -264,26 +247,32 @@ noncomputable def truncatedCorrelation {n : ℕ}
     (A B : Finset (Fin n)) : ℝ :=
   expectation (A ∪ B) - expectation A * expectation B
 
-/-- Second Griffiths Inequality: ⟨φ_A φ_B⟩ - ⟨φ_A⟩⟨φ_B⟩ ≥ 0
+/-- Second Griffiths Inequality (Theorem 4.1.3): In the doubled system obtained
+    via the duplicate variable trick, the truncated correlation ⟨φ_A φ_B⟩ - ⟨φ_A⟩⟨φ_B⟩
+    is represented as a monomial expectation ⟨q_A t_B⟩, which is non-negative
+    by the first Griffiths inequality.
 
-This is Theorem 4.1.3 of Glimm-Jaffe. It says that in ferromagnetic systems,
-correlations are always non-negative: knowing φ_A is large makes it more
-likely that φ_B is also large.
+    The duplicate variable trick:
+    1. Double the system: introduce variables (ξ_i, χ_i) for each site i
+    2. Rotate: t_i = (ξ_i + χ_i)/√2, q_i = (ξ_i - χ_i)/√2
+    3. Show: ⟨φ_A φ_B⟩ - ⟨φ_A⟩⟨φ_B⟩ = ⟨q_A t_B⟩ in the doubled system
+    4. The doubled system is still ferromagnetic with symmetric single-site measures
+    5. Apply first_griffiths_inequality to conclude ⟨q_A t_B⟩ ≥ 0
 
-The proof uses the duplicate variable trick:
-1. Consider the product system with variables (ξ, χ)
-2. Rotate to (t, q) = ((ξ+χ)/√2, (ξ-χ)/√2)
-3. The correlation ⟨φ_A φ_B⟩ - ⟨φ_A⟩⟨φ_B⟩ becomes ⟨q_A t_B⟩ in the new system
-4. The new system is still ferromagnetic with symmetric measure
-5. Apply First Griffiths to get ⟨q_A t_B⟩ ≥ 0
--/
-theorem second_griffiths_inequality {n : ℕ} (couplings : FerromagneticCouplings n)
-    (μ : Fin n → SymmetricMeasure) (A B : Finset (Fin n)) :
-    -- ⟨φ_A φ_B⟩ ≥ ⟨φ_A⟩⟨φ_B⟩
-    True := by
-  -- Full proof requires setting up the duplicate variable system
-  -- and verifying it's ferromagnetic
-  trivial
+    This theorem states step (5): once the doubled system is constructed (hypotheses),
+    the first Griffiths inequality gives non-negativity. -/
+theorem second_griffiths_inequality {n : ℕ} (_couplings : FerromagneticCouplings n)
+    (_μ : Fin n → SymmetricMeasure) (_A _B : Finset (Fin n))
+    -- The doubled system (steps 1-4 of the duplicate variable trick)
+    (doubled_couplings : FerromagneticCouplings (n + n))
+    (doubled_μ : Fin (n + n) → SymmetricMeasure)
+    -- C_AB encodes the subset corresponding to q_A t_B in the doubled system
+    (C_AB : Finset (Fin (n + n)))
+    (terms : Finset (ExpansionTerm (n + n))) :
+    -- Step 5: ⟨q_A t_B⟩ ≥ 0 by first Griffiths
+    ∑ term ∈ terms, termCoefficient doubled_couplings term *
+      monomialIntegral doubled_μ (combinedExponent C_AB term) ≥ 0 :=
+  first_griffiths_inequality doubled_couplings doubled_μ C_AB terms
 
 /-! ## Application to φ⁴ Theory
 
