@@ -184,4 +184,13 @@ noncomputable def MTCData.totalDimensionSquared (mtc : MTCData md cs)
     (MTC : ModularTensorCategory) : ℂ :=
   ∑ i : Fin (mtcRank MTC), mtc.quantumDimension MTC i * mtc.quantumDimension MTC i
 
+/- === Bridge to standalone FusionCategories.lean === -/
+
+-- Bridge note: FusionCategories.lean defines standalone `ModularCategoryData`
+-- (importing only Mathlib, no manifold/CS dependency). It encodes the same
+-- algebraic data as MTCData but is usable from paper formalizations.
+-- FusionCategories.lean is NOT imported here to avoid circular deps.
+-- Use ModularCategoryData directly for algebraic work and MTCData for
+-- TQFT constructions involving manifolds and surgery.
+
 end PhysicsLogic.QFT.TQFT
