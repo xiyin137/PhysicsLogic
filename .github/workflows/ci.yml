@@ -25,11 +25,24 @@ jobs:
           lean --version
           lake --version
 
-      - name: Download mathlib cache
-        run: lake exe cache get
+      - name: Download mathlib cache (best effort)
+        run: |
+          set -euo pipefail
+          ok=0
+          for i in 1 2 3; do
+            echo "cache attempt ${i}/3"
+            if lake exe cache get; then
+              ok=1
+              break
+            fi
+            sleep 5
+          done
+          if [ "$ok" -eq 0 ]; then
+            echo "cache download unavailable; continuing with source build"
+          fi
 
       - name: Invariant checks
-        run: scripts/check_nonpapers_invariants.sh
+        run: bash scripts/check_nonpapers_invariants.sh
 
       - name: Physics assumptions registry check
         run: bash scripts/check_physics_assumptions_registry.sh
