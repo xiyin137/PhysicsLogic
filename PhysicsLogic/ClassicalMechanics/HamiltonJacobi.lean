@@ -25,20 +25,20 @@ structure HamiltonJacobiTheory (n : ℕ) where
   /-- Solution of HJ equation gives canonical transformation -/
   hj_generates_canonical_transform :
     ∀ (S : HamiltonPrincipalFunction n)
-      (h : ∀ q t, deriv (S q) t + lhSystem.H q (fun i => partialS_q S q t i) t = 0),
+      (_h : ∀ q t, deriv (S q) t + lhSystem.H q (fun i => partialS_q S q t i) t = 0),
     ∃ (T : CanonicalTransformation n lhSystem.toHamiltonianSystem),
       ∀ x, lhSystem.toHamiltonianSystem.H (T.Q x) (T.P x) 0 =
         lhSystem.toHamiltonianSystem.H x.1 x.2 0
   /-- Hamilton-Jacobi method solves for trajectories -/
   hj_gives_trajectories :
     ∀ (S : HamiltonPrincipalFunction n)
-      (h : ∀ q t, deriv (S q) t + lhSystem.H q (fun i => partialS_q S q t i) t = 0)
+      (_h : ∀ q t, deriv (S q) t + lhSystem.H q (fun i => partialS_q S q t i) t = 0)
       (q₀ : GeneralizedCoordinates n),
     ∃ (q : Trajectory n), q 0 = q₀ ∧ satisfiesAllEulerLagrange lhSystem.toLagrangianSystem q
   /-- Separation of variables in HJ equation -/
   hj_separation_of_variables :
     ∀ (W : HamiltonCharacteristicFunction n)
-      (h_separable : ∃ (Wᵢ : Fin n → ℝ → (Fin n → ℝ) → ℝ),
+      (_h_separable : ∃ (Wᵢ : Fin n → ℝ → (Fin n → ℝ) → ℝ),
                        ∀ (q : GeneralizedCoordinates n) (alpha : Fin n → ℝ),
                          W q alpha = ∑ i, Wᵢ i (q i) alpha),
     ∃ E, ∀ (q : GeneralizedCoordinates n) (alpha : Fin n → ℝ),
@@ -46,7 +46,7 @@ structure HamiltonJacobiTheory (n : ℕ) where
   /-- Connection to action variables -/
   hj_gives_action_variables :
     ∀ (W : HamiltonCharacteristicFunction n) (E : ℝ)
-      (h : ∀ (q : GeneralizedCoordinates n) (alpha : Fin n → ℝ),
+      (_h : ∀ (q : GeneralizedCoordinates n) (alpha : Fin n → ℝ),
              lhSystem.H q (fun i => partialS_q (fun q' _ => W q' alpha) q 0 i) 0 = E)
       (i : Fin n) (γ : PhaseSpaceTrajectory n),
     ∃ (integral : ℝ), intTheory.actionVariable i γ = integral

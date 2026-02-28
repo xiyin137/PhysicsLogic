@@ -63,7 +63,7 @@ structure WorldlineTheory (metric : SpacetimeMetric) where
   /-- Proper time along timelike curve -/
   properTimeAlongCurve : (γ : Curve) → TimelikeCurve metric γ → ℝ → ℝ → ℝ
   /-- Four-velocity is normalized for timelike worldlines -/
-  fourVelocity_normalized : ∀ (γ : Worldline) (t : ℝ) (h : TimelikeCurve metric γ),
+  fourVelocity_normalized : ∀ (γ : Worldline) (t : ℝ) (_h : TimelikeCurve metric γ),
     innerProduct metric (γ t) (FourVelocity γ t) (FourVelocity γ t) = -1
 
 /-- Structure for Minkowski worldline theory -/
@@ -71,7 +71,7 @@ structure MinkowskiWorldlineTheory where
   /-- Underlying worldline theory for Minkowski metric -/
   theory : WorldlineTheory minkowskiMetric
   /-- Four-velocity normalization in Minkowski space -/
-  fourVelocity_timelike : ∀ (γ : Worldline) (t : ℝ) (h : TimelikeWorldline γ),
+  fourVelocity_timelike : ∀ (γ : Worldline) (t : ℝ) (_h : TimelikeWorldline γ),
     minkowskiInnerProduct (FourVelocity γ t) (FourVelocity γ t) = -1
 
 end PhysicsLogic.SpaceTime

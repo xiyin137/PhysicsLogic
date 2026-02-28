@@ -36,7 +36,7 @@ structure EulerFlowTheory (ops : DifferentialOperators) (md : MaterialDerivative
   /-- Bernoulli equation for steady flow: v²/2 + p/ρ + Φ = constant along streamline -/
   bernoulliTheorem :
     ∀ (v : VelocityField) (p : PressureField) (ρ : DensityField) (Φ : ScalarField)
-      (streamline : ℝ → SpatialPoint) (h_steady : isSteady v)
+      (streamline : ℝ → SpatialPoint) (_h_steady : isSteady v)
       (s₁ s₂ t : ℝ),
       (∑ i : Fin 3, (v (streamline s₁) t i)^2) / 2 + p (streamline s₁) t / ρ (streamline s₁) t + Φ (streamline s₁) t =
       (∑ i : Fin 3, (v (streamline s₂) t i)^2) / 2 + p (streamline s₂) t / ρ (streamline s₂) t + Φ (streamline s₂) t
@@ -44,7 +44,7 @@ structure EulerFlowTheory (ops : DifferentialOperators) (md : MaterialDerivative
   kelvinsCirculationTheorem :
     ∀ (v : VelocityField) (ρ : DensityField) (p : PressureField)
       (material_loop : ℝ → ℝ → SpatialPoint)
-      (h_barotropic : ∀ x₁ x₂ t, ρ x₁ t = ρ x₂ t → p x₁ t = p x₂ t)
+      (_h_barotropic : ∀ x₁ x₂ t, ρ x₁ t = ρ x₂ t → p x₁ t = p x₂ t)
       (t₁ t₂ : ℝ),
       circulation v (material_loop t₁) t₁ = circulation v (material_loop t₂) t₂
 

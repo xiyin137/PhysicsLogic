@@ -20,8 +20,8 @@ structure ChaosTheory (n : ℕ) where
     ∀ [MeasurableSpace (PhaseSpace n)] (μ : Measure (PhaseSpace n))
       (flow : ℝ → PhaseSpace n → PhaseSpace n)
       (U : Set (PhaseSpace n))
-      (h_finite : μ U < ⊤)
-      (h_preserves : ∀ t, μ U = μ {flow t x | x ∈ U}),
+      (_h_finite : μ U < ⊤)
+      (_h_preserves : ∀ t, μ U = μ {flow t x | x ∈ U}),
     ∀ x ∈ U, ∃ (t : ℝ), t > 0 ∧ flow t x ∈ U
 
 /-- System is chaotic if it has positive Lyapunov exponent -/

@@ -28,15 +28,15 @@ structure IntegrableSystemTheory (n : ℕ) where
   angleVariable : Fin n → PhaseSpaceTrajectory n → ℝ → ℝ
   /-- Action-angle variables form canonical coordinates -/
   action_angle_canonical :
-    ∀ (H : Hamiltonian n) (H_phase : PhaseSpace n → ℝ)
+    ∀ (_H : Hamiltonian n) (H_phase : PhaseSpace n → ℝ)
       (conserved : Fin n → PhaseSpace n → ℝ)
-      (h_integrable : isIntegrable sys H_phase conserved),
+      (_h_integrable : isIntegrable sys H_phase conserved),
     ∃ (T : CanonicalTransformation n sys),
       ∀ x, H_phase (T.Q x, T.P x) = H_phase x
   /-- Liouville-Arnold theorem: integrable systems have action-angle coordinates -/
   liouville_arnold_theorem :
     ∀ (H : PhaseSpace n → ℝ) (conserved : Fin n → PhaseSpace n → ℝ)
-      (h : isIntegrable sys H conserved),
+      (_h : isIntegrable sys H conserved),
     ∃ (T : CanonicalTransformation n sys) (H_action : (Fin n → ℝ) → ℝ),
       ∀ x, H (T.Q x, T.P x) = H_action (T.P x)
   /-- Frequency map ω(I) = ∂H/∂I -/
@@ -46,13 +46,13 @@ structure IntegrableSystemTheory (n : ℕ) where
   /-- KAM theorem: most invariant tori persist under small perturbations -/
   kam_theorem :
     ∀ [MeasurableSpace (PhaseSpace n)] (μ : Measure (PhaseSpace n))
-      (H₀ H₁ : PhaseSpace n → ℝ)
+      (H₀ _H₁ : PhaseSpace n → ℝ)
       (conserved : Fin n → PhaseSpace n → ℝ)
       (ε : ℝ)
-      (h_small : ε < 1)
-      (h_integrable : isIntegrable sys H₀ conserved)
-      (h_nondegenerate : ∃ (ω : (Fin n → ℝ) → Fin n → ℝ), ∀ I, ω I = frequencyMap H₀ I)
-      (h_finite : μ Set.univ ≠ ⊤),
+      (_h_small : ε < 1)
+      (_h_integrable : isIntegrable sys H₀ conserved)
+      (_h_nondegenerate : ∃ (ω : (Fin n → ℝ) → Fin n → ℝ), ∀ I, ω I = frequencyMap H₀ I)
+      (_h_finite : μ Set.univ ≠ ⊤),
     ∃ (invariant_tori : Set (PhaseSpace n)),
       MeasurableSet invariant_tori ∧
       (μ invariant_tori).toReal > (1 - ε) * (μ Set.univ).toReal

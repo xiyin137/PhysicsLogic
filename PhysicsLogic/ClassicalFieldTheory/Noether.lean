@@ -22,7 +22,7 @@ structure NoetherTheory (F : Type*) (actionTheory : ActionTheory F)
       ∂_μ j^μ = 0 (on-shell) -/
   noether_theorem : ∀ (phi : ClassicalField F)
     (symmetry : ClassicalField F → ClassicalField F)
-    (h : eom.eulerLagrange phi)
+    (_h : eom.eulerLagrange phi)
     (x : SpaceTimePoint),
     ∑ mu, scalarOps.derivatives.partialDerivative (fun y => noetherCurrent phi symmetry y mu) mu x = 0
   /-- Time translation → energy conservation -/

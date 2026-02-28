@@ -78,7 +78,7 @@ structure MassiveKernelData where
   /-- The massive Euclidean propagator K_d(m, r) in d dimensions -/
   kernel : (d : ℕ) → (m : ℝ) → (r : ℝ) → ℝ
   /-- For any mass m > 0, the massive kernel decays exponentially in d dimensions -/
-  kernel_decay : ∀ {d : ℕ} (m : ℝ) (hm : m > 0),
+  kernel_decay : ∀ {d : ℕ} (m : ℝ) (_hm : m > 0),
     ∃ C > 0, ∀ r ≥ 0, |kernel d m r| ≤ C * exp (-m * r)
   /-- In 2D, the massless kernel K(0,r) has logarithmic behavior for large r -/
   massless_2d_logarithmic :

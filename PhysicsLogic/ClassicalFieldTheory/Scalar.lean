@@ -46,7 +46,7 @@ structure ChargedScalarTheory (actTheory : ActionTheory ℂ)
   u1Current : ComplexScalarField → VectorField
   /-- U(1) charge conservation: ∂_μ j^μ = 0 -/
   u1_charge_conservation : ∀ (phi : ComplexScalarField)
-      (h : eom.eulerLagrange phi)
+      (_h : eom.eulerLagrange phi)
       (x : SpaceTimePoint),
     ∑ μ, fd.partialDerivative (fun y => u1Current phi y μ) μ x = 0
 

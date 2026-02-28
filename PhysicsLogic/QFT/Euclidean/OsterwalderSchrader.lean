@@ -47,7 +47,7 @@ structure OSAxioms {d : ℕ} [NeZero d] (theory : QFT d) where
   /-- OS Axiom E1: Euclidean covariance (rotation + translation invariance) -/
   euclidean_covariance : ∀ (n : ℕ)
     (rotation : Fin d → Fin d → ℝ)
-    (h_orthogonal : IsOrthogonal rotation)
+    (_h_orthogonal : IsOrthogonal rotation)
     (translation : EuclideanPoint d)
     (points : Fin n → EuclideanPoint d),
     theory.schwinger n points =
@@ -66,7 +66,7 @@ structure OSAxioms {d : ℕ} [NeZero d] (theory : QFT d) where
       a Hilbert space with positive-definite inner product (unitarity). -/
   reflection_positivity : ∀ (N : ℕ)
     (configs : Fin N → (Σ n : ℕ, Fin n → EuclideanPoint d))
-    (h_upper : ∀ i j, (configs i).2 j 0 ≥ 0)
+    (_h_upper : ∀ i j, (configs i).2 j 0 ≥ 0)
     (coeffs : Fin N → ℝ),
     ∑ i : Fin N, ∑ j : Fin N,
       coeffs i * coeffs j *

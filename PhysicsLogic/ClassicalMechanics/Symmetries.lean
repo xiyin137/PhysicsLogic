@@ -33,27 +33,27 @@ structure SymmetryTheory (n : ℕ) where
   lagSys : LagrangianSystem n
   /-- Noether's theorem: continuous symmetry → conserved quantity -/
   noether_theorem :
-    ∀ (symmetry : SymmetryTransformation n) (q : Trajectory n)
-      (h_el : satisfiesAllEulerLagrange lagSys q),
+    ∀ (_symmetry : SymmetryTransformation n) (q : Trajectory n)
+      (_h_el : satisfiesAllEulerLagrange lagSys q),
     ∃ (conserved_quantity : ℝ → ℝ), ∀ t₁ t₂, conserved_quantity t₁ = conserved_quantity t₂
   /-- Energy conservation from time translation symmetry -/
   energy_from_time_invariance :
     ∀ (q : Trajectory n)
-      (h_time_indep : ∀ q_val v t₁ t₂, lagSys.L q_val v t₁ = lagSys.L q_val v t₂)
-      (h_el : satisfiesAllEulerLagrange lagSys q)
+      (_h_time_indep : ∀ q_val v t₁ t₂, lagSys.L q_val v t₁ = lagSys.L q_val v t₂)
+      (_h_el : satisfiesAllEulerLagrange lagSys q)
       (t₁ t₂ : ℝ),
     energyFunction lagSys q t₁ = energyFunction lagSys q t₂
   /-- Momentum conservation from spatial translation symmetry -/
   momentum_from_translation :
     ∀ (q : Trajectory n) (i : Fin n)
-      (h_translation_inv : isCyclicCoordinate lagSys i)
-      (h_el : satisfiesAllEulerLagrange lagSys q)
+      (_h_translation_inv : isCyclicCoordinate lagSys i)
+      (_h_el : satisfiesAllEulerLagrange lagSys q)
       (t₁ t₂ : ℝ),
     linearMomentum lagSys q t₁ i = linearMomentum lagSys q t₂ i
   /-- Angular momentum conservation from rotational symmetry -/
   angular_momentum_from_rotation :
     ∀ (q : Trajectory n)
-      (h_el : satisfiesAllEulerLagrange lagSys q)
+      (_h_el : satisfiesAllEulerLagrange lagSys q)
       (t₁ t₂ : ℝ),
     angularMomentum lagSys q t₁ = angularMomentum lagSys q t₂
 

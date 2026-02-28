@@ -25,7 +25,7 @@ def EventHorizon (consts : GRConstants) (bh : BlackHole consts)
 
 /-- Trapped surface: closed 2-surface where both null expansions are negative.
     Both outgoing and ingoing families of null geodesics orthogonal to S converge. -/
-def TrappedSurface (metric : SpacetimeMetric) (S : Set SpaceTimePoint) : Prop :=
+def TrappedSurface (_metric : SpacetimeMetric) (S : Set SpaceTimePoint) : Prop :=
   ∀ p ∈ S, ∃ (θ_out θ_in : ℝ), θ_out < 0 ∧ θ_in < 0
 
 /-- Apparent horizon: outermost trapped surface at given time -/
