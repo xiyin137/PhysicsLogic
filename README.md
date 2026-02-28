@@ -118,6 +118,7 @@ Scripts are under `scripts/`:
 - `check_nonpapers_invariants.sh`
 - `check_physics_assumptions_registry.sh`
 - `check_physics_assumption_usage.sh`
+- `assumptions_report.sh`
 - `check_no_new_nonpapers_sorry.sh`
 - `check_nonpapers_sorry_budget.sh`
 
@@ -127,6 +128,7 @@ Recommended local pre-push run:
 ./scripts/check_nonpapers_invariants.sh
 ./scripts/check_physics_assumptions_registry.sh
 ./scripts/check_physics_assumption_usage.sh
+./scripts/assumptions_report.sh /tmp/assumptions_report.md
 ./scripts/check_no_new_nonpapers_sorry.sh
 ./scripts/check_nonpapers_sorry_budget.sh
 lake build PhysicsLogic.Core
@@ -146,6 +148,7 @@ CI enforces:
 - `AssumptionId` string payloads are unique,
 - no duplicate `AssumptionId` entries in `assumptionRegistry`,
 - no raw string literal IDs in non-Papers `PhysicsAssumption` uses,
+- assumptions usage report is generated and uploaded as CI artifact (`assumptions-report`),
 - no newly added non-Papers `sorry`,
 - non-Papers `sorry` count does not regress (when PR baseline is available),
 - `lake build PhysicsLogic.Core`,

@@ -99,6 +99,19 @@ jobs:
       - name: Physics assumption usage check
         run: bash scripts/check_physics_assumption_usage.sh
 
+      - name: Generate assumptions report
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          bash scripts/assumptions_report.sh artifacts/assumptions_report.md
+          sed -n '1,80p' artifacts/assumptions_report.md
+
+      - name: Upload assumptions report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: assumptions-report
+          path: artifacts/assumptions_report.md
+
       - name: No-new-sorry check (non-Papers)
         run: bash scripts/check_no_new_nonpapers_sorry.sh
 
