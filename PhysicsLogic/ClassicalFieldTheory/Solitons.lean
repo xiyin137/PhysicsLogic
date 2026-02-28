@@ -4,8 +4,10 @@ import PhysicsLogic.ClassicalFieldTheory.YangMills
 namespace PhysicsLogic.ClassicalFieldTheory
 
 /-- Structure for soliton solutions in field theory -/
-structure SolitonTheory (F : Type*) (at : ActionTheory F)
-    (emt : EnergyMomentumTheory F at (eom : EquationsOfMotion F at) (fd : FieldDerivatives F)) where
+structure SolitonTheory (F : Type*) (actionTheory : ActionTheory F)
+    (eom : EquationsOfMotion F actionTheory)
+    (scalarOps : ScalarFieldOperators)
+    (emt : EnergyMomentumTheory F actionTheory eom scalarOps) where
   /-- Topological charge for solitons -/
   solitonCharge : ClassicalField F → ℤ
   /-- Soliton stability from topology -/

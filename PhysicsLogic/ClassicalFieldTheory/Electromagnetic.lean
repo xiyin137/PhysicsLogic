@@ -7,8 +7,13 @@ open SpaceTime
 /-- Electromagnetic 4-potential A_μ -/
 abbrev EMPotential := VectorField
 
+/-- Gauge transformation: A_μ → A_μ + ∂_μ λ -/
+noncomputable def gaugeTransform (fd : FieldDerivatives ℝ)
+    (A : EMPotential) (lambda : ScalarField) : EMPotential :=
+  fun x μ => A x μ + fd.partialDerivative lambda μ x
+
 /-- Structure for electromagnetic field theory -/
-structure ElectromagneticTheory (fd : FieldDerivatives (Fin 4 → ℝ)) where
+structure ElectromagneticTheory (fd : FieldDerivatives ℝ) where
   /-- Field strength tensor F_μν = ∂_μ A_ν - ∂_ν A_μ -/
   fieldStrengthTensor : EMPotential → SpaceTimePoint → Fin 4 → Fin 4 → ℝ
   /-- Electric field E^i = -F^{0i} -/
@@ -29,27 +34,18 @@ structure ElectromagneticTheory (fd : FieldDerivatives (Fin 4 → ℝ)) where
   /-- Gauge invariance: F_μν unchanged under gauge transformation -/
   gauge_invariance : ∀ (A : EMPotential) (lambda : ScalarField) (x : SpaceTimePoint) (μ ν : Fin 4),
     fieldStrengthTensor (gaugeTransform fd A lambda) x μ ν = fieldStrengthTensor A x μ ν
-where
-  /-- Gauge transformation: A_μ → A_μ + ∂_μ λ -/
-  gaugeTransform (fd : FieldDerivatives (Fin 4 → ℝ)) (A : EMPotential) (lambda : ScalarField) : EMPotential :=
-    fun x μ => A x μ + fd.partialDerivative (fun y => lambda y) μ x
 
 /-- Maxwell equations (inhomogeneous): ∂_μ F^μν = J^ν -/
-def maxwellEquations (fd : FieldDerivatives (Fin 4 → ℝ)) (em : ElectromagneticTheory fd)
+def maxwellEquations (fd : FieldDerivatives ℝ) (em : ElectromagneticTheory fd)
     (A : EMPotential) (J : VectorField) : Prop :=
   ∀ x ν, ∑ μ, fd.partialDerivative (fun y => em.fieldStrengthTensor A y μ ν) μ x = J x ν
 
-/-- Gauge transformation: A_μ → A_μ + ∂_μ λ -/
-noncomputable def gaugeTransform (fd : FieldDerivatives (Fin 4 → ℝ))
-    (A : EMPotential) (lambda : ScalarField) : EMPotential :=
-  fun x μ => A x μ + fd.partialDerivative (fun y => lambda y) μ x
-
 /-- Lorenz gauge condition: ∂_μ A^μ = 0 -/
-def lorenzGauge (fd : FieldDerivatives (Fin 4 → ℝ)) (A : EMPotential) : Prop :=
+def lorenzGauge (fd : FieldDerivatives ℝ) (A : EMPotential) : Prop :=
   ∀ x, ∑ μ, fd.partialDerivative (fun y => A y μ) μ x = 0
 
 /-- Coulomb gauge: ∇·A = 0 -/
-def coulombGauge (fd : FieldDerivatives (Fin 4 → ℝ)) (A : EMPotential) : Prop :=
+def coulombGauge (fd : FieldDerivatives ℝ) (A : EMPotential) : Prop :=
   ∀ x, ∑ i : Fin 3, fd.partialDerivative (fun y => A y i.succ) i.succ x = 0
 
 end PhysicsLogic.ClassicalFieldTheory

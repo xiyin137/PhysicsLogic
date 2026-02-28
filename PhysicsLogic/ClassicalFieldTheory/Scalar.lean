@@ -7,8 +7,8 @@ namespace PhysicsLogic.ClassicalFieldTheory
 open SpaceTime
 
 /-- Structure for scalar field theory -/
-structure ScalarFieldTheory (sfo : ScalarFieldOperators) (at : ActionTheory ℝ)
-    (eom : EquationsOfMotion ℝ at) where
+structure ScalarFieldTheory (sfo : ScalarFieldOperators) (actTheory : ActionTheory ℝ)
+    (eom : EquationsOfMotion ℝ actTheory) where
   /-- Free scalar field Lagrangian: L = (1/2)∂_μφ ∂^μφ - (1/2)m²φ² -/
   freeScalarLagrangian : ℝ → ScalarField → ScalarField
   /-- φ⁴ interaction Lagrangian: L = L_free - (λ/4!)φ⁴ -/
@@ -35,8 +35,8 @@ def sineGordonEquation (sfo : ScalarFieldOperators) (phi : ScalarField) (m beta 
   ∀ x, sfo.dalembertian phi x - (m^2 / beta) * Real.sin (beta * phi x) = 0
 
 /-- Structure for charged scalar field theory (complex) -/
-structure ChargedScalarTheory (at : ActionTheory ℂ)
-    (eom : EquationsOfMotion ℂ at)
+structure ChargedScalarTheory (actTheory : ActionTheory ℂ)
+    (eom : EquationsOfMotion ℂ actTheory)
     (fd : FieldDerivatives ℂ) where
   /-- Charged scalar field Lagrangian: L = ∂_μφ* ∂^μφ - m²|φ|² -/
   chargedScalarLagrangian : ℝ → ComplexScalarField → ScalarField

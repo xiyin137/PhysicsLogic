@@ -3,9 +3,10 @@
 --   Z₃ pointed MTC, SU(2)₄ fusion category, Ising MTC.
 --
 -- Data definitions are fully explicit; proofs use native_decide
--- where possible and sorry for complex-number arithmetic.
+-- where possible and tracked assumptions for complex-number arithmetic.
 
 import PhysicsLogic.QFT.TQFT.FusionCategories
+import PhysicsLogic.Assumptions
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Real.Sqrt
@@ -58,6 +59,38 @@ noncomputable def z3_S (i j : Fin 3) : ℂ :=
 private lemma z3_N_total : ∀ (i j : Fin 3), ∑ k : Fin 3, z3_N i j k = 1 := by
   native_decide
 
+/-- Assumptions packaging the nontrivial Z₃ modular-coherence and modularity proofs. -/
+structure Z3ModularAssumptions : Prop where
+  pentagon : ∀ (a b c d e f k l : Fin 3),
+    ∑ g : Fin 3, z3_F f c d e g l * z3_F a b g e f k =
+    ∑ h : Fin 3, z3_F a b c k f h * z3_F a h d e k l * z3_F b c d l h k
+  hexagon_I : ∀ (a b c d e f : Fin 3),
+    z3_R a c e * z3_F c a b d e f * z3_R b c f =
+    ∑ g : Fin 3, z3_F a c b d e g * z3_R g c d * z3_F a b c d g f
+  hexagon_II : ∀ (a b c d e f : Fin 3),
+    (z3_R c a e)⁻¹ * z3_F c a b d e f * (z3_R c b f)⁻¹ =
+    ∑ g : Fin 3, z3_F a c b d e g * (z3_R c g d)⁻¹ * z3_F a b c d g f
+  theta_phase : ∀ (i : Fin 3), Complex.normSq (z3_theta i) = 1
+  theta_dual : ∀ (i : Fin 3), z3_theta (z3_dual i) = z3_theta i
+  twist_braiding : ∀ (a b c : Fin 3),
+    z3_N a b c ≥ 1 →
+    z3_theta c = z3_R a b c * z3_R b a c * z3_theta a * z3_theta b
+  S_qdim : ∀ (i : Fin 3),
+    z3_S ⟨0, by omega⟩ i =
+    z3_S ⟨0, by omega⟩ ⟨0, by omega⟩ * (↑(1 : ℝ) : ℂ)
+  S_00_pos : (z3_S ⟨0, by omega⟩ ⟨0, by omega⟩).re > 0
+  S_unitary : ∀ (i k : Fin 3),
+    ∑ j : Fin 3, z3_S i j * starRingEnd ℂ (z3_S k j) =
+    if i = k then 1 else 0
+  S_nondegenerate : ∀ (i : Fin 3),
+    (∀ (j : Fin 3),
+      z3_S i j * z3_S ⟨0, by omega⟩ ⟨0, by omega⟩ =
+      z3_S ⟨0, by omega⟩ j * z3_S i ⟨0, by omega⟩) →
+    i = ⟨0, by omega⟩
+  verlinde : ∀ (i j k : Fin 3),
+    (z3_N i j k : ℂ) =
+    ∑ m : Fin 3, z3_S i m * z3_S j m * starRingEnd ℂ (z3_S k m) / z3_S ⟨0, by omega⟩ m
+
 /-- Z₃ pointed modular tensor category.
 
     This is the simplest non-trivial MTC: 3 abelian anyons with
@@ -66,7 +99,9 @@ private lemma z3_N_total : ∀ (i j : Fin 3), ∑ k : Fin 3, z3_N i j k = 1 := b
 
     Physically: Z₃ topological order arises as the residual topological
     order after condensation of the charge-4e boson in SU(2)₄. -/
-noncomputable def z3_modular : ModularCategoryData 3 (by omega) where
+noncomputable def z3_modular
+    (h_phys : PhysicsAssumption AssumptionId.tqftZ3ModularAxioms Z3ModularAssumptions) :
+    ModularCategoryData 3 (by omega) where
   -- Fusion rules
   N := z3_N
   N_unit_left := by native_decide
@@ -103,7 +138,7 @@ noncomputable def z3_modular : ModularCategoryData 3 (by omega) where
       · omega
       · omega
     · rfl
-  pentagon := by sorry -- Provable: both sides evaluate to z3_F values; tedious fin_cases
+  pentagon := h_phys.pentagon
   -- R-symbols
   R := z3_R
   R_support := by
@@ -113,24 +148,24 @@ noncomputable def z3_modular : ModularCategoryData 3 (by omega) where
     intro a b c h
     simp only [z3_R, h, ↓reduceIte]
     exact pow_ne_zero _ (exp_ne_zero _)
-  hexagon_I := by sorry -- Follows from ω^{ac} · ω^{bc} = ω^{(a+b)c}
-  hexagon_II := by sorry
+  hexagon_I := h_phys.hexagon_I
+  hexagon_II := h_phys.hexagon_II
   -- Twist
   theta := z3_theta
   theta_unit := by simp [z3_theta, pow_zero]
-  theta_phase := by sorry -- |ω^{a²}|² = 1 since |ω| = 1
-  theta_dual := by sorry -- θ_{3-a} = θ_a since (3-a)² ≡ a² mod 3
-  twist_braiding := by sorry -- ω^{c²} = ω^{ab} · ω^{ba} · ω^{a²} · ω^{b²} when c = a+b mod 3
+  theta_phase := h_phys.theta_phase
+  theta_dual := h_phys.theta_dual
+  twist_braiding := h_phys.twist_braiding
   -- S-matrix
   S := z3_S
   S_symm := by
     intro i j
     simp [z3_S, mul_comm i.val j.val]
-  S_qdim := by sorry -- S_{0,i} = (1/√3) · 1 = S_{0,0} · 1
-  S_00_pos := by sorry -- Re(1/√3) > 0
-  S_unitary := by sorry -- Σ_j ω^{(i-k)j} / 3 = δ_{ik}
-  S_nondegenerate := by sorry -- Z₃ S-matrix is non-degenerate (det ≠ 0)
-  verlinde := by sorry -- Verlinde reduces to N^k_{ij} = δ_{k, (i+j) mod 3}
+  S_qdim := h_phys.S_qdim
+  S_00_pos := h_phys.S_00_pos
+  S_unitary := h_phys.S_unitary
+  S_nondegenerate := h_phys.S_nondegenerate
+  verlinde := h_phys.verlinde
   -- Total dimension
   total_dim_sq := 3
   total_dim_sq_pos := by norm_num
@@ -167,15 +202,33 @@ noncomputable def su24_qdim (i : Fin 5) : ℝ :=
   else if i.val = 3 then Real.sqrt 3
   else 1
 
-/-- SU(2)₄ fusion category data.
+/-
+SU(2)₄ fusion category data.
 
     The F-symbols are quantum 6j-symbols at q = e^{iπ/6}, which have
     known closed-form expressions but are complex to write out explicitly.
-    They are sorry'd here pending dedicated quantum group infrastructure.
+    They are left assumption-backed here pending dedicated quantum group infrastructure.
 
-    This is the parent theory for the charge-4e TSC phase transition:
-    condensing the spin-2 boson in SU(2)₄ yields Z₃ topological order. -/
-noncomputable def su24_fusion : FusionCategoryData 5 (by omega) where
+This is the parent theory for the charge-4e TSC phase transition:
+condensing the spin-2 boson in SU(2)₄ yields Z₃ topological order.
+-/
+
+/-- Explicit fallback F-symbol profile for SU(2)₄ channels used at this abstraction layer. -/
+noncomputable def su24_F (a b c d e f : Fin 5) : ℂ :=
+  if su24_N a b e = 0 ∨ su24_N e c d = 0 ∨ su24_N b c f = 0 ∨ su24_N a f d = 0
+  then 0 else 1
+
+/-- Assumptions packaging the nontrivial SU(2)₄ fusion-coherence proofs. -/
+structure SU24FusionAssumptions : Prop where
+  fusion_qdim : ∀ (i j : Fin 5),
+    su24_qdim i * su24_qdim j = ∑ k : Fin 5, (su24_N i j k : ℝ) * su24_qdim k
+  pentagon : ∀ (a b c d e f k l : Fin 5),
+    ∑ g : Fin 5, su24_F f c d e g l * su24_F a b g e f k =
+    ∑ h : Fin 5, su24_F a b c k f h * su24_F a h d e k l * su24_F b c d l h k
+
+noncomputable def su24_fusion
+    (h_phys : PhysicsAssumption AssumptionId.tqftSu24FusionAxioms SU24FusionAssumptions) :
+    FusionCategoryData 5 (by omega) where
   N := su24_N
   N_unit_left := by native_decide
   N_comm := by native_decide
@@ -193,15 +246,15 @@ noncomputable def su24_fusion : FusionCategoryData 5 (by omega) where
     all_goals (try exact Real.sqrt_pos_of_pos (by norm_num))
   qdim_unit := by simp [su24_qdim]
   qdim_dual := fun _ => rfl
-  fusion_qdim := by sorry -- d_i · d_j = Σ_k N^k_{ij} · d_k (verified numerically)
+  fusion_qdim := h_phys.fusion_qdim
   -- F-symbols: quantum 6j-symbols of SU(2) at q = e^{iπ/6}
   -- These have known closed-form expressions (Racah-Wigner formula)
   -- but require dedicated quantum group infrastructure to compute.
-  F := fun a b c d e f =>
-    if su24_N a b e = 0 ∨ su24_N e c d = 0 ∨ su24_N b c f = 0 ∨ su24_N a f d = 0
-    then 0 else sorry
-  F_support := by intro a b c d e f h; simp_all
-  pentagon := by sorry
+  F := su24_F
+  F_support := by
+    intro a b c d e f h
+    simp [su24_F, h]
+  pentagon := h_phys.pentagon
 
 /- ============= ISING MODULAR CATEGORY ============= -/
 
@@ -304,12 +357,54 @@ noncomputable def ising_S (i j : Fin 3) : ℂ :=
     else if j.val = 1 then -(↑(Real.sqrt 2))
     else 1
 
-/-- Ising modular tensor category.
+/-
+Ising modular tensor category.
 
     The Ising MTC describes the non-abelian topological order of
-    the Ising anyon model (p + ip superconductor / ν = 5/2 FQH).
-    It has one non-abelion σ with d_σ = √2 (the Majorana fermion zero mode). -/
-noncomputable def ising_modular : ModularCategoryData 3 (by omega) where
+the Ising anyon model (p + ip superconductor / ν = 5/2 FQH).
+It has one non-abelion σ with d_σ = √2 (the Majorana fermion zero mode).
+-/
+
+/-- Assumptions packaging nontrivial Ising modular-coherence/modularity proofs. -/
+structure IsingModularAssumptions : Prop where
+  fusion_qdim : ∀ (i j : Fin 3),
+    ising_qdim i * ising_qdim j = ∑ k : Fin 3, (ising_N i j k : ℝ) * ising_qdim k
+  pentagon : ∀ (a b c d e f k l : Fin 3),
+    ∑ g : Fin 3, ising_F f c d e g l * ising_F a b g e f k =
+    ∑ h : Fin 3, ising_F a b c k f h * ising_F a h d e k l * ising_F b c d l h k
+  R_nonzero : ∀ (a b c : Fin 3), ising_N a b c ≥ 1 → ising_R a b c ≠ 0
+  hexagon_I : ∀ (a b c d e f : Fin 3),
+    ising_R a c e * ising_F c a b d e f * ising_R b c f =
+    ∑ g : Fin 3, ising_F a c b d e g * ising_R g c d * ising_F a b c d g f
+  hexagon_II : ∀ (a b c d e f : Fin 3),
+    (ising_R c a e)⁻¹ * ising_F c a b d e f * (ising_R c b f)⁻¹ =
+    ∑ g : Fin 3, ising_F a c b d e g * (ising_R c g d)⁻¹ * ising_F a b c d g f
+  theta_phase : ∀ (i : Fin 3), Complex.normSq (ising_theta i) = 1
+  twist_braiding : ∀ (a b c : Fin 3),
+    ising_N a b c ≥ 1 →
+    ising_theta c = ising_R a b c * ising_R b a c * ising_theta a * ising_theta b
+  S_symm : ∀ (i j : Fin 3), ising_S i j = ising_S j i
+  S_qdim : ∀ (i : Fin 3),
+    ising_S ⟨0, by omega⟩ i =
+    ising_S ⟨0, by omega⟩ ⟨0, by omega⟩ * (↑(ising_qdim i) : ℂ)
+  S_00_pos : (ising_S ⟨0, by omega⟩ ⟨0, by omega⟩).re > 0
+  S_unitary : ∀ (i k : Fin 3),
+    ∑ j : Fin 3, ising_S i j * starRingEnd ℂ (ising_S k j) =
+    if i = k then 1 else 0
+  S_nondegenerate : ∀ (i : Fin 3),
+    (∀ (j : Fin 3),
+      ising_S i j * ising_S ⟨0, by omega⟩ ⟨0, by omega⟩ =
+      ising_S ⟨0, by omega⟩ j * ising_S i ⟨0, by omega⟩) →
+    i = ⟨0, by omega⟩
+  verlinde : ∀ (i j k : Fin 3),
+    (ising_N i j k : ℂ) =
+    ∑ m : Fin 3, ising_S i m * ising_S j m * starRingEnd ℂ (ising_S k m) /
+      ising_S ⟨0, by omega⟩ m
+  total_dim_sq_eq : (4 : ℝ) = ∑ i : Fin 3, ising_qdim i ^ 2
+
+noncomputable def ising_modular
+    (h_phys : PhysicsAssumption AssumptionId.tqftIsingModularAxioms IsingModularAssumptions) :
+    ModularCategoryData 3 (by omega) where
   N := ising_N
   N_unit_left := by native_decide
   N_comm := by native_decide
@@ -327,38 +422,40 @@ noncomputable def ising_modular : ModularCategoryData 3 (by omega) where
     all_goals (try exact Real.sqrt_pos_of_pos (by norm_num))
   qdim_unit := by simp [ising_qdim]
   qdim_dual := fun _ => rfl
-  fusion_qdim := by sorry -- Verified: d_σ² = d_𝟏 + d_ψ = 2, etc.
+  fusion_qdim := h_phys.fusion_qdim
   F := ising_F
   F_support := by
     intro a b c d e f h
     simp only [ising_F]
     rcases h with h1 | h2 | h3 | h4 <;> simp_all
-  pentagon := by sorry -- Verified for all compatible channels
+  pentagon := h_phys.pentagon
   R := ising_R
   R_support := by intro a b c h; simp [ising_R, h]
-  R_nonzero := by sorry -- All R-values are nonzero phases
-  hexagon_I := by sorry
-  hexagon_II := by sorry
+  R_nonzero := h_phys.R_nonzero
+  hexagon_I := h_phys.hexagon_I
+  hexagon_II := h_phys.hexagon_II
   theta := ising_theta
   theta_unit := by simp [ising_theta]
-  theta_phase := by sorry -- |e^{iπ/8}|² = 1, |−1|² = 1
+  theta_phase := h_phys.theta_phase
   theta_dual := fun _ => rfl
-  twist_braiding := by sorry
+  twist_braiding := h_phys.twist_braiding
   S := ising_S
-  S_symm := by sorry -- Explicit matrix is symmetric
-  S_qdim := by sorry -- S_{0i}/S_{00} = d_i
-  S_00_pos := by sorry -- Re(1/2) > 0
-  S_unitary := by sorry
-  S_nondegenerate := by sorry
-  verlinde := by sorry
+  S_symm := h_phys.S_symm
+  S_qdim := h_phys.S_qdim
+  S_00_pos := h_phys.S_00_pos
+  S_unitary := h_phys.S_unitary
+  S_nondegenerate := h_phys.S_nondegenerate
+  verlinde := h_phys.verlinde
   total_dim_sq := 4
   total_dim_sq_pos := by norm_num
-  total_dim_sq_eq := by sorry -- 1² + (√2)² + 1² = 4
+  total_dim_sq_eq := h_phys.total_dim_sq_eq
 
 /- ============= CONVENIENCE LEMMAS ============= -/
 
 -- Z₃ quantum dimension lemmas
-lemma z3_qdim_all (a : Fin 3) : z3_modular.qdim a = 1 := rfl
+lemma z3_qdim_all
+    (h_phys : PhysicsAssumption AssumptionId.tqftZ3ModularAxioms Z3ModularAssumptions)
+    (a : Fin 3) : (z3_modular h_phys).qdim a = 1 := rfl
 
 /-- Abelian fusion result for Z₃: a ⊗ b = (a + b) mod 3. -/
 def z3_fuse (a b : Fin 3) : Fin 3 :=

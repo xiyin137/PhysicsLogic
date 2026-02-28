@@ -26,7 +26,9 @@ structure HamiltonJacobiTheory (n : ℕ) where
   hj_generates_canonical_transform :
     ∀ (S : HamiltonPrincipalFunction n)
       (h : ∀ q t, deriv (S q) t + lhSystem.H q (fun i => partialS_q S q t i) t = 0),
-    ∃ (_ : CanonicalTransformation n lhSystem.toHamiltonianSystem), True
+    ∃ (T : CanonicalTransformation n lhSystem.toHamiltonianSystem),
+      ∀ x, lhSystem.toHamiltonianSystem.H (T.Q x) (T.P x) 0 =
+        lhSystem.toHamiltonianSystem.H x.1 x.2 0
   /-- Hamilton-Jacobi method solves for trajectories -/
   hj_gives_trajectories :
     ∀ (S : HamiltonPrincipalFunction n)

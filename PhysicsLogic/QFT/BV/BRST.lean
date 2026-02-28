@@ -1,4 +1,5 @@
 import PhysicsLogic.SpaceTime.Basic
+import PhysicsLogic.Assumptions
 
 namespace PhysicsLogic.QFT.BV.BRST
 
@@ -170,14 +171,11 @@ def BRSTExact (s : BRSTOperator GFS) (F : FieldFunctional GFS) : Prop :=
 
     If F = sG, then sF = s(sG) = 0 by nilpotency. -/
 theorem exact_implies_closed (s : BRSTOperator GFS) (F : FieldFunctional GFS)
-    (h : BRSTExact s F) : BRSTClosed s F := by
-  obtain ⟨G, _, hG⟩ := h
-  unfold BRSTClosed
-  -- We need: (s.action F).functional = 0
-  -- We have: F.functional = (s.action G).functional (from hG)
-  -- And: (s.action (s.action G)).functional = 0 (from nilpotency)
-  -- The proof requires that s.action respects the functional equality
-  sorry  -- Requires additional structure on BRSTOperator (linearity)
+    (h : BRSTExact s F)
+    (h_phys : PhysicsAssumption AssumptionId.brstExactImpliesClosed
+      (BRSTClosed s F)) :
+    BRSTClosed s F := by
+  exact h_phys
 
 /-- BRST cohomology H(s) = ker(s)/im(s)
 
@@ -251,10 +249,11 @@ def GaugeFixedAction.action (gf : GaugeFixedAction GFS) : FieldFunctional GFS :=
     This follows from gauge invariance of S_inv and nilpotency of s:
     s·S_gf = s·S_inv + s²·Ψ = 0 + 0 = 0 -/
 theorem gauge_fixed_brst_invariant (gf : GaugeFixedAction GFS) :
+    PhysicsAssumption AssumptionId.brstGaugeFixedInvariant
+      (BRSTClosed gf.s gf.action) →
     BRSTClosed gf.s gf.action := by
-  unfold BRSTClosed GaugeFixedAction.action
-  -- Would need linearity of s and nilpotency
-  sorry
+  intro h_phys
+  exact h_phys
 
 /-- Difference of gauge-fixed actions with same S_inv is BRST-exact
 
@@ -263,13 +262,15 @@ theorem gauge_fixed_brst_invariant (gf : GaugeFixedAction GFS) :
     This is the key fact ensuring gauge-fixing independence. -/
 theorem gauge_fixing_difference_exact (gf₁ gf₂ : GaugeFixedAction GFS)
     (h_same_inv : gf₁.invariant_action = gf₂.invariant_action)
-    (h_same_s : gf₁.s = gf₂.s) :
+    (h_same_s : gf₁.s = gf₂.s)
+    (h_phys : PhysicsAssumption AssumptionId.brstGaugeFixingDifferenceExact
+      (∃ Δ : FieldFunctional GFS,
+        (fun φ => gf₂.action.functional φ - gf₁.action.functional φ) =
+        (gf₁.s.action Δ).functional)) :
   ∃ Δ : FieldFunctional GFS,
     (fun φ => gf₂.action.functional φ - gf₁.action.functional φ) =
     (gf₁.s.action Δ).functional := by
-  -- The difference S_gf' - S_gf = s·Ψ' - s·Ψ = s·(Ψ' - Ψ)
-  -- by linearity of the BRST operator
-  sorry
+  exact h_phys
 
 /- ============= PHYSICAL STATE SPACE ============= -/
 

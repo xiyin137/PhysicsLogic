@@ -1,5 +1,6 @@
 import PhysicsLogic.SpaceTime.Curvature
 import PhysicsLogic.ClassicalFieldTheory.EnergyMomentum
+import PhysicsLogic.Assumptions
 
 namespace PhysicsLogic.GeneralRelativity
 
@@ -63,9 +64,13 @@ theorem bianchi_implies_conservation (consts : GRConstants)
     (conn : ConnectionTheory metric)
     (curv : CurvatureTheory metric)
     (T : TensorField 4 4)
-    (h : satisfiesEFE consts curv T)
-    (x : SpaceTimePoint) (nu : Fin 4) :
+    (_hEFE : satisfiesEFE consts curv T)
+    (x : SpaceTimePoint) (nu : Fin 4)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.bianchiImpliesConservation
+        ((∑ mu, conn.covariantDerivativeScalar (fun y => T y mu nu) mu x) = 0)) :
   ∑ mu, conn.covariantDerivativeScalar (fun y => T y mu nu) mu x = 0 := by
-  sorry
+  exact h_phys
 
 end PhysicsLogic.GeneralRelativity

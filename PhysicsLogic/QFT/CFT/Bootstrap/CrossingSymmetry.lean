@@ -1,5 +1,6 @@
 -- ModularPhysics/Core/QFT/CFT/Bootstrap/CrossingSymmetry.lean
 import PhysicsLogic.QFT.CFT.Basic
+import PhysicsLogic.Assumptions
 import Mathlib.Data.Complex.Basic
 
 namespace PhysicsLogic.QFT.CFT.Bootstrap
@@ -22,8 +23,23 @@ structure CrossRatios where
   positive : u > 0 ∧ v > 0
 
 /-- Compute cross-ratios from four points (in Euclidean signature) -/
+def CrossRatiosPositiveFrom4Points {d : ℕ}
+    (x₁ x₂ x₃ x₄ : Fin d → ℝ) : Prop :=
+  let x₁₂ := euclideanDistance x₁ x₂
+  let x₁₃ := euclideanDistance x₁ x₃
+  let x₁₄ := euclideanDistance x₁ x₄
+  let x₂₃ := euclideanDistance x₂ x₃
+  let x₂₄ := euclideanDistance x₂ x₄
+  let x₃₄ := euclideanDistance x₃ x₄
+  ((x₁₂ * x₃₄) / (x₁₃ * x₂₄) > 0) ∧ ((x₁₄ * x₂₃) / (x₁₃ * x₂₄) > 0)
+
 noncomputable def crossRatiosFrom4Points {d : ℕ}
-  (x₁ x₂ x₃ x₄ : Fin d → ℝ) : CrossRatios :=
+  (x₁ x₂ x₃ x₄ : Fin d → ℝ)
+  (h_phys :
+    PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.cftCrossRatiosPositiveFromPoints
+      (CrossRatiosPositiveFrom4Points x₁ x₂ x₃ x₄)) :
+  CrossRatios :=
   let x₁₂ := euclideanDistance x₁ x₂
   let x₁₃ := euclideanDistance x₁ x₃
   let x₁₄ := euclideanDistance x₁ x₄
@@ -32,7 +48,7 @@ noncomputable def crossRatiosFrom4Points {d : ℕ}
   let x₃₄ := euclideanDistance x₃ x₄
   { u := (x₁₂ * x₃₄) / (x₁₃ * x₂₄)
     v := (x₁₄ * x₂₃) / (x₁₃ * x₂₄)
-    positive := sorry }
+    positive := h_phys }
 
 /- ============= THREE OPE CHANNELS ============= -/
 

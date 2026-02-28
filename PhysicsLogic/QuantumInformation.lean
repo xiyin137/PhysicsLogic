@@ -3,7 +3,7 @@
 
 import PhysicsLogic.QuantumInformation.PartialTrace
 import PhysicsLogic.QuantumInformation.Entropy
--- import PhysicsLogic.QuantumInformation.Channels  -- ← DON'T IMPORT (causes conflicts)
+import PhysicsLogic.QuantumInformation.Channels
 import PhysicsLogic.QuantumInformation.Correlations
 import PhysicsLogic.QuantumInformation.Entanglement
 import PhysicsLogic.QuantumInformation.InformationTheorems

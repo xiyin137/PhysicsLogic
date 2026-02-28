@@ -1,5 +1,6 @@
 import PhysicsLogic.GeneralRelativity.EinsteinEquations
 import PhysicsLogic.SpaceTime.Minkowski
+import PhysicsLogic.Assumptions
 import Mathlib.Analysis.Complex.Basic
 
 namespace PhysicsLogic.GeneralRelativity
@@ -13,14 +14,29 @@ structure PerturbedMetric where
   small : ∀ x μ ν, |perturbation x μ ν| < 1
 
 /-- Metric perturbation h_μν around flat background -/
-noncomputable def metricPerturbation (h : TensorField 4 4) : SpacetimeMetric :=
-  { g := fun x μ ν => minkowskiMetric.g x μ ν + h x μ ν
-    symmetric := by sorry
-    inverseMetric := fun x μ ν => minkowskiMetric.inverseMetric x μ ν - h x μ ν
-    metricDeterminant := fun x => minkowskiMetric.metricDeterminant x  -- To first order in h
-    metric_nondegenerate := by sorry
-    inverse_metric_identity := by sorry
-    signature := fun x μ => minkowskiMetric.signature x μ }
+noncomputable def metricPerturbation (h : TensorField 4 4)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.metricPerturbationWellFormed
+        ((∀ x μ ν,
+            minkowskiMetric.g x μ ν + h x μ ν = minkowskiMetric.g x ν μ + h x ν μ) ∧
+         (∀ x, minkowskiMetric.metricDeterminant x ≠ 0) ∧
+         (∀ x μ ν,
+            ∑ ρ, (minkowskiMetric.inverseMetric x μ ρ - h x μ ρ) *
+              (minkowskiMetric.g x ρ ν + h x ρ ν) = if μ = ν then 1 else 0))) :
+    SpacetimeMetric := by
+  rcases h_phys with ⟨h_symm, h_nondeg, h_inv⟩
+  refine
+    { g := fun x μ ν => minkowskiMetric.g x μ ν + h x μ ν
+      symmetric := ?_
+      inverseMetric := fun x μ ν => minkowskiMetric.inverseMetric x μ ν - h x μ ν
+      metricDeterminant := fun x => minkowskiMetric.metricDeterminant x
+      metric_nondegenerate := ?_
+      inverse_metric_identity := ?_
+      signature := fun x μ => minkowskiMetric.signature x μ }
+  · exact h_symm
+  · exact h_nondeg
+  · exact h_inv
 
 /-- Linearized Einstein equations: □h̄_μν = -(16πG/c⁴)T_μν
 

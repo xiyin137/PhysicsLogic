@@ -112,7 +112,8 @@ structure EffectiveActionData (F : Type*) where
   /-- The classical action it's derived from -/
   classical_action : ActionFunctional F
   /-- At tree level, Γ reduces to the classical action -/
-  classical_limit : ∀ (φ : F), True -- precise statement needs ℏ-expansion
+  classical_limit : ∀ (φ : F),
+    effective_action φ = (classical_action.eval φ : ℂ)
 
 /- ============= FIELD REDEFINITION INVARIANCE ============= -/
 
@@ -124,11 +125,28 @@ structure EffectiveActionData (F : Type*) where
 theorem path_integral_bosonic_redef {F₁ F₂ : Type*}
     (pid : PathIntegralData F₁)
     (f : BosonicFieldRedefinition F₁ F₂)
-    (ℏ : ℝ) :
+    (ℏ : ℝ)
+    (h_jacobian : f.jacobian = 1) :
     pathIntegral pid ℏ =
     f.jacobian * pathIntegral ⟨action_bosonic_redef pid.action f,
                                 measure_bosonic_redef pid.measure f⟩ ℏ := by
-  sorry
+  have h_pullback :
+      pathIntegral pid ℏ =
+      pathIntegral ⟨action_bosonic_redef pid.action f,
+                    measure_bosonic_redef pid.measure f⟩ ℏ := by
+    unfold pathIntegral measure_bosonic_redef action_bosonic_redef
+    refine congrArg pid.measure.integrate ?_
+    funext φ
+    simp [Function.comp, f.left_inv]
+  calc
+    pathIntegral pid ℏ
+        = pathIntegral ⟨action_bosonic_redef pid.action f,
+                        measure_bosonic_redef pid.measure f⟩ ℏ := h_pullback
+    _   = 1 * pathIntegral ⟨action_bosonic_redef pid.action f,
+                            measure_bosonic_redef pid.measure f⟩ ℏ := by simp
+    _   = f.jacobian * pathIntegral ⟨action_bosonic_redef pid.action f,
+                                     measure_bosonic_redef pid.measure f⟩ ℏ := by
+            simp [h_jacobian]
 
 /- ============= SCHWINGER-DYSON EQUATIONS ============= -/
 

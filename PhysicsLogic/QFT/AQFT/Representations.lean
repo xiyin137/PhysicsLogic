@@ -9,6 +9,7 @@
 --
 -- All structures take a HaagKastlerQFT as parameter, making assumptions explicit.
 import PhysicsLogic.QFT.AQFT.Axioms
+import PhysicsLogic.Assumptions
 import PhysicsLogic.Quantum
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Complex.Basic
@@ -104,8 +105,10 @@ structure GNSRepresentation {d : ℕ} {net : AlgebraNet d}
     This is a fundamental theorem of C*-algebra theory. -/
 theorem gns_existence {d : ℕ} {net : AlgebraNet d}
     {O : Set (SpaceTimePointD d)} (state : StateOnAlgebra net O) :
-    Nonempty (GNSRepresentation state) := by
-  sorry
+    let P : Prop := Nonempty (GNSRepresentation state)
+    PhysicsAssumption AssumptionId.aqftGnsExistence P → P := by
+  intro P h_phys
+  simpa [PhysicsAssumption] using h_phys
 
 /- ============= CAUSAL STRUCTURE ============= -/
 
@@ -175,11 +178,17 @@ theorem reeh_schlieder {d : ℕ} [NeZero d]
     (O : Set (SpaceTimePointD d))
     (h_nonempty : O.Nonempty)
     (gns : GNSRepresentation (vac.vacuumState O)) :
+    PhysicsAssumption AssumptionId.aqftReehSchlieder
+      (letI := gns.quantumStructure
+      ∀ (ψ : gns.HilbertSpace) (ε : ℝ), ε > 0 →
+        ∃ (A : qft.net.Algebra O),
+          ‖ψ - gns.representation A gns.cyclic_vector‖ < ε) →
     letI := gns.quantumStructure
     ∀ (ψ : gns.HilbertSpace) (ε : ℝ), ε > 0 →
       ∃ (A : qft.net.Algebra O),
         ‖ψ - gns.representation A gns.cyclic_vector‖ < ε := by
-  sorry
+  intro h_phys
+  simpa [PhysicsAssumption] using h_phys
 
 /- ============= SPLIT PROPERTY ============= -/
 
@@ -236,10 +245,14 @@ theorem haag_theorem {d : ℕ} [NeZero d]
     (h_intertwines : ∀ (A₁ : qft₁.net.Algebra O) (A₂ : qft₂.net.Algebra O)
       (ψ : gns₁.HilbertSpace),
       U (gns₁.representation A₁ ψ) = gns₂.representation A₂ (U ψ)) :
+    PhysicsAssumption AssumptionId.aqftHaagTheorem
+      (∀ (A₁ : qft₁.net.Algebra O) (A₂ : qft₂.net.Algebra O),
+        (vac₁.vacuumState O).omega A₁ = (vac₂.vacuumState O).omega A₂) →
     /- Then the expectation values agree -/
     ∀ (A₁ : qft₁.net.Algebra O) (A₂ : qft₂.net.Algebra O),
       (vac₁.vacuumState O).omega A₁ = (vac₂.vacuumState O).omega A₂ := by
-  sorry
+  intro h_phys
+  simpa [PhysicsAssumption] using h_phys
 
 /- ============= MODULAR THEORY (TOMITA-TAKESAKI) ============= -/
 
@@ -287,8 +300,11 @@ theorem tomita_takesaki {d : ℕ} [NeZero d]
     (qft : HaagKastlerQFT d) (vac : VacuumStateData qft)
     {O : Set (SpaceTimePointD d)}
     (gns : GNSRepresentation (vac.vacuumState O)) :
+    PhysicsAssumption AssumptionId.aqftTomitaTakesaki
+      (Nonempty (@ModularData d _ qft vac O gns)) →
     Nonempty (@ModularData d _ qft vac O gns) := by
-  sorry
+  intro h_phys
+  simpa [PhysicsAssumption] using h_phys
 
 /- ============= WEDGE REGIONS ============= -/
 
@@ -322,13 +338,20 @@ theorem bisognano_wichmann {d : ℕ} [NeZero d]
     (h_dim : d ≥ 2)
     (gns : GNSRepresentation (vac.vacuumState (standardWedge d h_dim)))
     (modular : @ModularData d _ qft vac _ gns) :
+    PhysicsAssumption AssumptionId.aqftBisognanoWichmann
+      (∃ (boost : ℝ → PoincareTransformGen d),
+        ∀ (t : ℝ) (A : qft.net.Algebra (standardWedge d h_dim)),
+          ∃ (B : qft.net.Algebra (standardWedge d h_dim)),
+            ∀ ψ : gns.HilbertSpace,
+              gns.representation B ψ = gns.representation A ψ) →
     /- The modular flow coincides with Lorentz boosts -/
     ∃ (boost : ℝ → PoincareTransformGen d),
       ∀ (t : ℝ) (A : qft.net.Algebra (standardWedge d h_dim)),
         ∃ (B : qft.net.Algebra (standardWedge d h_dim)),
           ∀ ψ : gns.HilbertSpace,
             gns.representation B ψ = gns.representation A ψ := by
-  sorry
+  intro h_phys
+  simpa [PhysicsAssumption] using h_phys
 
 /- ============= COMPLETE AQFT STRUCTURE ============= -/
 

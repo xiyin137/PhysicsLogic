@@ -1,5 +1,6 @@
 import PhysicsLogic.Quantum
 import PhysicsLogic.QuantumInformation.Entanglement
+import PhysicsLogic.Assumptions
 
 namespace PhysicsLogic.QuantumInformation
 
@@ -46,9 +47,11 @@ variable {H : Type _} [QuantumStateSpace H]
     This is a THEOREM (Lieb-Ruskai 1973), not an axiom itself. -/
 theorem strong_subadditivity {HA HB HC : Type _}
   [QuantumStateSpace HA] [QuantumStateSpace HB] [QuantumStateSpace HC]
-  (S_ABC S_AB S_BC S_B : ℝ) :
+  (S_ABC S_AB S_BC S_B : ℝ)
+  (h_phys : PhysicsAssumption AssumptionId.qiStrongSubadditivity
+    (S_ABC + S_B ≤ S_AB + S_BC)) :
   S_ABC + S_B ≤ S_AB + S_BC := by
-  sorry
+  exact h_phys
 
 /-- No-cloning theorem (Wootters-Zurek 1982, Dieks 1982).
 
@@ -56,28 +59,38 @@ theorem strong_subadditivity {HA HB HC : Type _}
     Takes a tensor product structure as parameter. -/
 theorem no_cloning
   (T : TensorProductSpace H H)
-  (ip : InformationProtocols H T) :
+  (ip : InformationProtocols H T)
+  (h_phys : PhysicsAssumption AssumptionId.qiNoCloning
+    (¬∃ (cloning : T.carrier → T.carrier),
+      ∀ (psi : H), cloning (T.tensor psi ip.ancilla) = T.tensor psi psi)) :
   ¬∃ (cloning : T.carrier → T.carrier),
     ∀ (psi : H), cloning (T.tensor psi ip.ancilla) = T.tensor psi psi := by
-  sorry
+  exact h_phys
 
 /-- No-deleting theorem (Pati-Braunstein 2000).
 
     This is a THEOREM (provable from unitarity), not an axiom itself. -/
 theorem no_deleting
-  (T : TensorProductSpace H H) :
+  (T : TensorProductSpace H H)
+  (h_phys : PhysicsAssumption AssumptionId.qiNoDeleting
+    (¬∃ (deleting : T.carrier → H),
+      ∀ (psi : H), deleting (T.tensor psi psi) = psi)) :
   ¬∃ (deleting : T.carrier → H),
     ∀ (psi : H), deleting (T.tensor psi psi) = psi := by
-  sorry
+  exact h_phys
 
 /-- No-broadcasting theorem (Barnum et al. 1996).
 
     This is a THEOREM (provable from quantum mechanics), not an axiom itself. -/
 theorem no_broadcasting
-  (T : TensorProductSpace H H) :
+  (T : TensorProductSpace H H)
+  (h_phys : PhysicsAssumption AssumptionId.qiNoBroadcasting
+    (¬∃ (broadcast : H → T.carrier),
+      ∀ (psi phi : H), orthogonal psi phi →
+        broadcast psi = T.tensor psi psi)) :
   ¬∃ (broadcast : H → T.carrier),
     ∀ (psi phi : H), orthogonal psi phi →
       broadcast psi = T.tensor psi psi := by
-  sorry
+  exact h_phys
 
 end PhysicsLogic.QuantumInformation

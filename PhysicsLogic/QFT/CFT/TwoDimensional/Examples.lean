@@ -1,5 +1,6 @@
 -- ModularPhysics/Core/QFT/CFT/TwoDimensional/Examples.lean
 import PhysicsLogic.QFT.CFT.TwoDimensional.ModularInvariance
+import PhysicsLogic.Assumptions
 import Mathlib.Data.Complex.Basic
 
 namespace PhysicsLogic.QFT.CFT.TwoDimensional
@@ -37,14 +38,23 @@ structure FreeBosonCFT (H : Type _) where
     (primary n m).h = h_val ∧ (primary n m).h_bar = h_bar_val
 
 /-- T-duality map: exchange R ↔ 1/R -/
-noncomputable def t_dual {H : Type _} (fb : FreeBosonCFT H) : FreeBosonCFT H where
+noncomputable def t_dual {H : Type _} (fb : FreeBosonCFT H)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.cftTDualWeightSymmetry
+        (∀ (n m : ℤ),
+          let (h_val, h_bar_val) := momentum_winding_weight (1 / fb.compactification_radius) n m
+          (fb.primary m n).h = h_val ∧ (fb.primary m n).h_bar = h_bar_val)) :
+    FreeBosonCFT H where
   compactification_radius := 1 / fb.compactification_radius
   radius_positive := by
     apply div_pos
     · norm_num
     · exact fb.radius_positive
   primary := fun n m => fb.primary m n  -- T-duality swaps momentum and winding
-  primary_weights := sorry  -- follows from momentum_winding_weight symmetry under R ↔ 1/R, n ↔ m
+  primary_weights := by
+    intro n m
+    simpa using h_phys n m
 
 /-- Self-dual radius where R = 1/R -/
 def self_dual_radius : ℝ := 1

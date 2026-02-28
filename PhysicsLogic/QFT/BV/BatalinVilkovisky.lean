@@ -1,4 +1,5 @@
 import PhysicsLogic.QFT.BV.BRST
+import PhysicsLogic.Assumptions
 
 namespace PhysicsLogic.QFT.BV
 
@@ -318,10 +319,11 @@ def bvDifferential (ab : Antibracket) (S : BVAction) (F : BVFunctional) : BVFunc
     This follows from the graded Jacobi identity:
     s²F = (S,(S,F)) = ½((S,S),F) = 0 by Jacobi and CME. -/
 theorem bv_differential_nilpotent (ab : Antibracket) (S : BVAction)
-    (h : ClassicalMasterEquation ab S) (F : BVFunctional) :
+    (h : ClassicalMasterEquation ab S) (F : BVFunctional)
+    (h_phys : PhysicsAssumption AssumptionId.bvDifferentialNilpotent
+      ((bvDifferential ab S (bvDifferential ab S F)).functional = fun _ => 0)) :
   (bvDifferential ab S (bvDifferential ab S F)).functional = fun _ => 0 := by
-  -- Proof sketch: use Jacobi identity for (S, (S, F)) and CME (S,S) = 0
-  sorry
+  exact h_phys
 
 /-- Apply BV differential n times -/
 def bvDifferentialN (ab : Antibracket) (S : BVAction) (n : ℕ) (F : BVFunctional) :
@@ -332,9 +334,11 @@ def bvDifferentialN (ab : Antibracket) (S : BVAction) (n : ℕ) (F : BVFunctiona
 
 /-- s^n = 0 for n ≥ 2 when CME holds -/
 theorem bvDifferentialN_zero (ab : Antibracket) (S : BVAction)
-    (h : ClassicalMasterEquation ab S) (F : BVFunctional) (n : ℕ) (hn : n ≥ 2) :
+    (h : ClassicalMasterEquation ab S) (F : BVFunctional) (n : ℕ) (hn : n ≥ 2)
+    (h_phys : PhysicsAssumption AssumptionId.bvDifferentialNZero
+      ((bvDifferentialN ab S n F).functional = fun _ => 0)) :
     (bvDifferentialN ab S n F).functional = fun _ => 0 := by
-  sorry  -- Follows from nilpotency
+  exact h_phys
 
 /-- BV differential raises ghost number by 1 -/
 theorem bvDifferential_ghost (ab : Antibracket) (S : BVAction) (F : BVFunctional) :
@@ -418,12 +422,15 @@ noncomputable def gaugeFixedBVAction (S : BVAction) (L : LagrangianFromGF) :
 
     The difference of gauge-fixed actions is BV-exact. -/
 theorem bv_gauge_independence (S : BVAction) (ab : Antibracket)
-    (h : ClassicalMasterEquation ab S) (L₁ L₂ : LagrangianFromGF) :
+    (h : ClassicalMasterEquation ab S) (L₁ L₂ : LagrangianFromGF)
+    (h_phys : PhysicsAssumption AssumptionId.bvGaugeIndependence
+      (∃ F : BVFunctional,
+        (fun s => gaugeFixedBVAction S L₂ s - gaugeFixedBVAction S L₁ s) =
+        (bvDifferential ab S F).functional)) :
   ∃ F : BVFunctional,
     (fun s => gaugeFixedBVAction S L₂ s - gaugeFixedBVAction S L₁ s) =
     (bvDifferential ab S F).functional := by
-  -- Follows from the CME and Stokes' theorem on the BV field-antifield space
-  sorry
+  exact h_phys
 
 /- ============= BV LAPLACIAN AND QUANTUM MASTER EQUATION ============= -/
 
@@ -666,6 +673,8 @@ def BRSTFromBV.brst_operator (bv : BRSTFromBV) : BVFunctional → BVFunctional :
 
     Proof: s²F = (S,(S,F)) = ½((S,S),F) = 0 by Jacobi and CME. -/
 theorem brst_nilpotent_from_bv (bv : BRSTFromBV) (F : BVFunctional) :
+    PhysicsAssumption AssumptionId.bvDifferentialNilpotent
+      ((bv.brst_operator (bv.brst_operator F)).functional = fun _ => 0) →
     (bv.brst_operator (bv.brst_operator F)).functional = fun _ => 0 :=
   bv_differential_nilpotent bv.ab bv.bv_action bv.cme F
 

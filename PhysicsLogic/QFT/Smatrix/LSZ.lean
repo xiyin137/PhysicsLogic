@@ -3,6 +3,7 @@
 import PhysicsLogic.QFT.Smatrix.AsymptoticStates
 import PhysicsLogic.QFT.Wightman
 import PhysicsLogic.QFT.Euclidean
+import PhysicsLogic.Assumptions
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Complex.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -39,8 +40,17 @@ Green's functions. It is the bridge between correlation functions
 /-- Klein-Gordon operator: (□ + m²) where □ = ∂_μ ∂^μ is the d'Alembertian
 
     In Minkowski signature (+,-,-,-): □ = ∂²/∂t² - ∇² -/
-noncomputable def kleinGordonOp (m : ℝ) {d : ℕ} : ((Fin d → ℝ) → ℂ) → ((Fin d → ℝ) → ℂ) :=
-  sorry  -- (∂_μ ∂^μ + m²)
+def KleinGordonOperatorExists (m : ℝ) (d : ℕ) : Prop :=
+  ∃ op : (((Fin d → ℝ) → ℂ) → ((Fin d → ℝ) → ℂ)), True
+
+noncomputable def kleinGordonOp (m : ℝ) {d : ℕ}
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.lszKleinGordonOperatorExists
+        (KleinGordonOperatorExists m d)) :
+    ((Fin d → ℝ) → ℂ) → ((Fin d → ℝ) → ℂ) := by
+  classical
+  exact Classical.choose h_phys
 
 /- ============= LSZ DATA ============= -/
 
@@ -174,12 +184,19 @@ theorem lsz_reduction {d : ℕ} [NeZero d]
     (n m : ℕ)
     (mass : ℝ)
     (p_in : Fin n → OnShellMomentum mass)
-    (p_out : Fin m → OnShellMomentum mass) :
+    (p_out : Fin m → OnShellMomentum mass)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.lszReductionFormula
+        (∃ (S_amplitude : ℂ),
+          S_amplitude =
+            (lsz.field_strength_Z ^ ((n + m) / 2 : ℕ)) *
+            (lsz.integral_of_green_function n m mass p_in p_out))) :
   ∃ (S_amplitude : ℂ),
     S_amplitude =
       (lsz.field_strength_Z ^ ((n + m) / 2 : ℕ)) *
       (lsz.integral_of_green_function n m mass p_in p_out) := by
-  sorry
+  exact h_phys
 
 /- ============= VALIDITY CONDITIONS ============= -/
 

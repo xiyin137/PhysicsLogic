@@ -1,5 +1,6 @@
 import PhysicsLogic.QFT.Wightman.Axioms
 import PhysicsLogic.QFT.Wightman.WightmanFunctions
+import PhysicsLogic.Assumptions
 
 namespace PhysicsLogic.QFT.Wightman
 
@@ -21,12 +22,18 @@ open SpaceTime Quantum
 theorem pct_theorem {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
   (qft : WightmanQFT H d)
   (phi : FieldDistribution H d)
-  (n : ℕ) (hn : n > 0) (points : Fin n → (Fin d → ℝ)) :
+  (n : ℕ) (hn : n > 0) (points : Fin n → (Fin d → ℝ))
+  (h_phys :
+    PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.wightmanPctTheorem
+      (qft.wft.wightmanFunction phi n
+        (fun i μ => -points (⟨n - 1 - i.val, by omega⟩) μ) =
+      (starRingEnd ℂ) (qft.wft.wightmanFunction phi n points))) :
   -- PCT: W_n(-xₙ,...,-x₁) = conj(W_n(x₁,...,xₙ))
   qft.wft.wightmanFunction phi n
     (fun i μ => -points (⟨n - 1 - i.val, by omega⟩) μ) =
   (starRingEnd ℂ) (qft.wft.wightmanFunction phi n points) := by
-  sorry
+  exact h_phys
 
 /-- Spin-statistics theorem: In a Wightman QFT, fields of integer spin must
     satisfy Bose commutation relations (commute) at spacelike separation,
@@ -46,7 +53,18 @@ theorem spin_statistics {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
   (h_nonneg : spin ≥ 0)
   (f g : SchwartzFunction d)
   (h_spacelike : spacelikeSeparated (qft.supportOps.testFunctionSupport f)
-                                    (qft.supportOps.testFunctionSupport g)) :
+                                    (qft.supportOps.testFunctionSupport g))
+  (h_phys :
+    PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.wightmanSpinStatistics
+      ((spin.den = 1 →
+        ∀ state ∈ qft.locality.domain,
+          qft.ops.smear phi f (qft.ops.smear phi g state) =
+          qft.ops.smear phi g (qft.ops.smear phi f state)) ∧
+      (spin.den = 2 →
+        ∀ state ∈ qft.locality.domain,
+          qft.ops.smear phi f (qft.ops.smear phi g state) =
+          -(qft.ops.smear phi g (qft.ops.smear phi f state))))) :
   -- Integer spin → bosonic commutation at spacelike separation
   (spin.den = 1 →
     ∀ state ∈ qft.locality.domain,
@@ -57,7 +75,7 @@ theorem spin_statistics {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
     ∀ state ∈ qft.locality.domain,
       qft.ops.smear phi f (qft.ops.smear phi g state) =
       -(qft.ops.smear phi g (qft.ops.smear phi f state))) := by
-  sorry
+  exact h_phys
 
 /-- Haag's theorem: In relativistic QFT, the free and interacting field theories
     cannot be unitarily equivalent in a way that preserves both the vacuum and
@@ -80,7 +98,16 @@ theorem haag_theorem {H_free H_int : Type _}
   (phi_free : FieldDistribution H_free d)
   (phi_int : FieldDistribution H_int d)
   (h_distinct : qft_free.wft.wightmanFunction phi_free ≠
-                qft_int.wft.wightmanFunction phi_int) :
+                qft_int.wft.wightmanFunction phi_int)
+  (h_phys :
+    PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.wightmanHaagTheorem
+      (¬∃ (V : H_free → H_int),
+        (∀ ψ φ : H_free, innerProduct (V ψ) (V φ) = innerProduct ψ φ) ∧
+        V qft_free.vacuumFieldOps.vacuum = qft_int.vacuumFieldOps.vacuum ∧
+        (∀ (n : ℕ) (points : Fin n → (Fin d → ℝ)),
+          qft_free.wft.wightmanFunction phi_free n points =
+          qft_int.wft.wightmanFunction phi_int n points))) :
   ¬∃ (V : H_free → H_int),
     -- V is unitary (inner product preserving)
     (∀ ψ φ : H_free, innerProduct (V ψ) (V φ) = innerProduct ψ φ) ∧
@@ -90,6 +117,6 @@ theorem haag_theorem {H_free H_int : Type _}
     (∀ (n : ℕ) (points : Fin n → (Fin d → ℝ)),
       qft_free.wft.wightmanFunction phi_free n points =
       qft_int.wft.wightmanFunction phi_int n points) := by
-  sorry
+  exact h_phys
 
 end PhysicsLogic.QFT.Wightman

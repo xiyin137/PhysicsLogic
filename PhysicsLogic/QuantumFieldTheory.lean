@@ -8,6 +8,7 @@ import PhysicsLogic.QFT.BV
 import PhysicsLogic.QFT.TQFT
 import PhysicsLogic.QFT.KontsevichSegal
 import PhysicsLogic.QFT.CFT
+import PhysicsLogic.QFT.Smatrix
 
 namespace PhysicsLogic.QuantumFieldTheory
 
@@ -24,6 +25,7 @@ Re-exports all QFT frameworks:
 - Topological QFT (TQFT)
 - Kontsevich-Segal axioms
 - Conformal field theory (CFT)
+- S-matrix theory
 -/
 
 end PhysicsLogic.QuantumFieldTheory

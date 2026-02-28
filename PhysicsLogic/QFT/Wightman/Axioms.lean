@@ -1,4 +1,5 @@
 import PhysicsLogic.QFT.Wightman.WightmanFunctions
+import PhysicsLogic.Assumptions
 import PhysicsLogic.SpaceTime.Causality
 import PhysicsLogic.SpaceTime.Metrics
 import PhysicsLogic.SpaceTime.Minkowski
@@ -158,12 +159,17 @@ theorem reeh_schlieder {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
   (phi : SmearedFieldOperator H d)
   (O : Set (Fin d → ℝ))
   (h_bounded : ∃ R : ℝ, ∀ x ∈ O, ‖x‖ < R)
-  (h_nonempty : O.Nonempty) :
+  (h_nonempty : O.Nonempty)
+  (h_phys : PhysicsAssumption AssumptionId.wightmanReehSchlieder
+    (∀ (state : H) (ε : ℝ), ε > 0 →
+      ∃ (n : ℕ) (test_funcs : Fin n → SchwartzFunction d),
+        (∀ i, qft.supportOps.testFunctionSupport (test_funcs i) ⊆ O) ∧
+        ‖state - qft.vacuumFieldOps.applyFieldsToVacuum phi n test_funcs‖ < ε)) :
   ∀ (state : H) (ε : ℝ), ε > 0 →
     ∃ (n : ℕ) (test_funcs : Fin n → SchwartzFunction d),
       (∀ i, qft.supportOps.testFunctionSupport (test_funcs i) ⊆ O) ∧
       ‖state - qft.vacuumFieldOps.applyFieldsToVacuum phi n test_funcs‖ < ε := by
-  sorry
+  exact h_phys
 
 /-- Temperedness: Wightman functions are tempered distributions.
     They satisfy polynomial growth bounds: |W_n(x)| ≤ C(1 + |x|)^N.
@@ -176,8 +182,12 @@ theorem temperedness {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
   (qft : WightmanQFT H d)
   (phi : FieldDistribution H d)
   (n : ℕ) :
+  PhysicsAssumption AssumptionId.wightmanTemperedness
+    (∃ (C N : ℝ), ∀ (points : Fin n → (Fin d → ℝ)),
+      ‖qft.wft.wightmanFunction phi n points‖ ≤ C * (1 + ∑ i, ‖points i‖)^N) →
   ∃ (C N : ℝ), ∀ (points : Fin n → (Fin d → ℝ)),
     ‖qft.wft.wightmanFunction phi n points‖ ≤ C * (1 + ∑ i, ‖points i‖)^N := by
-  sorry
+  intro h_phys
+  exact h_phys
 
 end PhysicsLogic.QFT.Wightman

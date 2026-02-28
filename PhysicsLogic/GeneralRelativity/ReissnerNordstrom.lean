@@ -1,5 +1,6 @@
 import PhysicsLogic.GeneralRelativity.Singularities
 import PhysicsLogic.ClassicalFieldTheory.Fields
+import PhysicsLogic.Assumptions
 
 namespace PhysicsLogic.GeneralRelativity
 
@@ -9,32 +10,62 @@ open SpaceTime ClassicalFieldTheory
 
     ds² = -(1 - 2GM/rc² + GQ²/r²c⁴)c²dt² + (1 - 2GM/rc² + GQ²/r²c⁴)⁻¹dr² + r²dΩ²
 -/
-noncomputable def reissnerNordstromMetric (consts : GRConstants) (M Q : ℝ) : SpacetimeMetric :=
-  { g := fun (x : SpaceTimePoint) (μ ν : Fin 4) =>
-      let r := Real.sqrt ((x 1)^2 + (x 2)^2 + (x 3)^2)
-      let Δ := 1 - 2*consts.G*M/(r*consts.c^2) + consts.G*Q^2/(r^2*consts.c^4)
-      match μ, ν with
-      | 0, 0 => -Δ * consts.c^2
-      | 1, 1 => Δ⁻¹
-      | 2, 2 => r^2
-      | 3, 3 => r^2 * (Real.sin (x 2))^2
-      | _, _ => 0
-    symmetric := by sorry
-    inverseMetric := fun (x : SpaceTimePoint) (μ ν : Fin 4) =>
-      let r := Real.sqrt ((x 1)^2 + (x 2)^2 + (x 3)^2)
-      let Δ := 1 - 2*consts.G*M/(r*consts.c^2) + consts.G*Q^2/(r^2*consts.c^4)
-      match μ, ν with
-      | 0, 0 => -Δ⁻¹ / consts.c^2
-      | 1, 1 => Δ
-      | 2, 2 => r⁻¹^2
-      | 3, 3 => (r^2 * (Real.sin (x 2))^2)⁻¹
-      | _, _ => 0
-    metricDeterminant := fun x =>
-      let r := Real.sqrt ((x 1)^2 + (x 2)^2 + (x 3)^2)
-      -consts.c^2 * r^4 * (Real.sin (x 2))^2
-    metric_nondegenerate := by sorry
-    inverse_metric_identity := by sorry
-    signature := fun _ μ => if μ = 0 then -1 else 1 }
+noncomputable def reissnerNordstromMetricTensor
+    (consts : GRConstants) (M Q : ℝ)
+    (x : SpaceTimePoint) (mu nu : Fin 4) : ℝ :=
+  let r := Real.sqrt ((x 1)^2 + (x 2)^2 + (x 3)^2)
+  let delta := 1 - 2 * consts.G * M / (r * consts.c^2) + consts.G * Q^2 / (r^2 * consts.c^4)
+  match mu, nu with
+  | 0, 0 => -delta * consts.c^2
+  | 1, 1 => 1 / delta
+  | 2, 2 => r^2
+  | 3, 3 => r^2 * (Real.sin (x 2))^2
+  | _, _ => 0
+
+noncomputable def reissnerNordstromInverseMetricTensor
+    (consts : GRConstants) (M Q : ℝ)
+    (x : SpaceTimePoint) (mu nu : Fin 4) : ℝ :=
+  let r := Real.sqrt ((x 1)^2 + (x 2)^2 + (x 3)^2)
+  let delta := 1 - 2 * consts.G * M / (r * consts.c^2) + consts.G * Q^2 / (r^2 * consts.c^4)
+  match mu, nu with
+  | 0, 0 => -(1 / delta) / consts.c^2
+  | 1, 1 => delta
+  | 2, 2 => 1 / r^2
+  | 3, 3 => 1 / (r^2 * (Real.sin (x 2))^2)
+  | _, _ => 0
+
+noncomputable def reissnerNordstromMetricDeterminant
+    (consts : GRConstants) (x : SpaceTimePoint) : ℝ :=
+  -consts.c^2 * (Real.sqrt ((x 1)^2 + (x 2)^2 + (x 3)^2))^4 * (Real.sin (x 2))^2
+
+/-- Well-formedness package for the abstract RN metric data. -/
+def ReissnerNordstromMetricWellFormed (consts : GRConstants) (M Q : ℝ) : Prop :=
+  (∀ x mu nu,
+      reissnerNordstromMetricTensor consts M Q x mu nu =
+        reissnerNordstromMetricTensor consts M Q x nu mu) ∧
+  (∀ x, reissnerNordstromMetricDeterminant consts x ≠ 0) ∧
+  (∀ x mu nu,
+      ∑ rho,
+        reissnerNordstromInverseMetricTensor consts M Q x mu rho *
+          reissnerNordstromMetricTensor consts M Q x rho nu = if mu = nu then 1 else 0)
+
+noncomputable def reissnerNordstromMetric (consts : GRConstants) (M Q : ℝ)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.reissnerNordstromMetricWellFormed
+        (ReissnerNordstromMetricWellFormed consts M Q)) : SpacetimeMetric := by
+  rcases h_phys with ⟨h_symm, h_nondeg, h_inv⟩
+  refine
+    { g := reissnerNordstromMetricTensor consts M Q
+      symmetric := ?_
+      inverseMetric := reissnerNordstromInverseMetricTensor consts M Q
+      metricDeterminant := reissnerNordstromMetricDeterminant consts
+      metric_nondegenerate := ?_
+      inverse_metric_identity := ?_
+      signature := fun _ mu => if mu = 0 then -1 else 1 }
+  · exact h_symm
+  · exact h_nondeg
+  · exact h_inv
 
 /-- Inner (Cauchy) horizon -/
 noncomputable def rnInnerHorizon (consts : GRConstants) (M Q : ℝ) : ℝ :=
@@ -46,16 +77,26 @@ noncomputable def rnOuterHorizon (consts : GRConstants) (M Q : ℝ) : ℝ :=
 
 /-- Structure for Reissner-Nordström black hole theory -/
 structure RNTheory (consts : GRConstants) (M Q : ℝ) where
+  /-- Assumed well-formedness of the RN metric package. -/
+  metric_well_formed :
+    PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.reissnerNordstromMetricWellFormed
+      (ReissnerNordstromMetricWellFormed consts M Q)
   /-- Connection theory for RN metric -/
-  connection : ConnectionTheory (reissnerNordstromMetric consts M Q)
+  connection : ConnectionTheory (reissnerNordstromMetric consts M Q metric_well_formed)
   /-- Curvature theory for RN metric -/
-  curvature : CurvatureTheory (reissnerNordstromMetric consts M Q)
+  curvature : CurvatureTheory (reissnerNordstromMetric consts M Q metric_well_formed)
   /-- RN metric solves Einstein-Maxwell equations -/
   solves_einstein_maxwell : ∃ (T : TensorField 4 4),
     satisfiesEFE consts curvature T
   /-- RN reduces to Schwarzschild when Q = 0 -/
   reduces_to_schwarzschild : Q = 0 →
-    ∀ (hM : M > 0), reissnerNordstromMetric consts M Q = schwarzschildMetric consts M hM
+    ∀ (hM : M > 0)
+      (h_phys :
+        PhysicsLogic.PhysicsAssumption
+          PhysicsLogic.AssumptionId.schwarzschildMetricWellFormed
+          (SchwarzschildMetricWellFormed consts M hM)),
+      reissnerNordstromMetric consts M Q metric_well_formed = schwarzschildMetric consts M hM h_phys
   /-- Electric field of charged black hole -/
   electricField : ℝ → ℝ  -- as function of radius
   /-- Electric field formula: E = Q/(4πε₀r²) -/

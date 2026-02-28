@@ -18,8 +18,12 @@ structure CorrelationMeasures (H : Type _) [QuantumStateSpace H] where
   fidelity_symmetric : ∀ (rho sigma : DensityOperator H),
     fidelity rho sigma = fidelity sigma rho
   /-- Pure state fidelity is amplitude squared -/
-  pure_fidelity : ∀ (psi phi : PureState H),
-    fidelity (pureToDensity psi) (pureToDensity phi) = bornRule psi phi
+  pure_fidelity : ∀ (psi phi : PureState H)
+    (h_psi : PhysicsAssumption AssumptionId.quantumPureToDensityAxioms
+      (PureToDensityAssumptions psi))
+    (h_phi : PhysicsAssumption AssumptionId.quantumPureToDensityAxioms
+      (PureToDensityAssumptions phi)),
+    fidelity (pureToDensity psi h_psi) (pureToDensity phi h_phi) = bornRule psi phi
   /-- Trace distance bounds -/
   trace_distance_bounds : ∀ (rho sigma : DensityOperator H),
     0 ≤ traceDistance rho sigma ∧ traceDistance rho sigma ≤ 1

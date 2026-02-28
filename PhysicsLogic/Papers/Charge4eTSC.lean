@@ -651,7 +651,9 @@ theorem norm_map_trivial :
 --   - G-crossed braiding: outcome is ρ_g(a)
 
 /-- Abbreviation identifying the 4e TSC G-crossed extension. -/
-noncomputable abbrev z2_gcrossed_4eTSC := z2_gcrossed_z3
+noncomputable abbrev z2_gcrossed_4eTSC
+    (h_z3 : PhysicsLogic.PhysicsAssumption PhysicsLogic.AssumptionId.tqftZ3ModularAxioms
+      Z3ModularAssumptions) := z2_gcrossed_z3 h_z3
 
 /-- Total quantum dimension of the G-crossed extension:
     D²(C_G) = D²₀ + Σ_σ d_σ² = 2·D²₀.
@@ -678,8 +680,10 @@ theorem total_dim_gcrossed {n : ℕ} {hn : n ≥ 1} {G_order : ℕ} {hG : G_orde
     property of the topological order, but can be an emergent consequence
     of how symmetry interacts with topology. -/
 theorem non_abelian_is_extrinsic :
-    z2_gcrossed_z3.isExtrinsicNonAbelian := by
-  refine ⟨fun i => rfl, ⟨0, z2_gcrossed_z3.defect_count_pos⟩, ?_⟩
+    ∀ (h_z3 : PhysicsLogic.PhysicsAssumption PhysicsLogic.AssumptionId.tqftZ3ModularAxioms
+      Z3ModularAssumptions), (z2_gcrossed_z3 h_z3).isExtrinsicNonAbelian := by
+  intro h_z3
+  refine ⟨fun i => rfl, ⟨0, (z2_gcrossed_z3 h_z3).defect_count_pos⟩, ?_⟩
   show Real.sqrt 3 > 1
   have h := Real.sqrt_lt_sqrt (by norm_num : (0:ℝ) ≤ 1) (by norm_num : (1:ℝ) < 3)
   rwa [Real.sqrt_one] at h

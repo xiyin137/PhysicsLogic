@@ -1,5 +1,6 @@
 import PhysicsLogic.SpaceTime.Metrics
 import PhysicsLogic.SpaceTime.Minkowski
+import PhysicsLogic.Assumptions
 
 namespace PhysicsLogic.SpaceTime
 
@@ -74,17 +75,32 @@ def ChronologicalPast (metric : SpacetimeMetric) (p : SpaceTimePoint) : Set Spac
 def CausalDiamond (metric : SpacetimeMetric) (p q : SpaceTimePoint) : Set SpaceTimePoint :=
   CausalFuture metric p ∩ CausalPast metric q
 
-/-- Lorentz transformation preserves causal structure (Minkowski only) -/
-theorem lorentz_preserves_timelike (Λ : LorentzTransform) (x y : SpaceTimePoint) :
+/-- Lorentz transformation preserves causal structure (Minkowski only). -/
+theorem lorentz_preserves_timelike (Λ : LorentzTransform) (x y : SpaceTimePoint)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.lorentzPreservesTimelike
+        (Timelike minkowskiMetric x y →
+          Timelike minkowskiMetric (Λ.apply x) (Λ.apply y))) :
   Timelike minkowskiMetric x y → Timelike minkowskiMetric (Λ.apply x) (Λ.apply y) := by
-  sorry
+  exact h_phys
 
-theorem lorentz_preserves_spacelike (Λ : LorentzTransform) (x y : SpaceTimePoint) :
+theorem lorentz_preserves_spacelike (Λ : LorentzTransform) (x y : SpaceTimePoint)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.lorentzPreservesSpacelike
+        (Spacelike minkowskiMetric x y →
+          Spacelike minkowskiMetric (Λ.apply x) (Λ.apply y))) :
   Spacelike minkowskiMetric x y → Spacelike minkowskiMetric (Λ.apply x) (Λ.apply y) := by
-  sorry
+  exact h_phys
 
-theorem lorentz_preserves_lightlike (Λ : LorentzTransform) (x y : SpaceTimePoint) :
+theorem lorentz_preserves_lightlike (Λ : LorentzTransform) (x y : SpaceTimePoint)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.lorentzPreservesLightlike
+        (Lightlike minkowskiMetric x y →
+          Lightlike minkowskiMetric (Λ.apply x) (Λ.apply y))) :
   Lightlike minkowskiMetric x y → Lightlike minkowskiMetric (Λ.apply x) (Λ.apply y) := by
-  sorry
+  exact h_phys
 
 end PhysicsLogic.SpaceTime

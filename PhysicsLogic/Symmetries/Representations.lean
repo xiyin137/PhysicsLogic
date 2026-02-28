@@ -55,11 +55,33 @@ structure RepresentationOps (G : Type _) [Group G] where
 
 /-- Structure for physics field representations -/
 structure PhysicsRepresentations where
+  /-- Chosen group structure for Poincaré transformations in this model. -/
+  poincareGroup : Group PoincareTransform
+  /-- Chosen group structure for Lorentz transformations in this model. -/
+  lorentzGroup : Group LorentzTransform
   /-- Poincaré representation on scalar fields -/
-  scalarFieldRep : Representation PoincareTransform (SpaceTimePoint → ℝ)
+  scalarFieldRep :
+    @Representation
+      PoincareTransform
+      (SpaceTimePoint → ℝ)
+      poincareGroup
+      inferInstance
+      inferInstance
   /-- Poincaré representation on vector fields -/
-  vectorFieldRep : Representation PoincareTransform (SpaceTimePoint → Fin 4 → ℝ)
+  vectorFieldRep :
+    @Representation
+      PoincareTransform
+      (SpaceTimePoint → Fin 4 → ℝ)
+      poincareGroup
+      inferInstance
+      inferInstance
   /-- Lorentz representation on spinors -/
-  spinorRep : Representation LorentzTransform (Fin 2 → ℂ)
+  spinorRep :
+    @Representation
+      LorentzTransform
+      (Fin 2 → ℂ)
+      lorentzGroup
+      inferInstance
+      inferInstance
 
 end PhysicsLogic.Symmetries

@@ -31,7 +31,8 @@ structure IntegrableSystemTheory (n : ℕ) where
     ∀ (H : Hamiltonian n) (H_phase : PhaseSpace n → ℝ)
       (conserved : Fin n → PhaseSpace n → ℝ)
       (h_integrable : isIntegrable sys H_phase conserved),
-    ∃ (_ : CanonicalTransformation n sys), True
+    ∃ (T : CanonicalTransformation n sys),
+      ∀ x, H_phase (T.Q x, T.P x) = H_phase x
   /-- Liouville-Arnold theorem: integrable systems have action-angle coordinates -/
   liouville_arnold_theorem :
     ∀ (H : PhaseSpace n → ℝ) (conserved : Fin n → PhaseSpace n → ℝ)
@@ -56,7 +57,7 @@ structure IntegrableSystemTheory (n : ℕ) where
       MeasurableSet invariant_tori ∧
       (μ invariant_tori).toReal > (1 - ε) * (μ Set.univ).toReal
   /-- Poincaré-Birkhoff theorem: area-preserving twist map has periodic orbits -/
-  poincare_birkhoff_theorem : ∃ (_ : Set (PhaseSpace n)), True
+  poincare_birkhoff_theorem : ∃ (periodic_orbits : Set (PhaseSpace n)), periodic_orbits.Nonempty
 
 /-- Non-degeneracy condition: det(∂²H/∂I²) ≠ 0 -/
 def nonDegenerate (theory : IntegrableSystemTheory n) (H : PhaseSpace n → ℝ) : Prop :=

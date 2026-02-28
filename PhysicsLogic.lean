@@ -1,2 +1,2 @@
-import PhysicsLogic.Quantum
+import PhysicsLogic.Core
 import PhysicsLogic.Papers.AMPS

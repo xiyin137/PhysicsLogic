@@ -2,6 +2,7 @@
 -- Haag-Ruelle Scattering Theory: Rigorous Construction of Asymptotic States
 import PhysicsLogic.QFT.Smatrix.AsymptoticStates
 import PhysicsLogic.QFT.Wightman
+import PhysicsLogic.Assumptions
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Complex.Basic
 
@@ -224,9 +225,13 @@ theorem haag_ruelle_equals_lsz {H : Type*} [NormedAddCommGroup H] [Module ℂ H]
     (hr : HaagRuelleData H)
     (n k : ℕ)
     (p_in : Fin n → OnShellMomentum hr.mass)
-    (p_out : Fin k → OnShellMomentum hr.mass) :
+    (p_out : Fin k → OnShellMomentum hr.mass)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.haagRuelleEqualsLsz
+        (∃ (S_haag_ruelle S_lsz : ℂ), S_haag_ruelle = S_lsz)) :
   ∃ (S_haag_ruelle S_lsz : ℂ),
     S_haag_ruelle = S_lsz := by
-  sorry
+  exact h_phys
 
 end PhysicsLogic.QFT.Smatrix

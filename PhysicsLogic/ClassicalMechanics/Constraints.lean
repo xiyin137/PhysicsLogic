@@ -31,7 +31,9 @@ structure ConstrainedLagrangianSystem (n m : ℕ) where
               lagSys.partialL_q (q t) (fun j => trajectoryDerivative q t j) t i +
               ∑ j, lam t j * partialConstraint_q (constraints j) (q t) t i)
   /-- Holonomic constraints reduce degrees of freedom -/
-  holonomic_reduces_dof : m < n → ∃ (_ : LagrangianSystem (n - m)), True
+  holonomic_reduces_dof : m < n →
+    ∃ (reduced : LagrangianSystem (n - m)) (q : Trajectory (n - m)),
+      satisfiesAllEulerLagrange reduced q
 
 /-- Constrained Euler-Lagrange equations:
     d/dt(∂L/∂q̇ᵢ) - ∂L/∂qᵢ = Σⱼ λⱼ ∂fⱼ/∂qᵢ

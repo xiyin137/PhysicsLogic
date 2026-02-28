@@ -1,4 +1,5 @@
 import PhysicsLogic.SpaceTime.Metrics
+import PhysicsLogic.Assumptions
 import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
@@ -23,7 +24,9 @@ noncomputable def minkowskiMetric : SpacetimeMetric where
     else 0
   metricDeterminant := fun _ => -1
   metric_nondegenerate := by intro _; norm_num
-  inverse_metric_identity := by sorry  -- Can be proven but lengthy
+  inverse_metric_identity := by
+    intro x μ ν
+    fin_cases μ <;> fin_cases ν <;> simp
   signature := fun _ μ => if μ = 0 then -1 else 1
 
 /-- Minkowski inner product (constant across spacetime) -/
@@ -82,7 +85,15 @@ def LorentzTransformGen.apply {d : ℕ} [NeZero d]
 /-- Identity Lorentz transformation in d dimensions -/
 noncomputable def LorentzTransformGen.id (d : ℕ) [NeZero d] : LorentzTransformGen d where
   matrix := fun μ ν => if μ = ν then 1 else 0
-  preserves_metric := by sorry
+  preserves_metric := by
+    intro x y
+    simp [minkowskiInnerProductGen]
+
+/-- In 4D, the general Minkowski inner product specializes to the explicit 4D form. -/
+theorem minkowskiInnerProductGen_four (x y : Fin 4 → ℝ) :
+    minkowskiInnerProductGen x y = minkowskiInnerProduct x y := by
+  simp [minkowskiInnerProductGen, minkowskiInnerProduct, Fin.sum_univ_four]
+  ring
 
 /- ============= 4D LORENTZ TRANSFORMATIONS (BACKWARD COMPATIBILITY) ============= -/
 
@@ -108,12 +119,16 @@ def LorentzTransform.apply (Λ : LorentzTransform) (x : SpaceTimePoint) : SpaceT
 /-- Identity Lorentz transformation -/
 noncomputable def LorentzTransform.id : LorentzTransform where
   matrix := fun μ ν => if μ = ν then 1 else 0
-  preserves_metric := by sorry
+  preserves_metric := by
+    intro x y
+    simp [minkowskiInnerProduct]
 
 /-- Convert 4D Lorentz transform to general form -/
 def LorentzTransform.toGen (Λ : LorentzTransform) : LorentzTransformGen 4 where
   matrix := Λ.matrix
-  preserves_metric := by sorry  -- Bridge between 4D and general definitions
+  preserves_metric := by
+    intro x y
+    simpa [minkowskiInnerProductGen_four] using Λ.preserves_metric x y
 
 /-- Lorentz transformation preserves intervals -/
 theorem lorentz_preserves_interval (Λ : LorentzTransform) (x y : SpaceTimePoint) :
@@ -132,9 +147,9 @@ theorem lorentz_preserves_interval (Λ : LorentzTransform) (x y : SpaceTimePoint
 /-- Boost velocity must be subluminal -/
 def ValidBoostVelocity (v : ℝ) : Prop := v^2 < 1
 
-/-- Lorentz boost in x-direction -/
-noncomputable def lorentzBoost (v : ℝ) (h : ValidBoostVelocity v) : LorentzTransform where
-  matrix := fun μ ν =>
+/-- Matrix entries for an x-direction Lorentz boost. -/
+noncomputable def lorentzBoostMatrix (v : ℝ) : Fin 4 → Fin 4 → ℝ :=
+  fun μ ν =>
     let γ := 1 / Real.sqrt (1 - v^2)
     match μ, ν with
     | 0, 0 => γ
@@ -144,11 +159,24 @@ noncomputable def lorentzBoost (v : ℝ) (h : ValidBoostVelocity v) : LorentzTra
     | 2, 2 => 1
     | 3, 3 => 1
     | _, _ => 0
-  preserves_metric := by sorry
 
-/-- Spatial rotation around z-axis -/
-noncomputable def spatialRotation (θ : ℝ) : LorentzTransform where
-  matrix := fun μ ν =>
+/-- Lorentz boost in x-direction -/
+noncomputable def lorentzBoost (v : ℝ) (_h : ValidBoostVelocity v)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.lorentzBoostPreservesMetric
+        (∀ x y : SpaceTimePoint,
+          minkowskiInnerProduct x y = minkowskiInnerProduct
+            (fun μ => ∑ ν, lorentzBoostMatrix v μ ν * x ν)
+            (fun μ => ∑ ν, lorentzBoostMatrix v μ ν * y ν))) :
+    LorentzTransform where
+  matrix := lorentzBoostMatrix v
+  preserves_metric := by
+    simpa [lorentzBoostMatrix] using h_phys
+
+/-- Matrix entries for a spatial rotation around the z-axis. -/
+noncomputable def spatialRotationMatrix (θ : ℝ) : Fin 4 → Fin 4 → ℝ :=
+  fun μ ν =>
     match μ, ν with
     | 0, 0 => 1
     | 1, 1 => Real.cos θ
@@ -157,6 +185,19 @@ noncomputable def spatialRotation (θ : ℝ) : LorentzTransform where
     | 2, 2 => Real.cos θ
     | 3, 3 => 1
     | _, _ => 0
-  preserves_metric := by sorry
+
+/-- Spatial rotation around z-axis -/
+noncomputable def spatialRotation (θ : ℝ)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.spatialRotationPreservesMetric
+        (∀ x y : SpaceTimePoint,
+          minkowskiInnerProduct x y = minkowskiInnerProduct
+            (fun μ => ∑ ν, spatialRotationMatrix θ μ ν * x ν)
+            (fun μ => ∑ ν, spatialRotationMatrix θ μ ν * y ν))) :
+    LorentzTransform where
+  matrix := spatialRotationMatrix θ
+  preserves_metric := by
+    simpa [spatialRotationMatrix] using h_phys
 
 end PhysicsLogic.SpaceTime

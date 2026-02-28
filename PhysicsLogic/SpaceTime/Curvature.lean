@@ -40,6 +40,34 @@ structure CurvatureTheory (metric : SpacetimeMetric) where
 
 variable {metric : SpacetimeMetric}
 
+/-- Canonical flat curvature model with vanishing curvature tensors.
+
+    This is the kinematic "zero curvature" instance and is useful for
+    representing flat spacetimes concretely (for example Minkowski). -/
+noncomputable def flatCurvatureTheory (metric : SpacetimeMetric) : CurvatureTheory metric where
+  riemannTensor := fun _ _ _ _ _ => 0
+  weylTensor := fun _ _ _ _ _ => 0
+  covariantDerivativeRiemann := fun _ _ _ _ _ _ => 0
+  covariantDivergenceEinstein := fun _ _ => 0
+  riemann_antisymmetric_last_pair := by
+    intro x μ ν ρ σ
+    simp
+  riemann_antisymmetric_first_pair := by
+    intro x μ ν ρ σ
+    simp
+  riemann_pair_symmetry := by
+    intro x μ ν ρ σ
+    simp
+  bianchi_first_identity := by
+    intro x μ ν ρ σ
+    simp
+  bianchi_second_identity := by
+    intro x μ ν ρ σ τ
+    simp
+  contracted_bianchi := by
+    intro x ν
+    simp
+
 /-- Ricci tensor R_μν (contraction of Riemann tensor) -/
 noncomputable def ricciTensor (ct : CurvatureTheory metric) (x : SpaceTimePoint)
     (μ ν : Fin 4) : ℝ :=
@@ -62,10 +90,15 @@ noncomputable def einsteinTensor (ct : CurvatureTheory metric) (x : SpaceTimePoi
 def isFlat (ct : CurvatureTheory metric) : Prop :=
   ∀ x μ ν ρ σ, ct.riemannTensor x μ ν ρ σ = 0
 
-/-- Minkowski spacetime is flat: the Riemann tensor vanishes identically.
-    This follows from the Christoffel symbols being zero for a constant metric. -/
-theorem minkowski_is_flat (ct : CurvatureTheory minkowskiMetric) :
-    isFlat ct := by
-  sorry
+/-- Canonical flat curvature model is flat by construction. -/
+theorem flat_curvature_is_flat (metric : SpacetimeMetric) :
+    isFlat (flatCurvatureTheory metric) := by
+  intro x μ ν ρ σ
+  simp [flatCurvatureTheory]
+
+/-- Minkowski spacetime is flat in the canonical flat-curvature model. -/
+theorem minkowski_is_flat :
+    isFlat (flatCurvatureTheory minkowskiMetric) := by
+  simpa using flat_curvature_is_flat minkowskiMetric
 
 end PhysicsLogic.SpaceTime

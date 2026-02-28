@@ -43,7 +43,12 @@ structure KerrTheory (consts : GRConstants) (M a : ℝ) where
   axial_is_killing : KillingVector connection axialKilling
   /-- Kerr reduces to Schwarzschild when a = 0 -/
   reduces_to_schwarzschild : a = 0 →
-    ∀ (hM : M > 0), metric = schwarzschildMetric consts M hM
+    ∀ (hM : M > 0)
+      (h_phys :
+        PhysicsLogic.PhysicsAssumption
+          PhysicsLogic.AssumptionId.schwarzschildMetricWellFormed
+          (SchwarzschildMetricWellFormed consts M hM)),
+      metric = schwarzschildMetric consts M hM h_phys
   /-- Frame dragging frequency (Lense-Thirring effect) -/
   frameDraggingFrequency : ℝ → ℝ  -- as function of radius
 

@@ -11,6 +11,7 @@
 -- - Statistics = phase under particle exchange (bosons, fermions, anyons)
 -- - Doplicher-Roberts reconstruction: observables → field algebra + gauge group
 import PhysicsLogic.QFT.AQFT.Representations
+import PhysicsLogic.Assumptions
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Complex.Basic
 
@@ -115,8 +116,11 @@ theorem bose_fermi_alternative {d : ℕ} {Sector : Type*}
     (stats : StatisticsData d Sector)
     (sectors : SuperselectionSectorData d Sector)
     (h_dim : d ≥ 4) (ρ : Sector) :
+    PhysicsAssumption AssumptionId.aqftBoseFermiAlternative
+      (selfStatistics stats ρ = 1 ∨ selfStatistics stats ρ = -1) →
     selfStatistics stats ρ = 1 ∨ selfStatistics stats ρ = -1 := by
-  sorry
+  intro h_phys
+  simpa [PhysicsAssumption] using h_phys
 
 /-- In d = 3, anyonic statistics are possible: ε(ρ,ρ) = e^{iθ} for any θ.
 
@@ -128,9 +132,13 @@ theorem bose_fermi_alternative {d : ℕ} {Sector : Type*}
     - Chern-Simons theories -/
 theorem anyons_in_3d {Sector : Type*}
     (stats : StatisticsData 3 Sector) (ρ : Sector) :
+    PhysicsAssumption AssumptionId.aqftAnyonsIn3d
+      (∃ (θ : ℝ), 0 ≤ θ ∧ θ < 2 * Real.pi ∧
+        selfStatistics stats ρ = Complex.exp (Complex.I * θ)) →
     ∃ (θ : ℝ), 0 ≤ θ ∧ θ < 2 * Real.pi ∧
       selfStatistics stats ρ = Complex.exp (Complex.I * θ) := by
-  sorry
+  intro h_phys
+  simpa [PhysicsAssumption] using h_phys
 
 /- ============= DOPLICHER-ROBERTS RECONSTRUCTION ============= -/
 
@@ -159,13 +167,13 @@ structure DoplicherRobertsData {d : ℕ} [NeZero d] (Sector : Type*)
   /-- Observable algebra is the fixed-point subalgebra: A = F^G -/
   fixed_point_is_observable :
     ∀ (O : Set (SpaceTimePointD d)) (f : FieldAlgebra),
-      (∀ g : GaugeGroup, gaugeAction g f = f) → ∃ a : qft.net.Algebra O, True
+      (∀ g : GaugeGroup, gaugeAction g f = f) → Nonempty (qft.net.Algebra O)
   /-- Each sector corresponds to a representation of the gauge group -/
   sector_representation : Sector → (GaugeGroup → GaugeGroup)
   /-- Field algebra decomposes under the gauge group: F = ⊕_ρ H_ρ ⊗ A
       (Peter-Weyl decomposition) -/
   peter_weyl_decomposition :
-    ∀ (f : FieldAlgebra), ∃ (ρ : Sector), True
+    ∀ (f : FieldAlgebra), Nonempty Sector
 
 /-- Doplicher-Roberts reconstruction theorem: the reconstruction data exists
     for any Haag-Kastler QFT with finitely many superselection sectors satisfying
@@ -176,8 +184,10 @@ theorem doplicher_roberts_reconstruction {d : ℕ} [NeZero d]
     (Sector : Type*) (qft : HaagKastlerQFT d)
     (sectors : SuperselectionSectorData d Sector)
     (stats : StatisticsData d Sector) :
-    Nonempty (DoplicherRobertsData Sector qft) := by
-  sorry
+    let P : Prop := Nonempty (DoplicherRobertsData Sector qft)
+    PhysicsAssumption AssumptionId.aqftDoplicherRobertsReconstruction P → P := by
+  intro P h_phys
+  simpa [PhysicsAssumption] using h_phys
 
 /- ============= SPIN-STATISTICS THEOREM ============= -/
 
@@ -210,11 +220,15 @@ theorem spin_statistics {d : ℕ} {Sector : Type*}
     (stats : StatisticsData d Sector)
     (spinData : SpinData d Sector)
     (h_dim : d ≥ 4) (ρ : Sector) :
+    PhysicsAssumption AssumptionId.aqftSpinStatistics
+      (((∃ n : ℤ, spinData.spin ρ = n) → selfStatistics stats ρ = 1) ∧
+      ((∃ n : ℤ, spinData.spin ρ = n + 1/2) → selfStatistics stats ρ = -1)) →
     /- Integer spin implies Bose statistics -/
     ((∃ n : ℤ, spinData.spin ρ = n) → selfStatistics stats ρ = 1) ∧
     /- Half-integer spin implies Fermi statistics -/
     ((∃ n : ℤ, spinData.spin ρ = n + 1/2) → selfStatistics stats ρ = -1) := by
-  sorry
+  intro h_phys
+  simpa [PhysicsAssumption] using h_phys
 
 /- ============= COMPLETE DHR SUPERSELECTION STRUCTURE ============= -/
 

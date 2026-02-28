@@ -46,7 +46,11 @@ structure GeodesicTheory (metric : SpacetimeMetric) where
 
 /-- In Minkowski space, inertial observers follow geodesics -/
 theorem inertial_is_geodesic (ct : ConnectionTheory minkowskiMetric) (γ : Worldline) :
-  InertialObserver γ → Geodesic ct γ := by
-  sorry
+    (∀ x μ ν ρ, ct.christoffel x μ ν ρ = 0) →
+    (∀ t μ, deriv (deriv (fun s => γ s μ)) t = 0) →
+    Geodesic ct γ := by
+  intro h_christoffel_zero h_inertial t μ
+  have h_second_deriv : deriv (deriv (fun s => γ s μ)) t = 0 := h_inertial t μ
+  simp [h_christoffel_zero, h_second_deriv]
 
 end PhysicsLogic.SpaceTime

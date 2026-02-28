@@ -51,7 +51,49 @@ noncomputable def PoincareTransformGen.compose {d : ℕ} [NeZero d]
     (g₁ g₂ : PoincareTransformGen d) : PoincareTransformGen d where
   lorentz :=
     { matrix := fun μ ν => ∑ κ, g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν
-      preserves_metric := by sorry }
+      preserves_metric := by
+        intro x y
+        let x' : Fin d → ℝ := fun κ => ∑ ν, g₂.lorentz.matrix κ ν * x ν
+        let y' : Fin d → ℝ := fun κ => ∑ ν, g₂.lorentz.matrix κ ν * y ν
+        have h₂ : minkowskiInnerProductGen x y = minkowskiInnerProductGen x' y' := by
+          simpa [x', y'] using g₂.lorentz.preserves_metric x y
+        have h₁ :
+            minkowskiInnerProductGen x' y' =
+            minkowskiInnerProductGen
+              (fun μ => ∑ κ, g₁.lorentz.matrix μ κ * x' κ)
+              (fun μ => ∑ κ, g₁.lorentz.matrix μ κ * y' κ) := by
+          simpa [x', y'] using g₁.lorentz.preserves_metric x' y'
+        have hx :
+            (fun μ => ∑ κ, g₁.lorentz.matrix μ κ * x' κ) =
+            (fun μ => ∑ ν, (∑ κ, g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) * x ν) := by
+          ext μ
+          unfold x'
+          calc
+            ∑ κ, g₁.lorentz.matrix μ κ * (∑ ν, g₂.lorentz.matrix κ ν * x ν)
+                = ∑ κ, ∑ ν, g₁.lorentz.matrix μ κ * (g₂.lorentz.matrix κ ν * x ν) := by
+                    simp [Finset.mul_sum]
+            _ = ∑ κ, ∑ ν, x ν * (g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) := by
+                  simp [mul_left_comm, mul_comm]
+            _ = ∑ ν, ∑ κ, x ν * (g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) := by
+                  rw [Finset.sum_comm]
+            _ = ∑ ν, (∑ κ, g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) * x ν := by
+                  simp [mul_comm, Finset.mul_sum]
+        have hy :
+            (fun μ => ∑ κ, g₁.lorentz.matrix μ κ * y' κ) =
+            (fun μ => ∑ ν, (∑ κ, g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) * y ν) := by
+          ext μ
+          unfold y'
+          calc
+            ∑ κ, g₁.lorentz.matrix μ κ * (∑ ν, g₂.lorentz.matrix κ ν * y ν)
+                = ∑ κ, ∑ ν, g₁.lorentz.matrix μ κ * (g₂.lorentz.matrix κ ν * y ν) := by
+                    simp [Finset.mul_sum]
+            _ = ∑ κ, ∑ ν, y ν * (g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) := by
+                  simp [mul_left_comm, mul_comm]
+            _ = ∑ ν, ∑ κ, y ν * (g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) := by
+                  rw [Finset.sum_comm]
+            _ = ∑ ν, (∑ κ, g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) * y ν := by
+                  simp [mul_comm, Finset.mul_sum]
+        exact h₂.trans (h₁.trans (by simp [hx, hy])) }
   translation := fun μ => g₁.translation μ + ∑ ν, g₁.lorentz.matrix μ ν * g₂.translation ν
 
 /- ============= SPACELIKE SEPARATION (d-dimensional) =============

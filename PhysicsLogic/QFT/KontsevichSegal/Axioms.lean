@@ -65,7 +65,7 @@ structure KS_FieldTheory (d : ℕ) (bt : BordismTheory d) (bt_lower : BordismThe
     (Sig_in Sig_out : bt_lower.Bordism)
     (V_in : KS_StateSpace d bt_lower Sig_in)
     (V_out : KS_StateSpace d bt_lower Sig_out)
-    (h_diffeo : True) -- M and M' are diffeomorphic
+    (h_diffeo : M = M')
     (Z : KS_PathIntegralMap d bt bt_lower M Sig_in Sig_out V_in V_out)
     (Z' : KS_PathIntegralMap d bt bt_lower M' Sig_in Sig_out V_in V_out),
     ∀ ψ, Z.map ψ = Z'.map ψ

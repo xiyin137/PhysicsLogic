@@ -245,22 +245,34 @@ theorem bell_theorem :
 -- ========================================
 
 /-- The singlet state density operator -/
-noncomputable def singlet_density (basis : QubitBasis) (bell : BellState basis qubitTensorProduct) :
+noncomputable def singlet_density (basis : QubitBasis) (bell : BellState basis qubitTensorProduct)
+    (h_pure : PhysicsLogic.PhysicsAssumption PhysicsLogic.AssumptionId.quantumPureToDensityAxioms
+      (PureToDensityAssumptions (singlet basis bell))) :
     DensityOperator QubitPair :=
-  pureToDensity (singlet basis bell)
+  pureToDensity (singlet basis bell) h_pure
 
 /-- The correlation function -cos(a-b) is the quantum mechanical prediction for
     spin measurements on the singlet state along directions (θ=π/2, φ=a) and (θ=π/2, φ=b).
-    Depends on `singlet_pauli_correlation` (sorry in PhysicsLogic.Quantum.Measurement). -/
+    Depends on `singlet_pauli_correlation` in PhysicsLogic.Quantum.Measurement. -/
 theorem quantum_correlation_is_physical (basis : QubitBasis) (bell : BellState basis qubitTensorProduct)
     (paulis : PauliOperators) (a b : ℝ)
+    (h_pauli_a : PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.quantumPauliDirectionObservable
+      (PauliDirectionAssumptions paulis (Real.pi / 2) a))
+    (h_pauli_b : PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.quantumPauliDirectionObservable
+      (PauliDirectionAssumptions paulis (Real.pi / 2) b))
     (tensorObs : TensorObservable qubitTensorProduct
-      (pauli_direction paulis (Real.pi/2) a)
-      (pauli_direction paulis (Real.pi/2) b)) :
+      (pauli_direction paulis (Real.pi / 2) a h_pauli_a)
+      (pauli_direction paulis (Real.pi / 2) b h_pauli_b))
+    (h_phys : PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.quantumSingletPauliCorrelation
+      (expectation_value (singlet basis bell) tensorObs.obs = -Real.cos (a - b))) :
   quantum_correlation_singlet a b =
   expectation_value (singlet basis bell) tensorObs.obs := by
   unfold quantum_correlation_singlet
-  rw [singlet_pauli_correlation basis bell paulis a b tensorObs]
+  symm
+  exact singlet_pauli_correlation basis bell paulis a b h_pauli_a h_pauli_b tensorObs h_phys
 
 /-- **Quantum mechanics violates local realism**: No LHVT can reproduce the quantum mechanical
     expectation values for tensor product observables on the singlet state.
@@ -270,9 +282,15 @@ theorem quantum_correlation_is_physical (basis : QubitBasis) (bell : BellState b
 theorem quantum_mechanics_violates_local_realism (basis : QubitBasis)
     (bell : BellState basis qubitTensorProduct)
     (paulis : PauliOperators)
+    (h_pauli : ∀ (x : ℝ),
+      PhysicsLogic.PhysicsAssumption PhysicsLogic.AssumptionId.quantumPauliDirectionObservable
+      (PauliDirectionAssumptions paulis (Real.pi / 2) x))
     (mkTensorObs : ∀ (a b : ℝ), TensorObservable qubitTensorProduct
-      (pauli_direction paulis (Real.pi/2) a)
-      (pauli_direction paulis (Real.pi/2) b)) :
+      (pauli_direction paulis (Real.pi / 2) a (h_pauli a))
+      (pauli_direction paulis (Real.pi / 2) b (h_pauli b)))
+    (h_corr : ∀ (a b : ℝ),
+      PhysicsLogic.PhysicsAssumption PhysicsLogic.AssumptionId.quantumSingletPauliCorrelation
+      (expectation_value (singlet basis bell) (mkTensorObs a b).obs = -Real.cos (a - b))) :
   ¬∃ (theory : LHVT),
     ∀ (a b : Setting),
       lhvt_correlation theory a b =
@@ -281,7 +299,8 @@ theorem quantum_mechanics_violates_local_realism (basis : QubitBasis)
   apply bell_theorem
   use theory
   intro a b
-  rw [quantum_correlation_is_physical basis bell paulis a b (mkTensorObs a b)]
+  rw [quantum_correlation_is_physical basis bell paulis a b
+        (h_pauli a) (h_pauli b) (mkTensorObs a b) (h_corr a b)]
   exact h_match a b
 
 end Bell

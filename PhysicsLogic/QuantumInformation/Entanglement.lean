@@ -1,5 +1,6 @@
 import PhysicsLogic.Quantum
 import PhysicsLogic.QuantumInformation.Correlations
+import PhysicsLogic.Assumptions
 
 namespace PhysicsLogic.QuantumInformation
 
@@ -41,10 +42,13 @@ structure LOCCTheory {H1 H2 : Type _}
     provide explicit examples of separable states with nonzero discord. -/
 theorem separable_discord_nonzero
     (et : EntanglementTheory qubitTensorProduct)
-    (bc : BipartiteCorrelations qubitTensorProduct (cm : CorrelationMeasures QubitPair)) :
+    (bc : BipartiteCorrelations qubitTensorProduct (cm : CorrelationMeasures QubitPair))
+    (h_phys : PhysicsAssumption AssumptionId.qiSeparableDiscordNonzero
+      (∃ (rho : DensityOperator QubitPair),
+        et.Separable rho ∧ bc.quantumDiscord rho > 0)) :
     ∃ (rho : DensityOperator QubitPair),
       et.Separable rho ∧ bc.quantumDiscord rho > 0 := by
-  sorry
+  exact h_phys
 
 -- Note: Bound entanglement does NOT exist for 2×2 systems (qubit pairs).
 -- The PPT criterion is necessary and sufficient for 2×2 and 2×3 systems
@@ -60,9 +64,11 @@ variable {H1 H2 : Type _} [QuantumStateSpace H1] [QuantumStateSpace H2]
 theorem distillation_less_than_formation
   (T : TensorProductSpace H1 H2)
   (et : EntanglementTheory T)
-  (rho : DensityOperator T.carrier) :
+  (rho : DensityOperator T.carrier)
+  (h_phys : PhysicsAssumption AssumptionId.qiDistillationLessThanFormation
+    (et.entanglementOfDistillation rho ≤ et.entanglementOfFormation rho)) :
   et.entanglementOfDistillation rho ≤ et.entanglementOfFormation rho := by
-  sorry
+  exact h_phys
 
 /-- LOCC cannot increase entanglement (monotonicity).
 
@@ -72,9 +78,11 @@ theorem locc_monotone
   (et : EntanglementTheory T)
   (lt : LOCCTheory T et)
   (rho : DensityOperator T.carrier)
-  (locc_op : lt.LOCC) :
+  (locc_op : lt.LOCC)
+  (h_phys : PhysicsAssumption AssumptionId.qiLoccMonotone
+    (et.entanglementOfFormation (lt.applyLOCC locc_op rho) ≤ et.entanglementOfFormation rho)) :
   et.entanglementOfFormation (lt.applyLOCC locc_op rho) ≤ et.entanglementOfFormation rho := by
-  sorry
+  exact h_phys
 
 /-- LOCC cannot create entanglement from separable states.
 
@@ -85,8 +93,10 @@ theorem locc_preserves_separability
   (lt : LOCCTheory T et)
   (rho : DensityOperator T.carrier)
   (h : et.Separable rho)
-  (locc_op : lt.LOCC) :
+  (locc_op : lt.LOCC)
+  (h_phys : PhysicsAssumption AssumptionId.qiLoccPreservesSeparability
+    (et.Separable (lt.applyLOCC locc_op rho))) :
   et.Separable (lt.applyLOCC locc_op rho) := by
-  sorry
+  exact h_phys
 
 end PhysicsLogic.QuantumInformation

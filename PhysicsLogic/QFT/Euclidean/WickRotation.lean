@@ -1,5 +1,6 @@
 import PhysicsLogic.QFT.Euclidean.OsterwalderSchrader
 import PhysicsLogic.QFT.Wightman.WightmanFunctions
+import PhysicsLogic.Assumptions
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Data.Complex.Basic
 
@@ -66,11 +67,17 @@ structure WickRotationData (d : ℕ) [NeZero d] where
 theorem os_reconstruction_theorem {d : ℕ} [NeZero d]
   (theory : QFT d)
   (os : OSAxioms theory)
-  (wick : WickRotationData d) :
+  (wick : WickRotationData d)
+  (h_phys :
+    PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.osReconstruction
+      (∀ (n : ℕ), ∃ (W : AnalyticWightmanFunction d n),
+        ∀ euclidean_points : Fin n → EuclideanPoint d,
+          theory.schwinger n euclidean_points = wick.wickRotation n W euclidean_points)) :
   -- Conclusion: All n-point Schwinger functions are analytic continuations
   ∀ (n : ℕ), ∃ (W : AnalyticWightmanFunction d n),
     ∀ euclidean_points : Fin n → EuclideanPoint d,
       theory.schwinger n euclidean_points = wick.wickRotation n W euclidean_points := by
-  sorry
+  exact h_phys
 
 end PhysicsLogic.QFT.Euclidean

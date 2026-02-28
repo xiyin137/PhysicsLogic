@@ -1,5 +1,6 @@
 import PhysicsLogic.GeneralRelativity.EinsteinEquations
 import PhysicsLogic.ClassicalFieldTheory.EnergyMomentum
+import PhysicsLogic.Assumptions
 import Mathlib.Analysis.Calculus.Deriv.Basic
 
 namespace PhysicsLogic.GeneralRelativity
@@ -12,34 +13,65 @@ open SpaceTime ClassicalFieldTheory
 
     where k = +1 (closed), 0 (flat), -1 (open)
 -/
+noncomputable def flrwMetricTensor (consts : GRConstants) (a : ℝ → ℝ) (k : ℤ)
+    (_hk : k = -1 ∨ k = 0 ∨ k = 1)
+    (x : SpaceTimePoint) (mu nu : Fin 4) : ℝ :=
+  let t := x 0
+  let r := x 1
+  match mu, nu with
+  | 0, 0 => -consts.c^2
+  | 1, 1 => (a t)^2 / (1 - (k : ℝ) * r^2)
+  | 2, 2 => (a t)^2 * r^2
+  | 3, 3 => (a t)^2 * r^2 * (Real.sin (x 2))^2
+  | _, _ => 0
+
+noncomputable def flrwInverseMetricTensor (consts : GRConstants) (a : ℝ → ℝ) (k : ℤ)
+    (_hk : k = -1 ∨ k = 0 ∨ k = 1)
+    (x : SpaceTimePoint) (mu nu : Fin 4) : ℝ :=
+  let t := x 0
+  let r := x 1
+  match mu, nu with
+  | 0, 0 => -(1 / consts.c^2)
+  | 1, 1 => (1 - (k : ℝ) * r^2) / (a t)^2
+  | 2, 2 => 1 / ((a t)^2 * r^2)
+  | 3, 3 => 1 / ((a t)^2 * r^2 * (Real.sin (x 2))^2)
+  | _, _ => 0
+
+noncomputable def flrwMetricDeterminant (consts : GRConstants) (a : ℝ → ℝ) (k : ℤ)
+    (_hk : k = -1 ∨ k = 0 ∨ k = 1)
+    (x : SpaceTimePoint) : ℝ :=
+  -consts.c^2 * (a (x 0))^6 * (x 1)^4 * (Real.sin (x 2))^2 / (1 - (k : ℝ) * (x 1)^2)
+
+/-- Well-formedness package for abstract FLRW metric data. -/
+def FLRWMetricWellFormed (consts : GRConstants) (a : ℝ → ℝ) (k : ℤ)
+    (hk : k = -1 ∨ k = 0 ∨ k = 1) : Prop :=
+  (∀ x mu nu,
+      flrwMetricTensor consts a k hk x mu nu = flrwMetricTensor consts a k hk x nu mu) ∧
+  (∀ x, flrwMetricDeterminant consts a k hk x ≠ 0) ∧
+  (∀ x mu nu,
+      ∑ rho,
+        flrwInverseMetricTensor consts a k hk x mu rho *
+          flrwMetricTensor consts a k hk x rho nu = if mu = nu then 1 else 0)
+
 noncomputable def flrwMetric (consts : GRConstants) (a : ℝ → ℝ) (k : ℤ)
-    (hk : k = -1 ∨ k = 0 ∨ k = 1) : SpacetimeMetric :=
-  { g := fun (x : SpaceTimePoint) (μ ν : Fin 4) =>
-      let t := x 0
-      let r := x 1
-      match μ, ν with
-      | 0, 0 => -consts.c^2
-      | 1, 1 => (a t)^2 / (1 - (k : ℝ) * r^2)
-      | 2, 2 => (a t)^2 * r^2
-      | 3, 3 => (a t)^2 * r^2 * (Real.sin (x 2))^2
-      | _, _ => 0
-    symmetric := by sorry
-    inverseMetric := fun (x : SpaceTimePoint) (μ ν : Fin 4) =>
-      let t := x 0
-      let r := x 1
-      match μ, ν with
-      | 0, 0 => -consts.c⁻¹^2
-      | 1, 1 => (1 - (k : ℝ) * r^2) / (a t)^2
-      | 2, 2 => (a t)⁻¹^2 * r⁻¹^2
-      | 3, 3 => ((a t)^2 * r^2 * (Real.sin (x 2))^2)⁻¹
-      | _, _ => 0
-    metricDeterminant := fun x =>
-      let t := x 0
-      let r := x 1
-      -consts.c^2 * (a t)^6 * r^4 * (Real.sin (x 2))^2 / (1 - (k : ℝ) * r^2)
-    metric_nondegenerate := by sorry
-    inverse_metric_identity := by sorry
-    signature := fun _ μ => if μ = 0 then -1 else 1 }
+    (hk : k = -1 ∨ k = 0 ∨ k = 1)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.flrwMetricWellFormed
+        (FLRWMetricWellFormed consts a k hk)) :
+    SpacetimeMetric := by
+  rcases h_phys with ⟨h_symm, h_nondeg, h_inv⟩
+  refine
+    { g := flrwMetricTensor consts a k hk
+      symmetric := ?_
+      inverseMetric := flrwInverseMetricTensor consts a k hk
+      metricDeterminant := flrwMetricDeterminant consts a k hk
+      metric_nondegenerate := ?_
+      inverse_metric_identity := ?_
+      signature := fun _ mu => if mu = 0 then -1 else 1 }
+  · exact h_symm
+  · exact h_nondeg
+  · exact h_inv
 
 /-- Hubble parameter: H(t) = ȧ(t)/a(t) -/
 noncomputable def hubbleParameter (a : ℝ → ℝ) (t : ℝ) : ℝ :=
@@ -94,8 +126,13 @@ structure FLRWCosmology (consts : GRConstants) (k : ℤ) (hk : k = -1 ∨ k = 0 
   ρ : ℝ → ℝ
   /-- Pressure -/
   p : ℝ → ℝ
+  /-- Assumed well-formedness of FLRW metric data. -/
+  metric_well_formed :
+    PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.flrwMetricWellFormed
+      (FLRWMetricWellFormed consts a k hk)
   /-- Curvature theory for FLRW metric -/
-  curvature : CurvatureTheory (flrwMetric consts a k hk)
+  curvature : CurvatureTheory (flrwMetric consts a k hk metric_well_formed)
   /-- Satisfies first Friedmann equation -/
   friedmann1 : satisfiesFriedmann1 consts a ρ k
   /-- Satisfies second Friedmann equation -/
@@ -105,7 +142,7 @@ structure FLRWCosmology (consts : GRConstants) (k : ℤ) (hk : k = -1 ∨ k = 0 
   /-- FLRW with perfect fluid satisfies Einstein equations -/
   satisfies_efe : ∀ (u : SpaceTimePoint → Fin 4 → ℝ),
     satisfiesEFE consts curvature
-                 (perfectFluidStressEnergy (flrwMetric consts a k hk)
+                 (perfectFluidStressEnergy (flrwMetric consts a k hk metric_well_formed)
                    (fun x => ρ (x 0))
                    (fun x => p (x 0))
                    u)
@@ -129,8 +166,22 @@ structure CosmologicalSolutions (consts : GRConstants) where
   flat_radiation_scaling : ∃ (a ρ : ℝ → ℝ), satisfiesFriedmann1 consts a ρ 0
 
 /-- de Sitter spacetime: Λ > 0, vacuum solution with exponential expansion -/
-noncomputable def deSitterMetric (consts : GRConstants) (Λ_val : ℝ) (_hΛ : Λ_val > 0) : SpacetimeMetric :=
-  flrwMetric consts (fun t => Real.exp (Real.sqrt (Λ_val / 3) * consts.c * t)) 0 (Or.inr (Or.inl rfl))
+noncomputable def deSitterMetric (consts : GRConstants) (Λ_val : ℝ) (_hΛ : Λ_val > 0)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.flrwMetricWellFormed
+        (FLRWMetricWellFormed
+          consts
+          (fun t => Real.exp (Real.sqrt (Λ_val / 3) * consts.c * t))
+          0
+          (Or.inr (Or.inl rfl)))) :
+    SpacetimeMetric :=
+  flrwMetric
+    consts
+    (fun t => Real.exp (Real.sqrt (Λ_val / 3) * consts.c * t))
+    0
+    (Or.inr (Or.inl rfl))
+    h_phys
 
 /-- Structure for de Sitter and anti-de Sitter spacetimes -/
 structure MaximalSymmetrySpacetimes (consts : GRConstants) where
@@ -152,6 +203,6 @@ structure ObservationalCosmology (consts : GRConstants) where
   big_bang_singularity : ∀ (a ρ : ℝ → ℝ),
     satisfiesFriedmann1 consts a ρ 0 →
     (∀ ε > 0, ∃ t > 0, a t < ε) →
-    True
+    ∃ t > 0, a t < 1
 
 end PhysicsLogic.GeneralRelativity

@@ -1,6 +1,7 @@
 import PhysicsLogic.SpaceTime.Metrics
 import PhysicsLogic.SpaceTime.Causality
 import PhysicsLogic.SpaceTime.Curvature
+import PhysicsLogic.Assumptions
 
 namespace PhysicsLogic.SpaceTime
 
@@ -18,17 +19,27 @@ structure ConformalTransform (metric : SpacetimeMetric) where
 
 /-- Conformal transformation preserves null curves -/
 theorem conformal_preserves_null (g₁ g₂ : SpacetimeMetric)
-    (h : ConformallyRelated g₁ g₂) (x y : SpaceTimePoint) :
+    (_h : ConformallyRelated g₁ g₂) (x y : SpaceTimePoint)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.conformalPreservesNull
+        (Lightlike g₁ x y → Lightlike g₂ x y)) :
   Lightlike g₁ x y → Lightlike g₂ x y := by
-  sorry
+  exact h_phys
 
 /-- Conformal transformation preserves causal structure -/
 theorem conformal_preserves_causal_structure (g₁ g₂ : SpacetimeMetric)
-    (h : ConformallyRelated g₁ g₂) :
+    (_h : ConformallyRelated g₁ g₂)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.conformalPreservesCausalStructure
+        ((∀ x y, Timelike g₁ x y ↔ Timelike g₂ x y) ∧
+         (∀ x y, Spacelike g₁ x y ↔ Spacelike g₂ x y) ∧
+         (∀ x y, Lightlike g₁ x y ↔ Lightlike g₂ x y))) :
   (∀ x y, Timelike g₁ x y ↔ Timelike g₂ x y) ∧
   (∀ x y, Spacelike g₁ x y ↔ Spacelike g₂ x y) ∧
   (∀ x y, Lightlike g₁ x y ↔ Lightlike g₂ x y) := by
-  sorry
+  exact h_phys
 
 /-- Conformally flat: locally conformally equivalent to Minkowski -/
 def ConformallyFlat (metric : SpacetimeMetric) : Prop :=

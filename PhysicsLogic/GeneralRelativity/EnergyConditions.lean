@@ -1,5 +1,6 @@
 import PhysicsLogic.GeneralRelativity.EinsteinEquations
 import PhysicsLogic.ClassicalFieldTheory.EnergyMomentum
+import PhysicsLogic.Assumptions
 
 namespace PhysicsLogic.GeneralRelativity
 
@@ -55,9 +56,14 @@ theorem perfect_fluid_satisfies_energy_conditions
     (ρ p : SpaceTimePoint → ℝ)
     (u : SpaceTimePoint → Fin 4 → ℝ)
     (h_ρ : ∀ x, ρ x ≥ 0)
-    (h_ρp : ∀ x, ρ x + p x ≥ 0) :
+    (h_ρp : ∀ x, ρ x + p x ≥ 0)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.perfectFluidEnergyConditions
+        (WeakEnergyCondition metric (perfectFluidStressEnergy metric ρ p u) ∧
+         NullEnergyCondition metric (perfectFluidStressEnergy metric ρ p u))) :
   WeakEnergyCondition metric (perfectFluidStressEnergy metric ρ p u) ∧
   NullEnergyCondition metric (perfectFluidStressEnergy metric ρ p u) := by
-  sorry
+  exact h_phys
 
 end PhysicsLogic.GeneralRelativity

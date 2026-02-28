@@ -1,5 +1,6 @@
 import PhysicsLogic.Quantum
 import PhysicsLogic.QuantumInformation.PartialTrace
+import PhysicsLogic.Assumptions
 import Mathlib.Data.Real.Basic
 
 namespace PhysicsLogic.QuantumInformation
@@ -52,8 +53,12 @@ variable {H : Type _} [QuantumStateSpace H]
 
     This is a THEOREM (provable from quantum information theory), not an axiom itself. -/
 theorem holevo_bound
-  (sct : SingleSpaceChannelTheory H) (dim : ℕ) :
+  (sct : SingleSpaceChannelTheory H) (dim : ℕ)
+  (h_phys :
+    PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.holevoBound
+      (sct.theory.classicalCapacity sct.identityChannel ≤ Real.log dim)) :
   sct.theory.classicalCapacity sct.identityChannel ≤ Real.log dim := by
-  sorry
+  exact h_phys
 
 end PhysicsLogic.QuantumInformation

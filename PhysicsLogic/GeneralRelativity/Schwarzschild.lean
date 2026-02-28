@@ -1,5 +1,6 @@
 import PhysicsLogic.GeneralRelativity.EnergyConditions
 import PhysicsLogic.SpaceTime.Symmetries
+import PhysicsLogic.Assumptions
 
 namespace PhysicsLogic.GeneralRelativity
 
@@ -15,44 +16,78 @@ noncomputable def schwarzschildRadius (consts : GRConstants) (M : ℝ) : ℝ :=
 
     Describes static, spherically symmetric vacuum solution
 -/
-noncomputable def schwarzschildMetric (consts : GRConstants) (M : ℝ) (hM : M > 0) : SpacetimeMetric :=
-  { g := fun (x : SpaceTimePoint) (μ ν : Fin 4) =>
-      let r := Real.sqrt ((x 1)^2 + (x 2)^2 + (x 3)^2)
-      let rs := schwarzschildRadius consts M
-      if r > rs then
-        match μ, ν with
-        | 0, 0 => -(1 - rs/r) * consts.c^2
-        | 1, 1 => (1 - rs/r)⁻¹
-        | 2, 2 => r^2
-        | 3, 3 => r^2 * (Real.sin (x 2))^2
-        | _, _ => 0
-      else 0  -- Undefined at/inside horizon in these coordinates
-    symmetric := by sorry
-    inverseMetric := fun (x : SpaceTimePoint) (μ ν : Fin 4) =>
-      let r := Real.sqrt ((x 1)^2 + (x 2)^2 + (x 3)^2)
-      let rs := schwarzschildRadius consts M
-      if r > rs then
-        match μ, ν with
-        | 0, 0 => -(1 - rs/r)⁻¹ / consts.c^2
-        | 1, 1 => (1 - rs/r)
-        | 2, 2 => r⁻¹^2
-        | 3, 3 => (r^2 * (Real.sin (x 2))^2)⁻¹
-        | _, _ => 0
-      else 0
-    metricDeterminant := fun x =>
-      let r := Real.sqrt ((x 1)^2 + (x 2)^2 + (x 3)^2)
-      let rs := schwarzschildRadius consts M
-      if r > rs then -consts.c^2 * r^4 * (Real.sin (x 2))^2 else 0
-    metric_nondegenerate := by sorry
-    inverse_metric_identity := by sorry
-    signature := fun _ μ => if μ = 0 then -1 else 1 }
+noncomputable def schwarzschildMetricTensor (consts : GRConstants) (M : ℝ) (_hM : M > 0)
+    (x : SpaceTimePoint) (μ ν : Fin 4) : ℝ :=
+  let r := Real.sqrt ((x 1)^2 + (x 2)^2 + (x 3)^2)
+  let rs := schwarzschildRadius consts M
+  if r > rs then
+    match μ, ν with
+    | 0, 0 => -(1 - rs / r) * consts.c^2
+    | 1, 1 => (1 - rs / r)⁻¹
+    | 2, 2 => r^2
+    | 3, 3 => r^2 * (Real.sin (x 2))^2
+    | _, _ => 0
+  else 0
+
+noncomputable def schwarzschildInverseMetricTensor (consts : GRConstants) (M : ℝ) (_hM : M > 0)
+    (x : SpaceTimePoint) (μ ν : Fin 4) : ℝ :=
+  let r := Real.sqrt ((x 1)^2 + (x 2)^2 + (x 3)^2)
+  let rs := schwarzschildRadius consts M
+  if r > rs then
+    match μ, ν with
+    | 0, 0 => -(1 - rs / r)⁻¹ / consts.c^2
+    | 1, 1 => (1 - rs / r)
+    | 2, 2 => r⁻¹^2
+    | 3, 3 => (r^2 * (Real.sin (x 2))^2)⁻¹
+    | _, _ => 0
+  else 0
+
+noncomputable def schwarzschildMetricDeterminant (consts : GRConstants) (M : ℝ) (_hM : M > 0)
+    (x : SpaceTimePoint) : ℝ :=
+  let r := Real.sqrt ((x 1)^2 + (x 2)^2 + (x 3)^2)
+  let rs := schwarzschildRadius consts M
+  if r > rs then -consts.c^2 * r^4 * (Real.sin (x 2))^2 else 0
+
+/-- Well-formedness package for abstract Schwarzschild metric data. -/
+def SchwarzschildMetricWellFormed (consts : GRConstants) (M : ℝ) (hM : M > 0) : Prop :=
+  (∀ x μ ν,
+      schwarzschildMetricTensor consts M hM x μ ν = schwarzschildMetricTensor consts M hM x ν μ) ∧
+  (∀ x, schwarzschildMetricDeterminant consts M hM x ≠ 0) ∧
+  (∀ x μ ν,
+      ∑ ρ,
+        schwarzschildInverseMetricTensor consts M hM x μ ρ *
+          schwarzschildMetricTensor consts M hM x ρ ν = if μ = ν then 1 else 0)
+
+noncomputable def schwarzschildMetric (consts : GRConstants) (M : ℝ) (hM : M > 0)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.schwarzschildMetricWellFormed
+        (SchwarzschildMetricWellFormed consts M hM)) :
+    SpacetimeMetric := by
+  rcases h_phys with ⟨h_symm, h_nondeg, h_inv⟩
+  refine
+    { g := schwarzschildMetricTensor consts M hM
+      symmetric := ?_
+      inverseMetric := schwarzschildInverseMetricTensor consts M hM
+      metricDeterminant := schwarzschildMetricDeterminant consts M hM
+      metric_nondegenerate := ?_
+      inverse_metric_identity := ?_
+      signature := fun _ μ => if μ = 0 then -1 else 1 }
+  · exact h_symm
+  · exact h_nondeg
+  · exact h_inv
 
 /-- Structure for Schwarzschild spacetime theory -/
 structure SchwarzschildTheory (consts : GRConstants) (M : ℝ) (hM : M > 0) where
+  /-- Assumed well-formedness of Schwarzschild metric data. -/
+  metric_well_formed :
+    PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.schwarzschildMetricWellFormed
+      (SchwarzschildMetricWellFormed consts M hM)
   /-- Connection theory for Schwarzschild metric -/
-  connection : ConnectionTheory (schwarzschildMetric consts M hM)
+  connection : ConnectionTheory (schwarzschildMetric consts M hM metric_well_formed)
   /-- Curvature theory for Schwarzschild metric -/
-  curvature : CurvatureTheory (schwarzschildMetric consts M hM)
+  curvature : CurvatureTheory (schwarzschildMetric consts M hM metric_well_formed)
   /-- Schwarzschild metric solves vacuum Einstein equations -/
   solves_vacuum_efe : VacuumEFE consts curvature
   /-- Schwarzschild is static: has timelike Killing vector ∂_t -/
@@ -87,14 +122,19 @@ structure SchwarzschildTheory (consts : GRConstants) (M : ℝ) (hM : M > 0) wher
         Filter.atTop Filter.atTop
 
 /-- Structure for uniqueness theorems (Birkhoff) -/
-structure UniquenessTheorems (consts : GRConstants) where
+  structure UniquenessTheorems (consts : GRConstants) where
   /-- Birkhoff's theorem: Schwarzschild is unique spherically symmetric vacuum solution -/
   birkhoff_theorem : ∀ (metric : SpacetimeMetric) (conn : ConnectionTheory metric)
     (curv : CurvatureTheory metric),
     VacuumEFE consts curv →
     (∃ (ξs : Fin 3 → SpaceTimePoint → Fin 4 → ℝ),
       ∀ i, KillingVector conn (ξs i)) →
-    ∃ (M : ℝ) (hM : M > 0), metric = schwarzschildMetric consts M hM
+    ∃ (M : ℝ) (hM : M > 0)
+      (h_phys :
+        PhysicsLogic.PhysicsAssumption
+          PhysicsLogic.AssumptionId.schwarzschildMetricWellFormed
+          (SchwarzschildMetricWellFormed consts M hM)),
+      metric = schwarzschildMetric consts M hM h_phys
 
 /-- Structure for Schwarzschild geodesic motion -/
 structure SchwarzschildGeodesics (consts : GRConstants) (M : ℝ) (hM : M > 0)

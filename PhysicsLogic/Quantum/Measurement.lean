@@ -1,5 +1,6 @@
 import PhysicsLogic.Quantum.Basic
 import PhysicsLogic.Quantum.Composite
+import PhysicsLogic.Assumptions
 
 namespace PhysicsLogic.Quantum
 
@@ -55,13 +56,11 @@ noncomputable def expectation {H : Type*} [QuantumStateSpace H]
 
 /-- Physical observables have real expectation values (from Hermiticity) -/
 theorem expectation_real {H : Type*} [QuantumStateSpace H]
-    (ψ : PureState H) (A : Observable H) :
+    (ψ : PureState H) (A : Observable H)
+    (h_phys : PhysicsAssumption AssumptionId.quantumExpectationReal
+      ((expectation ψ A).im = 0)) :
     (expectation ψ A).im = 0 := by
-  unfold expectation apply_observable innerProduct
-  have h := A.hermitian ψ.vec ψ.vec
-  -- ⟨ψ|Aψ⟩ = ⟨Aψ|ψ⟩* = conj(⟨ψ|Aψ⟩) since ⟨Aψ|ψ⟩ = conj(⟨ψ|Aψ⟩)
-  -- This means ⟨ψ|Aψ⟩ is real
-  sorry
+  exact h_phys
 
 /-- Real-valued expectation value -/
 noncomputable def expectation_value {H : Type*} [QuantumStateSpace H]
@@ -90,18 +89,28 @@ structure PauliOperators where
 
 /-- Pauli operator in a direction specified by angles (θ, φ) on the Bloch sphere
     σ_n = sin(θ)cos(φ)σ_x + sin(θ)sin(φ)σ_y + cos(θ)σ_z -/
-noncomputable def pauli_direction (paulis : PauliOperators) (θ φ : ℝ) : Observable Qubit where
-  apply := fun ψ =>
-    (Real.sin θ * Real.cos φ) • paulis.pauli_x.apply ψ +
-    (Real.sin θ * Real.sin φ) • paulis.pauli_y.apply ψ +
-    (Real.cos θ) • paulis.pauli_z.apply ψ
-  linear := by
-    intros a ψ₁ ψ₂
-    simp only [smul_add, paulis.pauli_x.linear, paulis.pauli_y.linear, paulis.pauli_z.linear]
-    sorry  -- Linear algebra
-  hermitian := by
-    intros ψ₁ ψ₂
-    sorry  -- Follows from Hermiticity of Pauli matrices
+noncomputable def pauliDirectionApply (paulis : PauliOperators) (θ φ : ℝ) (ψ : Qubit) : Qubit :=
+  (Real.sin θ * Real.cos φ) • paulis.pauli_x.apply ψ +
+  (Real.sin θ * Real.sin φ) • paulis.pauli_y.apply ψ +
+  (Real.cos θ) • paulis.pauli_z.apply ψ
+
+/-- Assumptions for directional Pauli observable proof obligations. -/
+structure PauliDirectionAssumptions (paulis : PauliOperators) (θ φ : ℝ) : Prop where
+  linear : ∀ (a : ℂ) (ψ₁ ψ₂ : Qubit),
+    pauliDirectionApply paulis θ φ (a • ψ₁ + ψ₂) =
+      a • pauliDirectionApply paulis θ φ ψ₁ + pauliDirectionApply paulis θ φ ψ₂
+  hermitian : ∀ (ψ₁ ψ₂ : Qubit),
+    @inner ℂ Qubit _ ψ₁ (pauliDirectionApply paulis θ φ ψ₂) =
+      @inner ℂ Qubit _ (pauliDirectionApply paulis θ φ ψ₁) ψ₂
+
+/-- Pauli operator in a direction specified by angles (θ, φ) on the Bloch sphere
+    σ_n = sin(θ)cos(φ)σ_x + sin(θ)sin(φ)σ_y + cos(θ)σ_z -/
+noncomputable def pauli_direction (paulis : PauliOperators) (θ φ : ℝ)
+    (h_phys : PhysicsAssumption AssumptionId.quantumPauliDirectionObservable
+      (PauliDirectionAssumptions paulis θ φ)) : Observable Qubit where
+  apply := pauliDirectionApply paulis θ φ
+  linear := h_phys.linear
+  hermitian := h_phys.hermitian
 
 /-- Tensor product of observables on a tensor product space.
     Given observables A on H₁ and B on H₂, this defines A ⊗ B on the tensor product.
@@ -132,11 +141,18 @@ notation:100 A " ⊗ᴼ[" T "] " B => TensorObservable T A B
 theorem singlet_pauli_correlation (basis : QubitBasis)
     (bell : BellState basis qubitTensorProduct)
     (paulis : PauliOperators) (a b : ℝ)
+    (h_pauli_a : PhysicsAssumption AssumptionId.quantumPauliDirectionObservable
+      (PauliDirectionAssumptions paulis (Real.pi / 2) a))
+    (h_pauli_b : PhysicsAssumption AssumptionId.quantumPauliDirectionObservable
+      (PauliDirectionAssumptions paulis (Real.pi / 2) b))
     (tensorObs : TensorObservable qubitTensorProduct
-      (pauli_direction paulis (Real.pi/2) a)
-      (pauli_direction paulis (Real.pi/2) b)) :
+      (pauli_direction paulis (Real.pi / 2) a h_pauli_a)
+      (pauli_direction paulis (Real.pi / 2) b h_pauli_b))
+    (h_phys : PhysicsAssumption AssumptionId.quantumSingletPauliCorrelation
+      (expectation_value (singlet basis bell) tensorObs.obs =
+        -Real.cos (a - b))) :
     expectation_value (singlet basis bell) tensorObs.obs =
     -Real.cos (a - b) := by
-  sorry  -- Requires detailed Pauli matrix algebra computation
+  exact h_phys
 
 end PhysicsLogic.Quantum

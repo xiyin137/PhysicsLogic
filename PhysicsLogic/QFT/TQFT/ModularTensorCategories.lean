@@ -2,6 +2,7 @@
 -- Modular Tensor Categories and their relation to 3D TQFT
 import PhysicsLogic.QFT.TQFT.Axioms
 import PhysicsLogic.QFT.TQFT.ChernSimons
+import PhysicsLogic.Assumptions
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Matrix.Basic
 
@@ -104,12 +105,13 @@ structure MTCData (md : StandaloneManifoldData) (cs : ChernSimonsData md) where
       Together with T diagonal, this generates a projective representation
       of SL(2,ℤ) on the space spanned by simple objects. -/
   modular_relation : ∀ (MTC : ModularTensorCategory),
-    ∃ (c : ℂ) (_ : c ≠ 0),
-      ∀ i j : Fin (mtcRank MTC),
-        (∑ k : Fin (mtcRank MTC), ∑ l : Fin (mtcRank MTC), ∑ m : Fin (mtcRank MTC),
-          sMatrix MTC i k * tMatrix MTC k l * sMatrix MTC l m *
-          tMatrix MTC m j) =  -- This is ((ST)²S)_{ij} which should relate to c · δ_{ij}
-        sorry  -- The exact matrix identity is complex; left as sorry in Core
+    PhysicsAssumption AssumptionId.tqftModularRelation
+      (∃ (c : ℂ) (_ : c ≠ 0),
+        ∀ i j : Fin (mtcRank MTC),
+          (∑ k : Fin (mtcRank MTC), ∑ l : Fin (mtcRank MTC), ∑ m : Fin (mtcRank MTC),
+            sMatrix MTC i k * tMatrix MTC k l * sMatrix MTC l m *
+            tMatrix MTC m j) =
+          c * (if i = j then 1 else 0))
 
   /- === Verlinde formula === -/
 

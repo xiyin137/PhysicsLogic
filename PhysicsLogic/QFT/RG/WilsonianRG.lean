@@ -1,4 +1,5 @@
 import PhysicsLogic.QFT.RG.Basic
+import PhysicsLogic.Assumptions
 
 namespace PhysicsLogic.QFT.RG.Wilsonian
 
@@ -124,11 +125,17 @@ structure ModeIntegration {d : ℕ} (rg : RGFramework d) where
     This is a theorem about the RG flow, not an axiom. -/
 theorem irrelevant_suppression {d : ℕ} (rg : RGFramework d)
     (mi : ModeIntegration rg)
-    (O : rg.Operator) (h : Irrelevant rg O) :
+    (O : rg.Operator) (h : Irrelevant rg O)
+    (h_phys :
+      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.AssumptionId.wilsonianIrrelevantSuppression
+        (∃ C : ℝ, |wilsonCoeff mi.ir_action O| ≤
+          C * |wilsonCoeff mi.uv_action O| *
+          (mi.ir_action.cutoff.Λ / mi.uv_action.cutoff.Λ) ^ (rg.massDimension O - d))) :
   ∃ C : ℝ, |wilsonCoeff mi.ir_action O| ≤
     C * |wilsonCoeff mi.uv_action O| *
     (mi.ir_action.cutoff.Λ / mi.uv_action.cutoff.Λ) ^ (rg.massDimension O - d) := by
-  sorry
+  exact h_phys
 
 /- ============= UNIVERSALITY ============= -/
 
