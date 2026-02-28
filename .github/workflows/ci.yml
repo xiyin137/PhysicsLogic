@@ -1,0 +1,53 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install elan
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Toolchain versions
+        run: |
+          lean --version
+          lake --version
+
+      - name: Download mathlib cache
+        run: lake exe cache get
+
+      - name: Invariant checks
+        run: scripts/check_nonpapers_invariants.sh
+
+      - name: Physics assumptions registry check
+        run: bash scripts/check_physics_assumptions_registry.sh
+
+      - name: Physics assumption usage check
+        run: bash scripts/check_physics_assumption_usage.sh
+
+      - name: No-new-sorry check (non-Papers)
+        run: bash scripts/check_no_new_nonpapers_sorry.sh
+
+      - name: Non-Papers sorry budget check
+        run: bash scripts/check_nonpapers_sorry_budget.sh
+
+      - name: Build strict core target
+        run: lake build PhysicsLogic.Core
+
+      - name: Build papers target
+        run: lake build PhysicsLogic.Papers
+
+      - name: Build compatibility umbrella target
+        run: lake build PhysicsLogic

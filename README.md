@@ -1,88 +1,177 @@
 # PhysicsLogic
 
-Encoding the logical architecture of theoretical physics in Lean 4 — making assumptions, structures, and inter-framework relationships explicit in the type system.
+PhysicsLogic encodes the logical architecture of theoretical physics in Lean 4.
 
-This project is not about mathematical rigor (proving theorems from first principles) but about **parsing the logical structure of physics**: what each framework assumes, what follows from what, and where different frameworks are mutually inconsistent.
+The goal is explicitness, not full mathematical rigor:
+- make assumptions visible,
+- make framework dependencies explicit,
+- make theorem statements sound at the abstraction level of physics reasoning.
 
-Built on [Mathlib](https://github.com/leanprover-community/mathlib4). Lean 4 toolchain: `v4.29.0-rc1`.
+Proof-heavy formalization is intentionally delegated to other repositories.
 
-## Structure
+Built on [Mathlib](https://github.com/leanprover-community/mathlib4).  
+Lean toolchain: `leanprover/lean4:v4.29.0-rc1`.
 
-### Foundations
+## Mission And Scope
 
-| Module | Contents |
-|--------|----------|
-| **SpaceTime/** | Manifolds, metrics, Minkowski space, causality, curvature, geodesics, conformal structure |
-| **Symmetries/** | Lorentz group, Poincaré group, Lie algebras, representations, discrete symmetries |
+PhysicsLogic is for parsing physics logic:
+- which hypotheses are required,
+- what each framework actually claims,
+- how frameworks relate or conflict.
 
-### Classical Physics
+PhysicsLogic is not:
+- a replacement for rigorous analysis/topology/operator-algebra formalization,
+- a numerical/simulation codebase.
 
-| Module | Contents |
-|--------|----------|
-| **ClassicalMechanics/** | Lagrangian/Hamiltonian mechanics, phase space, canonical transforms, Hamilton-Jacobi, integrability, perturbation theory |
-| **ClassicalFieldTheory/** | Scalar/electromagnetic/Yang-Mills fields, Euler-Lagrange equations, Noether's theorem, energy-momentum, solitons |
-| **FluidMechanics/** | Euler and Navier-Stokes equations, vorticity, compressible flow, conservation laws |
-| **GeneralRelativity/** | Einstein equations, energy conditions, Schwarzschild/Kerr/Reissner-Nordström black holes, cosmology, gravitational waves, singularities |
+## Core Design: Tracked Physical Assumptions
 
-### Quantum Physics
+All non-derived physical premises are tracked through:
+- `PhysicsLogic/Assumptions.lean`
+- `PhysicsAssumption` (traceability wrapper)
+- `AssumptionId.*` (stable string IDs)
+- `assumptionRegistry` (master human-readable registry)
 
-| Module | Contents |
-|--------|----------|
-| **Quantum/** | Hilbert spaces, operators, composite systems, measurement |
-| **QuantumInformation/** | Entanglement, entropy, channels, partial trace, correlations, information theorems |
+Canonical theorem style:
 
-### Quantum Field Theory
-
-| Module | Contents |
-|--------|----------|
-| **QFT/Wightman/** | Wightman axioms, field operators, Wightman functions, PCT and spin-statistics theorems |
-| **QFT/Euclidean/** | Osterwalder-Schrader axioms, Schwinger functions, Wick rotation |
-| **QFT/AQFT/** | Algebraic QFT (Haag-Kastler axioms), nets of algebras, Haag's theorem |
-| **QFT/PathIntegral/** | Functional integrals, regularization, Faddeev-Popov, instantons |
-| **QFT/CFT/** | Conformal field theory, bootstrap, 2D CFT (Virasoro algebra, modular invariance, minimal models) |
-| **QFT/RG/** | Renormalization group, Polchinski/Wetterich flows, local potential approximation |
-| **QFT/BV/** | Batalin-Vilkovisky formalism, BRST cohomology |
-| **QFT/Smatrix/** | S-matrix, LSZ reduction, crossing symmetry, optical theorem |
-| **QFT/TQFT/** | Topological QFT, Atiyah axioms, cobordisms, Chern-Simons, Dijkgraaf-Witten |
-| **QFT/KontsevichSegal/** | Kontsevich-Segal criterion for well-defined QFT |
-
-### Papers
-
-Formalizations of specific physics papers and arguments:
-
-| File | Topic |
-|------|-------|
-| **Bell.lean** | Bell's theorem (CHSH inequality, quantum violation, no local hidden variables) |
-| **AMPS.lean** | AMPS firewall paradox (unitarity vs EFT vs Page's theorem) |
-| **Phi4_2D.lean** | φ⁴ theory in 2D |
-| **Coleman2D.lean** | Coleman's theorem on symmetry breaking in 2D |
-| **VafaWitten.lean** | Vafa-Witten theorem on parity conservation |
-| **cTheorem.lean** | Zamolodchikov's c-theorem |
-| **Kolmogorov.lean** | Kolmogorov's theory of turbulence |
-| **GlimmJaffe/** | Glimm-Jaffe constructive QFT (lattice theory, reflection positivity, cluster expansions, correlation inequalities, hypercontractivity) |
-
-Papers include `_clean.lean` (code only, no comments) and `_interpretation.md` (mathematical exposition) companion files.
-
-## Design Principles
-
-- **No `axiom` declarations.** All physical assumptions are structure fields, visible to the reader. Lean axioms silently pollute the global environment — the opposite of this project's goal.
-- **No `True` placeholders.** Structure fields must carry information. If a condition cannot yet be stated, omit it with a comment explaining why.
-- **No bare `Prop` fields.** Every propositional field must express a meaningful constraint.
-- **No trivially satisfiable `∃ x, ...` patterns.** Existentials must be constrained.
-- **No smuggled assumptions.** Computational results cannot be assumed in definitions or structures.
-- **Definitions must be sound.** "Conceptually correct" is not good enough — definitions must be accurate and proper.
-
-## Building
-
+```lean
+(h_phys : PhysicsAssumption AssumptionId.someFact P) : P := by
+  exact h_phys
 ```
+
+Rules:
+- never use Lean `axiom` declarations,
+- never pass raw string literals as `PhysicsAssumption` IDs,
+- always use `AssumptionId.*`,
+- keep IDs stable after introduction.
+
+## Repository Layout
+
+Top-level library entry points:
+- `PhysicsLogic/Core.lean`: strict non-Papers aggregator.
+- `PhysicsLogic/Papers.lean`: all paper formalizations.
+- `PhysicsLogic.lean`: compatibility umbrella (`Core` + `Papers.AMPS`).
+
+Core physics modules:
+- `PhysicsLogic/SpaceTime/`
+- `PhysicsLogic/Symmetries/`
+- `PhysicsLogic/ClassicalMechanics/`
+- `PhysicsLogic/ClassicalFieldTheory/`
+- `PhysicsLogic/FluidMechanics/`
+- `PhysicsLogic/GeneralRelativity/`
+- `PhysicsLogic/Quantum/`
+- `PhysicsLogic/QuantumInformation/`
+- `PhysicsLogic/QFT/`
+
+Paper-oriented modules:
+- `PhysicsLogic/Papers/` (Bell, AMPS, Phi4_2D, Coleman2D, VafaWitten, cTheorem, Kolmogorov, GlimmJaffe, Charge4eTSC)
+
+## Setup
+
+1. Install Lean toolchain manager (`elan`).
+2. Clone this repository.
+3. Download Mathlib cache:
+
+```bash
+lake exe cache get
+```
+
+4. Build strict core target:
+
+```bash
+lake build PhysicsLogic.Core
+```
+
+## Build Targets
+
+Strict non-Papers build:
+
+```bash
+lake build PhysicsLogic.Core
+```
+
+All papers:
+
+```bash
+lake build PhysicsLogic.Papers
+```
+
+Compatibility umbrella:
+
+```bash
 lake build PhysicsLogic
 ```
 
-To build a specific module:
+Specific module examples:
 
-```
-lake build PhysicsLogic.Papers.AMPS
+```bash
 lake build PhysicsLogic.QFT.Wightman
+lake build PhysicsLogic.Papers.AMPS
 ```
 
-Do not run `lake build` without a target (causes cache issues). Do not run `lake clean` (risks clearing the Mathlib cache).
+Important:
+- do not run `lake build` with no target in this repo,
+- do not run `lake clean` (can invalidate downloaded caches and slow recovery).
+
+## Invariant And Governance Scripts
+
+Scripts are under `scripts/`:
+- `check_nonpapers_invariants.sh`
+- `check_physics_assumptions_registry.sh`
+- `check_physics_assumption_usage.sh`
+- `check_no_new_nonpapers_sorry.sh`
+- `check_nonpapers_sorry_budget.sh`
+
+Recommended local pre-push run:
+
+```bash
+./scripts/check_nonpapers_invariants.sh
+./scripts/check_physics_assumptions_registry.sh
+./scripts/check_physics_assumption_usage.sh
+./scripts/check_no_new_nonpapers_sorry.sh
+./scripts/check_nonpapers_sorry_budget.sh
+lake build PhysicsLogic.Core
+```
+
+## CI Policy
+
+GitHub Actions workflow: `.github/workflows/ci.yml`.
+
+CI enforces:
+- no explicit Lean `axiom` declarations,
+- no non-Papers `True` placeholders in declaration signatures,
+- no vacuous `∃ ..., True` non-Papers patterns,
+- no exact bare `field : Prop` in non-Papers structures,
+- all `PhysicsAssumption` labels are defined,
+- all defined labels are listed in `assumptionRegistry`,
+- `AssumptionId` string payloads are unique,
+- no duplicate `AssumptionId` entries in `assumptionRegistry`,
+- no raw string literal IDs in non-Papers `PhysicsAssumption` uses,
+- no newly added non-Papers `sorry`,
+- non-Papers `sorry` count does not regress (when PR baseline is available),
+- `lake build PhysicsLogic.Core`,
+- `lake build PhysicsLogic.Papers`,
+- `lake build PhysicsLogic`.
+
+## Contributor Guidelines
+
+When adding new results:
+- prefer structure fields and explicit hypotheses over hidden assumptions,
+- use `PhysicsAssumption AssumptionId.*` when a claim is physically motivated but not derived here,
+- keep signatures informative and non-vacuous.
+
+When adding a new physical assumption:
+1. Add a new stable ID in `AssumptionId` (`PhysicsLogic/Assumptions.lean`).
+2. Add a concise description in `assumptionRegistry`.
+3. Use that ID at theorem/definition call sites.
+4. Run the assumption guard scripts.
+
+When touching non-Papers code:
+- do not introduce `axiom`,
+- do not introduce raw string literal assumption IDs,
+- do not introduce new `sorry`.
+
+## Notes On Papers
+
+`PhysicsLogic/Papers` is intentionally looser than `Core`:
+- paper modules may use stronger temporary placeholders while arguments are being translated,
+- `Core` remains the strict target for architecture-level soundness.
