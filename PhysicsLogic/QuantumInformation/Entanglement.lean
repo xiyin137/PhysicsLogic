@@ -92,7 +92,7 @@ theorem locc_preserves_separability
   (et : EntanglementTheory T)
   (lt : LOCCTheory T et)
   (rho : DensityOperator T.carrier)
-  (h : et.Separable rho)
+  (_h : et.Separable rho)
   (locc_op : lt.LOCC)
   (h_phys : PhysicsAssumption AssumptionId.qiLoccPreservesSeparability
     (et.Separable (lt.applyLOCC locc_op rho))) :

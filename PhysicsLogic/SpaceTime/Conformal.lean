@@ -60,7 +60,7 @@ structure ConformalTheory (metric : SpacetimeMetric) where
   /-- Curvature theory for this metric -/
   curvature : CurvatureTheory metric
   /-- Weyl tensor is conformally invariant -/
-  weyl_conformal_invariant : ∀ (g₂ : SpacetimeMetric) (h : ConformallyRelated metric g₂)
+  weyl_conformal_invariant : ∀ (g₂ : SpacetimeMetric) (_h : ConformallyRelated metric g₂)
     (ct₂ : CurvatureTheory g₂) (x : SpaceTimePoint) (μ ν ρ σ : Fin 4),
     curvature.weylTensor x μ ν ρ σ = ct₂.weylTensor x μ ν ρ σ
   /-- Conformally flat iff Weyl tensor vanishes -/

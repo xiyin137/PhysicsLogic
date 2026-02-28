@@ -22,7 +22,7 @@ open SpaceTime Quantum
 theorem pct_theorem {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
   (qft : WightmanQFT H d)
   (phi : FieldDistribution H d)
-  (n : ℕ) (hn : n > 0) (points : Fin n → (Fin d → ℝ))
+  (n : ℕ) (_hn : n > 0) (points : Fin n → (Fin d → ℝ))
   (h_phys :
     PhysicsLogic.PhysicsAssumption
       PhysicsLogic.AssumptionId.wightmanPctTheorem
@@ -50,9 +50,9 @@ theorem spin_statistics {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
   (qft : WightmanQFT H d)
   (phi : SmearedFieldOperator H d)
   (spin : ℚ)  -- Spin as rational number (0, 1/2, 1, 3/2, ...)
-  (h_nonneg : spin ≥ 0)
+  (_h_nonneg : spin ≥ 0)
   (f g : SchwartzFunction d)
-  (h_spacelike : spacelikeSeparated (qft.supportOps.testFunctionSupport f)
+  (_h_spacelike : spacelikeSeparated (qft.supportOps.testFunctionSupport f)
                                     (qft.supportOps.testFunctionSupport g))
   (h_phys :
     PhysicsLogic.PhysicsAssumption
@@ -97,7 +97,7 @@ theorem haag_theorem {H_free H_int : Type _}
   (qft_int : WightmanQFT H_int d)
   (phi_free : FieldDistribution H_free d)
   (phi_int : FieldDistribution H_int d)
-  (h_distinct : qft_free.wft.wightmanFunction phi_free ≠
+  (_h_distinct : qft_free.wft.wightmanFunction phi_free ≠
                 qft_int.wft.wightmanFunction phi_int)
   (h_phys :
     PhysicsLogic.PhysicsAssumption

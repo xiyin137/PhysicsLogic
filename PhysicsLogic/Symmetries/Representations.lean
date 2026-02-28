@@ -49,7 +49,7 @@ structure RepresentationOps (G : Type _) [Group G] where
   schur_lemma : ∀ {V W : Type _} [AddCommGroup V] [Module ℝ V]
     [AddCommGroup W] [Module ℝ W]
     (ρ : Representation G V) (σ : Representation G W)
-    (hρ : isIrreducible ρ) (hσ : isIrreducible σ)
+    (_hρ : isIrreducible ρ) (_hσ : isIrreducible σ)
     (f : Intertwiner ρ σ),
     Function.Bijective f.toLinearMap ∨ f.toLinearMap = 0
 

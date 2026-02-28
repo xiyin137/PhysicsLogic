@@ -114,8 +114,8 @@ def selfStatistics {d : ℕ} {Sector : Type*}
     group S_n, whose only 1D representations are trivial and sign. -/
 theorem bose_fermi_alternative {d : ℕ} {Sector : Type*}
     (stats : StatisticsData d Sector)
-    (sectors : SuperselectionSectorData d Sector)
-    (h_dim : d ≥ 4) (ρ : Sector) :
+    (_sectors : SuperselectionSectorData d Sector)
+    (_h_dim : d ≥ 4) (ρ : Sector) :
     PhysicsAssumption AssumptionId.aqftBoseFermiAlternative
       (selfStatistics stats ρ = 1 ∨ selfStatistics stats ρ = -1) →
     selfStatistics stats ρ = 1 ∨ selfStatistics stats ρ = -1 := by
@@ -173,7 +173,7 @@ structure DoplicherRobertsData {d : ℕ} [NeZero d] (Sector : Type*)
   /-- Field algebra decomposes under the gauge group: F = ⊕_ρ H_ρ ⊗ A
       (Peter-Weyl decomposition) -/
   peter_weyl_decomposition :
-    ∀ (f : FieldAlgebra), Nonempty Sector
+    ∀ (_f : FieldAlgebra), Nonempty Sector
 
 /-- Doplicher-Roberts reconstruction theorem: the reconstruction data exists
     for any Haag-Kastler QFT with finitely many superselection sectors satisfying
@@ -182,8 +182,8 @@ structure DoplicherRobertsData {d : ℕ} [NeZero d] (Sector : Type*)
     This is a deep THEOREM from the theory of compact group duals. -/
 theorem doplicher_roberts_reconstruction {d : ℕ} [NeZero d]
     (Sector : Type*) (qft : HaagKastlerQFT d)
-    (sectors : SuperselectionSectorData d Sector)
-    (stats : StatisticsData d Sector) :
+    (_sectors : SuperselectionSectorData d Sector)
+    (_stats : StatisticsData d Sector) :
     let P : Prop := Nonempty (DoplicherRobertsData Sector qft)
     PhysicsAssumption AssumptionId.aqftDoplicherRobertsReconstruction P → P := by
   intro P h_phys
@@ -219,7 +219,7 @@ structure SpinData (d : ℕ) (Sector : Type*) where
 theorem spin_statistics {d : ℕ} {Sector : Type*}
     (stats : StatisticsData d Sector)
     (spinData : SpinData d Sector)
-    (h_dim : d ≥ 4) (ρ : Sector) :
+    (_h_dim : d ≥ 4) (ρ : Sector) :
     PhysicsAssumption AssumptionId.aqftSpinStatistics
       (((∃ n : ℤ, spinData.spin ρ = n) → selfStatistics stats ρ = 1) ∧
       ((∃ n : ℤ, spinData.spin ρ = n + 1/2) → selfStatistics stats ρ = -1)) →
@@ -245,7 +245,7 @@ structure DHRSuperselectionTheory {d : ℕ} [NeZero d]
   /-- Sector operations (fusion, conjugation) -/
   sectorOps : SuperselectionSectorData d Sector
   /-- DHR endomorphisms exist for each sector and region -/
-  dhrEndomorphisms : ∀ (O : Set (SpaceTimePointD d)) (ρ : Sector),
+  dhrEndomorphisms : ∀ (O : Set (SpaceTimePointD d)) (_ρ : Sector),
     DHREndomorphism qft.net O
   /-- Statistics of sectors -/
   statistics : StatisticsData d Sector

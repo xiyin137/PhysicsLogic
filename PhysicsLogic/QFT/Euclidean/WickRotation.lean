@@ -51,7 +51,7 @@ structure AnalyticWightmanFunction (d : ℕ) [NeZero d] (n : ℕ) where
     via analytic continuation through the forward tube domain. -/
 structure WickRotationData (d : ℕ) [NeZero d] where
   /-- Wick rotation map: given an analytic Wightman function, produce Schwinger functions -/
-  wickRotation : ∀ (n : ℕ) (W_analytic : AnalyticWightmanFunction d n),
+  wickRotation : ∀ (n : ℕ) (_W_analytic : AnalyticWightmanFunction d n),
     (Fin n → EuclideanPoint d) → ℝ
 
 /-- Osterwalder-Schrader reconstruction theorem (corrected version):
@@ -66,7 +66,7 @@ structure WickRotationData (d : ℕ) [NeZero d] where
     when Wick rotated, reproduce the Schwinger functions. -/
 theorem os_reconstruction_theorem {d : ℕ} [NeZero d]
   (theory : QFT d)
-  (os : OSAxioms theory)
+  (_os : OSAxioms theory)
   (wick : WickRotationData d)
   (h_phys :
     PhysicsLogic.PhysicsAssumption

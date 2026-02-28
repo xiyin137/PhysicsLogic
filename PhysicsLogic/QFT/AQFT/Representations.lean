@@ -148,7 +148,7 @@ def CausallyComplete {d : ℕ} [NeZero d]
 structure HasHaagDuality {d : ℕ} [NeZero d] (qft : HaagKastlerQFT d) where
   /-- Observables in O and O' commute when embedded in a common region -/
   haag_duality : ∀ (O : Set (SpaceTimePointD d))
-    (h_complete : CausallyComplete O)
+    (_h_complete : CausallyComplete O)
     (A : qft.net.Algebra O)
     (B : qft.net.Algebra (causalComplement O))
     (O_full : Set (SpaceTimePointD d))
@@ -176,7 +176,7 @@ theorem reeh_schlieder {d : ℕ} [NeZero d]
     (qft : HaagKastlerQFT d)
     (vac : VacuumStateData qft)
     (O : Set (SpaceTimePointD d))
-    (h_nonempty : O.Nonempty)
+    (_h_nonempty : O.Nonempty)
     (gns : GNSRepresentation (vac.vacuumState O)) :
     PhysicsAssumption AssumptionId.aqftReehSchlieder
       (letI := gns.quantumStructure
@@ -210,9 +210,9 @@ structure HasSplitProperty {d : ℕ} [NeZero d] (qft : HaagKastlerQFT d) where
   split : ∀ (O₁ O₂ : Set (SpaceTimePointD d))
     (h : O₁ ⊆ O₂)
     (ω₁ : StateOnAlgebra qft.net O₁)
-    (ω₂ : StateOnAlgebra qft.net (causalComplement O₂))
+    (_ω₂ : StateOnAlgebra qft.net (causalComplement O₂))
     (O_full : Set (SpaceTimePointD d))
-    (h1 : O₂ ⊆ O_full) (h2 : causalComplement O₂ ⊆ O_full),
+    (h1 : O₂ ⊆ O_full) (_h2 : causalComplement O₂ ⊆ O_full),
     ∃ (ω : StateOnAlgebra qft.net O_full),
       ∀ A : qft.net.Algebra O₁,
         ω.omega (qft.net.inclusion (h.trans h1) A) = ω₁.omega A
@@ -241,8 +241,8 @@ theorem haag_theorem {d : ℕ} [NeZero d]
     (gns₂ : GNSRepresentation (vac₂.vacuumState O))
     (U : gns₁.HilbertSpace → gns₂.HilbertSpace)
     /- U is unitary, intertwines representations, and maps vacuum to vacuum -/
-    (h_maps_vacuum : U gns₁.cyclic_vector = gns₂.cyclic_vector)
-    (h_intertwines : ∀ (A₁ : qft₁.net.Algebra O) (A₂ : qft₂.net.Algebra O)
+    (_h_maps_vacuum : U gns₁.cyclic_vector = gns₂.cyclic_vector)
+    (_h_intertwines : ∀ (A₁ : qft₁.net.Algebra O) (A₂ : qft₂.net.Algebra O)
       (ψ : gns₁.HilbertSpace),
       U (gns₁.representation A₁ ψ) = gns₂.representation A₂ (U ψ)) :
     PhysicsAssumption AssumptionId.aqftHaagTheorem
@@ -287,7 +287,7 @@ structure ModularData {d : ℕ} [NeZero d] {qft : HaagKastlerQFT d}
   J_involution : ∀ ψ : gns.HilbertSpace,
     modular_conjugation (modular_conjugation ψ) = ψ
   /-- Modular flow σ_t preserves the algebra -/
-  flow_preserves_algebra : ∀ (t : ℝ) (A : qft.net.Algebra O),
+  flow_preserves_algebra : ∀ (_t : ℝ) (A : qft.net.Algebra O),
     ∃ (B : qft.net.Algebra O), ∀ ψ : gns.HilbertSpace,
       gns.representation B ψ = gns.representation A ψ
 
@@ -337,16 +337,16 @@ theorem bisognano_wichmann {d : ℕ} [NeZero d]
     (qft : HaagKastlerQFT d) (vac : VacuumStateData qft)
     (h_dim : d ≥ 2)
     (gns : GNSRepresentation (vac.vacuumState (standardWedge d h_dim)))
-    (modular : @ModularData d _ qft vac _ gns) :
+    (_modular : @ModularData d _ qft vac _ gns) :
     PhysicsAssumption AssumptionId.aqftBisognanoWichmann
-      (∃ (boost : ℝ → PoincareTransformGen d),
-        ∀ (t : ℝ) (A : qft.net.Algebra (standardWedge d h_dim)),
+      (∃ (_boost : ℝ → PoincareTransformGen d),
+        ∀ (_t : ℝ) (A : qft.net.Algebra (standardWedge d h_dim)),
           ∃ (B : qft.net.Algebra (standardWedge d h_dim)),
             ∀ ψ : gns.HilbertSpace,
               gns.representation B ψ = gns.representation A ψ) →
     /- The modular flow coincides with Lorentz boosts -/
-    ∃ (boost : ℝ → PoincareTransformGen d),
-      ∀ (t : ℝ) (A : qft.net.Algebra (standardWedge d h_dim)),
+    ∃ (_boost : ℝ → PoincareTransformGen d),
+      ∀ (_t : ℝ) (A : qft.net.Algebra (standardWedge d h_dim)),
         ∃ (B : qft.net.Algebra (standardWedge d h_dim)),
           ∀ ψ : gns.HilbertSpace,
             gns.representation B ψ = gns.representation A ψ := by

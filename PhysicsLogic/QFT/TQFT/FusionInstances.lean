@@ -119,7 +119,7 @@ noncomputable def z3_modular
   qdim_dual := fun _ => rfl
   fusion_qdim := by
     intro i j
-    simp only [one_mul, mul_one]
+    simp only [mul_one]
     have h := z3_N_total i j
     have : ∑ k : Fin 3, (z3_N i j k : ℝ) = (↑(∑ k : Fin 3, z3_N i j k) : ℝ) := by
       push_cast; ring
@@ -243,7 +243,6 @@ noncomputable def su24_fusion
     simp only [su24_qdim]
     split <;> try split <;> try split <;> try split
     all_goals (try norm_num)
-    all_goals (try exact Real.sqrt_pos_of_pos (by norm_num))
   qdim_unit := by simp [su24_qdim]
   qdim_dual := fun _ => rfl
   fusion_qdim := h_phys.fusion_qdim
@@ -419,7 +418,6 @@ noncomputable def ising_modular
     simp only [ising_qdim]
     split <;> try split
     all_goals (try norm_num)
-    all_goals (try exact Real.sqrt_pos_of_pos (by norm_num))
   qdim_unit := by simp [ising_qdim]
   qdim_dual := fun _ => rfl
   fusion_qdim := h_phys.fusion_qdim

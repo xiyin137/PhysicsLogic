@@ -171,7 +171,7 @@ def BRSTExact (s : BRSTOperator GFS) (F : FieldFunctional GFS) : Prop :=
 
     If F = sG, then sF = s(sG) = 0 by nilpotency. -/
 theorem exact_implies_closed (s : BRSTOperator GFS) (F : FieldFunctional GFS)
-    (h : BRSTExact s F)
+    (_h : BRSTExact s F)
     (h_phys : PhysicsAssumption AssumptionId.brstExactImpliesClosed
       (BRSTClosed s F)) :
     BRSTClosed s F := by
@@ -261,8 +261,8 @@ theorem gauge_fixed_brst_invariant (gf : GaugeFixedAction GFS) :
 
     This is the key fact ensuring gauge-fixing independence. -/
 theorem gauge_fixing_difference_exact (gf₁ gf₂ : GaugeFixedAction GFS)
-    (h_same_inv : gf₁.invariant_action = gf₂.invariant_action)
-    (h_same_s : gf₁.s = gf₂.s)
+    (_h_same_inv : gf₁.invariant_action = gf₂.invariant_action)
+    (_h_same_s : gf₁.s = gf₂.s)
     (h_phys : PhysicsAssumption AssumptionId.brstGaugeFixingDifferenceExact
       (∃ Δ : FieldFunctional GFS,
         (fun φ => gf₂.action.functional φ - gf₁.action.functional φ) =

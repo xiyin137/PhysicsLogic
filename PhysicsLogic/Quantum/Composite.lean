@@ -52,11 +52,11 @@ noncomputable def qubitTensorProduct : TensorProductSpace Qubit Qubit where
   tensor_add_left := by
     intros ψ₁ ψ₂ φ
     ext i
-    fin_cases i <;> simp [EuclideanSpace.single_apply, add_mul] <;> ring
+    fin_cases i <;> simp [EuclideanSpace.single_apply, add_mul]
   tensor_add_right := by
     intros ψ φ₁ φ₂
     ext i
-    fin_cases i <;> simp [EuclideanSpace.single_apply, mul_add] <;> ring
+    fin_cases i <;> simp [EuclideanSpace.single_apply, mul_add]
   tensor_smul_left := by
     intros a ψ φ
     ext i

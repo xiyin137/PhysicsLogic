@@ -78,9 +78,9 @@ structure Locality (H : Type _) [QuantumStateSpace H] (d : ℕ) [NeZero d]
   /-- Fields at spacelike separation commute on the domain -/
   locality : ∀ (phi psi : SmearedFieldOperator H d)
     (f g : SchwartzFunction d)
-    (h_spacelike : spacelikeSeparated (supportOps.testFunctionSupport f)
+    (_h_spacelike : spacelikeSeparated (supportOps.testFunctionSupport f)
                                       (supportOps.testFunctionSupport g))
-    (state : H) (h_domain : state ∈ domain),
+    (state : H) (_h_domain : state ∈ domain),
     ops.smear phi f (ops.smear psi g state) =
     ops.smear psi g (ops.smear phi f state)
 
@@ -158,8 +158,8 @@ theorem reeh_schlieder {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
   (qft : WightmanQFT H d)
   (phi : SmearedFieldOperator H d)
   (O : Set (Fin d → ℝ))
-  (h_bounded : ∃ R : ℝ, ∀ x ∈ O, ‖x‖ < R)
-  (h_nonempty : O.Nonempty)
+  (_h_bounded : ∃ R : ℝ, ∀ x ∈ O, ‖x‖ < R)
+  (_h_nonempty : O.Nonempty)
   (h_phys : PhysicsAssumption AssumptionId.wightmanReehSchlieder
     (∀ (state : H) (ε : ℝ), ε > 0 →
       ∃ (n : ℕ) (test_funcs : Fin n → SchwartzFunction d),

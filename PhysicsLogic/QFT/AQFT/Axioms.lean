@@ -139,7 +139,7 @@ structure IsotonyAxiom {d : ℕ} (net : AlgebraNet d) where
 structure LocalityAxiom {d : ℕ} [NeZero d] (net : AlgebraNet d) where
   /-- Spacelike separated observables commute in any common embedding -/
   locality : ∀ (O₁ O₂ : Set (SpaceTimePointD d))
-    (h : SpacelikeSeparatedD O₁ O₂)
+    (_h : SpacelikeSeparatedD O₁ O₂)
     (A : net.Algebra O₁) (B : net.Algebra O₂)
     (O : Set (SpaceTimePointD d)) (h1 : O₁ ⊆ O) (h2 : O₂ ⊆ O),
     net.mul (net.inclusion h1 A) (net.inclusion h2 B) =

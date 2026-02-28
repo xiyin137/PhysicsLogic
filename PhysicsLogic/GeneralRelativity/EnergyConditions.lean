@@ -55,8 +55,8 @@ theorem perfect_fluid_satisfies_energy_conditions
     (metric : SpacetimeMetric)
     (ρ p : SpaceTimePoint → ℝ)
     (u : SpaceTimePoint → Fin 4 → ℝ)
-    (h_ρ : ∀ x, ρ x ≥ 0)
-    (h_ρp : ∀ x, ρ x + p x ≥ 0)
+    (_h_ρ : ∀ x, ρ x ≥ 0)
+    (_h_ρp : ∀ x, ρ x + p x ≥ 0)
     (h_phys :
       PhysicsLogic.PhysicsAssumption
         PhysicsLogic.AssumptionId.perfectFluidEnergyConditions
