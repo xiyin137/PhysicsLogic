@@ -15,13 +15,62 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install prerequisites
+        run: |
+          set -euo pipefail
+          for i in 1 2 3; do
+            echo "apt attempt ${i}/3"
+            if sudo apt-get update && sudo apt-get install -y ripgrep; then
+              break
+            fi
+            if [ "$i" -eq 3 ]; then
+              echo "failed to install prerequisites after retries"
+              exit 1
+            fi
+            sleep 5
+          done
+
       - name: Install elan
         run: |
-          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y
+          set -euo pipefail
+          for i in 1 2 3; do
+            echo "elan install attempt ${i}/3"
+            if curl -fL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o /tmp/elan-init.sh \
+              && sh /tmp/elan-init.sh -y; then
+              break
+            fi
+            if [ "$i" -eq 3 ]; then
+              echo "failed to install elan after retries"
+              exit 1
+            fi
+            sleep 5
+          done
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Install Lean toolchain
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.elan/bin:$PATH"
+          toolchain="$(cat lean-toolchain)"
+          for i in 1 2 3; do
+            echo "toolchain install attempt ${i}/3: ${toolchain}"
+            if elan toolchain install "$toolchain"; then
+              break
+            fi
+            if [ "$i" -eq 3 ]; then
+              echo "failed to install Lean toolchain after retries"
+              exit 1
+            fi
+            sleep 5
+          done
+          elan default "$toolchain"
 
       - name: Toolchain versions
         run: |
+          set -euo pipefail
+          export PATH="$HOME/.elan/bin:$PATH"
+          elan --version
+          rg --version
           lean --version
           lake --version
 

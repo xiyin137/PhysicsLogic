@@ -7,7 +7,7 @@ cd "$ROOT_DIR"
 echo "[check] no raw string literal ids in non-Papers PhysicsAssumption uses"
 
 raw_id_hits="$(
-  rg -nUP '(?:PhysicsLogic\.)?PhysicsAssumption\s*"' PhysicsLogic --glob '*.lean' \
+  rg -n '(PhysicsLogic\.)?PhysicsAssumption[[:space:]]*"' PhysicsLogic --glob '*.lean' \
     | rg -v '^PhysicsLogic/Papers/' || true
 )"
 
