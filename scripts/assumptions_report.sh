@@ -5,6 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
 out_file="${1:-}"
+include_timestamp="${ASSUMPTIONS_REPORT_INCLUDE_TIMESTAMP:-0}"
 
 defs_tmp="$(mktemp)"
 desc_tmp="$(mktemp)"
@@ -108,12 +109,14 @@ awk -F '\t' -v summary_path="$summary_tmp" '
 ' "$desc_tmp" "$total_tmp" "$core_tmp" "$papers_tmp" "$defs_tmp" > "$rows_tmp"
 
 IFS=$'\t' read -r registered_count used_in_core_count unused_count < "$summary_tmp"
-generated_at="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 
 {
   echo "# Physics Assumptions Report"
   echo
-  echo "- Generated (UTC): \`$generated_at\`"
+  if [[ "$include_timestamp" == "1" ]]; then
+    generated_at="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+    echo "- Generated (UTC): \`$generated_at\`"
+  fi
   echo "- Registered assumptions: \`$registered_count\`"
   echo "- Assumptions referenced in non-Papers modules: \`$used_in_core_count\`"
   echo "- Assumptions with zero references outside registry: \`$unused_count\`"

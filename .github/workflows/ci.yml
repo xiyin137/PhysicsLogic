@@ -103,8 +103,15 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p artifacts
-          bash scripts/assumptions_report.sh artifacts/assumptions_report.md
+          ASSUMPTIONS_REPORT_INCLUDE_TIMESTAMP=1 \
+            bash scripts/assumptions_report.sh artifacts/assumptions_report.md
           sed -n '1,80p' artifacts/assumptions_report.md
+
+      - name: Check assumptions catalog is up to date
+        run: |
+          set -euo pipefail
+          bash scripts/update_assumptions_catalog.sh
+          git diff --exit-code -- ASSUMPTIONS.md
 
       - name: Upload assumptions report artifact
         uses: actions/upload-artifact@v4
