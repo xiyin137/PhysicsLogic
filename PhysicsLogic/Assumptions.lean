@@ -168,6 +168,9 @@ def cft2dBuscherRules : String := "qft.cft.2d.buscher_rules"
 def cft2dGaugedWzwCosetFlow : String := "qft.cft.2d.gauged_wzw_coset_flow"
 def cft2dLiouvilleMarginality : String := "qft.cft.2d.liouville_marginality"
 def cft2dLiouvilleDozzRecursion : String := "qft.cft.2d.liouville_dozz_recursion"
+def cft2dOrbifoldConformalManifoldDimensionFormula : String := "qft.cft.2d.orbifold_conformal_manifold_dimension_formula"
+def cft2dZamolodchikovMetricTwoPointNormalization : String := "qft.cft.2d.zamolodchikov_metric_two_point_normalization"
+def cft2dOrbifoldKTwoModuliFixedPointDistinction : String := "qft.cft.2d.orbifold_k2_moduli_fixed_point_distinction"
 def cft2dSuperspace11DerivativeAlgebra : String :=
   "qft.cft.2d.superspace_11_derivative_algebra"
 def cft2dN1SuperconformalAlgebra : String :=
@@ -994,6 +997,12 @@ def assumptionRegistry : List AssumptionEntry :=
       "Marginality condition Q = b + 1/b for Liouville interaction and associated conformal fixed-point interpretation are assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dLiouvilleDozzRecursion,
       "Degenerate-field bootstrap recursion constraints leading to DOZZ-type Liouville structure constants are assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dOrbifoldConformalManifoldDimensionFormula,
+      "The `C^2/Z_k` twisted-sector exactly-marginal counting relation (`k-1` twisted sectors and `4(k-1)` `(4,4)`-preserving marginal descendants) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dZamolodchikovMetricTwoPointNormalization,
+      "The Zamolodchikov-metric package for exactly marginal operators (two-point normalization `⟨M_I M_J⟩ = G_IJ/|z|^4`, symmetry, and non-negative diagonal entries) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dOrbifoldKTwoModuliFixedPointDistinction,
+      "The `k=2` orbifold-conformal-manifold package (`M̃₂=(R^3×S^1)/Z₂`, triplet ALE-resolution versus singlet `B`-period direction, and distinction of regular/singular fixed points) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dSuperspace11DerivativeAlgebra,
       "The (1,1) superspace derivative/supercharge algebra (including anticommutation relations and D^2 identities) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dN1SuperconformalAlgebra,

@@ -5,6 +5,7 @@
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/GeometricSingularities.lean`
 - Cross-lane bridge target: `PhysicsLogic/StringTheory/SingularityCFTBridge.lean`
+- QFT target: `PhysicsLogic/QFT/CFT/TwoDimensional/ConformalManifolds.lean`
 
 ## Reading Summary
 - Extracted NS5 transverse-circle background and Buscher T-duality map to Taub-NUT
@@ -65,6 +66,9 @@
 - `DslstCosetCftBridgePackage`
 - `CigarLiouvilleMirrorBridgePackage`
 - `ConifoldInstantonNlsmBridgePackage`
+- `OrbifoldConformalManifoldDimensionFormula`
+- `ZamolodchikovMetricTwoPointNormalization`
+- `OrbifoldKTwoModuliFixedPointDistinction`
 
 ## Assumption Candidates
 - Mapped `AssumptionId`: `stringSingularityNs5TaubNutTDuality`.
