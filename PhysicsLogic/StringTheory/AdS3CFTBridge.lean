@@ -453,6 +453,64 @@ theorem ads3_mixed_flux_bridge_package
   exact ⟨h_string_flux_pkg, h_string_pulsating_pkg, h_qft_flux_pkg, h_qft_pulsating_pkg,
     h_g, h_alpha, h_k5, h_q5, h_r, h_mu_flux, h_n, h_k, h_mu_pulsating, h_delta⟩
 
+/-- Cross-lane data for mixed-flux long-string threshold/discretization transition. -/
+structure AdS3MixedFluxLongStringTransitionBridgeData where
+  stringTransition : AdS3MixedFluxLongStringTransitionData
+  qftFlux : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxWorldsheetData
+
+/-- Bridge package:
+string-side and QFT-side mixed-flux long-string transition data aligned across
+threshold, continuum/discrete behavior, and boundary-reaching conditions. -/
+def AdS3MixedFluxLongStringTransitionBridgePackage
+    (data : AdS3MixedFluxLongStringTransitionBridgeData) : Prop :=
+  AdS3MixedFluxLongStringTransitionPackage data.stringTransition /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxWorldsheetDeformationPackage data.qftFlux /\
+  data.stringTransition.nsFluxK5 = data.qftFlux.nsFluxK5 /\
+  data.stringTransition.mu = data.qftFlux.mu /\
+  data.stringTransition.longStringContinuumPresent = data.qftFlux.longStringContinuumPresent /\
+  data.stringTransition.longStringSpectrumDiscrete = data.qftFlux.longStringSpectrumDiscrete /\
+  data.stringTransition.shortLongDistinctionSharp = data.qftFlux.shortLongDistinctionSharp /\
+  data.stringTransition.longStringsReachBoundaryAtFiniteEnergy =
+    data.qftFlux.longStringsReachBoundaryAtFiniteEnergy /\
+  data.stringTransition.nsnsLongStringThresholdDimension =
+    data.qftFlux.nsnsLongStringThresholdDimension
+
+/-- Assumed bridge package for mixed-flux long-string transition data. -/
+theorem ads3_mixed_flux_long_string_transition_bridge_package
+    (data : AdS3MixedFluxLongStringTransitionBridgeData)
+    (h_string : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxLongStringSpectrumTransition
+      (AdS3MixedFluxLongStringTransitionPackage data.stringTransition))
+    (h_qft : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxWorldsheetDeformation
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxWorldsheetDeformationPackage
+        data.qftFlux))
+    (h_k5 : data.stringTransition.nsFluxK5 = data.qftFlux.nsFluxK5)
+    (h_mu : data.stringTransition.mu = data.qftFlux.mu)
+    (h_cont :
+      data.stringTransition.longStringContinuumPresent = data.qftFlux.longStringContinuumPresent)
+    (h_disc :
+      data.stringTransition.longStringSpectrumDiscrete = data.qftFlux.longStringSpectrumDiscrete)
+    (h_sharp :
+      data.stringTransition.shortLongDistinctionSharp = data.qftFlux.shortLongDistinctionSharp)
+    (h_boundary :
+      data.stringTransition.longStringsReachBoundaryAtFiniteEnergy =
+        data.qftFlux.longStringsReachBoundaryAtFiniteEnergy)
+    (h_threshold :
+      data.stringTransition.nsnsLongStringThresholdDimension =
+        data.qftFlux.nsnsLongStringThresholdDimension) :
+    AdS3MixedFluxLongStringTransitionBridgePackage data := by
+  have h_string_pkg :
+      AdS3MixedFluxLongStringTransitionPackage data.stringTransition :=
+    ads3_mixed_flux_long_string_transition_package data.stringTransition h_string
+  have h_qft_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxWorldsheetDeformationPackage
+        data.qftFlux :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_worldsheet_deformation_package
+      data.qftFlux h_qft
+  exact ⟨h_string_pkg, h_qft_pkg, h_k5, h_mu, h_cont, h_disc, h_sharp, h_boundary,
+    h_threshold⟩
+
 /-- Cross-lane data for mixed-flux RR-deformation SFT recursion and mass-shift packages. -/
 structure AdS3MixedFluxSftMassShiftBridgeData where
   stringSft : AdS3MixedFluxSftRrDeformationData
@@ -626,5 +684,67 @@ theorem ads3_mixed_flux_wzw_ope_constant_bridge_package
     PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_wzw_ope_structure_constant_cft_package
       data.qftOpe h_qft
   exact ⟨h_string_pkg, h_qft_pkg, h_k, h_c_su, h_c_sl, h_su_id, h_sl_id, h_asym_su, h_asym_sl⟩
+
+/-- Cross-lane data for mixed-flux RR-deformation two-string bracket structure. -/
+structure AdS3MixedFluxRrTwoStringBracketBridgeData where
+  stringBracket : AdS3MixedFluxRrTwoStringBracketData
+  qftBracket : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxRrTwoStringBracketCftData
+
+/-- Bridge package:
+string-side and QFT-side explicit mixed-flux RR-deformation two-string-bracket
+structures aligned field-by-field. -/
+def AdS3MixedFluxRrTwoStringBracketBridgePackage
+    (data : AdS3MixedFluxRrTwoStringBracketBridgeData) : Prop :=
+  AdS3MixedFluxRrTwoStringBracketPackage data.stringBracket /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxRrTwoStringBracketCftPackage data.qftBracket /\
+  data.stringBracket.levelK = data.qftBracket.levelK /\
+  data.stringBracket.mu = data.qftBracket.mu /\
+  data.stringBracket.z0Abs = data.qftBracket.z0Abs /\
+  data.stringBracket.normalizationN1 = data.qftBracket.normalizationN1 /\
+  data.stringBracket.overallCoefficient = data.qftBracket.overallCoefficient /\
+  data.stringBracket.cSlMinusHalfMinusHalfMinusOne = data.qftBracket.cSlMinusHalfMinusHalfMinusOne /\
+  data.stringBracket.cSuHalfHalfOne = data.qftBracket.cSuHalfHalfOne /\
+  data.stringBracket.slPower = data.qftBracket.slPower /\
+  data.stringBracket.suPower = data.qftBracket.suPower /\
+  data.stringBracket.slRelativeSign = data.qftBracket.slRelativeSign /\
+  data.stringBracket.suRelativeSign = data.qftBracket.suRelativeSign /\
+  data.stringBracket.projectedZeroWeightVanishesAtFiniteK =
+    data.qftBracket.projectedZeroWeightVanishesAtFiniteK
+
+/-- Assumed bridge package for mixed-flux RR-deformation two-string-bracket data. -/
+theorem ads3_mixed_flux_rr_two_string_bracket_bridge_package
+    (data : AdS3MixedFluxRrTwoStringBracketBridgeData)
+    (h_string : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxRrTwoStringBracketStructure
+      (AdS3MixedFluxRrTwoStringBracketPackage data.stringBracket))
+    (h_qft : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxRrTwoStringBracketStructure
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxRrTwoStringBracketCftPackage
+        data.qftBracket))
+    (h_k : data.stringBracket.levelK = data.qftBracket.levelK)
+    (h_mu : data.stringBracket.mu = data.qftBracket.mu)
+    (h_z0 : data.stringBracket.z0Abs = data.qftBracket.z0Abs)
+    (h_n1 : data.stringBracket.normalizationN1 = data.qftBracket.normalizationN1)
+    (h_coeff : data.stringBracket.overallCoefficient = data.qftBracket.overallCoefficient)
+    (h_c_sl :
+      data.stringBracket.cSlMinusHalfMinusHalfMinusOne = data.qftBracket.cSlMinusHalfMinusHalfMinusOne)
+    (h_c_su : data.stringBracket.cSuHalfHalfOne = data.qftBracket.cSuHalfHalfOne)
+    (h_pow_sl : data.stringBracket.slPower = data.qftBracket.slPower)
+    (h_pow_su : data.stringBracket.suPower = data.qftBracket.suPower)
+    (h_sign_sl : data.stringBracket.slRelativeSign = data.qftBracket.slRelativeSign)
+    (h_sign_su : data.stringBracket.suRelativeSign = data.qftBracket.suRelativeSign)
+    (h_proj :
+      data.stringBracket.projectedZeroWeightVanishesAtFiniteK =
+        data.qftBracket.projectedZeroWeightVanishesAtFiniteK) :
+    AdS3MixedFluxRrTwoStringBracketBridgePackage data := by
+  have h_string_pkg : AdS3MixedFluxRrTwoStringBracketPackage data.stringBracket :=
+    ads3_mixed_flux_rr_two_string_bracket_package data.stringBracket h_string
+  have h_qft_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxRrTwoStringBracketCftPackage
+        data.qftBracket :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_rr_two_string_bracket_cft_package
+      data.qftBracket h_qft
+  exact ⟨h_string_pkg, h_qft_pkg, h_k, h_mu, h_z0, h_n1, h_coeff, h_c_sl, h_c_su,
+    h_pow_sl, h_pow_su, h_sign_sl, h_sign_su, h_proj⟩
 
 end PhysicsLogic.StringTheory

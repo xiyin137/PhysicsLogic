@@ -424,6 +424,44 @@ theorem ads3_mixed_flux_package
     AdS3MixedFluxPackage data := by
   exact h_phys
 
+/-- Long-string transition data across `(NS,NS)` and mixed `(NS,NS)/(R,R)` AdS3 fluxes. -/
+structure AdS3MixedFluxLongStringTransitionData where
+  nsFluxK5 : ℕ
+  mu : ℝ
+  longStringContinuumPresent : Bool
+  longStringSpectrumDiscrete : Bool
+  shortLongDistinctionSharp : Bool
+  longStringsReachBoundaryAtFiniteEnergy : Bool
+  nsnsLongStringThresholdDimension : ℝ
+
+/-- Long-string transition package in mixed-flux AdS3:
+at `mu = 0` the continuum is present with threshold `Delta = K5/2`,
+while at nonzero `mu` long strings are discretized, cannot reach the AdS
+boundary at finite energy, and the short/long distinction is no longer sharp. -/
+def AdS3MixedFluxLongStringTransitionPackage
+    (data : AdS3MixedFluxLongStringTransitionData) : Prop :=
+  data.nsFluxK5 > 0 ∧
+  data.mu ≥ 0 ∧
+  (data.mu = 0 → data.longStringContinuumPresent = true) ∧
+  (data.mu = 0 → data.longStringSpectrumDiscrete = false) ∧
+  (data.mu = 0 → data.shortLongDistinctionSharp = true) ∧
+  (data.mu = 0 → data.longStringsReachBoundaryAtFiniteEnergy = true) ∧
+  (data.mu = 0 →
+    data.nsnsLongStringThresholdDimension = (data.nsFluxK5 : ℝ) / 2) ∧
+  (data.mu ≠ 0 → data.longStringContinuumPresent = false) ∧
+  (data.mu ≠ 0 → data.longStringSpectrumDiscrete = true) ∧
+  (data.mu ≠ 0 → data.shortLongDistinctionSharp = false) ∧
+  (data.mu ≠ 0 → data.longStringsReachBoundaryAtFiniteEnergy = false)
+
+/-- Assumed mixed-flux long-string transition package in AdS3. -/
+theorem ads3_mixed_flux_long_string_transition_package
+    (data : AdS3MixedFluxLongStringTransitionData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxLongStringSpectrumTransition
+      (AdS3MixedFluxLongStringTransitionPackage data)) :
+    AdS3MixedFluxLongStringTransitionPackage data := by
+  exact h_phys
+
 /-- Circular pulsating-string energy-shift data at small mixed-flux parameter `mu`. -/
 structure AdS3MixedFluxPulsatingData where
   n : ℝ
@@ -596,6 +634,50 @@ theorem ads3_mixed_flux_wzw_ope_structure_constant_package
       AssumptionId.stringAdS3MixedFluxWzwOpeStructureConstants
       (AdS3MixedFluxWzwOpeStructureConstantPackage data)) :
     AdS3MixedFluxWzwOpeStructureConstantPackage data := by
+  exact h_phys
+
+/-- Data for the explicit mixed-flux RR-deformation two-string bracket `[W^(1) ⊗ W^(1)]`. -/
+structure AdS3MixedFluxRrTwoStringBracketData where
+  levelK : ℝ
+  mu : ℝ
+  z0Abs : ℝ
+  normalizationN1 : ℝ
+  overallCoefficient : ℝ
+  cSlMinusHalfMinusHalfMinusOne : ℝ
+  cSuHalfHalfOne : ℝ
+  slPower : ℝ
+  suPower : ℝ
+  slRelativeSign : ℤ
+  suRelativeSign : ℤ
+  projectedZeroWeightVanishesAtFiniteK : Bool
+
+/-- Mixed-flux RR-deformation two-string-bracket package:
+`[W^(1) ⊗ W^(1)]` splits into `SL(2)` and `SU(2)` adjoint channels with
+opposite `|2 z0|^{±4/k}` scaling powers and vanishing projected zero-weight
+component at finite `k`. -/
+def AdS3MixedFluxRrTwoStringBracketPackage
+    (data : AdS3MixedFluxRrTwoStringBracketData) : Prop :=
+  data.levelK > 0 ∧
+  data.mu >= 0 ∧
+  data.z0Abs > 0 ∧
+  data.normalizationN1 > 0 ∧
+  data.cSlMinusHalfMinusHalfMinusOne > 0 ∧
+  data.cSuHalfHalfOne > 0 ∧
+  data.overallCoefficient = -16 * data.normalizationN1 ^ (2 : Nat) ∧
+  data.slPower = -(4 / data.levelK) ∧
+  data.suPower = 4 / data.levelK ∧
+  data.suPower = -data.slPower ∧
+  data.slRelativeSign = -1 ∧
+  data.suRelativeSign = 1 ∧
+  data.projectedZeroWeightVanishesAtFiniteK = true
+
+/-- Assumed mixed-flux RR-deformation two-string-bracket package. -/
+theorem ads3_mixed_flux_rr_two_string_bracket_package
+    (data : AdS3MixedFluxRrTwoStringBracketData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxRrTwoStringBracketStructure
+      (AdS3MixedFluxRrTwoStringBracketPackage data)) :
+    AdS3MixedFluxRrTwoStringBracketPackage data := by
   exact h_phys
 
 end PhysicsLogic.StringTheory

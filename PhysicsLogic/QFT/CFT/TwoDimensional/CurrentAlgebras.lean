@@ -358,11 +358,14 @@ structure AdS3MixedFluxWorldsheetData where
   radius : ℝ
   mu : ℝ
   longStringContinuumPresent : Bool
+  longStringSpectrumDiscrete : Bool
   shortLongDistinctionSharp : Bool
+  longStringsReachBoundaryAtFiniteEnergy : Bool
+  nsnsLongStringThresholdDimension : ℝ
 
 /-- Mixed-flux worldsheet deformation package:
 `R^2 = alpha' sqrt(K5^2 + g_B^2 Q5^2)`, `mu = g_B Q5 / K5`,
-and qualitative long-string-spectrum transition away from `mu=0`. -/
+plus long-string threshold/discretization transition across `mu=0`. -/
 def AdS3MixedFluxWorldsheetDeformationPackage
     (data : AdS3MixedFluxWorldsheetData) : Prop :=
   data.stringCoupling > 0 /\
@@ -376,7 +379,14 @@ def AdS3MixedFluxWorldsheetDeformationPackage
           (data.stringCoupling * (data.rrFluxQ5 : ℝ)) ^ (2 : Nat)) /\
   data.mu = data.stringCoupling * (data.rrFluxQ5 : ℝ) / (data.nsFluxK5 : ℝ) /\
   (data.mu = 0 -> data.longStringContinuumPresent = true) /\
+  (data.mu = 0 -> data.longStringSpectrumDiscrete = false) /\
+  (data.mu = 0 -> data.shortLongDistinctionSharp = true) /\
+  (data.mu = 0 -> data.longStringsReachBoundaryAtFiniteEnergy = true) /\
+  (data.mu = 0 ->
+    data.nsnsLongStringThresholdDimension = (data.nsFluxK5 : ℝ) / 2) /\
   (data.mu ≠ 0 -> data.longStringContinuumPresent = false) /\
+  (data.mu ≠ 0 -> data.longStringSpectrumDiscrete = true) /\
+  (data.mu ≠ 0 -> data.longStringsReachBoundaryAtFiniteEnergy = false) /\
   (data.mu ≠ 0 -> data.shortLongDistinctionSharp = false)
 
 /-- Assumed mixed-flux worldsheet deformation package in the 2D CFT lane. -/
@@ -561,6 +571,49 @@ theorem ads3_mixed_flux_wzw_ope_structure_constant_cft_package
       AssumptionId.cft2dAds3MixedFluxWzwOpeStructureConstants
       (AdS3MixedFluxWzwOpeStructureConstantCftPackage data)) :
     AdS3MixedFluxWzwOpeStructureConstantCftPackage data := by
+  exact h_phys
+
+/-- Data for the explicit mixed-flux RR-deformation two-string bracket in the QFT lane. -/
+structure AdS3MixedFluxRrTwoStringBracketCftData where
+  levelK : ℝ
+  mu : ℝ
+  z0Abs : ℝ
+  normalizationN1 : ℝ
+  overallCoefficient : ℝ
+  cSlMinusHalfMinusHalfMinusOne : ℝ
+  cSuHalfHalfOne : ℝ
+  slPower : ℝ
+  suPower : ℝ
+  slRelativeSign : ℤ
+  suRelativeSign : ℤ
+  projectedZeroWeightVanishesAtFiniteK : Bool
+
+/-- Mixed-flux RR-deformation two-string-bracket package in the QFT lane:
+`[W^(1) ⊗ W^(1)]` split into `SL(2)`/`SU(2)` adjoint channels with opposite
+`|2 z0|^{±4/k}` powers and finite-`k` vanishing projected zero-weight part. -/
+def AdS3MixedFluxRrTwoStringBracketCftPackage
+    (data : AdS3MixedFluxRrTwoStringBracketCftData) : Prop :=
+  data.levelK > 0 /\
+  data.mu >= 0 /\
+  data.z0Abs > 0 /\
+  data.normalizationN1 > 0 /\
+  data.cSlMinusHalfMinusHalfMinusOne > 0 /\
+  data.cSuHalfHalfOne > 0 /\
+  data.overallCoefficient = -16 * data.normalizationN1 ^ (2 : Nat) /\
+  data.slPower = -(4 / data.levelK) /\
+  data.suPower = 4 / data.levelK /\
+  data.suPower = -data.slPower /\
+  data.slRelativeSign = -1 /\
+  data.suRelativeSign = 1 /\
+  data.projectedZeroWeightVanishesAtFiniteK = true
+
+/-- Assumed mixed-flux RR-deformation two-string-bracket package in the 2D CFT lane. -/
+theorem ads3_mixed_flux_rr_two_string_bracket_cft_package
+    (data : AdS3MixedFluxRrTwoStringBracketCftData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxRrTwoStringBracketStructure
+      (AdS3MixedFluxRrTwoStringBracketCftPackage data)) :
+    AdS3MixedFluxRrTwoStringBracketCftPackage data := by
   exact h_phys
 
 end PhysicsLogic.QFT.CFT.TwoDimensional

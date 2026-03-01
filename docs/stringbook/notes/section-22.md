@@ -42,11 +42,13 @@
 - `AdS3NSNSSuperstringBackgroundPackage`
 - `AdS3NSNSSuperstringMassShellPackage`
 - `AdS3MixedFluxPackage`
+- `AdS3MixedFluxLongStringTransitionPackage`
 - `AdS3MixedFluxPulsatingPackage`
 - `AdS3MixedFluxSftRrDeformationPackage`
 - `AdS3MixedFluxMassShiftFromFourPointPackage`
 - `AdS3MixedFluxFiniteKWzwFourPointReductionPackage`
 - `AdS3MixedFluxWzwOpeStructureConstantPackage`
+- `AdS3MixedFluxRrTwoStringBracketPackage`
 - `D1D5ConformalManifoldGeometryPackage` (QFT lane)
 - `D1D5AttractorTauGamma0Package` (QFT lane)
 - `D1D5SymmetricProductOrbifoldLocusPackage` (QFT lane)
@@ -68,15 +70,18 @@
 - `AdS3MixedFluxMassShiftFromFourPointCftPackage` (QFT lane)
 - `AdS3MixedFluxFiniteKWzwFourPointReductionCftPackage` (QFT lane)
 - `AdS3MixedFluxWzwOpeStructureConstantCftPackage` (QFT lane)
+- `AdS3MixedFluxRrTwoStringBracketCftPackage` (QFT lane)
 - `AdS3BosonicWzwBridgePackage`
 - `AdS3SpectralMassShellBridgePackage`
 - `AdS3NsnsWorldsheetBridgePackage`
 - `AdS3NsnsGsoBridgePackage`
 - `AdS3NsnsMassShellBridgePackage`
 - `AdS3MixedFluxBridgePackage`
+- `AdS3MixedFluxLongStringTransitionBridgePackage`
 - `AdS3MixedFluxSftMassShiftBridgePackage`
 - `AdS3MixedFluxFiniteKWzwReductionBridgePackage`
 - `AdS3MixedFluxWzwOpeConstantBridgePackage`
+- `AdS3MixedFluxRrTwoStringBracketBridgePackage`
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `stringAdS3D1D5InstantonChargeMap`.
@@ -93,11 +98,13 @@
 - Candidate new `AssumptionId`: `stringAdS3NsnsSuperstringWorldsheet`.
 - Candidate new `AssumptionId`: `stringAdS3NsnsSuperstringMassShell`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxParameterization`.
+- Candidate new `AssumptionId`: `stringAdS3MixedFluxLongStringSpectrumTransition`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxPulsatingShift`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxSftRrDeformation`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxMassShiftFromFourPoint`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxFiniteKWzwFourPointReduction`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxWzwOpeStructureConstants`.
+- Candidate new `AssumptionId`: `stringAdS3MixedFluxRrTwoStringBracketStructure`.
 - Candidate new `AssumptionId`: `cft2dD1D5ConformalManifoldQuaternionicQuotient`.
 - Candidate new `AssumptionId`: `cft2dD1D5AttractorTauGamma0Level`.
 - Candidate new `AssumptionId`: `cft2dD1D5SymmetricProductOrbifoldLocus`.
@@ -116,6 +123,7 @@
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxMassShiftFromFourPoint`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxFiniteKWzwFourPointReduction`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxWzwOpeStructureConstants`.
+- Candidate new `AssumptionId`: `cft2dAds3MixedFluxRrTwoStringBracketStructure`.
 
 ## Subsections
 - [x] 22.1 The D1-D5 system and its low energy effective theory (p.507)
