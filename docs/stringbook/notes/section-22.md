@@ -4,6 +4,8 @@
 - Source page start: 507
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/AdS3CFT2.lean`
+- QFT target: `PhysicsLogic/QFT/CFT/TwoDimensional/ConformalManifolds.lean`
+- Cross-lane bridge target: `PhysicsLogic/StringTheory/AdS3CFTBridge.lean`
 
 ## Reading Summary
 - Derives the low-energy D1-D5 gauge-theory description, emphasizing Coulomb vs
@@ -39,6 +41,12 @@
 - `AdS3NSNSSuperstringMassShellPackage`
 - `AdS3MixedFluxPackage`
 - `AdS3MixedFluxPulsatingPackage`
+- `D1D5ConformalManifoldGeometryPackage` (QFT lane)
+- `D1D5AttractorTauGamma0Package` (QFT lane)
+- `D1D5SymmetricProductOrbifoldLocusPackage` (QFT lane)
+- `D1D5ConformalGeometryBridgePackage`
+- `D1D5AttractorBridgePackage`
+- `D1D5SymmetricOrbifoldBridgePackage`
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `stringAdS3D1D5InstantonChargeMap`.
@@ -56,6 +64,9 @@
 - Candidate new `AssumptionId`: `stringAdS3NsnsSuperstringMassShell`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxParameterization`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxPulsatingShift`.
+- Candidate new `AssumptionId`: `cft2dD1D5ConformalManifoldQuaternionicQuotient`.
+- Candidate new `AssumptionId`: `cft2dD1D5AttractorTauGamma0Level`.
+- Candidate new `AssumptionId`: `cft2dD1D5SymmetricProductOrbifoldLocus`.
 
 ## Subsections
 - [x] 22.1 The D1-D5 system and its low energy effective theory (p.507)

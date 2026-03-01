@@ -1,7 +1,7 @@
 # Physics Assumptions Report
 
-- Registered assumptions: `217`
-- Assumptions referenced in non-Papers modules: `217`
+- Registered assumptions: `220`
+- Assumptions referenced in non-Papers modules: `220`
 - Assumptions with zero references outside registry: `0`
 
 | AssumptionId | Payload | Core refs | Papers refs | Total refs | Description |
@@ -23,6 +23,9 @@
 | `bvDifferentialNilpotent` | `qft.bv.differential_nilpotent` | 2 | 0 | 2 | Nilpotency of the BV differential under the classical master equation is assumed in this abstraction layer. |
 | `bvGaugeIndependence` | `qft.bv.gauge_independence` | 1 | 0 | 1 | Gauge-fixing independence in BV via BV-exact variation is assumed in this abstraction layer. |
 | `cft2dBuscherRules` | `qft.cft.2d.buscher_rules` | 1 | 0 | 1 | Buscher T-duality transformation rules (including dilaton shift) are assumed valid in this abstraction layer. |
+| `cft2dD1D5AttractorTauGamma0Level` | `qft.cft.2d.d1d5_attractor_tau_gamma0_level` | 2 | 0 | 2 | The D1-D5 attractor/U-duality package (`tau~ = (Q1/Q5)tau`, `Im(tau)>0`, and arithmetic `Gamma_0(k)` level relation with `k = Q1Q5/(gcd(Q1,Q5))^2`) is assumed in this abstraction layer. |
+| `cft2dD1D5ConformalManifoldQuaternionicQuotient` | `qft.cft.2d.d1d5_conformal_manifold_quaternionic_quotient` | 2 | 0 | 2 | The D1-D5 conformal-manifold geometry package (`k = Q1Q5/(gcd(Q1,Q5))^2`, quaternionic local geometry `SO(5,4)/(SO(5)xSO(4))`, and `20=4x5` marginal-direction counting) is assumed in this abstraction layer. |
+| `cft2dD1D5SymmetricProductOrbifoldLocus` | `qft.cft.2d.d1d5_symmetric_product_orbifold_locus` | 2 | 0 | 2 | The D1-D5 symmetric-product-orbifold locus package (regular/singular distinction `Re(tau)=1/2` vs `Re(tau)=0` and arithmetic locus relation `(a tau + b)/(Q1 tau + Q5)=1/2+i/g'`) is assumed in this abstraction layer. |
 | `cft2dDefectFusionPentagon` | `qft.cft.2d.defect_fusion_pentagon` | 1 | 0 | 1 | Topological-defect fusion/junction data is assumed to satisfy pentagon-type consistency in this abstraction layer. |
 | `cft2dGaugedWzwCosetFlow` | `qft.cft.2d.gauged_wzw_coset_flow` | 2 | 0 | 2 | The gauged-WZW to coset/nonlinear-sigma-model correspondence in the IR is assumed in this abstraction layer. |
 | `cft2dLiouvilleDozzRecursion` | `qft.cft.2d.liouville_dozz_recursion` | 1 | 0 | 1 | Degenerate-field bootstrap recursion constraints leading to DOZZ-type Liouville structure constants are assumed in this abstraction layer. |

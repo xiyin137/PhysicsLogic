@@ -171,6 +171,9 @@ def cft2dLiouvilleDozzRecursion : String := "qft.cft.2d.liouville_dozz_recursion
 def cft2dOrbifoldConformalManifoldDimensionFormula : String := "qft.cft.2d.orbifold_conformal_manifold_dimension_formula"
 def cft2dZamolodchikovMetricTwoPointNormalization : String := "qft.cft.2d.zamolodchikov_metric_two_point_normalization"
 def cft2dOrbifoldKTwoModuliFixedPointDistinction : String := "qft.cft.2d.orbifold_k2_moduli_fixed_point_distinction"
+def cft2dD1D5ConformalManifoldQuaternionicQuotient : String := "qft.cft.2d.d1d5_conformal_manifold_quaternionic_quotient"
+def cft2dD1D5AttractorTauGamma0Level : String := "qft.cft.2d.d1d5_attractor_tau_gamma0_level"
+def cft2dD1D5SymmetricProductOrbifoldLocus : String := "qft.cft.2d.d1d5_symmetric_product_orbifold_locus"
 def cft2dSuperspace11DerivativeAlgebra : String :=
   "qft.cft.2d.superspace_11_derivative_algebra"
 def cft2dN1SuperconformalAlgebra : String :=
@@ -1003,6 +1006,12 @@ def assumptionRegistry : List AssumptionEntry :=
       "The Zamolodchikov-metric package for exactly marginal operators (two-point normalization `⟨M_I M_J⟩ = G_IJ/|z|^4`, symmetry, and non-negative diagonal entries) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dOrbifoldKTwoModuliFixedPointDistinction,
       "The `k=2` orbifold-conformal-manifold package (`M̃₂=(R^3×S^1)/Z₂`, triplet ALE-resolution versus singlet `B`-period direction, and distinction of regular/singular fixed points) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dD1D5ConformalManifoldQuaternionicQuotient,
+      "The D1-D5 conformal-manifold geometry package (`k = Q1Q5/(gcd(Q1,Q5))^2`, quaternionic local geometry `SO(5,4)/(SO(5)xSO(4))`, and `20=4x5` marginal-direction counting) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dD1D5AttractorTauGamma0Level,
+      "The D1-D5 attractor/U-duality package (`tau~ = (Q1/Q5)tau`, `Im(tau)>0`, and arithmetic `Gamma_0(k)` level relation with `k = Q1Q5/(gcd(Q1,Q5))^2`) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dD1D5SymmetricProductOrbifoldLocus,
+      "The D1-D5 symmetric-product-orbifold locus package (regular/singular distinction `Re(tau)=1/2` vs `Re(tau)=0` and arithmetic locus relation `(a tau + b)/(Q1 tau + Q5)=1/2+i/g'`) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dSuperspace11DerivativeAlgebra,
       "The (1,1) superspace derivative/supercharge algebra (including anticommutation relations and D^2 identities) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dN1SuperconformalAlgebra,

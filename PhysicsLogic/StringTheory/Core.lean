@@ -26,6 +26,7 @@ import PhysicsLogic.StringTheory.Holography
 import PhysicsLogic.StringTheory.AdSCFT
 import PhysicsLogic.StringTheory.MTheoryHolography
 import PhysicsLogic.StringTheory.AdS3CFT2
+import PhysicsLogic.StringTheory.AdS3CFTBridge
 import PhysicsLogic.StringTheory.AdS5Integrability
 import PhysicsLogic.StringTheory.AdS5MirrorTBAQSC
 import PhysicsLogic.StringTheory.WilsonLinesConfinement
