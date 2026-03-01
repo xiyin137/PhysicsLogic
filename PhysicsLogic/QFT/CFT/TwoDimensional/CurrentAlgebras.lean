@@ -552,6 +552,59 @@ theorem ads3_mixed_flux_pulsating_spectrum_package
     AdS3MixedFluxPulsatingSpectrumPackage data := by
   exact h_phys
 
+/-- Data for compositional reconstruction of the mixed-flux small-`mu`
+circular-pulsating spectrum from the `mu`/`k` definition and Bohr-Sommerfeld
+units in the QFT lane. -/
+structure AdS3MixedFluxPulsatingSpectrumCompositionalData where
+  muK : AdS3MixedFluxMuKDefinitionCftData
+  bohr : AdS3MixedFluxPulsatingBohrSommerfeldCftData
+  spectrum : AdS3MixedFluxPulsatingSpectrumData
+
+/-- Compositional package for the mixed-flux small-`mu` circular-pulsating
+spectrum in the QFT lane:
+combines the `mu`/`k` block, Bohr-Sommerfeld units, and the identifications
+needed to recover the semiclassical spectrum law. -/
+def AdS3MixedFluxPulsatingSpectrumCompositionalPackage
+    (data : AdS3MixedFluxPulsatingSpectrumCompositionalData) : Prop :=
+  AdS3MixedFluxMuKDefinitionCftPackage data.muK /\
+  AdS3MixedFluxPulsatingBohrSommerfeldCftPackage data.bohr /\
+  data.spectrum.levelK = data.muK.levelK /\
+  data.spectrum.mu = data.muK.mu /\
+  data.spectrum.excitationNumber = (data.bohr.integral.excitationNumber : ℝ) /\
+  (data.bohr.integral.excitationNumber : ℝ) > 0 /\
+  data.spectrum.delta =
+    -2 * data.spectrum.excitationNumber +
+      2 * Real.sqrt (data.spectrum.excitationNumber * data.spectrum.levelK) +
+      data.spectrum.mu ^ (2 : Nat) *
+        (Real.sqrt (data.spectrum.excitationNumber * data.spectrum.levelK) / 2 +
+          (2 * data.spectrum.excitationNumber * data.spectrum.levelK -
+              3 * data.spectrum.excitationNumber *
+                Real.sqrt (data.spectrum.excitationNumber * data.spectrum.levelK)) /
+            (2 * (2 * Real.sqrt data.spectrum.excitationNumber -
+              Real.sqrt data.spectrum.levelK) ^ (2 : Nat)))
+
+/-- Reconstruct the mixed-flux small-`mu` circular-pulsating spectrum package
+from compositional `mu`/`k` and Bohr-Sommerfeld units in the QFT lane. -/
+theorem ads3_mixed_flux_pulsating_spectrum_package_from_compositional
+    (data : AdS3MixedFluxPulsatingSpectrumCompositionalData)
+    (h_comp : AdS3MixedFluxPulsatingSpectrumCompositionalPackage data) :
+    AdS3MixedFluxPulsatingSpectrumPackage data.spectrum := by
+  rcases h_comp with ⟨h_mu_k, _, h_k, h_mu, h_n, h_n_pos, h_delta⟩
+  rcases h_mu_k with ⟨h_g_pos, h_q5_pos, h_k5_pos, h_level_pos, _, h_mu_def⟩
+  have h_mu_nonneg_muK : data.muK.mu >= 0 := by
+    rw [h_mu_def]
+    have h_num_pos : data.muK.stringCoupling * (data.muK.rrFluxQ5 : ℝ) > 0 := by
+      exact mul_pos h_g_pos (Nat.cast_pos.mpr h_q5_pos)
+    have h_den_pos : (data.muK.nsFluxK5 : ℝ) > 0 := Nat.cast_pos.mpr h_k5_pos
+    exact le_of_lt (div_pos h_num_pos h_den_pos)
+  have h_n_pos_spectrum : data.spectrum.excitationNumber > 0 := by
+    simpa [h_n] using h_n_pos
+  have h_k_pos_spectrum : data.spectrum.levelK > 0 := by
+    simpa [h_k] using h_level_pos
+  have h_mu_nonneg_spectrum : data.spectrum.mu >= 0 := by
+    simpa [h_mu] using h_mu_nonneg_muK
+  exact ⟨h_n_pos_spectrum, h_k_pos_spectrum, h_mu_nonneg_spectrum, h_delta⟩
+
 /-- Data for the mixed-flux pulsating-threshold relation in the QFT lane. -/
 structure AdS3MixedFluxPulsatingThresholdCftData where
   excitationNumber : ℝ

@@ -47,6 +47,7 @@
 - `AdS3MixedFluxPulsatingTurningPointPackage`
 - `AdS3MixedFluxPulsatingIntegralQuantizationPackage`
 - `AdS3MixedFluxPulsatingBohrSommerfeldPackage`
+- `AdS3MixedFluxPulsatingCompositionalPackage`
 - `AdS3MixedFluxPulsatingPackage`
 - `AdS3MixedFluxPulsatingThresholdPackage`
 - `AdS3MixedFluxSftRrDeformationPackage`
@@ -74,6 +75,7 @@
 - `AdS3MixedFluxPulsatingTurningPointCftPackage` (QFT lane)
 - `AdS3MixedFluxPulsatingIntegralQuantizationCftPackage` (QFT lane)
 - `AdS3MixedFluxPulsatingBohrSommerfeldCftPackage` (QFT lane)
+- `AdS3MixedFluxPulsatingSpectrumCompositionalPackage` (QFT lane)
 - `AdS3MixedFluxPulsatingSpectrumPackage` (QFT lane)
 - `AdS3MixedFluxPulsatingThresholdCftPackage` (QFT lane)
 - `AdS3MixedFluxSftRrDeformationCftPackage` (QFT lane)
@@ -91,6 +93,7 @@
 - `AdS3MixedFluxPulsatingTurningPointBridgePackage`
 - `AdS3MixedFluxPulsatingIntegralQuantizationBridgePackage`
 - `AdS3MixedFluxPulsatingBohrSommerfeldBridgePackage`
+- `AdS3MixedFluxPulsatingCompositionalBridgePackage`
 - `AdS3MixedFluxPulsatingThresholdBridgePackage`
 - `AdS3MixedFluxLongStringTransitionBridgePackage`
 - `AdS3MixedFluxSftMassShiftBridgePackage`

@@ -613,6 +613,54 @@ theorem ads3_mixed_flux_pulsating_package
     AdS3MixedFluxPulsatingPackage data := by
   exact h_phys
 
+/-- Data for compositional reconstruction of the mixed-flux small-`mu`
+pulsating spectrum from the `mu`/`k` definition and Bohr-Sommerfeld units. -/
+structure AdS3MixedFluxPulsatingCompositionalData where
+  muK : AdS3MixedFluxMuKDefinitionData
+  bohr : AdS3MixedFluxPulsatingBohrSommerfeldData
+  pulsating : AdS3MixedFluxPulsatingData
+
+/-- Compositional package for the mixed-flux small-`mu` pulsating spectrum:
+combines the `mu`/`k` block, Bohr-Sommerfeld units, and the identifications
+needed to recover the semiclassical spectrum law. -/
+def AdS3MixedFluxPulsatingCompositionalPackage
+    (data : AdS3MixedFluxPulsatingCompositionalData) : Prop :=
+  AdS3MixedFluxMuKDefinitionPackage data.muK ∧
+  AdS3MixedFluxPulsatingBohrSommerfeldPackage data.bohr ∧
+  data.pulsating.k = data.muK.levelK ∧
+  data.pulsating.mu = data.muK.mu ∧
+  data.pulsating.n = (data.bohr.integral.excitationNumber : ℝ) ∧
+  (data.bohr.integral.excitationNumber : ℝ) > 0 ∧
+  data.pulsating.delta =
+    -2 * data.pulsating.n + 2 * Real.sqrt (data.pulsating.n * data.pulsating.k) +
+      data.pulsating.mu ^ (2 : ℕ) *
+        (Real.sqrt (data.pulsating.n * data.pulsating.k) / 2 +
+          (2 * data.pulsating.n * data.pulsating.k -
+              3 * data.pulsating.n * Real.sqrt (data.pulsating.n * data.pulsating.k)) /
+            (2 * (2 * Real.sqrt data.pulsating.n - Real.sqrt data.pulsating.k) ^ (2 : ℕ)))
+
+/-- Reconstruct the mixed-flux small-`mu` pulsating spectrum package from the
+compositional `mu`/`k` and Bohr-Sommerfeld units. -/
+theorem ads3_mixed_flux_pulsating_package_from_compositional
+    (data : AdS3MixedFluxPulsatingCompositionalData)
+    (h_comp : AdS3MixedFluxPulsatingCompositionalPackage data) :
+    AdS3MixedFluxPulsatingPackage data.pulsating := by
+  rcases h_comp with ⟨h_mu_k, _, h_k, h_mu, h_n, h_n_pos, h_delta⟩
+  rcases h_mu_k with ⟨h_g_pos, h_q5_pos, h_k5_pos, h_level_pos, _, h_mu_def⟩
+  have h_mu_nonneg_muK : data.muK.mu ≥ 0 := by
+    rw [h_mu_def]
+    have h_num_pos : data.muK.stringCoupling * (data.muK.rrFluxQ5 : ℝ) > 0 := by
+      exact mul_pos h_g_pos (Nat.cast_pos.mpr h_q5_pos)
+    have h_den_pos : (data.muK.nsFluxK5 : ℝ) > 0 := Nat.cast_pos.mpr h_k5_pos
+    exact le_of_lt (div_pos h_num_pos h_den_pos)
+  have h_n_pos_pulsating : data.pulsating.n > 0 := by
+    simpa [h_n] using h_n_pos
+  have h_k_pos_pulsating : data.pulsating.k > 0 := by
+    simpa [h_k] using h_level_pos
+  have h_mu_nonneg_pulsating : data.pulsating.mu ≥ 0 := by
+    simpa [h_mu] using h_mu_nonneg_muK
+  exact ⟨h_n_pos_pulsating, h_k_pos_pulsating, h_mu_nonneg_pulsating, h_delta⟩
+
 /-- Data for the mixed-flux pulsating-threshold relation in AdS3. -/
 structure AdS3MixedFluxPulsatingThresholdData where
   excitationNumber : ℝ

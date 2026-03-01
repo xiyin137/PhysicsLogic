@@ -697,6 +697,53 @@ theorem ads3_mixed_flux_pulsating_bohr_sommerfeld_bridge_package
       h_int_period, h_int_period_flag, h_int_integral⟩
   exact ⟨h_string_bohr_pkg, h_qft_bohr_pkg, h_turning_bridge, h_integral_bridge⟩
 
+/-- Cross-lane data for compositional reconstruction of the mixed-flux small-`mu`
+pulsating spectrum. -/
+structure AdS3MixedFluxPulsatingCompositionalBridgeData where
+  stringCompositional : AdS3MixedFluxPulsatingCompositionalData
+  qftCompositional :
+    PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingSpectrumCompositionalData
+
+/-- Bridge package for compositional mixed-flux small-`mu` pulsating spectrum:
+lane-level compositional reconstructions with aligned observables
+`n`, `k`, `mu`, and `Delta`. -/
+def AdS3MixedFluxPulsatingCompositionalBridgePackage
+    (data : AdS3MixedFluxPulsatingCompositionalBridgeData) : Prop :=
+  AdS3MixedFluxPulsatingPackage data.stringCompositional.pulsating /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingSpectrumPackage
+    data.qftCompositional.spectrum /\
+  data.stringCompositional.pulsating.n = data.qftCompositional.spectrum.excitationNumber /\
+  data.stringCompositional.pulsating.k = data.qftCompositional.spectrum.levelK /\
+  data.stringCompositional.pulsating.mu = data.qftCompositional.spectrum.mu /\
+  data.stringCompositional.pulsating.delta = data.qftCompositional.spectrum.delta
+
+/-- Reconstruct the cross-lane mixed-flux small-`mu` pulsating spectrum bridge
+from compositional lane packages and observable identifications. -/
+theorem ads3_mixed_flux_pulsating_compositional_bridge_package
+    (data : AdS3MixedFluxPulsatingCompositionalBridgeData)
+    (h_string : AdS3MixedFluxPulsatingCompositionalPackage data.stringCompositional)
+    (h_qft :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingSpectrumCompositionalPackage
+        data.qftCompositional)
+    (h_n :
+      data.stringCompositional.pulsating.n = data.qftCompositional.spectrum.excitationNumber)
+    (h_k :
+      data.stringCompositional.pulsating.k = data.qftCompositional.spectrum.levelK)
+    (h_mu :
+      data.stringCompositional.pulsating.mu = data.qftCompositional.spectrum.mu)
+    (h_delta :
+      data.stringCompositional.pulsating.delta = data.qftCompositional.spectrum.delta) :
+    AdS3MixedFluxPulsatingCompositionalBridgePackage data := by
+  have h_string_pkg :
+      AdS3MixedFluxPulsatingPackage data.stringCompositional.pulsating :=
+    ads3_mixed_flux_pulsating_package_from_compositional data.stringCompositional h_string
+  have h_qft_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingSpectrumPackage
+        data.qftCompositional.spectrum :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_pulsating_spectrum_package_from_compositional
+      data.qftCompositional h_qft
+  exact ⟨h_string_pkg, h_qft_pkg, h_n, h_k, h_mu, h_delta⟩
+
 /-- Cross-lane data for the mixed-flux pulsating-threshold relation. -/
 structure AdS3MixedFluxPulsatingThresholdBridgeData where
   stringThreshold : AdS3MixedFluxPulsatingThresholdData
