@@ -564,4 +564,38 @@ theorem ads3_mixed_flux_finite_k_wzw_four_point_reduction_package
     AdS3MixedFluxFiniteKWzwFourPointReductionPackage data := by
   exact h_phys
 
+/-- Finite-`k` WZW OPE-constant normalization data for mixed-flux AdS3 RR deformation. -/
+structure AdS3MixedFluxWzwOpeStructureConstantData where
+  levelK : ℝ
+  cSuHalfHalfOne : ℝ
+  cSlMinusHalfMinusHalfMinusOne : ℝ
+  suIdentityOpeCoefficient : ℝ
+  slIdentityOpeCoefficient : ℝ
+  cSuLargeKAsymptoticValue : ℝ
+  cSlLargeKAsymptoticValue : ℝ
+
+/-- Finite-`k` WZW OPE-constant package:
+identity coefficients normalized to `1`,
+`C^sl_{-1/2,-1/2,-1} = (4/3)/C^su_{1/2,1/2,1}`,
+and shared large-`k` asymptotic value `2/sqrt(3)`. -/
+def AdS3MixedFluxWzwOpeStructureConstantPackage
+    (data : AdS3MixedFluxWzwOpeStructureConstantData) : Prop :=
+  data.levelK > 3 ∧
+  data.suIdentityOpeCoefficient = 1 ∧
+  data.slIdentityOpeCoefficient = 1 ∧
+  data.cSuHalfHalfOne > 0 ∧
+  data.cSlMinusHalfMinusHalfMinusOne > 0 ∧
+  data.cSlMinusHalfMinusHalfMinusOne = (4 / 3 : ℝ) / data.cSuHalfHalfOne ∧
+  data.cSuLargeKAsymptoticValue = 2 / Real.sqrt 3 ∧
+  data.cSlLargeKAsymptoticValue = 2 / Real.sqrt 3
+
+/-- Assumed finite-`k` WZW OPE-constant package for mixed-flux AdS3 RR deformation. -/
+theorem ads3_mixed_flux_wzw_ope_structure_constant_package
+    (data : AdS3MixedFluxWzwOpeStructureConstantData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxWzwOpeStructureConstants
+      (AdS3MixedFluxWzwOpeStructureConstantPackage data)) :
+    AdS3MixedFluxWzwOpeStructureConstantPackage data := by
+  exact h_phys
+
 end PhysicsLogic.StringTheory

@@ -575,4 +575,56 @@ theorem ads3_mixed_flux_finite_k_wzw_reduction_bridge_package
       data.qftReduction h_qft
   exact ⟨h_string_pkg, h_qft_pkg, h_k, h_mu, h_sl, h_su, h_largek⟩
 
+/-- Cross-lane data for finite-`k` mixed-flux WZW OPE-constant normalization. -/
+structure AdS3MixedFluxWzwOpeConstantBridgeData where
+  stringOpe : AdS3MixedFluxWzwOpeStructureConstantData
+  qftOpe : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxWzwOpeStructureConstantCftData
+
+/-- Bridge package:
+string-side finite-`k` mixed-flux WZW OPE constants aligned with QFT-side
+finite-`k` OPE-constant package. -/
+def AdS3MixedFluxWzwOpeConstantBridgePackage
+    (data : AdS3MixedFluxWzwOpeConstantBridgeData) : Prop :=
+  AdS3MixedFluxWzwOpeStructureConstantPackage data.stringOpe /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxWzwOpeStructureConstantCftPackage data.qftOpe /\
+  data.stringOpe.levelK = data.qftOpe.levelK /\
+  data.stringOpe.cSuHalfHalfOne = data.qftOpe.cSuHalfHalfOne /\
+  data.stringOpe.cSlMinusHalfMinusHalfMinusOne = data.qftOpe.cSlMinusHalfMinusHalfMinusOne /\
+  data.stringOpe.suIdentityOpeCoefficient = data.qftOpe.suIdentityOpeCoefficient /\
+  data.stringOpe.slIdentityOpeCoefficient = data.qftOpe.slIdentityOpeCoefficient /\
+  data.stringOpe.cSuLargeKAsymptoticValue = data.qftOpe.cSuLargeKAsymptoticValue /\
+  data.stringOpe.cSlLargeKAsymptoticValue = data.qftOpe.cSlLargeKAsymptoticValue
+
+/-- Assumed bridge package for finite-`k` mixed-flux WZW OPE-constant data. -/
+theorem ads3_mixed_flux_wzw_ope_constant_bridge_package
+    (data : AdS3MixedFluxWzwOpeConstantBridgeData)
+    (h_string : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxWzwOpeStructureConstants
+      (AdS3MixedFluxWzwOpeStructureConstantPackage data.stringOpe))
+    (h_qft : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxWzwOpeStructureConstants
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxWzwOpeStructureConstantCftPackage
+        data.qftOpe))
+    (h_k : data.stringOpe.levelK = data.qftOpe.levelK)
+    (h_c_su : data.stringOpe.cSuHalfHalfOne = data.qftOpe.cSuHalfHalfOne)
+    (h_c_sl :
+      data.stringOpe.cSlMinusHalfMinusHalfMinusOne = data.qftOpe.cSlMinusHalfMinusHalfMinusOne)
+    (h_su_id :
+      data.stringOpe.suIdentityOpeCoefficient = data.qftOpe.suIdentityOpeCoefficient)
+    (h_sl_id :
+      data.stringOpe.slIdentityOpeCoefficient = data.qftOpe.slIdentityOpeCoefficient)
+    (h_asym_su :
+      data.stringOpe.cSuLargeKAsymptoticValue = data.qftOpe.cSuLargeKAsymptoticValue)
+    (h_asym_sl :
+      data.stringOpe.cSlLargeKAsymptoticValue = data.qftOpe.cSlLargeKAsymptoticValue) :
+    AdS3MixedFluxWzwOpeConstantBridgePackage data := by
+  have h_string_pkg : AdS3MixedFluxWzwOpeStructureConstantPackage data.stringOpe :=
+    ads3_mixed_flux_wzw_ope_structure_constant_package data.stringOpe h_string
+  have h_qft_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxWzwOpeStructureConstantCftPackage
+        data.qftOpe :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_wzw_ope_structure_constant_cft_package
+      data.qftOpe h_qft
+  exact ⟨h_string_pkg, h_qft_pkg, h_k, h_c_su, h_c_sl, h_su_id, h_sl_id, h_asym_su, h_asym_sl⟩
+
 end PhysicsLogic.StringTheory

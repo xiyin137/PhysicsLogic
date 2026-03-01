@@ -1,7 +1,7 @@
 # Physics Assumptions Report
 
-- Registered assumptions: `233`
-- Assumptions referenced in non-Papers modules: `233`
+- Registered assumptions: `235`
+- Assumptions referenced in non-Papers modules: `235`
 - Assumptions with zero references outside registry: `0`
 
 | AssumptionId | Payload | Core refs | Papers refs | Total refs | Description |
@@ -26,6 +26,7 @@
 | `cft2dAds3MixedFluxFiniteKWzwFourPointReduction` | `qft.cft.2d.ads3_mixed_flux_finite_k_wzw_four_point_reduction` | 2 | 0 | 2 | The mixed-flux AdS3 finite-`k` WZW reduction package (RHS of the RR-deformation mass-shift equation reduced to bosonic `SL(2)_{k+2}` and `SU(2)_{k-2}` four-point functions with a pair of fundamental and a pair of generic primaries, and large-`k` agreement with semiclassical pulsating-string shifts) is assumed in this abstraction layer. |
 | `cft2dAds3MixedFluxMassShiftFromFourPoint` | `qft.cft.2d.ads3_mixed_flux_mass_shift_from_four_point` | 2 | 0 | 2 | The mixed-flux AdS3 RR-deformation mass-shift package (`Delta(mu)=Delta(0)-(alpha'/2)delta m^2`, `delta m^2\|_{mu^2}=mu^2 A_(0,4)/alpha'`, and no-zero-weight intermediate bracket conditions) is assumed in this abstraction layer. |
 | `cft2dAds3MixedFluxSftRrDeformation` | `qft.cft.2d.ads3_mixed_flux_sft_rr_deformation` | 2 | 0 | 2 | The mixed-flux AdS3 RR-deformation worldsheet-SFT package (`Q_B W^(2)=-(1/2)P^+[W^(1)⊗W^(1)]`, finite-`k` projected-bracket vanishing, and order-`mu^2` Siegel-resolvent correction) is assumed in this abstraction layer. |
+| `cft2dAds3MixedFluxWzwOpeStructureConstants` | `qft.cft.2d.ads3_mixed_flux_wzw_ope_structure_constants` | 2 | 0 | 2 | The mixed-flux AdS3 finite-`k` WZW OPE-constant package (identity-OPE normalization, `C^sl_{-1/2,-1/2,-1} = (4/3)/(C^su_{1/2,1/2,1})`, and common large-`k` limit `2/sqrt(3)`) is assumed in this abstraction layer. |
 | `cft2dAds3NsnsAffineLevelShift` | `qft.cft.2d.ads3_nsns_affine_level_shift` | 2 | 0 | 2 | The `(NS,NS)` AdS3/S3 affine-level-shift package (`sl` bosonic level `k+2`, `su` bosonic level `k-2`, and fermion-bilinear current shifts to superconformal descendants) is assumed in this abstraction layer. |
 | `cft2dAds3NsnsSpinFieldGsoConstraints` | `qft.cft.2d.ads3_nsns_spin_field_gso_constraints` | 2 | 0 | 2 | The AdS3 `(NS,NS)` Ramond spin-field/GSO package (`epsilon_1 epsilon_2 epsilon_3 = 1`, `epsilon_4 epsilon_5 = 1`, sign quantization `epsilon_I in {+1,-1}`, and 16 BRST-invariant supersymmetry currents) is assumed in this abstraction layer. |
 | `cft2dAds3NsnsWorldsheetMatterScft` | `qft.cft.2d.ads3_nsns_worldsheet_matter_scft` | 3 | 0 | 3 | The purely `(NS,NS)` AdS3xS3xM4 worldsheet matter-SCFT package (`R^2=k alpha'`, `c_sl=3(k+2)/k+3/2`, `c_su=3(k-2)/k+3/2`, `c_int=6`, total `c=15`) is assumed in this abstraction layer. |
@@ -98,6 +99,7 @@
 | `stringAdS3MixedFluxFiniteKWzwFourPointReduction` | `string.ads3.mixed_flux_finite_k_wzw_four_point_reduction` | 2 | 0 | 2 | The mixed-flux AdS3 finite-`k` WZW reduction package (RR-deformation mass-shift equation reduced to bosonic `SL(2)_{k+2}` and `SU(2)_{k-2}` four-point functions with a pair of fundamental and a pair of generic primaries, and large-`k` agreement with semiclassical pulsating-string shifts) is assumed in this abstraction layer. |
 | `stringAdS3MixedFluxMassShiftFromFourPoint` | `string.ads3.mixed_flux_mass_shift_from_four_point` | 2 | 0 | 2 | The mixed-flux AdS3 RR-deformation spectrum-shift package from four-string amplitudes (`Delta(mu)=Delta(0)-(alpha'/2)delta m^2`, `delta m^2\|_{mu^2}=mu^2 A_(0,4)/alpha'`, and no-zero-weight intermediate bracket conditions) is assumed in this abstraction layer. |
 | `stringAdS3MixedFluxSftRrDeformation` | `string.ads3.mixed_flux_sft_rr_deformation` | 2 | 0 | 2 | The mixed-flux AdS3 RR-deformation closed-superstring-field-theory package (`Q_B W^(2)=-(1/2)P^+[W^(1)⊗W^(1)]`, finite-`k` projected-bracket vanishing, and order-`mu^2` Siegel-resolvent correction) is assumed in this abstraction layer. |
+| `stringAdS3MixedFluxWzwOpeStructureConstants` | `string.ads3.mixed_flux_wzw_ope_structure_constants` | 2 | 0 | 2 | The mixed-flux AdS3 finite-`k` WZW OPE-constant package (identity-OPE normalization, `C^sl_{-1/2,-1/2,-1} = (4/3)/(C^su_{1/2,1/2,1})`, and common large-`k` limit `2/sqrt(3)`) is assumed in this abstraction layer. |
 | `stringAdSCftD3DecouplingLimit` | `string.adscft.d3_decoupling_limit` | 1 | 0 | 1 | The D3-brane low-energy decoupling-limit inequalities on string-scale and coupling-scale energies are assumed in this abstraction layer. |
 | `stringAdSCftDictionary` | `string.adscft.dictionary` | 1 | 0 | 1 | The generating-functional AdS/CFT dictionary relation equating bulk partition data with boundary correlator data is assumed in this abstraction layer. |
 | `stringAdSCftParameterMap` | `string.adscft.parameter_map` | 1 | 0 | 1 | The AdS5/CFT4 parameter relations `g_B = g_YM^2/(2pi)`, `lambda = 2 g_YM^2 N`, and `R^4/alpha'^2 = lambda` are assumed in this abstraction layer. |

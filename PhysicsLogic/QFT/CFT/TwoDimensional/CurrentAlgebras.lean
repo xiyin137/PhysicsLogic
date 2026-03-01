@@ -529,4 +529,38 @@ theorem ads3_mixed_flux_finite_k_wzw_four_point_reduction_cft_package
     AdS3MixedFluxFiniteKWzwFourPointReductionCftPackage data := by
   exact h_phys
 
+/-- Finite-`k` WZW OPE-constant normalization data in the mixed-flux AdS3 QFT lane. -/
+structure AdS3MixedFluxWzwOpeStructureConstantCftData where
+  levelK : ℝ
+  cSuHalfHalfOne : ℝ
+  cSlMinusHalfMinusHalfMinusOne : ℝ
+  suIdentityOpeCoefficient : ℝ
+  slIdentityOpeCoefficient : ℝ
+  cSuLargeKAsymptoticValue : ℝ
+  cSlLargeKAsymptoticValue : ℝ
+
+/-- Finite-`k` WZW OPE-constant package in the QFT lane:
+identity OPE normalization, `SL(2)`/`SU(2)` structure-constant relation
+`C^sl_{-1/2,-1/2,-1} = (4/3)/C^su_{1/2,1/2,1}`, and shared large-`k`
+asymptotic value `2/sqrt(3)`. -/
+def AdS3MixedFluxWzwOpeStructureConstantCftPackage
+    (data : AdS3MixedFluxWzwOpeStructureConstantCftData) : Prop :=
+  data.levelK > 3 /\
+  data.suIdentityOpeCoefficient = 1 /\
+  data.slIdentityOpeCoefficient = 1 /\
+  data.cSuHalfHalfOne > 0 /\
+  data.cSlMinusHalfMinusHalfMinusOne > 0 /\
+  data.cSlMinusHalfMinusHalfMinusOne = (4 / 3 : ℝ) / data.cSuHalfHalfOne /\
+  data.cSuLargeKAsymptoticValue = 2 / Real.sqrt 3 /\
+  data.cSlLargeKAsymptoticValue = 2 / Real.sqrt 3
+
+/-- Assumed finite-`k` WZW OPE-constant package in the 2D CFT lane. -/
+theorem ads3_mixed_flux_wzw_ope_structure_constant_cft_package
+    (data : AdS3MixedFluxWzwOpeStructureConstantCftData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxWzwOpeStructureConstants
+      (AdS3MixedFluxWzwOpeStructureConstantCftPackage data)) :
+    AdS3MixedFluxWzwOpeStructureConstantCftPackage data := by
+  exact h_phys
+
 end PhysicsLogic.QFT.CFT.TwoDimensional
