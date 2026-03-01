@@ -44,6 +44,7 @@
 - `AdS3MixedFluxPackage`
 - `AdS3MixedFluxLongStringTransitionPackage`
 - `AdS3MixedFluxPulsatingPackage`
+- `AdS3MixedFluxPulsatingThresholdPackage`
 - `AdS3MixedFluxSftRrDeformationPackage`
 - `AdS3MixedFluxMassShiftFromFourPointPackage`
 - `AdS3MixedFluxFiniteKWzwFourPointReductionPackage`
@@ -66,6 +67,7 @@
 - `AdS3NsnsSuperstringMassShellBpsPackage` (QFT lane)
 - `AdS3MixedFluxWorldsheetDeformationPackage` (QFT lane)
 - `AdS3MixedFluxPulsatingSpectrumPackage` (QFT lane)
+- `AdS3MixedFluxPulsatingThresholdCftPackage` (QFT lane)
 - `AdS3MixedFluxSftRrDeformationCftPackage` (QFT lane)
 - `AdS3MixedFluxMassShiftFromFourPointCftPackage` (QFT lane)
 - `AdS3MixedFluxFiniteKWzwFourPointReductionCftPackage` (QFT lane)
@@ -77,6 +79,7 @@
 - `AdS3NsnsGsoBridgePackage`
 - `AdS3NsnsMassShellBridgePackage`
 - `AdS3MixedFluxBridgePackage`
+- `AdS3MixedFluxPulsatingThresholdBridgePackage`
 - `AdS3MixedFluxLongStringTransitionBridgePackage`
 - `AdS3MixedFluxSftMassShiftBridgePackage`
 - `AdS3MixedFluxFiniteKWzwReductionBridgePackage`
@@ -100,6 +103,7 @@
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxParameterization`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxLongStringSpectrumTransition`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxPulsatingShift`.
+- Candidate new `AssumptionId`: `stringAdS3MixedFluxPulsatingThresholdPole`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxSftRrDeformation`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxMassShiftFromFourPoint`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxFiniteKWzwFourPointReduction`.
@@ -119,6 +123,7 @@
 - Candidate new `AssumptionId`: `cft2dAds3NsnsSuperstringMassShellBps`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxWorldsheetDeformation`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxPulsatingSpectrumShift`.
+- Candidate new `AssumptionId`: `cft2dAds3MixedFluxPulsatingThresholdPole`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxSftRrDeformation`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxMassShiftFromFourPoint`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxFiniteKWzwFourPointReduction`.

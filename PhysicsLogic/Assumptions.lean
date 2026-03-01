@@ -189,6 +189,7 @@ def cft2dAds3MixedFluxWorldsheetDeformation : String :=
   "qft.cft.2d.ads3_mixed_flux_worldsheet_deformation"
 def cft2dAds3MixedFluxPulsatingSpectrumShift : String :=
   "qft.cft.2d.ads3_mixed_flux_pulsating_spectrum_shift"
+def cft2dAds3MixedFluxPulsatingThresholdPole : String := "qft.cft.2d.ads3_mixed_flux_pulsating_threshold_pole"
 def cft2dAds3MixedFluxSftRrDeformation : String := "qft.cft.2d.ads3_mixed_flux_sft_rr_deformation"
 def cft2dAds3MixedFluxMassShiftFromFourPoint : String := "qft.cft.2d.ads3_mixed_flux_mass_shift_from_four_point"
 def cft2dAds3MixedFluxFiniteKWzwFourPointReduction : String := "qft.cft.2d.ads3_mixed_flux_finite_k_wzw_four_point_reduction"
@@ -429,6 +430,7 @@ def stringAdS3NsnsSuperstringMassShell : String :=
 def stringAdS3MixedFluxParameterization : String := "string.ads3.mixed_flux_parameterization"
 def stringAdS3MixedFluxLongStringSpectrumTransition : String := "string.ads3.mixed_flux_long_string_spectrum_transition"
 def stringAdS3MixedFluxPulsatingShift : String := "string.ads3.mixed_flux_pulsating_shift"
+def stringAdS3MixedFluxPulsatingThresholdPole : String := "string.ads3.mixed_flux_pulsating_threshold_pole"
 def stringAdS3MixedFluxSftRrDeformation : String := "string.ads3.mixed_flux_sft_rr_deformation"
 def stringAdS3MixedFluxMassShiftFromFourPoint : String := "string.ads3.mixed_flux_mass_shift_from_four_point"
 def stringAdS3MixedFluxFiniteKWzwFourPointReduction : String := "string.ads3.mixed_flux_finite_k_wzw_four_point_reduction"
@@ -1058,6 +1060,8 @@ def assumptionRegistry : List AssumptionEntry :=
       "The mixed `(NS,NS)`/`(R,R)` AdS3 worldsheet-deformation package (`R^2 = alpha' sqrt(K5^2 + g_B^2 Q5^2)`, `mu = g_B Q5 / K5`, NSNS long-string threshold `Delta = K5/2`, and nonzero-`mu` long-string discretization/non-boundary-reaching constraints) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dAds3MixedFluxPulsatingSpectrumShift,
       "The mixed-flux AdS3 circular-pulsating spectrum shift package (`Delta = -2n + 2sqrt(nk) + mu^2 (...)` at leading nontrivial order) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dAds3MixedFluxPulsatingThresholdPole,
+      "The mixed-flux AdS3 pulsating-threshold package (order-`mu^2` denominator pole at `n = k/4` and equality of the `mu=0` short-string energy with the NSNS long-string threshold `Delta = k/2`) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dAds3MixedFluxSftRrDeformation,
       "The mixed-flux AdS3 RR-deformation worldsheet-SFT package (`Q_B W^(2)=-(1/2)P^+[W^(1)⊗W^(1)]`, finite-`k` projected-bracket vanishing, and order-`mu^2` Siegel-resolvent correction) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dAds3MixedFluxMassShiftFromFourPoint,
@@ -1348,6 +1352,8 @@ def assumptionRegistry : List AssumptionEntry :=
       "The mixed-flux AdS3 long-string transition package (`Delta_threshold = K5/2` and continuum at `mu=0`; no-boundary-reaching, discretized long-string spectrum, and no sharp short/long distinction at nonzero `mu`) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringAdS3MixedFluxPulsatingShift,
       "The small-`mu` semiclassical correction formula for circular pulsating-string energies in mixed-flux AdS3 backgrounds is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringAdS3MixedFluxPulsatingThresholdPole,
+      "The mixed-flux AdS3 pulsating-threshold package (order-`mu^2` denominator pole at `n = k/4` and equality of the `mu=0` short-string energy with the NSNS long-string threshold `Delta = k/2`) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringAdS3MixedFluxSftRrDeformation,
       "The mixed-flux AdS3 RR-deformation closed-superstring-field-theory package (`Q_B W^(2)=-(1/2)P^+[W^(1)⊗W^(1)]`, finite-`k` projected-bracket vanishing, and order-`mu^2` Siegel-resolvent correction) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringAdS3MixedFluxMassShiftFromFourPoint,

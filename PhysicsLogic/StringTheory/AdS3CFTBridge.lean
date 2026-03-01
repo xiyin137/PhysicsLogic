@@ -453,6 +453,61 @@ theorem ads3_mixed_flux_bridge_package
   exact ⟨h_string_flux_pkg, h_string_pulsating_pkg, h_qft_flux_pkg, h_qft_pulsating_pkg,
     h_g, h_alpha, h_k5, h_q5, h_r, h_mu_flux, h_n, h_k, h_mu_pulsating, h_delta⟩
 
+/-- Cross-lane data for the mixed-flux pulsating-threshold relation. -/
+structure AdS3MixedFluxPulsatingThresholdBridgeData where
+  stringThreshold : AdS3MixedFluxPulsatingThresholdData
+  qftThreshold : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingThresholdCftData
+
+/-- Bridge package:
+string-side and QFT-side mixed-flux pulsating-threshold data aligned
+field-by-field. -/
+def AdS3MixedFluxPulsatingThresholdBridgePackage
+    (data : AdS3MixedFluxPulsatingThresholdBridgeData) : Prop :=
+  AdS3MixedFluxPulsatingThresholdPackage data.stringThreshold /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingThresholdCftPackage
+    data.qftThreshold /\
+  data.stringThreshold.excitationNumber = data.qftThreshold.excitationNumber /\
+  data.stringThreshold.levelK = data.qftThreshold.levelK /\
+  data.stringThreshold.poleExcitationNumber = data.qftThreshold.poleExcitationNumber /\
+  data.stringThreshold.muOrderTwoCorrectionDenominator =
+    data.qftThreshold.muOrderTwoCorrectionDenominator /\
+  data.stringThreshold.shortStringEnergyAtPole = data.qftThreshold.shortStringEnergyAtPole /\
+  data.stringThreshold.nsnsLongStringThresholdDimension =
+    data.qftThreshold.nsnsLongStringThresholdDimension
+
+/-- Assumed bridge package for mixed-flux pulsating-threshold data. -/
+theorem ads3_mixed_flux_pulsating_threshold_bridge_package
+    (data : AdS3MixedFluxPulsatingThresholdBridgeData)
+    (h_string : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxPulsatingThresholdPole
+      (AdS3MixedFluxPulsatingThresholdPackage data.stringThreshold))
+    (h_qft : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxPulsatingThresholdPole
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingThresholdCftPackage
+        data.qftThreshold))
+    (h_n : data.stringThreshold.excitationNumber = data.qftThreshold.excitationNumber)
+    (h_k : data.stringThreshold.levelK = data.qftThreshold.levelK)
+    (h_npole :
+      data.stringThreshold.poleExcitationNumber = data.qftThreshold.poleExcitationNumber)
+    (h_den :
+      data.stringThreshold.muOrderTwoCorrectionDenominator =
+        data.qftThreshold.muOrderTwoCorrectionDenominator)
+    (h_energy :
+      data.stringThreshold.shortStringEnergyAtPole = data.qftThreshold.shortStringEnergyAtPole)
+    (h_threshold :
+      data.stringThreshold.nsnsLongStringThresholdDimension =
+        data.qftThreshold.nsnsLongStringThresholdDimension) :
+    AdS3MixedFluxPulsatingThresholdBridgePackage data := by
+  have h_string_pkg :
+      AdS3MixedFluxPulsatingThresholdPackage data.stringThreshold :=
+    ads3_mixed_flux_pulsating_threshold_package data.stringThreshold h_string
+  have h_qft_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingThresholdCftPackage
+        data.qftThreshold :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_pulsating_threshold_cft_package
+      data.qftThreshold h_qft
+  exact ⟨h_string_pkg, h_qft_pkg, h_n, h_k, h_npole, h_den, h_energy, h_threshold⟩
+
 /-- Cross-lane data for mixed-flux long-string threshold/discretization transition. -/
 structure AdS3MixedFluxLongStringTransitionBridgeData where
   stringTransition : AdS3MixedFluxLongStringTransitionData

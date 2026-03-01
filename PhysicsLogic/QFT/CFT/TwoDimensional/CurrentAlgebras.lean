@@ -429,6 +429,43 @@ theorem ads3_mixed_flux_pulsating_spectrum_package
     AdS3MixedFluxPulsatingSpectrumPackage data := by
   exact h_phys
 
+/-- Data for the mixed-flux pulsating-threshold relation in the QFT lane. -/
+structure AdS3MixedFluxPulsatingThresholdCftData where
+  excitationNumber : ℝ
+  levelK : ℝ
+  poleExcitationNumber : ℝ
+  muOrderTwoCorrectionDenominator : ℝ
+  shortStringEnergyAtPole : ℝ
+  nsnsLongStringThresholdDimension : ℝ
+
+/-- Mixed-flux pulsating-threshold package in the QFT lane:
+the order-`mu^2` pulsating correction denominator vanishes at `n = k/4`,
+and the `mu=0` short-string energy at that point equals the NSNS long-string
+continuum threshold `Delta = k/2`. -/
+def AdS3MixedFluxPulsatingThresholdCftPackage
+    (data : AdS3MixedFluxPulsatingThresholdCftData) : Prop :=
+  data.excitationNumber > 0 /\
+  data.levelK > 0 /\
+  data.poleExcitationNumber = data.levelK / 4 /\
+  data.muOrderTwoCorrectionDenominator =
+    2 * Real.sqrt data.excitationNumber - Real.sqrt data.levelK /\
+  (data.excitationNumber = data.poleExcitationNumber ->
+    data.muOrderTwoCorrectionDenominator = 0) /\
+  data.shortStringEnergyAtPole =
+    -2 * data.poleExcitationNumber +
+      2 * Real.sqrt (data.poleExcitationNumber * data.levelK) /\
+  data.nsnsLongStringThresholdDimension = data.levelK / 2 /\
+  data.shortStringEnergyAtPole = data.nsnsLongStringThresholdDimension
+
+/-- Assumed mixed-flux pulsating-threshold package in the 2D CFT lane. -/
+theorem ads3_mixed_flux_pulsating_threshold_cft_package
+    (data : AdS3MixedFluxPulsatingThresholdCftData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxPulsatingThresholdPole
+      (AdS3MixedFluxPulsatingThresholdCftPackage data)) :
+    AdS3MixedFluxPulsatingThresholdCftPackage data := by
+  exact h_phys
+
 /-- `(NS,NS)/(R,R)` mixed-flux RR-deformation data in the worldsheet-SFT/CFT lane. -/
 structure AdS3MixedFluxSftRrDeformationCftData where
   mu : ℝ
