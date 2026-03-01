@@ -526,37 +526,54 @@ theorem ads3_mixed_flux_pulsating_turning_point_package
     AdS3MixedFluxPulsatingTurningPointPackage data := by
   exact h_phys
 
-/-- Data for the mixed-flux pulsating Bohr-Sommerfeld quantization package in AdS3. -/
-structure AdS3MixedFluxPulsatingBohrSommerfeldData where
+/-- Data for mixed-flux pulsating integral quantization in AdS3. -/
+structure AdS3MixedFluxPulsatingIntegralQuantizationData where
   alphaPrime : ℝ
   radiusSquared : ℝ
-  k5Flux : ℝ
   excitationNumber : ℤ
   maximalRadius : ℝ
   bohrSommerfeldPeriod : ℝ
   bohrSommerfeldPeriodRepresentsTwoPi : Bool
   bohrSommerfeldIntegral : ℝ
-  turningPointEnergy : ℝ
 
-/-- Mixed-flux pulsating Bohr-Sommerfeld package:
-`2 ∮_0^{r0} dr (R^2/alpha') (dot r/(1+r^2)) = period * n` with
-`period` marked as `2pi`, and turning-point energy relation
-`Delta = (R^2/alpha') r0 sqrt(1+r0^2) - K5 r0^2`. -/
-def AdS3MixedFluxPulsatingBohrSommerfeldPackage
-    (data : AdS3MixedFluxPulsatingBohrSommerfeldData) : Prop :=
+/-- Mixed-flux pulsating integral-quantization package:
+`2 ∮_0^{r0} dr (R^2/alpha') (dot r/(1+r^2)) = period * n`,
+with `period` marked as `2pi`. -/
+def AdS3MixedFluxPulsatingIntegralQuantizationPackage
+    (data : AdS3MixedFluxPulsatingIntegralQuantizationData) : Prop :=
   data.alphaPrime > 0 ∧
   data.radiusSquared > 0 ∧
-  data.k5Flux > 0 ∧
   data.maximalRadius ≥ 0 ∧
   (data.excitationNumber : ℝ) ≥ 0 ∧
   data.bohrSommerfeldPeriod > 0 ∧
   data.bohrSommerfeldPeriodRepresentsTwoPi = true ∧
   data.bohrSommerfeldIntegral =
-    data.bohrSommerfeldPeriod * (data.excitationNumber : ℝ) ∧
-  data.turningPointEnergy =
-    (data.radiusSquared / data.alphaPrime) * data.maximalRadius *
-      Real.sqrt (1 + data.maximalRadius ^ (2 : ℕ)) -
-      data.k5Flux * data.maximalRadius ^ (2 : ℕ)
+    data.bohrSommerfeldPeriod * (data.excitationNumber : ℝ)
+
+/-- Assumed mixed-flux pulsating integral-quantization package in AdS3. -/
+theorem ads3_mixed_flux_pulsating_integral_quantization_package
+    (data : AdS3MixedFluxPulsatingIntegralQuantizationData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxPulsatingIntegralQuantization
+      (AdS3MixedFluxPulsatingIntegralQuantizationPackage data)) :
+    AdS3MixedFluxPulsatingIntegralQuantizationPackage data := by
+  exact h_phys
+
+/-- Data for the mixed-flux pulsating Bohr-Sommerfeld quantization package in AdS3. -/
+structure AdS3MixedFluxPulsatingBohrSommerfeldData where
+  turningPoint : AdS3MixedFluxPulsatingTurningPointData
+  integral : AdS3MixedFluxPulsatingIntegralQuantizationData
+
+/-- Mixed-flux pulsating Bohr-Sommerfeld package:
+compositional package combining the turning-point relation and integral
+quantization unit, with shared `alpha'`, `R^2`, and `r0` data. -/
+def AdS3MixedFluxPulsatingBohrSommerfeldPackage
+    (data : AdS3MixedFluxPulsatingBohrSommerfeldData) : Prop :=
+  AdS3MixedFluxPulsatingTurningPointPackage data.turningPoint ∧
+  AdS3MixedFluxPulsatingIntegralQuantizationPackage data.integral ∧
+  data.turningPoint.alphaPrime = data.integral.alphaPrime ∧
+  data.turningPoint.radiusSquared = data.integral.radiusSquared ∧
+  data.turningPoint.maximalRadius = data.integral.maximalRadius
 
 /-- Assumed mixed-flux pulsating Bohr-Sommerfeld package in AdS3. -/
 theorem ads3_mixed_flux_pulsating_bohr_sommerfeld_package

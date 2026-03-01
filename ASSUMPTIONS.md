@@ -1,7 +1,7 @@
 # Physics Assumptions Report
 
-- Registered assumptions: `248`
-- Assumptions referenced in non-Papers modules: `248`
+- Registered assumptions: `250`
+- Assumptions referenced in non-Papers modules: `250`
 - Assumptions with zero references outside registry: `0`
 
 | AssumptionId | Payload | Core refs | Papers refs | Total refs | Description |
@@ -27,6 +27,7 @@
 | `cft2dAds3MixedFluxMassShiftFromFourPoint` | `qft.cft.2d.ads3_mixed_flux_mass_shift_from_four_point` | 2 | 0 | 2 | The mixed-flux AdS3 RR-deformation mass-shift package (`Delta(mu)=Delta(0)-(alpha'/2)delta m^2`, `delta m^2\|_{mu^2}=mu^2 A_(0,4)/alpha'`, and no-zero-weight intermediate bracket conditions) is assumed in this abstraction layer. |
 | `cft2dAds3MixedFluxMuKDefinition` | `qft.cft.2d.ads3_mixed_flux_mu_k_definition` | 2 | 0 | 2 | The mixed-flux AdS3 parameter-definition package (`mu = g_B Q5 / K5`, `k = K5`, positivity of couplings/flux data) used in the pulsating-string formulas is assumed in this abstraction layer. |
 | `cft2dAds3MixedFluxPulsatingBohrSommerfeld` | `qft.cft.2d.ads3_mixed_flux_pulsating_bohr_sommerfeld` | 2 | 0 | 2 | The mixed-flux AdS3 pulsating Bohr-Sommerfeld package (`2 ∮_0^{r0} dr (R^2/alpha') (dot r/(1+r^2)) = 2 pi n`, integer level `n`, and turning-point energy relation `Delta = (R^2/alpha') r0 sqrt(1+r0^2) - K5 r0^2`) is assumed in this abstraction layer. |
+| `cft2dAds3MixedFluxPulsatingIntegralQuantization` | `qft.cft.2d.ads3_mixed_flux_pulsating_integral_quantization` | 2 | 0 | 2 | The mixed-flux AdS3 pulsating integral-quantization package (`2 ∮_0^{r0} dr (R^2/alpha') (dot r/(1+r^2)) = 2 pi n`, integer level `n`, and positive period normalization interpreted as `2pi`) is assumed in this abstraction layer. |
 | `cft2dAds3MixedFluxPulsatingThresholdPole` | `qft.cft.2d.ads3_mixed_flux_pulsating_threshold_pole` | 2 | 0 | 2 | The mixed-flux AdS3 pulsating-threshold package (order-`mu^2` denominator pole at `n = k/4` and equality of the `mu=0` short-string energy with the NSNS long-string threshold `Delta = k/2`) is assumed in this abstraction layer. |
 | `cft2dAds3MixedFluxPulsatingTurningPoint` | `qft.cft.2d.ads3_mixed_flux_pulsating_turning_point` | 2 | 0 | 2 | The mixed-flux AdS3 pulsating turning-point package (`r0` maximal radius of oscillatory motion, turning-point radial velocity `dot r = 0`, and `Delta = (R^2/alpha') r0 sqrt(1+r0^2) - K5 r0^2`) is assumed in this abstraction layer. |
 | `cft2dAds3MixedFluxRrTwoStringBracketStructure` | `qft.cft.2d.ads3_mixed_flux_rr_two_string_bracket_structure` | 2 | 0 | 2 | The mixed-flux AdS3 RR-deformation two-string-bracket package (`[W^(1)⊗W^(1)]` split into `SL(2)` and `SU(2)` adjoint channels with opposite `\|2 z0\|^{±4/k}` powers and vanishing projected zero-weight component at finite `k`) is assumed in this abstraction layer. |
@@ -107,6 +108,7 @@
 | `stringAdS3MixedFluxMuKDefinition` | `string.ads3.mixed_flux_mu_k_definition` | 2 | 0 | 2 | The mixed-flux AdS3 parameter-definition package (`mu = g_B Q5 / K5`, `k = K5`, positivity of couplings/flux data) used in the pulsating-string formulas is assumed in this abstraction layer. |
 | `stringAdS3MixedFluxParameterization` | `string.ads3.mixed_flux_parameterization` | 2 | 0 | 2 | The mixed `(NS,NS)`/`(R,R)` AdS3 flux parameterization with `R^2 = alpha' sqrt(K5^2 + g_B^2 Q5^2)` and `mu = g_B Q5 / K5` is assumed in this abstraction layer. |
 | `stringAdS3MixedFluxPulsatingBohrSommerfeld` | `string.ads3.mixed_flux_pulsating_bohr_sommerfeld` | 2 | 0 | 2 | The mixed-flux AdS3 pulsating Bohr-Sommerfeld package (`2 ∮_0^{r0} dr (R^2/alpha') (dot r/(1+r^2)) = 2 pi n`, integer level `n`, and turning-point energy relation `Delta = (R^2/alpha') r0 sqrt(1+r0^2) - K5 r0^2`) is assumed in this abstraction layer. |
+| `stringAdS3MixedFluxPulsatingIntegralQuantization` | `string.ads3.mixed_flux_pulsating_integral_quantization` | 2 | 0 | 2 | The mixed-flux AdS3 pulsating integral-quantization package (`2 ∮_0^{r0} dr (R^2/alpha') (dot r/(1+r^2)) = 2 pi n`, integer level `n`, and positive period normalization interpreted as `2pi`) is assumed in this abstraction layer. |
 | `stringAdS3MixedFluxPulsatingShift` | `string.ads3.mixed_flux_pulsating_shift` | 2 | 0 | 2 | The small-`mu` semiclassical correction formula for circular pulsating-string energies in mixed-flux AdS3 backgrounds is assumed in this abstraction layer. |
 | `stringAdS3MixedFluxPulsatingThresholdPole` | `string.ads3.mixed_flux_pulsating_threshold_pole` | 2 | 0 | 2 | The mixed-flux AdS3 pulsating-threshold package (order-`mu^2` denominator pole at `n = k/4` and equality of the `mu=0` short-string energy with the NSNS long-string threshold `Delta = k/2`) is assumed in this abstraction layer. |
 | `stringAdS3MixedFluxPulsatingTurningPoint` | `string.ads3.mixed_flux_pulsating_turning_point` | 2 | 0 | 2 | The mixed-flux AdS3 pulsating turning-point package (`r0` maximal radius of oscillatory motion, turning-point radial velocity `dot r = 0`, and `Delta = (R^2/alpha') r0 sqrt(1+r0^2) - K5 r0^2`) is assumed in this abstraction layer. |

@@ -45,6 +45,7 @@
 - `AdS3MixedFluxMuKDefinitionPackage`
 - `AdS3MixedFluxLongStringTransitionPackage`
 - `AdS3MixedFluxPulsatingTurningPointPackage`
+- `AdS3MixedFluxPulsatingIntegralQuantizationPackage`
 - `AdS3MixedFluxPulsatingBohrSommerfeldPackage`
 - `AdS3MixedFluxPulsatingPackage`
 - `AdS3MixedFluxPulsatingThresholdPackage`
@@ -71,6 +72,7 @@
 - `AdS3MixedFluxWorldsheetDeformationPackage` (QFT lane)
 - `AdS3MixedFluxMuKDefinitionCftPackage` (QFT lane)
 - `AdS3MixedFluxPulsatingTurningPointCftPackage` (QFT lane)
+- `AdS3MixedFluxPulsatingIntegralQuantizationCftPackage` (QFT lane)
 - `AdS3MixedFluxPulsatingBohrSommerfeldCftPackage` (QFT lane)
 - `AdS3MixedFluxPulsatingSpectrumPackage` (QFT lane)
 - `AdS3MixedFluxPulsatingThresholdCftPackage` (QFT lane)
@@ -87,6 +89,7 @@
 - `AdS3MixedFluxBridgePackage`
 - `AdS3MixedFluxMuKDefinitionBridgePackage`
 - `AdS3MixedFluxPulsatingTurningPointBridgePackage`
+- `AdS3MixedFluxPulsatingIntegralQuantizationBridgePackage`
 - `AdS3MixedFluxPulsatingBohrSommerfeldBridgePackage`
 - `AdS3MixedFluxPulsatingThresholdBridgePackage`
 - `AdS3MixedFluxLongStringTransitionBridgePackage`
@@ -113,6 +116,7 @@
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxMuKDefinition`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxLongStringSpectrumTransition`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxPulsatingTurningPoint`.
+- Candidate new `AssumptionId`: `stringAdS3MixedFluxPulsatingIntegralQuantization`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxPulsatingBohrSommerfeld`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxPulsatingShift`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxPulsatingThresholdPole`.
@@ -136,6 +140,7 @@
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxWorldsheetDeformation`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxMuKDefinition`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxPulsatingTurningPoint`.
+- Candidate new `AssumptionId`: `cft2dAds3MixedFluxPulsatingIntegralQuantization`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxPulsatingBohrSommerfeld`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxPulsatingSpectrumShift`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxPulsatingThresholdPole`.

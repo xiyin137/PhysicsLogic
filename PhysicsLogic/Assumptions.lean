@@ -189,6 +189,7 @@ def cft2dAds3MixedFluxWorldsheetDeformation : String :=
   "qft.cft.2d.ads3_mixed_flux_worldsheet_deformation"
 def cft2dAds3MixedFluxMuKDefinition : String := "qft.cft.2d.ads3_mixed_flux_mu_k_definition"
 def cft2dAds3MixedFluxPulsatingTurningPoint : String := "qft.cft.2d.ads3_mixed_flux_pulsating_turning_point"
+def cft2dAds3MixedFluxPulsatingIntegralQuantization : String := "qft.cft.2d.ads3_mixed_flux_pulsating_integral_quantization"
 def cft2dAds3MixedFluxPulsatingBohrSommerfeld : String := "qft.cft.2d.ads3_mixed_flux_pulsating_bohr_sommerfeld"
 def cft2dAds3MixedFluxPulsatingSpectrumShift : String :=
   "qft.cft.2d.ads3_mixed_flux_pulsating_spectrum_shift"
@@ -434,6 +435,7 @@ def stringAdS3MixedFluxParameterization : String := "string.ads3.mixed_flux_para
 def stringAdS3MixedFluxLongStringSpectrumTransition : String := "string.ads3.mixed_flux_long_string_spectrum_transition"
 def stringAdS3MixedFluxMuKDefinition : String := "string.ads3.mixed_flux_mu_k_definition"
 def stringAdS3MixedFluxPulsatingTurningPoint : String := "string.ads3.mixed_flux_pulsating_turning_point"
+def stringAdS3MixedFluxPulsatingIntegralQuantization : String := "string.ads3.mixed_flux_pulsating_integral_quantization"
 def stringAdS3MixedFluxPulsatingBohrSommerfeld : String := "string.ads3.mixed_flux_pulsating_bohr_sommerfeld"
 def stringAdS3MixedFluxPulsatingShift : String := "string.ads3.mixed_flux_pulsating_shift"
 def stringAdS3MixedFluxPulsatingThresholdPole : String := "string.ads3.mixed_flux_pulsating_threshold_pole"
@@ -1068,6 +1070,8 @@ def assumptionRegistry : List AssumptionEntry :=
       "The mixed-flux AdS3 parameter-definition package (`mu = g_B Q5 / K5`, `k = K5`, positivity of couplings/flux data) used in the pulsating-string formulas is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dAds3MixedFluxPulsatingTurningPoint,
       "The mixed-flux AdS3 pulsating turning-point package (`r0` maximal radius of oscillatory motion, turning-point radial velocity `dot r = 0`, and `Delta = (R^2/alpha') r0 sqrt(1+r0^2) - K5 r0^2`) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dAds3MixedFluxPulsatingIntegralQuantization,
+      "The mixed-flux AdS3 pulsating integral-quantization package (`2 ∮_0^{r0} dr (R^2/alpha') (dot r/(1+r^2)) = 2 pi n`, integer level `n`, and positive period normalization interpreted as `2pi`) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dAds3MixedFluxPulsatingBohrSommerfeld,
       "The mixed-flux AdS3 pulsating Bohr-Sommerfeld package (`2 ∮_0^{r0} dr (R^2/alpha') (dot r/(1+r^2)) = 2 pi n`, integer level `n`, and turning-point energy relation `Delta = (R^2/alpha') r0 sqrt(1+r0^2) - K5 r0^2`) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dAds3MixedFluxPulsatingSpectrumShift,
@@ -1366,6 +1370,8 @@ def assumptionRegistry : List AssumptionEntry :=
       "The mixed-flux AdS3 parameter-definition package (`mu = g_B Q5 / K5`, `k = K5`, positivity of couplings/flux data) used in the pulsating-string formulas is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringAdS3MixedFluxPulsatingTurningPoint,
       "The mixed-flux AdS3 pulsating turning-point package (`r0` maximal radius of oscillatory motion, turning-point radial velocity `dot r = 0`, and `Delta = (R^2/alpha') r0 sqrt(1+r0^2) - K5 r0^2`) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringAdS3MixedFluxPulsatingIntegralQuantization,
+      "The mixed-flux AdS3 pulsating integral-quantization package (`2 ∮_0^{r0} dr (R^2/alpha') (dot r/(1+r^2)) = 2 pi n`, integer level `n`, and positive period normalization interpreted as `2pi`) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringAdS3MixedFluxPulsatingBohrSommerfeld,
       "The mixed-flux AdS3 pulsating Bohr-Sommerfeld package (`2 ∮_0^{r0} dr (R^2/alpha') (dot r/(1+r^2)) = 2 pi n`, integer level `n`, and turning-point energy relation `Delta = (R^2/alpha') r0 sqrt(1+r0^2) - K5 r0^2`) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringAdS3MixedFluxPulsatingShift,
