@@ -680,6 +680,26 @@ def stringDinstantonNormalizationFromZeroModeMeasure : String :=
   "string.dinstanton.normalization_from_zero_mode_measure"
 def stringDinstantonMultipleIkktIntegralScaling : String :=
   "string.dinstanton.multiple_ikkt_integral_scaling"
+def stringTypeIUnorientedWorldsheetParityProjection : String :=
+  "string.type_i.unoriented_worldsheet_parity_projection"
+def stringTypeICrosscapStateAndKleinBottleDuality : String :=
+  "string.type_i.crosscap_state_and_klein_bottle_duality"
+def stringTypeIClosedOpenOmegaProjectionSpectrum : String :=
+  "string.type_i.closed_open_omega_projection_spectrum"
+def stringTypeITadpoleCancellationSO32 : String :=
+  "string.type_i.tadpole_cancellation_so32"
+def stringTypeIAmplitudeNormalizationUnorientedOpenClosed : String :=
+  "string.type_i.amplitude_normalization_unoriented_open_closed"
+def stringTypeIVacuumAmplitudeTopologyAndCancellation : String :=
+  "string.type_i.vacuum_amplitude_topology_and_cancellation"
+def stringTypeIEffectiveActionGaugeGravityCouplings : String :=
+  "string.type_i.effective_action_gauge_gravity_couplings"
+def stringTypeIBpsD1D5BraneSpectrum : String :=
+  "string.type_i.bps_d1_d5_brane_spectrum"
+def stringTypeINonBpsD0StabilityAndFermions : String :=
+  "string.type_i.non_bps_d0_stability_and_fermions"
+def stringOrientifoldPlaneCrosscapChargeDictionary : String :=
+  "string.orientifold_plane.crosscap_charge_dictionary"
 
 end AssumptionId
 
@@ -1556,6 +1576,26 @@ def assumptionRegistry : List AssumptionEntry :=
       "The D-instanton normalization package (open-string zero-mode measure extraction with gauge-angle fixing and leading `R^4`-sector coefficient matching) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringDinstantonMultipleIkktIntegralScaling,
       "The multiple D-instanton IKKT package (`U(k)` Chan-Paton/zero-mode promotion, matrix-integral normalization, and `sqrt(k) Z(k)` scaling of leading `R^4` corrections) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringTypeIUnorientedWorldsheetParityProjection,
+      "The type-I unoriented-worldsheet parity package (gauged orientation reversal, `Omega`-invariant state projection, crosscap Euler-characteristic bookkeeping, and NSNS `B`-field projection) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringTypeICrosscapStateAndKleinBottleDuality,
+      "The type-I crosscap package (crosscap gluing conditions, explicit crosscap state, Klein-bottle modular crossing, and Mobius-fixable normalization sign) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringTypeIClosedOpenOmegaProjectionSpectrum,
+      "The type-I closed/open projection package (type-IIB parent with `Omega` action on matter/ghost/superghost sectors, RR-spectrum reduction, and `SO/Sp` Chan-Paton algebra outcomes) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringTypeITadpoleCancellationSO32,
+      "The type-I tadpole-cancellation package (NSNS/RR crosscap and D9 boundary-state matching with unique `SO(32)` cancellation condition) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringTypeIAmplitudeNormalizationUnorientedOpenClosed,
+      "The type-I unoriented open+closed amplitude-normalization package (PCO/spin-structure fiber integration, unitarity normalization, and `Omega`-invariant factorization) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringTypeIVacuumAmplitudeTopologyAndCancellation,
+      "The type-I vacuum-amplitude package (torus/Klein/cylinder/Mobius one-loop sectors, tadpole-controlled divergence cancellation, and supersymmetric vacuum-energy vanishing) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringTypeIEffectiveActionGaugeGravityCouplings,
+      "The type-I effective-action package (functional gauge/gravity coupling dictionary with RR Chern-Simons and Green-Schwarz anomaly-cancellation couplings) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringTypeIBpsD1D5BraneSpectrum,
+      "The type-I BPS D1/D5 package (`Omega`-compatible brane sectors, Chan-Paton symmetry constraints, and D1/D5 with D9-induced massless spectra) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringTypeINonBpsD0StabilityAndFermions,
+      "The type-I non-BPS D0 package (`Omega` tachyon projection, residual `Z_2` gauge structure, and D0-D9 fermionic zero-mode spectrum/stability data) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringOrientifoldPlaneCrosscapChargeDictionary,
+      "The orientifold-plane package (`Omega * I` quotient construction, crosscap normalization, `O p^+ / O p^-` classification, and charge/tension relations via duality checks) is assumed in this abstraction layer."⟩
   ]
 
 end PhysicsLogic

@@ -16,6 +16,7 @@ import PhysicsLogic.StringTheory.DBraneDynamicsBosonic
 import PhysicsLogic.StringTheory.DBraneDynamicsTypeII
 import PhysicsLogic.StringTheory.OpenStringFieldTheory
 import PhysicsLogic.StringTheory.DInstantons
+import PhysicsLogic.StringTheory.TypeIOrientifolds
 import PhysicsLogic.StringTheory.Conventions
 import PhysicsLogic.StringTheory.Anomalies
 import PhysicsLogic.StringTheory.Holography
