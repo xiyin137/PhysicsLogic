@@ -32,7 +32,7 @@ architectural clarity, not full mathematical rigor.
 - `AdSCFT.lean`: Section-20 AdS/CFT interfaces for decoupling limits, parameter map, Coulomb branch, operator/state map, spectra, giant gravitons, and thermodynamics.
 - `MTheoryHolography.lean`: Section-21 interfaces for M2/M5 near-horizon duals, 3D `N=8` SYM/ABJM structure, and 6D `(0,2)` SCFT compactification packages.
 - `AdS3CFT2.lean`: Section-22 interfaces for D1-D5/AdS3-CFT2 moduli and decoupling, AdS3 WZW/spectral-flow spectra, and mixed `(NS,NS)`/`(R,R)` flux deformation packages.
-- `AdS3CFTBridge.lean`: cross-lane interfaces tying Section-22 D1-D5 conformal-manifold/symmetric-orbifold assumptions to shared QFT 2D-CFT conformal-manifold packages.
+- `AdS3CFTBridge.lean`: cross-lane interfaces tying Section-22 D1-D5 conformal-manifold/symmetric-orbifold assumptions and AdS3 WZW/spectral-flow/worldsheet packages to shared QFT 2D-CFT modules.
 - `AdS5Integrability.lean`: Section-23 interfaces for planar `N=4` spin-chain integrability, BMN/pp-wave mapping, centrally extended magnon kinematics, S-matrix crossing/dressing constraints, BES cusp relations, and Bethe-Yang/bound-state packages.
 - `AdS5MirrorTBAQSC.lean`: Section-24 interfaces for mirror double-Wick kinematics, finite-volume mirror TBA/Y-system, wrapping corrections (including Konishi), and the `Pmu` quantum spectral curve with weak-coupling and small-spin limits.
 - `WilsonLinesConfinement.lean`: Section-25 interfaces for Maldacena-Wilson lines, cusp/bremsstrahlung observables, Witten and Sakai-Sugimoto holographic QCD packages, and Klebanov-Witten/Tseytlin/Strassler conifold-cascade confinement data.

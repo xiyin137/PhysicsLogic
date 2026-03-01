@@ -1,6 +1,7 @@
 import PhysicsLogic.Assumptions
 import PhysicsLogic.StringTheory.AdS3CFT2
 import PhysicsLogic.QFT.CFT.TwoDimensional.ConformalManifolds
+import PhysicsLogic.QFT.CFT.TwoDimensional.CurrentAlgebras
 
 namespace PhysicsLogic.StringTheory
 
@@ -137,5 +138,131 @@ theorem d1_d5_symmetric_orbifold_bridge_package
   rcases h_string_pkg with ⟨_, _, _, h_parity_tag, _⟩
   rcases h_qft_pkg with ⟨_, _, _, _, h_qft_singular_re, h_qft_orbifold_re, _, _, _, _⟩
   exact ⟨h_string_pkg_full, h_qft_pkg_full, h_q1, h_q5, h_parity_tag, h_qft_singular_re, h_qft_orbifold_re⟩
+
+/-- Cross-lane data for bosonic AdS3 WZW level/radius matching. -/
+structure AdS3BosonicWzwBridgeData where
+  stringData : AdS3BosonicWZWData
+  qftData : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2BosonicWzwData
+
+/-- Bridge package:
+string-side bosonic AdS3 WZW level/radius relation aligned with QFT-side current-algebra data. -/
+def AdS3BosonicWzwBridgePackage
+    (data : AdS3BosonicWzwBridgeData) : Prop :=
+  AdS3BosonicWZWLevelRadiusRelation data.stringData /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2BosonicWzwLevelRadiusRelation data.qftData /\
+  data.stringData.levelK = data.qftData.levelK /\
+  data.stringData.radius = data.qftData.radius /\
+  data.stringData.alphaPrime = data.qftData.alphaPrime
+
+/-- Assumed bridge package for bosonic AdS3 WZW level/radius data. -/
+theorem ads3_bosonic_wzw_bridge_package
+    (data : AdS3BosonicWzwBridgeData)
+    (h_string : PhysicsAssumption
+      AssumptionId.stringAdS3BosonicWzwLevelRadius
+      (AdS3BosonicWZWLevelRadiusRelation data.stringData))
+    (h_qft : PhysicsAssumption
+      AssumptionId.cft2dAds3BosonicWzwLevelRadius
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2BosonicWzwLevelRadiusRelation data.qftData))
+    (h_level : data.stringData.levelK = data.qftData.levelK)
+    (h_radius : data.stringData.radius = data.qftData.radius)
+    (h_alpha : data.stringData.alphaPrime = data.qftData.alphaPrime) :
+    AdS3BosonicWzwBridgePackage data := by
+  have h_string_pkg : AdS3BosonicWZWLevelRadiusRelation data.stringData :=
+    ads3_bosonic_wzw_level_radius_relation data.stringData h_string
+  have h_qft_pkg : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2BosonicWzwLevelRadiusRelation data.qftData :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_sl2_bosonic_wzw_level_radius_relation data.qftData h_qft
+  exact ⟨h_string_pkg, h_qft_pkg, h_level, h_radius, h_alpha⟩
+
+/-- Cross-lane data for AdS3 spectral-flow and mass-shell matching. -/
+structure AdS3SpectralMassShellBridgeData where
+  stringSpectral : AdS3BosonicSpectralFlowData
+  stringMassShell : AdS3BosonicMassShellData
+  qftSpectral : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2SpectralFlowData
+  qftMassShell : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2MassShellData
+
+/-- Bridge package:
+string-side AdS3 spectral-flow/mass-shell packages aligned with QFT-side current-algebra constraints. -/
+def AdS3SpectralMassShellBridgePackage
+    (data : AdS3SpectralMassShellBridgeData) : Prop :=
+  AdS3BosonicSpectralFlowPackage data.stringSpectral /\
+  AdS3BosonicMassShellPackage data.stringMassShell /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2SpectralFlowAutomorphism data.qftSpectral /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2MassShellEnergyRelation data.qftMassShell /\
+  data.stringSpectral.levelK = data.qftSpectral.levelK /\
+  data.stringMassShell.levelK = data.qftMassShell.levelK /\
+  data.stringSpectral.flowW = data.qftSpectral.flowW /\
+  data.stringMassShell.flowW = data.qftMassShell.flowW /\
+  data.stringMassShell.j0Three = data.qftMassShell.j0Three
+
+/-- Assumed bridge package for AdS3 spectral-flow and mass-shell data. -/
+theorem ads3_spectral_mass_shell_bridge_package
+    (data : AdS3SpectralMassShellBridgeData)
+    (h_string_spectral : PhysicsAssumption
+      AssumptionId.stringAdS3BosonicSpectralFlow
+      (AdS3BosonicSpectralFlowPackage data.stringSpectral))
+    (h_string_mass : PhysicsAssumption
+      AssumptionId.stringAdS3BosonicMassShell
+      (AdS3BosonicMassShellPackage data.stringMassShell))
+    (h_qft_spectral : PhysicsAssumption
+      AssumptionId.cft2dAds3Sl2SpectralFlowAutomorphism
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2SpectralFlowAutomorphism data.qftSpectral))
+    (h_qft_mass : PhysicsAssumption
+      AssumptionId.cft2dAds3Sl2MassShellEnergyRelation
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2MassShellEnergyRelation data.qftMassShell))
+    (h_k_spectral : data.stringSpectral.levelK = data.qftSpectral.levelK)
+    (h_k_mass : data.stringMassShell.levelK = data.qftMassShell.levelK)
+    (h_w_spectral : data.stringSpectral.flowW = data.qftSpectral.flowW)
+    (h_w_mass : data.stringMassShell.flowW = data.qftMassShell.flowW)
+    (h_j0 : data.stringMassShell.j0Three = data.qftMassShell.j0Three) :
+    AdS3SpectralMassShellBridgePackage data := by
+  have h_string_spectral_pkg : AdS3BosonicSpectralFlowPackage data.stringSpectral :=
+    ads3_bosonic_spectral_flow_package data.stringSpectral h_string_spectral
+  have h_string_mass_pkg : AdS3BosonicMassShellPackage data.stringMassShell :=
+    ads3_bosonic_mass_shell_package data.stringMassShell h_string_mass
+  have h_qft_spectral_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2SpectralFlowAutomorphism data.qftSpectral :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_sl2_spectral_flow_automorphism data.qftSpectral h_qft_spectral
+  have h_qft_mass_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2MassShellEnergyRelation data.qftMassShell :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_sl2_mass_shell_energy_relation data.qftMassShell h_qft_mass
+  exact ⟨h_string_spectral_pkg, h_string_mass_pkg, h_qft_spectral_pkg, h_qft_mass_pkg,
+    h_k_spectral, h_k_mass, h_w_spectral, h_w_mass, h_j0⟩
+
+/-- Cross-lane data for purely `(NS,NS)` AdS3xS3xM4 worldsheet matching. -/
+structure AdS3NsnsWorldsheetBridgeData where
+  stringData : AdS3NSNSSuperstringBackgroundData
+  qftData : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsWorldsheetMatterData
+
+/-- Bridge package:
+string-side `(NS,NS)` worldsheet background package aligned with QFT-side matter-SCFT package. -/
+def AdS3NsnsWorldsheetBridgePackage
+    (data : AdS3NsnsWorldsheetBridgeData) : Prop :=
+  AdS3NSNSSuperstringBackgroundPackage data.stringData /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsWorldsheetMatterScftPackage data.qftData /\
+  data.stringData.levelK = data.qftData.levelK /\
+  data.stringData.radius = data.qftData.radius /\
+  data.stringData.alphaPrime = data.qftData.alphaPrime /\
+  data.stringData.matterCentralCharge = data.qftData.totalMatterCentralCharge
+
+/-- Assumed bridge package for purely `(NS,NS)` AdS3 worldsheet data. -/
+theorem ads3_nsns_worldsheet_bridge_package
+    (data : AdS3NsnsWorldsheetBridgeData)
+    (h_string : PhysicsAssumption
+      AssumptionId.stringAdS3NsnsSuperstringWorldsheet
+      (AdS3NSNSSuperstringBackgroundPackage data.stringData))
+    (h_qft : PhysicsAssumption
+      AssumptionId.cft2dAds3NsnsWorldsheetMatterScft
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsWorldsheetMatterScftPackage data.qftData))
+    (h_level : data.stringData.levelK = data.qftData.levelK)
+    (h_radius : data.stringData.radius = data.qftData.radius)
+    (h_alpha : data.stringData.alphaPrime = data.qftData.alphaPrime)
+    (h_c : data.stringData.matterCentralCharge = data.qftData.totalMatterCentralCharge) :
+    AdS3NsnsWorldsheetBridgePackage data := by
+  have h_string_pkg : AdS3NSNSSuperstringBackgroundPackage data.stringData :=
+    ads3_nsns_superstring_background_package data.stringData h_string
+  have h_qft_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsWorldsheetMatterScftPackage data.qftData :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_nsns_worldsheet_matter_scft_package data.qftData h_qft
+  exact ⟨h_string_pkg, h_qft_pkg, h_level, h_radius, h_alpha, h_c⟩
 
 end PhysicsLogic.StringTheory

@@ -5,6 +5,7 @@
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/AdS3CFT2.lean`
 - QFT target: `PhysicsLogic/QFT/CFT/TwoDimensional/ConformalManifolds.lean`
+- QFT target: `PhysicsLogic/QFT/CFT/TwoDimensional/CurrentAlgebras.lean`
 - Cross-lane bridge target: `PhysicsLogic/StringTheory/AdS3CFTBridge.lean`
 
 ## Reading Summary
@@ -47,6 +48,14 @@
 - `D1D5ConformalGeometryBridgePackage`
 - `D1D5AttractorBridgePackage`
 - `D1D5SymmetricOrbifoldBridgePackage`
+- `AdS3Sl2BosonicWzwLevelRadiusRelation` (QFT lane)
+- `AdS3Sl2SpectralFlowAutomorphism` (QFT lane)
+- `AdS3Sl2RepresentationSpectrumPackage` (QFT lane)
+- `AdS3Sl2MassShellEnergyRelation` (QFT lane)
+- `AdS3NsnsWorldsheetMatterScftPackage` (QFT lane)
+- `AdS3BosonicWzwBridgePackage`
+- `AdS3SpectralMassShellBridgePackage`
+- `AdS3NsnsWorldsheetBridgePackage`
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `stringAdS3D1D5InstantonChargeMap`.
@@ -67,6 +76,11 @@
 - Candidate new `AssumptionId`: `cft2dD1D5ConformalManifoldQuaternionicQuotient`.
 - Candidate new `AssumptionId`: `cft2dD1D5AttractorTauGamma0Level`.
 - Candidate new `AssumptionId`: `cft2dD1D5SymmetricProductOrbifoldLocus`.
+- Candidate new `AssumptionId`: `cft2dAds3BosonicWzwLevelRadius`.
+- Candidate new `AssumptionId`: `cft2dAds3Sl2SpectralFlowAutomorphism`.
+- Candidate new `AssumptionId`: `cft2dAds3Sl2RepresentationSpectrum`.
+- Candidate new `AssumptionId`: `cft2dAds3Sl2MassShellEnergyRelation`.
+- Candidate new `AssumptionId`: `cft2dAds3NsnsWorldsheetMatterScft`.
 
 ## Subsections
 - [x] 22.1 The D1-D5 system and its low energy effective theory (p.507)

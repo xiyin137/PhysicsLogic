@@ -174,6 +174,11 @@ def cft2dOrbifoldKTwoModuliFixedPointDistinction : String := "qft.cft.2d.orbifol
 def cft2dD1D5ConformalManifoldQuaternionicQuotient : String := "qft.cft.2d.d1d5_conformal_manifold_quaternionic_quotient"
 def cft2dD1D5AttractorTauGamma0Level : String := "qft.cft.2d.d1d5_attractor_tau_gamma0_level"
 def cft2dD1D5SymmetricProductOrbifoldLocus : String := "qft.cft.2d.d1d5_symmetric_product_orbifold_locus"
+def cft2dAds3BosonicWzwLevelRadius : String := "qft.cft.2d.ads3_bosonic_wzw_level_radius"
+def cft2dAds3Sl2SpectralFlowAutomorphism : String := "qft.cft.2d.ads3_sl2_spectral_flow_automorphism"
+def cft2dAds3Sl2RepresentationSpectrum : String := "qft.cft.2d.ads3_sl2_representation_spectrum"
+def cft2dAds3Sl2MassShellEnergyRelation : String := "qft.cft.2d.ads3_sl2_mass_shell_energy_relation"
+def cft2dAds3NsnsWorldsheetMatterScft : String := "qft.cft.2d.ads3_nsns_worldsheet_matter_scft"
 def cft2dSuperspace11DerivativeAlgebra : String :=
   "qft.cft.2d.superspace_11_derivative_algebra"
 def cft2dN1SuperconformalAlgebra : String :=
@@ -1012,6 +1017,16 @@ def assumptionRegistry : List AssumptionEntry :=
       "The D1-D5 attractor/U-duality package (`tau~ = (Q1/Q5)tau`, `Im(tau)>0`, and arithmetic `Gamma_0(k)` level relation with `k = Q1Q5/(gcd(Q1,Q5))^2`) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dD1D5SymmetricProductOrbifoldLocus,
       "The D1-D5 symmetric-product-orbifold locus package (regular/singular distinction `Re(tau)=1/2` vs `Re(tau)=0` and arithmetic locus relation `(a tau + b)/(Q1 tau + Q5)=1/2+i/g'`) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dAds3BosonicWzwLevelRadius,
+      "The bosonic AdS3 `SL(2,R)` WZW level/radius package (`k = R^2/alpha'`, with positive radius and slope) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dAds3Sl2SpectralFlowAutomorphism,
+      "The AdS3 affine-`SL(2,R)` spectral-flow automorphism package (`J'^±_n = J^±_{n±w}`, `J'^3_n` and `L'_n` shifts) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dAds3Sl2RepresentationSpectrum,
+      "The AdS3 `SL(2,R)` representation-window package (discrete `1/2<j<(k-1)/2` with reflected window, continuous `j=1/2+is`, and `alpha in [0,1)`) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dAds3Sl2MassShellEnergyRelation,
+      "The AdS3 bosonic mass-shell and spacetime-kinematics package (`-j(j-1)/(k-2)-wm-k w^2/4+N+ell+h-1=0`, `J_0^3=m+k w/2`, `(E+J)/2=J_0^3`) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dAds3NsnsWorldsheetMatterScft,
+      "The purely `(NS,NS)` AdS3xS3xM4 worldsheet matter-SCFT package (`R^2=k alpha'`, `c_sl=3(k+2)/k+3/2`, `c_su=3(k-2)/k+3/2`, `c_int=6`, total `c=15`) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dSuperspace11DerivativeAlgebra,
       "The (1,1) superspace derivative/supercharge algebra (including anticommutation relations and D^2 identities) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dN1SuperconformalAlgebra,

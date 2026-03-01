@@ -1,7 +1,7 @@
 # Physics Assumptions Report
 
-- Registered assumptions: `220`
-- Assumptions referenced in non-Papers modules: `220`
+- Registered assumptions: `225`
+- Assumptions referenced in non-Papers modules: `225`
 - Assumptions with zero references outside registry: `0`
 
 | AssumptionId | Payload | Core refs | Papers refs | Total refs | Description |
@@ -22,6 +22,11 @@
 | `bvDifferentialNZero` | `qft.bv.differential_n_zero` | 1 | 0 | 1 | Vanishing of higher BV differential iterates (n >= 2) is assumed in this abstraction layer. |
 | `bvDifferentialNilpotent` | `qft.bv.differential_nilpotent` | 2 | 0 | 2 | Nilpotency of the BV differential under the classical master equation is assumed in this abstraction layer. |
 | `bvGaugeIndependence` | `qft.bv.gauge_independence` | 1 | 0 | 1 | Gauge-fixing independence in BV via BV-exact variation is assumed in this abstraction layer. |
+| `cft2dAds3BosonicWzwLevelRadius` | `qft.cft.2d.ads3_bosonic_wzw_level_radius` | 2 | 0 | 2 | The bosonic AdS3 `SL(2,R)` WZW level/radius package (`k = R^2/alpha'`, with positive radius and slope) is assumed in this abstraction layer. |
+| `cft2dAds3NsnsWorldsheetMatterScft` | `qft.cft.2d.ads3_nsns_worldsheet_matter_scft` | 2 | 0 | 2 | The purely `(NS,NS)` AdS3xS3xM4 worldsheet matter-SCFT package (`R^2=k alpha'`, `c_sl=3(k+2)/k+3/2`, `c_su=3(k-2)/k+3/2`, `c_int=6`, total `c=15`) is assumed in this abstraction layer. |
+| `cft2dAds3Sl2MassShellEnergyRelation` | `qft.cft.2d.ads3_sl2_mass_shell_energy_relation` | 2 | 0 | 2 | The AdS3 bosonic mass-shell and spacetime-kinematics package (`-j(j-1)/(k-2)-wm-k w^2/4+N+ell+h-1=0`, `J_0^3=m+k w/2`, `(E+J)/2=J_0^3`) is assumed in this abstraction layer. |
+| `cft2dAds3Sl2RepresentationSpectrum` | `qft.cft.2d.ads3_sl2_representation_spectrum` | 1 | 0 | 1 | The AdS3 `SL(2,R)` representation-window package (discrete `1/2<j<(k-1)/2` with reflected window, continuous `j=1/2+is`, and `alpha in [0,1)`) is assumed in this abstraction layer. |
+| `cft2dAds3Sl2SpectralFlowAutomorphism` | `qft.cft.2d.ads3_sl2_spectral_flow_automorphism` | 2 | 0 | 2 | The AdS3 affine-`SL(2,R)` spectral-flow automorphism package (`J'^±_n = J^±_{n±w}`, `J'^3_n` and `L'_n` shifts) is assumed in this abstraction layer. |
 | `cft2dBuscherRules` | `qft.cft.2d.buscher_rules` | 1 | 0 | 1 | Buscher T-duality transformation rules (including dilaton shift) are assumed valid in this abstraction layer. |
 | `cft2dD1D5AttractorTauGamma0Level` | `qft.cft.2d.d1d5_attractor_tau_gamma0_level` | 2 | 0 | 2 | The D1-D5 attractor/U-duality package (`tau~ = (Q1/Q5)tau`, `Im(tau)>0`, and arithmetic `Gamma_0(k)` level relation with `k = Q1Q5/(gcd(Q1,Q5))^2`) is assumed in this abstraction layer. |
 | `cft2dD1D5ConformalManifoldQuaternionicQuotient` | `qft.cft.2d.d1d5_conformal_manifold_quaternionic_quotient` | 2 | 0 | 2 | The D1-D5 conformal-manifold geometry package (`k = Q1Q5/(gcd(Q1,Q5))^2`, quaternionic local geometry `SO(5,4)/(SO(5)xSO(4))`, and `20=4x5` marginal-direction counting) is assumed in this abstraction layer. |
