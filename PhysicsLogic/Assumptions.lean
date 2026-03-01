@@ -179,6 +179,8 @@ def cft2dAds3Sl2SpectralFlowAutomorphism : String := "qft.cft.2d.ads3_sl2_spectr
 def cft2dAds3Sl2RepresentationSpectrum : String := "qft.cft.2d.ads3_sl2_representation_spectrum"
 def cft2dAds3Sl2MassShellEnergyRelation : String := "qft.cft.2d.ads3_sl2_mass_shell_energy_relation"
 def cft2dAds3NsnsWorldsheetMatterScft : String := "qft.cft.2d.ads3_nsns_worldsheet_matter_scft"
+def cft2dAds3NsnsAffineLevelShift : String := "qft.cft.2d.ads3_nsns_affine_level_shift"
+def cft2dAds3NsnsSpinFieldGsoConstraints : String := "qft.cft.2d.ads3_nsns_spin_field_gso_constraints"
 def cft2dSuperspace11DerivativeAlgebra : String :=
   "qft.cft.2d.superspace_11_derivative_algebra"
 def cft2dN1SuperconformalAlgebra : String :=
@@ -1027,6 +1029,10 @@ def assumptionRegistry : List AssumptionEntry :=
       "The AdS3 bosonic mass-shell and spacetime-kinematics package (`-j(j-1)/(k-2)-wm-k w^2/4+N+ell+h-1=0`, `J_0^3=m+k w/2`, `(E+J)/2=J_0^3`) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dAds3NsnsWorldsheetMatterScft,
       "The purely `(NS,NS)` AdS3xS3xM4 worldsheet matter-SCFT package (`R^2=k alpha'`, `c_sl=3(k+2)/k+3/2`, `c_su=3(k-2)/k+3/2`, `c_int=6`, total `c=15`) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dAds3NsnsAffineLevelShift,
+      "The `(NS,NS)` AdS3/S3 affine-level-shift package (`sl` bosonic level `k+2`, `su` bosonic level `k-2`, and fermion-bilinear current shifts to superconformal descendants) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dAds3NsnsSpinFieldGsoConstraints,
+      "The AdS3 `(NS,NS)` Ramond spin-field/GSO package (`epsilon_1 epsilon_2 epsilon_3 = 1`, `epsilon_4 epsilon_5 = 1`, sign quantization `epsilon_I in {+1,-1}`, and 16 BRST-invariant supersymmetry currents) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dSuperspace11DerivativeAlgebra,
       "The (1,1) superspace derivative/supercharge algebra (including anticommutation relations and D^2 identities) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dN1SuperconformalAlgebra,

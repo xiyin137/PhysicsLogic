@@ -183,4 +183,68 @@ theorem ads3_nsns_worldsheet_matter_scft_package
     AdS3NsnsWorldsheetMatterScftPackage data := by
   exact h_phys
 
+/-- Bosonic-level shifts used in supersymmetric AdS3/S3 WZW current-algebra construction. -/
+structure AdS3NsnsAffineLevelShiftData where
+  levelK : ℝ
+  slBosonicLevel : ℝ
+  suBosonicLevel : ℝ
+  slCurrentShiftByFermionBilinearUsed : Bool
+  suCurrentShiftByFermionBilinearUsed : Bool
+
+/-- `(NS,NS)` affine-level-shift package:
+`sl` bosonic level `k+2`, `su` bosonic level `k-2`, and superconformal-current
+construction via fermion-bilinear shifts of bosonic currents. -/
+def AdS3NsnsAffineLevelShiftPackage
+    (data : AdS3NsnsAffineLevelShiftData) : Prop :=
+  data.levelK > 2 /\
+  data.slBosonicLevel = data.levelK + 2 /\
+  data.suBosonicLevel = data.levelK - 2 /\
+  data.slCurrentShiftByFermionBilinearUsed = true /\
+  data.suCurrentShiftByFermionBilinearUsed = true
+
+/-- Assumed `(NS,NS)` affine-level-shift package in the 2D CFT lane. -/
+theorem ads3_nsns_affine_level_shift_package
+    (data : AdS3NsnsAffineLevelShiftData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dAds3NsnsAffineLevelShift
+      (AdS3NsnsAffineLevelShiftPackage data)) :
+    AdS3NsnsAffineLevelShiftPackage data := by
+  exact h_phys
+
+/-- Sign assignment data for Ramond spin fields in the AdS3/S3/T4 worldsheet SCFT. -/
+structure AdS3NsnsSpinFieldGsoData where
+  epsilon1 : ℤ
+  epsilon2 : ℤ
+  epsilon3 : ℤ
+  epsilon4 : ℤ
+  epsilon5 : ℤ
+  supersymmetryCurrentCount : Nat
+
+/-- Two-valued sign condition (`epsilon` equals plus or minus `1`). -/
+def IsSign (ε : ℤ) : Prop :=
+  ε = 1 \/ ε = -1
+
+/-- AdS3 `(NS,NS)` spin-field/GSO package:
+`epsilon_1 epsilon_2 epsilon_3 = 1`, `epsilon_4 epsilon_5 = 1`, each sign in
+`{+1,-1}`, and `16` BRST-invariant supersymmetry currents. -/
+def AdS3NsnsSpinFieldGsoConstraintPackage
+    (data : AdS3NsnsSpinFieldGsoData) : Prop :=
+  IsSign data.epsilon1 /\
+  IsSign data.epsilon2 /\
+  IsSign data.epsilon3 /\
+  IsSign data.epsilon4 /\
+  IsSign data.epsilon5 /\
+  data.epsilon1 * data.epsilon2 * data.epsilon3 = 1 /\
+  data.epsilon4 * data.epsilon5 = 1 /\
+  data.supersymmetryCurrentCount = 16
+
+/-- Assumed AdS3 `(NS,NS)` spin-field/GSO package in the 2D CFT lane. -/
+theorem ads3_nsns_spin_field_gso_constraint_package
+    (data : AdS3NsnsSpinFieldGsoData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dAds3NsnsSpinFieldGsoConstraints
+      (AdS3NsnsSpinFieldGsoConstraintPackage data)) :
+    AdS3NsnsSpinFieldGsoConstraintPackage data := by
+  exact h_phys
+
 end PhysicsLogic.QFT.CFT.TwoDimensional

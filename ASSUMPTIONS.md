@@ -1,7 +1,7 @@
 # Physics Assumptions Report
 
-- Registered assumptions: `225`
-- Assumptions referenced in non-Papers modules: `225`
+- Registered assumptions: `227`
+- Assumptions referenced in non-Papers modules: `227`
 - Assumptions with zero references outside registry: `0`
 
 | AssumptionId | Payload | Core refs | Papers refs | Total refs | Description |
@@ -23,7 +23,9 @@
 | `bvDifferentialNilpotent` | `qft.bv.differential_nilpotent` | 2 | 0 | 2 | Nilpotency of the BV differential under the classical master equation is assumed in this abstraction layer. |
 | `bvGaugeIndependence` | `qft.bv.gauge_independence` | 1 | 0 | 1 | Gauge-fixing independence in BV via BV-exact variation is assumed in this abstraction layer. |
 | `cft2dAds3BosonicWzwLevelRadius` | `qft.cft.2d.ads3_bosonic_wzw_level_radius` | 2 | 0 | 2 | The bosonic AdS3 `SL(2,R)` WZW level/radius package (`k = R^2/alpha'`, with positive radius and slope) is assumed in this abstraction layer. |
-| `cft2dAds3NsnsWorldsheetMatterScft` | `qft.cft.2d.ads3_nsns_worldsheet_matter_scft` | 2 | 0 | 2 | The purely `(NS,NS)` AdS3xS3xM4 worldsheet matter-SCFT package (`R^2=k alpha'`, `c_sl=3(k+2)/k+3/2`, `c_su=3(k-2)/k+3/2`, `c_int=6`, total `c=15`) is assumed in this abstraction layer. |
+| `cft2dAds3NsnsAffineLevelShift` | `qft.cft.2d.ads3_nsns_affine_level_shift` | 2 | 0 | 2 | The `(NS,NS)` AdS3/S3 affine-level-shift package (`sl` bosonic level `k+2`, `su` bosonic level `k-2`, and fermion-bilinear current shifts to superconformal descendants) is assumed in this abstraction layer. |
+| `cft2dAds3NsnsSpinFieldGsoConstraints` | `qft.cft.2d.ads3_nsns_spin_field_gso_constraints` | 2 | 0 | 2 | The AdS3 `(NS,NS)` Ramond spin-field/GSO package (`epsilon_1 epsilon_2 epsilon_3 = 1`, `epsilon_4 epsilon_5 = 1`, sign quantization `epsilon_I in {+1,-1}`, and 16 BRST-invariant supersymmetry currents) is assumed in this abstraction layer. |
+| `cft2dAds3NsnsWorldsheetMatterScft` | `qft.cft.2d.ads3_nsns_worldsheet_matter_scft` | 3 | 0 | 3 | The purely `(NS,NS)` AdS3xS3xM4 worldsheet matter-SCFT package (`R^2=k alpha'`, `c_sl=3(k+2)/k+3/2`, `c_su=3(k-2)/k+3/2`, `c_int=6`, total `c=15`) is assumed in this abstraction layer. |
 | `cft2dAds3Sl2MassShellEnergyRelation` | `qft.cft.2d.ads3_sl2_mass_shell_energy_relation` | 2 | 0 | 2 | The AdS3 bosonic mass-shell and spacetime-kinematics package (`-j(j-1)/(k-2)-wm-k w^2/4+N+ell+h-1=0`, `J_0^3=m+k w/2`, `(E+J)/2=J_0^3`) is assumed in this abstraction layer. |
 | `cft2dAds3Sl2RepresentationSpectrum` | `qft.cft.2d.ads3_sl2_representation_spectrum` | 1 | 0 | 1 | The AdS3 `SL(2,R)` representation-window package (discrete `1/2<j<(k-1)/2` with reflected window, continuous `j=1/2+is`, and `alpha in [0,1)`) is assumed in this abstraction layer. |
 | `cft2dAds3Sl2SpectralFlowAutomorphism` | `qft.cft.2d.ads3_sl2_spectral_flow_automorphism` | 2 | 0 | 2 | The AdS3 affine-`SL(2,R)` spectral-flow automorphism package (`J'^±_n = J^±_{n±w}`, `J'^3_n` and `L'_n` shifts) is assumed in this abstraction layer. |

@@ -265,4 +265,61 @@ theorem ads3_nsns_worldsheet_bridge_package
     PhysicsLogic.QFT.CFT.TwoDimensional.ads3_nsns_worldsheet_matter_scft_package data.qftData h_qft
   exact ⟨h_string_pkg, h_qft_pkg, h_level, h_radius, h_alpha, h_c⟩
 
+/-- Cross-lane data for `(NS,NS)` AdS3 worldsheet affine-shift and spin-field/GSO constraints. -/
+structure AdS3NsnsGsoBridgeData where
+  stringData : AdS3NSNSSuperstringBackgroundData
+  qftMatterData : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsWorldsheetMatterData
+  qftAffineData : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsAffineLevelShiftData
+  qftGsoData : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSpinFieldGsoData
+
+/-- Bridge package:
+string-side `(NS,NS)` AdS3 worldsheet background aligned with QFT-side matter,
+affine-level shifts, and spin-field/GSO constraints. -/
+def AdS3NsnsGsoBridgePackage
+    (data : AdS3NsnsGsoBridgeData) : Prop :=
+  AdS3NSNSSuperstringBackgroundPackage data.stringData /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsWorldsheetMatterScftPackage data.qftMatterData /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsAffineLevelShiftPackage data.qftAffineData /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSpinFieldGsoConstraintPackage data.qftGsoData /\
+  data.stringData.levelK = data.qftMatterData.levelK /\
+  data.stringData.levelK = data.qftAffineData.levelK /\
+  data.stringData.matterCentralCharge = data.qftMatterData.totalMatterCentralCharge /\
+  data.qftGsoData.supersymmetryCurrentCount = 16
+
+/-- Assumed bridge package for `(NS,NS)` AdS3 worldsheet and spin-field/GSO constraints. -/
+theorem ads3_nsns_gso_bridge_package
+    (data : AdS3NsnsGsoBridgeData)
+    (h_string : PhysicsAssumption
+      AssumptionId.stringAdS3NsnsSuperstringWorldsheet
+      (AdS3NSNSSuperstringBackgroundPackage data.stringData))
+    (h_qft_matter : PhysicsAssumption
+      AssumptionId.cft2dAds3NsnsWorldsheetMatterScft
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsWorldsheetMatterScftPackage data.qftMatterData))
+    (h_qft_affine : PhysicsAssumption
+      AssumptionId.cft2dAds3NsnsAffineLevelShift
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsAffineLevelShiftPackage data.qftAffineData))
+    (h_qft_gso : PhysicsAssumption
+      AssumptionId.cft2dAds3NsnsSpinFieldGsoConstraints
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSpinFieldGsoConstraintPackage data.qftGsoData))
+    (h_level_matter : data.stringData.levelK = data.qftMatterData.levelK)
+    (h_level_affine : data.stringData.levelK = data.qftAffineData.levelK)
+    (h_c : data.stringData.matterCentralCharge = data.qftMatterData.totalMatterCentralCharge) :
+    AdS3NsnsGsoBridgePackage data := by
+  have h_string_pkg : AdS3NSNSSuperstringBackgroundPackage data.stringData :=
+    ads3_nsns_superstring_background_package data.stringData h_string
+  have h_qft_matter_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsWorldsheetMatterScftPackage data.qftMatterData :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_nsns_worldsheet_matter_scft_package data.qftMatterData h_qft_matter
+  have h_qft_affine_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsAffineLevelShiftPackage data.qftAffineData :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_nsns_affine_level_shift_package data.qftAffineData h_qft_affine
+  have h_qft_gso_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSpinFieldGsoConstraintPackage data.qftGsoData :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_nsns_spin_field_gso_constraint_package data.qftGsoData h_qft_gso
+  have h_qft_gso_pkg_full :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSpinFieldGsoConstraintPackage data.qftGsoData := h_qft_gso_pkg
+  rcases h_qft_gso_pkg with ⟨_, _, _, _, _, _, _, h_susy_count⟩
+  exact ⟨h_string_pkg, h_qft_matter_pkg, h_qft_affine_pkg, h_qft_gso_pkg_full,
+    h_level_matter, h_level_affine, h_c, h_susy_count⟩
+
 end PhysicsLogic.StringTheory
