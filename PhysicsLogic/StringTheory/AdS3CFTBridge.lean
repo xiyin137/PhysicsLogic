@@ -453,6 +453,50 @@ theorem ads3_mixed_flux_bridge_package
   exact ⟨h_string_flux_pkg, h_string_pulsating_pkg, h_qft_flux_pkg, h_qft_pulsating_pkg,
     h_g, h_alpha, h_k5, h_q5, h_r, h_mu_flux, h_n, h_k, h_mu_pulsating, h_delta⟩
 
+/-- Cross-lane data for the mixed-flux parameter-definition block `mu = g_B Q5 / K5`,
+`k = K5`. -/
+structure AdS3MixedFluxMuKDefinitionBridgeData where
+  stringMuK : AdS3MixedFluxMuKDefinitionData
+  qftMuK : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxMuKDefinitionCftData
+
+/-- Bridge package:
+string-side and QFT-side mixed-flux `mu`/`k` definition data aligned
+field-by-field. -/
+def AdS3MixedFluxMuKDefinitionBridgePackage
+    (data : AdS3MixedFluxMuKDefinitionBridgeData) : Prop :=
+  AdS3MixedFluxMuKDefinitionPackage data.stringMuK /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxMuKDefinitionCftPackage data.qftMuK /\
+  data.stringMuK.stringCoupling = data.qftMuK.stringCoupling /\
+  data.stringMuK.rrFluxQ5 = data.qftMuK.rrFluxQ5 /\
+  data.stringMuK.nsFluxK5 = data.qftMuK.nsFluxK5 /\
+  data.stringMuK.mu = data.qftMuK.mu /\
+  data.stringMuK.levelK = data.qftMuK.levelK
+
+/-- Assumed bridge package for mixed-flux `mu`/`k` definition data. -/
+theorem ads3_mixed_flux_mu_k_definition_bridge_package
+    (data : AdS3MixedFluxMuKDefinitionBridgeData)
+    (h_string : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxMuKDefinition
+      (AdS3MixedFluxMuKDefinitionPackage data.stringMuK))
+    (h_qft : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxMuKDefinition
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxMuKDefinitionCftPackage
+        data.qftMuK))
+    (h_g : data.stringMuK.stringCoupling = data.qftMuK.stringCoupling)
+    (h_q5 : data.stringMuK.rrFluxQ5 = data.qftMuK.rrFluxQ5)
+    (h_k5 : data.stringMuK.nsFluxK5 = data.qftMuK.nsFluxK5)
+    (h_mu : data.stringMuK.mu = data.qftMuK.mu)
+    (h_k : data.stringMuK.levelK = data.qftMuK.levelK) :
+    AdS3MixedFluxMuKDefinitionBridgePackage data := by
+  have h_string_pkg : AdS3MixedFluxMuKDefinitionPackage data.stringMuK :=
+    ads3_mixed_flux_mu_k_definition_package data.stringMuK h_string
+  have h_qft_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxMuKDefinitionCftPackage
+        data.qftMuK :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_mu_k_definition_cft_package
+      data.qftMuK h_qft
+  exact ⟨h_string_pkg, h_qft_pkg, h_g, h_q5, h_k5, h_mu, h_k⟩
+
 /-- Cross-lane data for mixed-flux pulsating Bohr-Sommerfeld quantization. -/
 structure AdS3MixedFluxPulsatingBohrSommerfeldBridgeData where
   stringBohr : AdS3MixedFluxPulsatingBohrSommerfeldData

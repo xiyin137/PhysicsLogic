@@ -462,6 +462,34 @@ theorem ads3_mixed_flux_long_string_transition_package
     AdS3MixedFluxLongStringTransitionPackage data := by
   exact h_phys
 
+/-- Data for the mixed-flux parameter-definition block `mu = g_B Q5 / K5`, `k = K5`. -/
+structure AdS3MixedFluxMuKDefinitionData where
+  stringCoupling : ℝ
+  rrFluxQ5 : ℕ
+  nsFluxK5 : ℕ
+  mu : ℝ
+  levelK : ℝ
+
+/-- Mixed-flux `mu`/`k` definition package:
+`mu = g_B Q5 / K5` and `k = K5`, with positive coupling and flux data. -/
+def AdS3MixedFluxMuKDefinitionPackage
+    (data : AdS3MixedFluxMuKDefinitionData) : Prop :=
+  data.stringCoupling > 0 ∧
+  data.rrFluxQ5 > 0 ∧
+  data.nsFluxK5 > 0 ∧
+  data.levelK > 0 ∧
+  data.levelK = (data.nsFluxK5 : ℝ) ∧
+  data.mu = data.stringCoupling * (data.rrFluxQ5 : ℝ) / (data.nsFluxK5 : ℝ)
+
+/-- Assumed mixed-flux `mu`/`k` definition package in AdS3. -/
+theorem ads3_mixed_flux_mu_k_definition_package
+    (data : AdS3MixedFluxMuKDefinitionData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxMuKDefinition
+      (AdS3MixedFluxMuKDefinitionPackage data)) :
+    AdS3MixedFluxMuKDefinitionPackage data := by
+  exact h_phys
+
 /-- Data for the mixed-flux pulsating Bohr-Sommerfeld quantization package in AdS3. -/
 structure AdS3MixedFluxPulsatingBohrSommerfeldData where
   alphaPrime : ℝ

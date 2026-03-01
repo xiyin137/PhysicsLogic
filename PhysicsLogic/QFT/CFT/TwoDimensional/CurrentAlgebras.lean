@@ -398,6 +398,35 @@ theorem ads3_mixed_flux_worldsheet_deformation_package
     AdS3MixedFluxWorldsheetDeformationPackage data := by
   exact h_phys
 
+/-- Data for the mixed-flux parameter-definition block `mu = g_B Q5 / K5`, `k = K5`
+in the QFT lane. -/
+structure AdS3MixedFluxMuKDefinitionCftData where
+  stringCoupling : ℝ
+  rrFluxQ5 : ℕ
+  nsFluxK5 : ℕ
+  mu : ℝ
+  levelK : ℝ
+
+/-- Mixed-flux `mu`/`k` definition package in the QFT lane:
+`mu = g_B Q5 / K5` and `k = K5`, with positive coupling and flux data. -/
+def AdS3MixedFluxMuKDefinitionCftPackage
+    (data : AdS3MixedFluxMuKDefinitionCftData) : Prop :=
+  data.stringCoupling > 0 /\
+  data.rrFluxQ5 > 0 /\
+  data.nsFluxK5 > 0 /\
+  data.levelK > 0 /\
+  data.levelK = (data.nsFluxK5 : ℝ) /\
+  data.mu = data.stringCoupling * (data.rrFluxQ5 : ℝ) / (data.nsFluxK5 : ℝ)
+
+/-- Assumed mixed-flux `mu`/`k` definition package in the 2D CFT lane. -/
+theorem ads3_mixed_flux_mu_k_definition_cft_package
+    (data : AdS3MixedFluxMuKDefinitionCftData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxMuKDefinition
+      (AdS3MixedFluxMuKDefinitionCftPackage data)) :
+    AdS3MixedFluxMuKDefinitionCftPackage data := by
+  exact h_phys
+
 /-- Data for mixed-flux pulsating Bohr-Sommerfeld quantization in the QFT lane. -/
 structure AdS3MixedFluxPulsatingBohrSommerfeldCftData where
   alphaPrime : ℝ
