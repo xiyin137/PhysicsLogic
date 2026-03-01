@@ -700,6 +700,38 @@ def stringTypeINonBpsD0StabilityAndFermions : String :=
   "string.type_i.non_bps_d0_stability_and_fermions"
 def stringOrientifoldPlaneCrosscapChargeDictionary : String :=
   "string.orientifold_plane.crosscap_charge_dictionary"
+def stringDualityHeteroticTypeIStrongWeak : String :=
+  "string.duality.heterotic_type_i_strong_weak"
+def stringDualityTypeIINS5BpsSoliton : String :=
+  "string.duality.type_ii_ns5_bps_soliton"
+def stringDualityNS5ThroatLittleStringScft : String :=
+  "string.duality.ns5_throat_little_string_scft"
+def stringDualityHeteroticNS5GaugeInstantonSmallInstanton : String :=
+  "string.duality.heterotic_ns5_gauge_instanton_small_instanton"
+def stringDualityTypeIIBSdualityModularInvariantCouplings : String :=
+  "string.duality.type_iib_s_duality_modular_invariant_couplings"
+def stringDualityPQStringsAndFiveBranes : String :=
+  "string.duality.pq_strings_and_five_branes"
+def stringDualityBlackPBraneSupergravityDictionary : String :=
+  "string.duality.black_p_brane_supergravity_dictionary"
+def stringDualityD7BraneFTheoryEllipticMonodromy : String :=
+  "string.duality.d7_brane_f_theory_elliptic_monodromy"
+def stringDualityMTheoryTypeIIACircleRelation : String :=
+  "string.duality.m_theory_type_iia_circle_relation"
+def stringDualityM2M5BraneTensionDictionary : String :=
+  "string.duality.m2_m5_brane_tension_dictionary"
+def stringDualityD6KaluzaKleinMonopoleUplift : String :=
+  "string.duality.d6_kaluza_klein_monopole_uplift"
+def stringDualityMTheoryHigherDerivativeProtectedTerms : String :=
+  "string.duality.m_theory_higher_derivative_protected_terms"
+def stringDualityHeteroticE8SO32CircleTduality : String :=
+  "string.duality.heterotic_e8_so32_circle_t_duality"
+def stringDualityHeteroticStrongCouplingMTheoryInterval : String :=
+  "string.duality.heterotic_strong_coupling_m_theory_interval"
+def stringDualityHoravaWittenBoundaryAnomalyInflow : String :=
+  "string.duality.horava_witten_boundary_anomaly_inflow"
+def stringDualityMassiveIIARomansD8System : String :=
+  "string.duality.massive_iia_romans_d8_system"
 
 end AssumptionId
 
@@ -1596,6 +1628,38 @@ def assumptionRegistry : List AssumptionEntry :=
       "The type-I non-BPS D0 package (`Omega` tachyon projection, residual `Z_2` gauge structure, and D0-D9 fermionic zero-mode spectrum/stability data) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringOrientifoldPlaneCrosscapChargeDictionary,
       "The orientifold-plane package (`Omega * I` quotient construction, crosscap normalization, `O p^+ / O p^-` classification, and charge/tension relations via duality checks) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDualityHeteroticTypeIStrongWeak,
+      "The heterotic/type-I duality package (Einstein-frame dictionary, opposite-dilaton map, D1/fundamental-string and NS5/D5 matching, and non-BPS state correspondence) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDualityTypeIINS5BpsSoliton,
+      "The type-II NS5 BPS package (quantized H-flux, supersymmetric harmonic-profile solution, and NS5 tension scaling) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDualityNS5ThroatLittleStringScft,
+      "The NS5-throat package (linear-dilaton plus `SU(2)_k` worldsheet factorization and little-string-theory interpretation) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDualityHeteroticNS5GaugeInstantonSmallInstanton,
+      "The heterotic NS5/small-instanton package (self-dual instanton equations, modified-Bianchi dilaton profile, and instanton-to-NS5 limit) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDualityTypeIIBSdualityModularInvariantCouplings,
+      "The type-IIB S-duality package (`SL(2,Z)` action and modularly completed protected couplings, including `R^4` Eisenstein-structure checks) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDualityPQStringsAndFiveBranes,
+      "The `(p,q)`-state package (worldvolume electric-flux quantization, `SL(2,Z)` orbits, and `(p,q)` string/five-brane BPS tension structure) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDualityBlackPBraneSupergravityDictionary,
+      "The black p-brane package (RR flux quantization, warped supergravity solutions, and charge/radius parameter dictionaries) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDualityD7BraneFTheoryEllipticMonodromy,
+      "The D7/F-theory package (axio-dilaton monodromies, elliptic-fibration/j-invariant construction, and Sen-limit orientifold identification) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDualityMTheoryTypeIIACircleRelation,
+      "The M-theory/type-IIA circle package (11D reduction, D0/Kaluza-Klein map, and Planck-scale/radius dictionaries) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDualityM2M5BraneTensionDictionary,
+      "The M2/M5 package (electric/magnetic C3-charge sectors with wrapped-brane maps to F1/D4 and tension dictionaries) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDualityD6KaluzaKleinMonopoleUplift,
+      "The D6/KK-monopole package (Taub-NUT uplift, smooth-core/orbifold structure, and half-BPS compatibility) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDualityMTheoryHigherDerivativeProtectedTerms,
+      "The M-theory higher-derivative package (protected `R^4`/related terms from type-IIA decompactification and strong-coupling limits) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDualityHeteroticE8SO32CircleTduality,
+      "The heterotic circle T-duality package (Narain-lattice isomorphism with Wilson lines and hetE/hetO radius/momentum map) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDualityHeteroticStrongCouplingMTheoryInterval,
+      "The strong-coupling hetE package (duality chain to M-theory on interval, boundary `E8 x E8`, and stretched-M2 heterotic-string realization) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDualityHoravaWittenBoundaryAnomalyInflow,
+      "The Horava-Witten package (boundary conditions for `G_4`, anomaly inflow from bulk Chern-Simons terms, and boundary-coupling matching) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDualityMassiveIIARomansD8System,
+      "The massive-IIA Romans package (`F_0` quantization, T-dual axion monodromy interpretation, and D8/O8 consistency structure) is assumed in this abstraction layer."⟩
   ]
 
 end PhysicsLogic

@@ -23,6 +23,7 @@ architectural clarity, not full mathematical rigor.
 - `OpenStringFieldTheory.lean`: Section-15 interfaces for classical/quantum open string field theory, cubic star-algebra dynamics, tachyon condensation and `KBc`/analytic solutions, marginal and rolling-tachyon deformations, Erler-Maccaferri background-independence constructions, and open+closed (super)SFT BV packages.
 - `DInstantons.lean`: Section-16 interfaces for D-instanton transseries/moduli integration, `c=1` ZZ and type-IIB D(-1) sectors, open+closed-SFT zero-mode gauge treatment, normalization extraction, and multiple-instanton IKKT scaling packages.
 - `TypeIOrientifolds.lean`: Section-17 interfaces for unoriented/type-I worldsheet parity projection, crosscap and tadpole cancellation structure, unoriented open+closed amplitude normalization, type-I effective couplings, type-I D1/D5 and non-BPS D0 spectra, and orientifold-plane charge/tension dictionaries.
+- `Dualities.lean`: Section-18 interfaces for non-perturbative dualities across heterotic/type-I, NS5 sectors, type-IIB S-duality and `(p,q)` states, black-brane dictionaries, D7/F-theory, M-theory and heterotic-M-theory maps, and massive-IIA/D8 structures.
 - `Conventions.lean`: Appendix-A convention interfaces for string/gravity couplings, D-brane tensions, and M-theory scale dictionaries.
 - `Anomalies.lean`: type-IIB and type-I/heterotic anomaly-polynomial and Green-Schwarz-cancellation interfaces.
 - `Holography.lean`: AdS/CFT scalar, current, stress-tensor, Witten-diagram, and Mellin-amplitude interfaces.
@@ -54,6 +55,7 @@ Source modules currently backing those lanes:
 - `OpenStringFieldTheory.lean`
 - `DInstantons.lean`
 - `TypeIOrientifolds.lean`
+- `Dualities.lean`
 - `Conventions.lean`
 - `Anomalies.lean`
 - `Holography.lean`
