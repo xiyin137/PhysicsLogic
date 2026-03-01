@@ -732,6 +732,24 @@ def stringDualityHoravaWittenBoundaryAnomalyInflow : String :=
   "string.duality.horava_witten_boundary_anomaly_inflow"
 def stringDualityMassiveIIARomansD8System : String :=
   "string.duality.massive_iia_romans_d8_system"
+def stringSingularityNs5TaubNutTDuality : String := "string.singularity.ns5_taub_nut_t_duality"
+def stringSingularityOrbifoldNFourTwistMarginal : String := "string.singularity.orbifold_n4_twist_marginal"
+def stringSingularityOrbifoldConformalManifoldSingularPoints : String := "string.singularity.orbifold_conformal_manifold_singular_points"
+def stringSingularityOrbifoldWrappedDbraneGaugeEnhancement : String := "string.singularity.orbifold_wrapped_dbrane_gauge_enhancement"
+def stringSingularityOrbifoldFractionalBraneBoundaryState : String := "string.singularity.orbifold_fractional_brane_boundary_state"
+def stringDslstDoubleScalingCosetBackground : String := "string.dslst.double_scaling_coset_background"
+def stringDslstSu2CosetNTwoStructure : String := "string.dslst.su2_coset_n2_structure"
+def stringDslstSl2CosetCigarSpectrum : String := "string.dslst.sl2_coset_cigar_spectrum"
+def stringDslstCigarLiouvilleMirrorDuality : String := "string.dslst.cigar_liouville_mirror_duality"
+def stringDslstMasslessSpectrumSixDInterpretation : String := "string.dslst.massless_spectrum_sixd_interpretation"
+def stringConifoldGeometryDeformedResolvedMetrics : String := "string.conifold.geometry_deformed_resolved_metrics"
+def stringConifoldTypeIibTransitionWrappedD3Hypermultiplet : String := "string.conifold.type_iib_transition_wrapped_d3_hypermultiplet"
+def stringConifoldTypeIiaTransitionWrappedD2Hypermultiplet : String := "string.conifold.type_iia_transition_wrapped_d2_hypermultiplet"
+def stringConifoldWorldsheetInstantonExpansion : String := "string.conifold.worldsheet_instanton_expansion"
+def stringConifoldSingularCftGlsmLiouvilleLimit : String := "string.conifold.singular_cft_glsm_liouville_limit"
+def stringMTheoryOrbifoldSingularityGaugeSector : String := "string.mtheory.orbifold_singularity_gauge_sector"
+def stringMTheoryGTwoConeBranchesAssociativeCycles : String := "string.mtheory.g2_cone_branches_associative_cycles"
+def stringMTheoryQuantumModuliCurveTrialityInvariant : String := "string.mtheory.quantum_moduli_curve_triality_invariant"
 
 end AssumptionId
 
@@ -1660,6 +1678,42 @@ def assumptionRegistry : List AssumptionEntry :=
       "The Horava-Witten package (boundary conditions for `G_4`, anomaly inflow from bulk Chern-Simons terms, and boundary-coupling matching) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringDualityMassiveIIARomansD8System,
       "The massive-IIA Romans package (`F_0` quantization, T-dual axion monodromy interpretation, and D8/O8 consistency structure) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringSingularityNs5TaubNutTDuality,
+      "The NS5/Taub-NUT package (smeared NS5 harmonic profile, transverse-circle Buscher duality, Taub-NUT monopole geometry, and `C^2/Z_k` limit with matching marginal-moduli counting) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringSingularityOrbifoldNFourTwistMarginal,
+      "The `C^2/Z_k` orbifold twisted-sector package (twist-field weights, `(4,4)` chiral primaries, and exactly marginal descendants preserving `(4,4)` superconformal symmetry) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringSingularityOrbifoldConformalManifoldSingularPoints,
+      "The orbifold conformal-manifold package (Zamolodchikov metric, `k=2` ALE plus `B`-period parameterization, and distinction between regular and singular fixed points) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringSingularityOrbifoldWrappedDbraneGaugeEnhancement,
+      "The singular-orbifold wrapped-brane package (exact BPS wrapped-D2 mass formula and massless-limit `U(1)^(k-1)` to `SU(k)` gauge enhancement) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringSingularityOrbifoldFractionalBraneBoundaryState,
+      "The orbifold fractional-brane package (defect-line boundary-state construction, phase-weighted orbifold branes, and ALE map to wrapped D2 configurations) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDslstDoubleScalingCosetBackground,
+      "The DSLST double-scaling package (ring-distributed NS5 limit with fixed rescaled coupling, T-dual cigar-bell geometry, and exact `((SL(2,R)/U(1)) x (SU(2)/U(1)))/Z_k` worldsheet realization) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDslstSu2CosetNTwoStructure,
+      "The DSLST `SU(2)_k/U(1)` coset package (`N=2` SCA, spectral-flow/field-identification constraints, modular selection rules, and emergent `Z_k` structure) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDslstSl2CosetCigarSpectrum,
+      "The DSLST `SL(2,R)_k/U(1)` cigar package (continuous/discrete spectra, winding integrality, reflection relation, and spectral-flow constraints) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDslstCigarLiouvilleMirrorDuality,
+      "The DSLST cigar/Liouville mirror package (linear-dilaton asymptotics, chiral-primary Liouville deformation, and mirror equivalence to the `SL(2,R)/U(1)` coset) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringDslstMasslessSpectrumSixDInterpretation,
+      "The DSLST massless-spectrum package (orbifold/GSO constraints, NSNS and RR massless sectors, and six-dimensional NS5 effective-theory interpretation near the little-string limit) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringConifoldGeometryDeformedResolvedMetrics,
+      "The conifold-geometry package (singular conifold with `T^{1,1}` base, deformed and resolved Ricci-flat branches, and flop exchange of the two small resolutions) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringConifoldTypeIibTransitionWrappedD3Hypermultiplet,
+      "The type-IIB conifold-transition package (special-Kahler period geometry, logarithmic conifold singularity, wrapped-D3 hypermultiplet, and non-singular vector-plus-hyper Wilsonian EFT) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringConifoldTypeIiaTransitionWrappedD2Hypermultiplet,
+      "The type-IIA conifold-transition package (complexified Kahler modulus, perturbative cubic prepotential from PQ symmetry, wrapped-D2/D0 sectors, and EFT resolution of the singular point) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringConifoldWorldsheetInstantonExpansion,
+      "The conifold worldsheet-instanton package (holomorphic-map saddles, rational-map instanton moduli, topological-twist localization, and exponential degree-`k` instanton weights with `a_k = 1/k^3`) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringConifoldSingularCftGlsmLiouvilleLimit,
+      "The singular-conifold CFT package (`U(1)` GLSM with two positive and two negative chiral charges, FI-controlled small resolutions, and conifold-point `N=2` Liouville infrared description) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringMTheoryOrbifoldSingularityGaugeSector,
+      "The M-theory orbifold package (strong-coupling D6 limit to `C^2/Z_k`, localized 7D `SU(k)` gauge sector, and M2/instanton-tension matching) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringMTheoryGTwoConeBranchesAssociativeCycles,
+      "The M-theory `G_2` cone package (associative/coassociative form structure, triality-related three-cycle branches, and complex modulus from `C_3` period plus calibrated three-cycle volume) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringMTheoryQuantumModuliCurveTrialityInvariant,
+      "The asymptotically conical M-theory quantum-moduli package (`eta_1 eta_2 eta_3 = -1`, triality symmetry, and curve `eta_2 (1-eta_3)=1` smoothly joining the three semiclassical branches) is assumed in this abstraction layer."⟩
   ]
 
 end PhysicsLogic
