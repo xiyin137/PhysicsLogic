@@ -19,6 +19,7 @@ import PhysicsLogic.StringTheory.DInstantons
 import PhysicsLogic.StringTheory.TypeIOrientifolds
 import PhysicsLogic.StringTheory.Dualities
 import PhysicsLogic.StringTheory.GeometricSingularities
+import PhysicsLogic.StringTheory.SingularityCFTBridge
 import PhysicsLogic.StringTheory.Conventions
 import PhysicsLogic.StringTheory.Anomalies
 import PhysicsLogic.StringTheory.Holography
