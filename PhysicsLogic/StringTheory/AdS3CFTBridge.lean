@@ -497,6 +497,62 @@ theorem ads3_mixed_flux_mu_k_definition_bridge_package
       data.qftMuK h_qft
   exact ⟨h_string_pkg, h_qft_pkg, h_g, h_q5, h_k5, h_mu, h_k⟩
 
+/-- Cross-lane data for the mixed-flux pulsating turning-point relation. -/
+structure AdS3MixedFluxPulsatingTurningPointBridgeData where
+  stringTurningPoint : AdS3MixedFluxPulsatingTurningPointData
+  qftTurningPoint :
+    PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingTurningPointCftData
+
+/-- Bridge package:
+string-side and QFT-side mixed-flux pulsating turning-point data aligned
+field-by-field. -/
+def AdS3MixedFluxPulsatingTurningPointBridgePackage
+    (data : AdS3MixedFluxPulsatingTurningPointBridgeData) : Prop :=
+  AdS3MixedFluxPulsatingTurningPointPackage data.stringTurningPoint /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingTurningPointCftPackage
+    data.qftTurningPoint /\
+  data.stringTurningPoint.alphaPrime = data.qftTurningPoint.alphaPrime /\
+  data.stringTurningPoint.radiusSquared = data.qftTurningPoint.radiusSquared /\
+  data.stringTurningPoint.k5Flux = data.qftTurningPoint.k5Flux /\
+  data.stringTurningPoint.maximalRadius = data.qftTurningPoint.maximalRadius /\
+  data.stringTurningPoint.turningPointEnergy = data.qftTurningPoint.turningPointEnergy /\
+  data.stringTurningPoint.radialVelocityAtTurningPoint =
+    data.qftTurningPoint.radialVelocityAtTurningPoint /\
+  data.stringTurningPoint.maximalRadiusIsTurningPoint =
+    data.qftTurningPoint.maximalRadiusIsTurningPoint
+
+/-- Assumed bridge package for mixed-flux pulsating turning-point data. -/
+theorem ads3_mixed_flux_pulsating_turning_point_bridge_package
+    (data : AdS3MixedFluxPulsatingTurningPointBridgeData)
+    (h_string : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxPulsatingTurningPoint
+      (AdS3MixedFluxPulsatingTurningPointPackage data.stringTurningPoint))
+    (h_qft : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxPulsatingTurningPoint
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingTurningPointCftPackage
+        data.qftTurningPoint))
+    (h_alpha : data.stringTurningPoint.alphaPrime = data.qftTurningPoint.alphaPrime)
+    (h_r2 : data.stringTurningPoint.radiusSquared = data.qftTurningPoint.radiusSquared)
+    (h_k5 : data.stringTurningPoint.k5Flux = data.qftTurningPoint.k5Flux)
+    (h_r0 : data.stringTurningPoint.maximalRadius = data.qftTurningPoint.maximalRadius)
+    (h_delta : data.stringTurningPoint.turningPointEnergy = data.qftTurningPoint.turningPointEnergy)
+    (h_rdot :
+      data.stringTurningPoint.radialVelocityAtTurningPoint =
+        data.qftTurningPoint.radialVelocityAtTurningPoint)
+    (h_turning :
+      data.stringTurningPoint.maximalRadiusIsTurningPoint =
+        data.qftTurningPoint.maximalRadiusIsTurningPoint) :
+    AdS3MixedFluxPulsatingTurningPointBridgePackage data := by
+  have h_string_pkg :
+      AdS3MixedFluxPulsatingTurningPointPackage data.stringTurningPoint :=
+    ads3_mixed_flux_pulsating_turning_point_package data.stringTurningPoint h_string
+  have h_qft_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingTurningPointCftPackage
+        data.qftTurningPoint :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_pulsating_turning_point_cft_package
+      data.qftTurningPoint h_qft
+  exact ⟨h_string_pkg, h_qft_pkg, h_alpha, h_r2, h_k5, h_r0, h_delta, h_rdot, h_turning⟩
+
 /-- Cross-lane data for mixed-flux pulsating Bohr-Sommerfeld quantization. -/
 structure AdS3MixedFluxPulsatingBohrSommerfeldBridgeData where
   stringBohr : AdS3MixedFluxPulsatingBohrSommerfeldData

@@ -490,6 +490,42 @@ theorem ads3_mixed_flux_mu_k_definition_package
     AdS3MixedFluxMuKDefinitionPackage data := by
   exact h_phys
 
+/-- Data for the mixed-flux pulsating turning-point relation in AdS3. -/
+structure AdS3MixedFluxPulsatingTurningPointData where
+  alphaPrime : ℝ
+  radiusSquared : ℝ
+  k5Flux : ℝ
+  maximalRadius : ℝ
+  turningPointEnergy : ℝ
+  radialVelocityAtTurningPoint : ℝ
+  maximalRadiusIsTurningPoint : Bool
+
+/-- Mixed-flux pulsating turning-point package:
+`r0` is the maximal radius of oscillatory motion, with turning-point
+condition `dot r = 0`, and
+`Delta = (R^2/alpha') r0 sqrt(1+r0^2) - K5 r0^2`. -/
+def AdS3MixedFluxPulsatingTurningPointPackage
+    (data : AdS3MixedFluxPulsatingTurningPointData) : Prop :=
+  data.alphaPrime > 0 ∧
+  data.radiusSquared > 0 ∧
+  data.k5Flux > 0 ∧
+  data.maximalRadius ≥ 0 ∧
+  data.maximalRadiusIsTurningPoint = true ∧
+  data.radialVelocityAtTurningPoint = 0 ∧
+  data.turningPointEnergy =
+    (data.radiusSquared / data.alphaPrime) * data.maximalRadius *
+      Real.sqrt (1 + data.maximalRadius ^ (2 : ℕ)) -
+      data.k5Flux * data.maximalRadius ^ (2 : ℕ)
+
+/-- Assumed mixed-flux pulsating turning-point package in AdS3. -/
+theorem ads3_mixed_flux_pulsating_turning_point_package
+    (data : AdS3MixedFluxPulsatingTurningPointData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxPulsatingTurningPoint
+      (AdS3MixedFluxPulsatingTurningPointPackage data)) :
+    AdS3MixedFluxPulsatingTurningPointPackage data := by
+  exact h_phys
+
 /-- Data for the mixed-flux pulsating Bohr-Sommerfeld quantization package in AdS3. -/
 structure AdS3MixedFluxPulsatingBohrSommerfeldData where
   alphaPrime : ℝ

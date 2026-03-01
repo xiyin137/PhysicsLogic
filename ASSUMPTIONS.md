@@ -1,7 +1,7 @@
 # Physics Assumptions Report
 
-- Registered assumptions: `246`
-- Assumptions referenced in non-Papers modules: `246`
+- Registered assumptions: `248`
+- Assumptions referenced in non-Papers modules: `248`
 - Assumptions with zero references outside registry: `0`
 
 | AssumptionId | Payload | Core refs | Papers refs | Total refs | Description |
@@ -28,6 +28,7 @@
 | `cft2dAds3MixedFluxMuKDefinition` | `qft.cft.2d.ads3_mixed_flux_mu_k_definition` | 2 | 0 | 2 | The mixed-flux AdS3 parameter-definition package (`mu = g_B Q5 / K5`, `k = K5`, positivity of couplings/flux data) used in the pulsating-string formulas is assumed in this abstraction layer. |
 | `cft2dAds3MixedFluxPulsatingBohrSommerfeld` | `qft.cft.2d.ads3_mixed_flux_pulsating_bohr_sommerfeld` | 2 | 0 | 2 | The mixed-flux AdS3 pulsating Bohr-Sommerfeld package (`2 ∮_0^{r0} dr (R^2/alpha') (dot r/(1+r^2)) = 2 pi n`, integer level `n`, and turning-point energy relation `Delta = (R^2/alpha') r0 sqrt(1+r0^2) - K5 r0^2`) is assumed in this abstraction layer. |
 | `cft2dAds3MixedFluxPulsatingThresholdPole` | `qft.cft.2d.ads3_mixed_flux_pulsating_threshold_pole` | 2 | 0 | 2 | The mixed-flux AdS3 pulsating-threshold package (order-`mu^2` denominator pole at `n = k/4` and equality of the `mu=0` short-string energy with the NSNS long-string threshold `Delta = k/2`) is assumed in this abstraction layer. |
+| `cft2dAds3MixedFluxPulsatingTurningPoint` | `qft.cft.2d.ads3_mixed_flux_pulsating_turning_point` | 2 | 0 | 2 | The mixed-flux AdS3 pulsating turning-point package (`r0` maximal radius of oscillatory motion, turning-point radial velocity `dot r = 0`, and `Delta = (R^2/alpha') r0 sqrt(1+r0^2) - K5 r0^2`) is assumed in this abstraction layer. |
 | `cft2dAds3MixedFluxRrTwoStringBracketStructure` | `qft.cft.2d.ads3_mixed_flux_rr_two_string_bracket_structure` | 2 | 0 | 2 | The mixed-flux AdS3 RR-deformation two-string-bracket package (`[W^(1)⊗W^(1)]` split into `SL(2)` and `SU(2)` adjoint channels with opposite `\|2 z0\|^{±4/k}` powers and vanishing projected zero-weight component at finite `k`) is assumed in this abstraction layer. |
 | `cft2dAds3MixedFluxSftRrDeformation` | `qft.cft.2d.ads3_mixed_flux_sft_rr_deformation` | 2 | 0 | 2 | The mixed-flux AdS3 RR-deformation worldsheet-SFT package (`Q_B W^(2)=-(1/2)P^+[W^(1)⊗W^(1)]`, finite-`k` projected-bracket vanishing, and order-`mu^2` Siegel-resolvent correction) is assumed in this abstraction layer. |
 | `cft2dAds3MixedFluxWzwOpeStructureConstants` | `qft.cft.2d.ads3_mixed_flux_wzw_ope_structure_constants` | 2 | 0 | 2 | The mixed-flux AdS3 finite-`k` WZW OPE-constant package (identity-OPE normalization, `C^sl_{-1/2,-1/2,-1} = (4/3)/(C^su_{1/2,1/2,1})`, and common large-`k` limit `2/sqrt(3)`) is assumed in this abstraction layer. |
@@ -108,6 +109,7 @@
 | `stringAdS3MixedFluxPulsatingBohrSommerfeld` | `string.ads3.mixed_flux_pulsating_bohr_sommerfeld` | 2 | 0 | 2 | The mixed-flux AdS3 pulsating Bohr-Sommerfeld package (`2 ∮_0^{r0} dr (R^2/alpha') (dot r/(1+r^2)) = 2 pi n`, integer level `n`, and turning-point energy relation `Delta = (R^2/alpha') r0 sqrt(1+r0^2) - K5 r0^2`) is assumed in this abstraction layer. |
 | `stringAdS3MixedFluxPulsatingShift` | `string.ads3.mixed_flux_pulsating_shift` | 2 | 0 | 2 | The small-`mu` semiclassical correction formula for circular pulsating-string energies in mixed-flux AdS3 backgrounds is assumed in this abstraction layer. |
 | `stringAdS3MixedFluxPulsatingThresholdPole` | `string.ads3.mixed_flux_pulsating_threshold_pole` | 2 | 0 | 2 | The mixed-flux AdS3 pulsating-threshold package (order-`mu^2` denominator pole at `n = k/4` and equality of the `mu=0` short-string energy with the NSNS long-string threshold `Delta = k/2`) is assumed in this abstraction layer. |
+| `stringAdS3MixedFluxPulsatingTurningPoint` | `string.ads3.mixed_flux_pulsating_turning_point` | 2 | 0 | 2 | The mixed-flux AdS3 pulsating turning-point package (`r0` maximal radius of oscillatory motion, turning-point radial velocity `dot r = 0`, and `Delta = (R^2/alpha') r0 sqrt(1+r0^2) - K5 r0^2`) is assumed in this abstraction layer. |
 | `stringAdS3MixedFluxRrTwoStringBracketStructure` | `string.ads3.mixed_flux_rr_two_string_bracket_structure` | 2 | 0 | 2 | The mixed-flux AdS3 RR-deformation two-string-bracket package (`[W^(1)⊗W^(1)]` split into `SL(2)` and `SU(2)` adjoint channels with opposite `\|2 z0\|^{±4/k}` powers and vanishing projected zero-weight component at finite `k`) is assumed in this abstraction layer. |
 | `stringAdS3MixedFluxSftRrDeformation` | `string.ads3.mixed_flux_sft_rr_deformation` | 2 | 0 | 2 | The mixed-flux AdS3 RR-deformation closed-superstring-field-theory package (`Q_B W^(2)=-(1/2)P^+[W^(1)⊗W^(1)]`, finite-`k` projected-bracket vanishing, and order-`mu^2` Siegel-resolvent correction) is assumed in this abstraction layer. |
 | `stringAdS3MixedFluxWzwOpeStructureConstants` | `string.ads3.mixed_flux_wzw_ope_structure_constants` | 2 | 0 | 2 | The mixed-flux AdS3 finite-`k` WZW OPE-constant package (identity-OPE normalization, `C^sl_{-1/2,-1/2,-1} = (4/3)/(C^su_{1/2,1/2,1})`, and common large-`k` limit `2/sqrt(3)`) is assumed in this abstraction layer. |

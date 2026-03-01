@@ -427,6 +427,42 @@ theorem ads3_mixed_flux_mu_k_definition_cft_package
     AdS3MixedFluxMuKDefinitionCftPackage data := by
   exact h_phys
 
+/-- Data for the mixed-flux pulsating turning-point relation in the QFT lane. -/
+structure AdS3MixedFluxPulsatingTurningPointCftData where
+  alphaPrime : ℝ
+  radiusSquared : ℝ
+  k5Flux : ℝ
+  maximalRadius : ℝ
+  turningPointEnergy : ℝ
+  radialVelocityAtTurningPoint : ℝ
+  maximalRadiusIsTurningPoint : Bool
+
+/-- Mixed-flux pulsating turning-point package in the QFT lane:
+`r0` is maximal radius of oscillatory motion, with turning-point condition
+`dot r = 0`, and
+`Delta = (R^2/alpha') r0 sqrt(1+r0^2) - K5 r0^2`. -/
+def AdS3MixedFluxPulsatingTurningPointCftPackage
+    (data : AdS3MixedFluxPulsatingTurningPointCftData) : Prop :=
+  data.alphaPrime > 0 /\
+  data.radiusSquared > 0 /\
+  data.k5Flux > 0 /\
+  data.maximalRadius >= 0 /\
+  data.maximalRadiusIsTurningPoint = true /\
+  data.radialVelocityAtTurningPoint = 0 /\
+  data.turningPointEnergy =
+    (data.radiusSquared / data.alphaPrime) * data.maximalRadius *
+      Real.sqrt (1 + data.maximalRadius ^ (2 : Nat)) -
+      data.k5Flux * data.maximalRadius ^ (2 : Nat)
+
+/-- Assumed mixed-flux pulsating turning-point package in the 2D CFT lane. -/
+theorem ads3_mixed_flux_pulsating_turning_point_cft_package
+    (data : AdS3MixedFluxPulsatingTurningPointCftData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxPulsatingTurningPoint
+      (AdS3MixedFluxPulsatingTurningPointCftPackage data)) :
+    AdS3MixedFluxPulsatingTurningPointCftPackage data := by
+  exact h_phys
+
 /-- Data for mixed-flux pulsating Bohr-Sommerfeld quantization in the QFT lane. -/
 structure AdS3MixedFluxPulsatingBohrSommerfeldCftData where
   alphaPrime : ℝ
