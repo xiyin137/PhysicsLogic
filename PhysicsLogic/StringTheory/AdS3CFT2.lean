@@ -887,4 +887,66 @@ theorem ads3_mixed_flux_rr_two_string_bracket_package
     AdS3MixedFluxRrTwoStringBracketPackage data := by
   exact h_phys
 
+/-- Data for compositional reconstruction of the mixed-flux RR-spectrum
+correction from SFT recursion, RR two-string bracket, finite-`k` WZW reduction,
+and OPE-constant units. -/
+structure AdS3MixedFluxRrSpectrumCorrectionCompositionalData where
+  sft : AdS3MixedFluxSftRrDeformationData
+  bracket : AdS3MixedFluxRrTwoStringBracketData
+  reduction : AdS3MixedFluxFiniteKWzwFourPointReductionData
+  ope : AdS3MixedFluxWzwOpeStructureConstantData
+  massShift : AdS3MixedFluxMassShiftFromFourPointData
+
+/-- Compositional package for mixed-flux RR-spectrum correction:
+combines SFT recursion, explicit two-string bracket structure, finite-`k`
+WZW reduction, and OPE constants with the identifications needed to recover
+the four-point mass-shift relation. -/
+def AdS3MixedFluxRrSpectrumCorrectionCompositionalPackage
+    (data : AdS3MixedFluxRrSpectrumCorrectionCompositionalData) : Prop :=
+  AdS3MixedFluxSftRrDeformationPackage data.sft ∧
+  AdS3MixedFluxRrTwoStringBracketPackage data.bracket ∧
+  AdS3MixedFluxFiniteKWzwFourPointReductionPackage data.reduction ∧
+  AdS3MixedFluxWzwOpeStructureConstantPackage data.ope ∧
+  data.massShift.mu = data.sft.mu ∧
+  data.sft.mu = data.bracket.mu ∧
+  data.sft.mu = data.reduction.mu ∧
+  data.sft.levelK = data.bracket.levelK ∧
+  data.sft.levelK = data.reduction.levelK ∧
+  data.sft.levelK = data.ope.levelK ∧
+  data.bracket.cSlMinusHalfMinusHalfMinusOne = data.ope.cSlMinusHalfMinusHalfMinusOne ∧
+  data.bracket.cSuHalfHalfOne = data.ope.cSuHalfHalfOne ∧
+  data.massShift.noZeroWeightInWOneBracket =
+    data.bracket.projectedZeroWeightVanishesAtFiniteK ∧
+  data.massShift.noZeroWeightInNestedBracket =
+    data.sft.projectedTwoStringBracketVanishesAtFiniteK ∧
+  data.massShift.alphaPrime > 0 ∧
+  data.massShift.scalingDimensionMu =
+    data.massShift.scalingDimensionZero - (data.massShift.alphaPrime / 2) * data.massShift.massSquaredShift ∧
+  data.massShift.massSquaredShift =
+    data.massShift.mu ^ (2 : Nat) * data.massShift.fourPointAmplitude / data.massShift.alphaPrime
+
+/-- Reconstruct the mixed-flux RR-deformation four-point mass-shift package
+from the compositional SFT/bracket/reduction/OPE units. -/
+theorem ads3_mixed_flux_mass_shift_from_compositional
+    (data : AdS3MixedFluxRrSpectrumCorrectionCompositionalData)
+    (h_comp : AdS3MixedFluxRrSpectrumCorrectionCompositionalPackage data) :
+    AdS3MixedFluxMassShiftFromFourPointPackage data.massShift := by
+  rcases h_comp with ⟨h_sft, h_bracket, _, _, h_mu_mass, _, _, _, _, _, _, _,
+    h_nozero_one, h_nozero_nested, h_alpha, h_delta, h_dm2⟩
+  rcases h_sft with ⟨h_mu_nonneg_sft, _, _, h_proj_sft, _, _, _, _⟩
+  rcases h_bracket with ⟨_, _, _, _, _, _, _, _, _, _, _, _, h_proj_bracket⟩
+  have h_mu_nonneg_mass : data.massShift.mu >= 0 := by
+    simpa [h_mu_mass] using h_mu_nonneg_sft
+  have h_nozero_one_true : data.massShift.noZeroWeightInWOneBracket = true := by
+    calc
+      data.massShift.noZeroWeightInWOneBracket =
+          data.bracket.projectedZeroWeightVanishesAtFiniteK := h_nozero_one
+      _ = true := h_proj_bracket
+  have h_nozero_nested_true : data.massShift.noZeroWeightInNestedBracket = true := by
+    calc
+      data.massShift.noZeroWeightInNestedBracket =
+          data.sft.projectedTwoStringBracketVanishesAtFiniteK := h_nozero_nested
+      _ = true := h_proj_sft
+  exact ⟨h_mu_nonneg_mass, h_alpha, h_nozero_one_true, h_nozero_nested_true, h_delta, h_dm2⟩
+
 end PhysicsLogic.StringTheory

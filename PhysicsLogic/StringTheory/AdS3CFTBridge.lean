@@ -1093,4 +1093,66 @@ theorem ads3_mixed_flux_rr_two_string_bracket_bridge_package
   exact ⟨h_string_pkg, h_qft_pkg, h_k, h_mu, h_z0, h_n1, h_coeff, h_c_sl, h_c_su,
     h_pow_sl, h_pow_su, h_sign_sl, h_sign_su, h_proj⟩
 
+/-- Cross-lane data for compositional reconstruction of mixed-flux RR-spectrum
+correction. -/
+structure AdS3MixedFluxRrSpectrumCorrectionCompositionalBridgeData where
+  stringCompositional : AdS3MixedFluxRrSpectrumCorrectionCompositionalData
+  qftCompositional :
+    PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxRrSpectrumCorrectionCompositionalCftData
+
+/-- Bridge package for compositional mixed-flux RR-spectrum correction:
+lane-level compositional reconstructions with aligned four-point mass-shift
+observables. -/
+def AdS3MixedFluxRrSpectrumCorrectionCompositionalBridgePackage
+    (data : AdS3MixedFluxRrSpectrumCorrectionCompositionalBridgeData) : Prop :=
+  AdS3MixedFluxMassShiftFromFourPointPackage data.stringCompositional.massShift /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxMassShiftFromFourPointCftPackage
+    data.qftCompositional.massShift /\
+  data.stringCompositional.massShift.mu = data.qftCompositional.massShift.mu /\
+  data.stringCompositional.massShift.alphaPrime = data.qftCompositional.massShift.alphaPrime /\
+  data.stringCompositional.massShift.scalingDimensionMu =
+    data.qftCompositional.massShift.scalingDimensionMu /\
+  data.stringCompositional.massShift.scalingDimensionZero =
+    data.qftCompositional.massShift.scalingDimensionZero /\
+  data.stringCompositional.massShift.massSquaredShift =
+    data.qftCompositional.massShift.massSquaredShift /\
+  data.stringCompositional.massShift.fourPointAmplitude =
+    data.qftCompositional.massShift.fourPointAmplitude
+
+/-- Reconstruct the cross-lane mixed-flux RR-spectrum mass-shift bridge from
+compositional lane packages and mass-shift observable identifications. -/
+theorem ads3_mixed_flux_rr_spectrum_correction_compositional_bridge_package
+    (data : AdS3MixedFluxRrSpectrumCorrectionCompositionalBridgeData)
+    (h_string :
+      AdS3MixedFluxRrSpectrumCorrectionCompositionalPackage data.stringCompositional)
+    (h_qft :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxRrSpectrumCorrectionCompositionalCftPackage
+        data.qftCompositional)
+    (h_mu :
+      data.stringCompositional.massShift.mu = data.qftCompositional.massShift.mu)
+    (h_alpha :
+      data.stringCompositional.massShift.alphaPrime = data.qftCompositional.massShift.alphaPrime)
+    (h_delta_mu :
+      data.stringCompositional.massShift.scalingDimensionMu =
+        data.qftCompositional.massShift.scalingDimensionMu)
+    (h_delta_zero :
+      data.stringCompositional.massShift.scalingDimensionZero =
+        data.qftCompositional.massShift.scalingDimensionZero)
+    (h_dm2 :
+      data.stringCompositional.massShift.massSquaredShift =
+        data.qftCompositional.massShift.massSquaredShift)
+    (h_a04 :
+      data.stringCompositional.massShift.fourPointAmplitude =
+        data.qftCompositional.massShift.fourPointAmplitude) :
+    AdS3MixedFluxRrSpectrumCorrectionCompositionalBridgePackage data := by
+  have h_string_pkg :
+      AdS3MixedFluxMassShiftFromFourPointPackage data.stringCompositional.massShift :=
+    ads3_mixed_flux_mass_shift_from_compositional data.stringCompositional h_string
+  have h_qft_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxMassShiftFromFourPointCftPackage
+        data.qftCompositional.massShift :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_mass_shift_from_compositional_cft
+      data.qftCompositional h_qft
+  exact ⟨h_string_pkg, h_qft_pkg, h_mu, h_alpha, h_delta_mu, h_delta_zero, h_dm2, h_a04⟩
+
 end PhysicsLogic.StringTheory
