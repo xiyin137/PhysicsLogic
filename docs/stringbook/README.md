@@ -9,6 +9,8 @@ materials into formalization-ready notes for `PhysicsLogic`.
 - `ROADMAP.md`: phased incorporation plan and quality gates.
 - `appendix-qft-crosswalk.md`: mapping from appendices to `PhysicsLogic/QFT` targets.
 - `physics-organization.md`: physics-first lane organization for formalization.
+- `reference-artifacts.md`: tracked index for gitignored notebook/figure artifacts
+  under `references/stringbook/` and their Lean touchpoints.
 - `data/`: generated machine-readable TSV extracts from the book TOC.
 - `notes/`: per-unit note templates for manual extraction and progress tracking.
 
