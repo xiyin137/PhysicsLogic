@@ -52,6 +52,7 @@
 - `AdS3MixedFluxPulsatingThresholdPackage`
 - `AdS3MixedFluxSftRrDeformationPackage`
 - `AdS3MixedFluxMassShiftFromFourPointPackage`
+- `AdS3MixedFluxPulsatingMassShiftConsistencyPackage`
 - `AdS3MixedFluxFiniteKWzwFourPointReductionPackage`
 - `AdS3MixedFluxWzwOpeStructureConstantPackage`
 - `AdS3MixedFluxRrTwoStringBracketPackage`
@@ -81,6 +82,7 @@
 - `AdS3MixedFluxPulsatingThresholdCftPackage` (QFT lane)
 - `AdS3MixedFluxSftRrDeformationCftPackage` (QFT lane)
 - `AdS3MixedFluxMassShiftFromFourPointCftPackage` (QFT lane)
+- `AdS3MixedFluxPulsatingMassShiftConsistencyCftPackage` (QFT lane)
 - `AdS3MixedFluxFiniteKWzwFourPointReductionCftPackage` (QFT lane)
 - `AdS3MixedFluxWzwOpeStructureConstantCftPackage` (QFT lane)
 - `AdS3MixedFluxRrTwoStringBracketCftPackage` (QFT lane)
@@ -99,6 +101,7 @@
 - `AdS3MixedFluxPulsatingThresholdBridgePackage`
 - `AdS3MixedFluxLongStringTransitionBridgePackage`
 - `AdS3MixedFluxSftMassShiftBridgePackage`
+- `AdS3MixedFluxPulsatingMassShiftConsistencyBridgePackage`
 - `AdS3MixedFluxFiniteKWzwReductionBridgePackage`
 - `AdS3MixedFluxWzwOpeConstantBridgePackage`
 - `AdS3MixedFluxRrTwoStringBracketBridgePackage`

@@ -767,6 +767,75 @@ theorem ads3_mixed_flux_mass_shift_from_four_point_package
     AdS3MixedFluxMassShiftFromFourPointPackage data := by
   exact h_phys
 
+/-- Data for consistency between semiclassical pulsating shifts and RR
+four-point mass-shift relations in mixed-flux AdS3. -/
+structure AdS3MixedFluxPulsatingMassShiftConsistencyData where
+  pulsating : AdS3MixedFluxPulsatingData
+  massShift : AdS3MixedFluxMassShiftFromFourPointData
+
+/-- Consistency package linking semiclassical pulsating and RR mass-shift
+descriptions:
+`Delta(mu)` is identified across both lanes, the `mu=0` baseline is matched to
+the semiclassical NSNS term, and the induced `delta m^2` is written in terms of
+`Delta(mu)-Delta(0)`. -/
+def AdS3MixedFluxPulsatingMassShiftConsistencyPackage
+    (data : AdS3MixedFluxPulsatingMassShiftConsistencyData) : Prop :=
+  AdS3MixedFluxPulsatingPackage data.pulsating ∧
+  AdS3MixedFluxMassShiftFromFourPointPackage data.massShift ∧
+  data.pulsating.mu = data.massShift.mu ∧
+  data.pulsating.delta = data.massShift.scalingDimensionMu ∧
+  data.massShift.scalingDimensionZero =
+    -2 * data.pulsating.n + 2 * Real.sqrt (data.pulsating.n * data.pulsating.k) ∧
+  data.massShift.massSquaredShift =
+    -(2 / data.massShift.alphaPrime) *
+      (data.pulsating.delta - data.massShift.scalingDimensionZero)
+
+/-- Construct pulsating/mass-shift consistency from the two base packages plus
+identification hypotheses. -/
+theorem ads3_mixed_flux_pulsating_mass_shift_consistency_from_packages
+    (data : AdS3MixedFluxPulsatingMassShiftConsistencyData)
+    (h_pulsating : AdS3MixedFluxPulsatingPackage data.pulsating)
+    (h_massShift : AdS3MixedFluxMassShiftFromFourPointPackage data.massShift)
+    (h_mu : data.pulsating.mu = data.massShift.mu)
+    (h_delta : data.pulsating.delta = data.massShift.scalingDimensionMu)
+    (h_delta_zero :
+      data.massShift.scalingDimensionZero =
+        -2 * data.pulsating.n + 2 * Real.sqrt (data.pulsating.n * data.pulsating.k)) :
+    AdS3MixedFluxPulsatingMassShiftConsistencyPackage data := by
+  have h_mass_pkg : AdS3MixedFluxMassShiftFromFourPointPackage data.massShift := h_massShift
+  rcases h_massShift with ⟨_, h_alpha_pos, _, _, h_dim_relation, _⟩
+  have h_dim_delta :
+      data.pulsating.delta =
+        data.massShift.scalingDimensionZero -
+          (data.massShift.alphaPrime / 2) * data.massShift.massSquaredShift := by
+    simpa [h_delta] using h_dim_relation
+  have h_mul :
+      (data.massShift.alphaPrime / 2) * data.massShift.massSquaredShift =
+        data.massShift.scalingDimensionZero - data.pulsating.delta := by
+    linarith [h_dim_delta]
+  have h_mul2 :
+      data.massShift.alphaPrime * data.massShift.massSquaredShift =
+        2 * (data.massShift.scalingDimensionZero - data.pulsating.delta) := by
+    nlinarith [h_mul]
+  have h_alpha_ne : data.massShift.alphaPrime ≠ 0 := ne_of_gt h_alpha_pos
+  have h_mass_formula_pos :
+      data.massShift.massSquaredShift =
+        (2 / data.massShift.alphaPrime) *
+          (data.massShift.scalingDimensionZero - data.pulsating.delta) := by
+    field_simp [h_alpha_ne]
+    simpa [mul_comm] using h_mul2
+  have h_mass_formula :
+      data.massShift.massSquaredShift =
+        -(2 / data.massShift.alphaPrime) *
+          (data.pulsating.delta - data.massShift.scalingDimensionZero) := by
+    calc
+      data.massShift.massSquaredShift =
+          (2 / data.massShift.alphaPrime) *
+            (data.massShift.scalingDimensionZero - data.pulsating.delta) := h_mass_formula_pos
+      _ = -(2 / data.massShift.alphaPrime) *
+            (data.pulsating.delta - data.massShift.scalingDimensionZero) := by ring
+  exact ⟨h_pulsating, h_mass_pkg, h_mu, h_delta, h_delta_zero, h_mass_formula⟩
+
 /-- Finite-`k` WZW four-point-reduction data for mixed-flux AdS3 RR-deformation shifts. -/
 structure AdS3MixedFluxFiniteKWzwFourPointReductionData where
   levelK : ℝ

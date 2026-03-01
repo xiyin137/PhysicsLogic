@@ -931,6 +931,56 @@ theorem ads3_mixed_flux_sft_mass_shift_bridge_package
   exact ⟨h_string_sft_pkg, h_string_mass_pkg, h_qft_sft_pkg, h_qft_mass_pkg,
     h_mu_sft, h_k_sft, h_coeff, h_mu_mass, h_alpha, h_delta_mu, h_delta_zero, h_dm2, h_a04⟩
 
+/-- Cross-lane data for consistency between semiclassical pulsating shifts and
+RR four-point mass-shift relations. -/
+structure AdS3MixedFluxPulsatingMassShiftConsistencyBridgeData where
+  stringConsistency : AdS3MixedFluxPulsatingMassShiftConsistencyData
+  qftConsistency :
+    PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingMassShiftConsistencyCftData
+
+/-- Bridge package:
+string-side and QFT-side pulsating/mass-shift consistency packages aligned
+across shared physical observables. -/
+def AdS3MixedFluxPulsatingMassShiftConsistencyBridgePackage
+    (data : AdS3MixedFluxPulsatingMassShiftConsistencyBridgeData) : Prop :=
+  AdS3MixedFluxPulsatingMassShiftConsistencyPackage data.stringConsistency /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingMassShiftConsistencyCftPackage
+    data.qftConsistency /\
+  data.stringConsistency.pulsating.n = data.qftConsistency.spectrum.excitationNumber /\
+  data.stringConsistency.pulsating.k = data.qftConsistency.spectrum.levelK /\
+  data.stringConsistency.pulsating.mu = data.qftConsistency.spectrum.mu /\
+  data.stringConsistency.pulsating.delta = data.qftConsistency.spectrum.delta /\
+  data.stringConsistency.massShift.scalingDimensionZero =
+    data.qftConsistency.massShift.scalingDimensionZero /\
+  data.stringConsistency.massShift.massSquaredShift =
+    data.qftConsistency.massShift.massSquaredShift /\
+  data.stringConsistency.massShift.fourPointAmplitude =
+    data.qftConsistency.massShift.fourPointAmplitude
+
+/-- Assemble the cross-lane pulsating/mass-shift consistency bridge from lane
+packages and observable identifications. -/
+theorem ads3_mixed_flux_pulsating_mass_shift_consistency_bridge_package
+    (data : AdS3MixedFluxPulsatingMassShiftConsistencyBridgeData)
+    (h_string : AdS3MixedFluxPulsatingMassShiftConsistencyPackage data.stringConsistency)
+    (h_qft :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingMassShiftConsistencyCftPackage
+        data.qftConsistency)
+    (h_n : data.stringConsistency.pulsating.n = data.qftConsistency.spectrum.excitationNumber)
+    (h_k : data.stringConsistency.pulsating.k = data.qftConsistency.spectrum.levelK)
+    (h_mu : data.stringConsistency.pulsating.mu = data.qftConsistency.spectrum.mu)
+    (h_delta : data.stringConsistency.pulsating.delta = data.qftConsistency.spectrum.delta)
+    (h_delta_zero :
+      data.stringConsistency.massShift.scalingDimensionZero =
+        data.qftConsistency.massShift.scalingDimensionZero)
+    (h_dm2 :
+      data.stringConsistency.massShift.massSquaredShift =
+        data.qftConsistency.massShift.massSquaredShift)
+    (h_a04 :
+      data.stringConsistency.massShift.fourPointAmplitude =
+        data.qftConsistency.massShift.fourPointAmplitude) :
+    AdS3MixedFluxPulsatingMassShiftConsistencyBridgePackage data := by
+  exact ⟨h_string, h_qft, h_n, h_k, h_mu, h_delta, h_delta_zero, h_dm2, h_a04⟩
+
 /-- Cross-lane data for finite-`k` WZW four-point reduction in mixed-flux AdS3. -/
 structure AdS3MixedFluxFiniteKWzwReductionBridgeData where
   stringReduction : AdS3MixedFluxFiniteKWzwFourPointReductionData

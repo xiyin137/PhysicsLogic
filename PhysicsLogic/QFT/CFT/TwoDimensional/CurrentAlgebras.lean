@@ -711,6 +711,77 @@ theorem ads3_mixed_flux_mass_shift_from_four_point_cft_package
     AdS3MixedFluxMassShiftFromFourPointCftPackage data := by
   exact h_phys
 
+/-- Data for consistency between mixed-flux semiclassical circular-pulsating
+shifts and RR four-point mass-shift relations in the QFT lane. -/
+structure AdS3MixedFluxPulsatingMassShiftConsistencyCftData where
+  spectrum : AdS3MixedFluxPulsatingSpectrumData
+  massShift : AdS3MixedFluxMassShiftFromFourPointCftData
+
+/-- Consistency package linking QFT-lane semiclassical circular-pulsating and
+RR mass-shift descriptions:
+`Delta(mu)` is identified across both packages, the `mu=0` baseline is matched
+to the semiclassical NSNS term, and the induced `delta m^2` is written in terms
+of `Delta(mu)-Delta(0)`. -/
+def AdS3MixedFluxPulsatingMassShiftConsistencyCftPackage
+    (data : AdS3MixedFluxPulsatingMassShiftConsistencyCftData) : Prop :=
+  AdS3MixedFluxPulsatingSpectrumPackage data.spectrum /\
+  AdS3MixedFluxMassShiftFromFourPointCftPackage data.massShift /\
+  data.spectrum.mu = data.massShift.mu /\
+  data.spectrum.delta = data.massShift.scalingDimensionMu /\
+  data.massShift.scalingDimensionZero =
+    -2 * data.spectrum.excitationNumber +
+      2 * Real.sqrt (data.spectrum.excitationNumber * data.spectrum.levelK) /\
+  data.massShift.massSquaredShift =
+    -(2 / data.massShift.alphaPrime) *
+      (data.spectrum.delta - data.massShift.scalingDimensionZero)
+
+/-- Construct QFT-lane pulsating/mass-shift consistency from the two base
+packages plus identification hypotheses. -/
+theorem ads3_mixed_flux_pulsating_mass_shift_consistency_from_packages_cft
+    (data : AdS3MixedFluxPulsatingMassShiftConsistencyCftData)
+    (h_spectrum : AdS3MixedFluxPulsatingSpectrumPackage data.spectrum)
+    (h_massShift : AdS3MixedFluxMassShiftFromFourPointCftPackage data.massShift)
+    (h_mu : data.spectrum.mu = data.massShift.mu)
+    (h_delta : data.spectrum.delta = data.massShift.scalingDimensionMu)
+    (h_delta_zero :
+      data.massShift.scalingDimensionZero =
+        -2 * data.spectrum.excitationNumber +
+          2 * Real.sqrt (data.spectrum.excitationNumber * data.spectrum.levelK)) :
+    AdS3MixedFluxPulsatingMassShiftConsistencyCftPackage data := by
+  have h_mass_pkg : AdS3MixedFluxMassShiftFromFourPointCftPackage data.massShift := h_massShift
+  rcases h_massShift with ⟨_, h_alpha_pos, _, _, h_dim_relation, _⟩
+  have h_dim_delta :
+      data.spectrum.delta =
+        data.massShift.scalingDimensionZero -
+          (data.massShift.alphaPrime / 2) * data.massShift.massSquaredShift := by
+    simpa [h_delta] using h_dim_relation
+  have h_mul :
+      (data.massShift.alphaPrime / 2) * data.massShift.massSquaredShift =
+        data.massShift.scalingDimensionZero - data.spectrum.delta := by
+    linarith [h_dim_delta]
+  have h_mul2 :
+      data.massShift.alphaPrime * data.massShift.massSquaredShift =
+        2 * (data.massShift.scalingDimensionZero - data.spectrum.delta) := by
+    nlinarith [h_mul]
+  have h_alpha_ne : data.massShift.alphaPrime ≠ 0 := ne_of_gt h_alpha_pos
+  have h_mass_formula_pos :
+      data.massShift.massSquaredShift =
+        (2 / data.massShift.alphaPrime) *
+          (data.massShift.scalingDimensionZero - data.spectrum.delta) := by
+    field_simp [h_alpha_ne]
+    simpa [mul_comm] using h_mul2
+  have h_mass_formula :
+      data.massShift.massSquaredShift =
+        -(2 / data.massShift.alphaPrime) *
+          (data.spectrum.delta - data.massShift.scalingDimensionZero) := by
+    calc
+      data.massShift.massSquaredShift =
+          (2 / data.massShift.alphaPrime) *
+            (data.massShift.scalingDimensionZero - data.spectrum.delta) := h_mass_formula_pos
+      _ = -(2 / data.massShift.alphaPrime) *
+            (data.spectrum.delta - data.massShift.scalingDimensionZero) := by ring
+  exact ⟨h_spectrum, h_mass_pkg, h_mu, h_delta, h_delta_zero, h_mass_formula⟩
+
 /-- Finite-`k` WZW four-point-reduction data in the mixed-flux AdS3 QFT lane. -/
 structure AdS3MixedFluxFiniteKWzwFourPointReductionCftData where
   levelK : ℝ
