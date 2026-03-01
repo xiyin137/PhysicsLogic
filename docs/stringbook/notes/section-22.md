@@ -55,10 +55,13 @@
 - `AdS3NsnsWorldsheetMatterScftPackage` (QFT lane)
 - `AdS3NsnsAffineLevelShiftPackage` (QFT lane)
 - `AdS3NsnsSpinFieldGsoConstraintPackage` (QFT lane)
+- `AdS3NsnsSl2SpectralFlowAutomorphism` (QFT lane)
+- `AdS3NsnsSuperstringMassShellBpsPackage` (QFT lane)
 - `AdS3BosonicWzwBridgePackage`
 - `AdS3SpectralMassShellBridgePackage`
 - `AdS3NsnsWorldsheetBridgePackage`
 - `AdS3NsnsGsoBridgePackage`
+- `AdS3NsnsMassShellBridgePackage`
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `stringAdS3D1D5InstantonChargeMap`.
@@ -86,6 +89,8 @@
 - Candidate new `AssumptionId`: `cft2dAds3NsnsWorldsheetMatterScft`.
 - Candidate new `AssumptionId`: `cft2dAds3NsnsAffineLevelShift`.
 - Candidate new `AssumptionId`: `cft2dAds3NsnsSpinFieldGsoConstraints`.
+- Candidate new `AssumptionId`: `cft2dAds3NsnsSl2SpectralFlowAutomorphism`.
+- Candidate new `AssumptionId`: `cft2dAds3NsnsSuperstringMassShellBps`.
 
 ## Subsections
 - [x] 22.1 The D1-D5 system and its low energy effective theory (p.507)

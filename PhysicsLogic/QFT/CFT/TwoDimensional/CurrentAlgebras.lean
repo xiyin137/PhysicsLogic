@@ -247,4 +247,105 @@ theorem ads3_nsns_spin_field_gso_constraint_package
     AdS3NsnsSpinFieldGsoConstraintPackage data := by
   exact h_phys
 
+/-- Spectral-flow data for the supersymmetric `hatSL(2)_k` algebra in the `(NS,NS)` sector. -/
+structure AdS3NsnsSl2SpectralFlowData where
+  levelK : ℝ
+  flowW : ℤ
+  psiPlusMode : ℚ → ℂ
+  psiMinusMode : ℚ → ℂ
+  psiThreeMode : ℚ → ℂ
+  currentPlusMode : ℤ → ℂ
+  currentMinusMode : ℤ → ℂ
+  currentThreeMode : ℤ → ℝ
+  virasoroMode : ℤ → ℝ
+  supercurrentMode : ℚ → ℂ
+  flowedPsiPlusMode : ℚ → ℂ
+  flowedPsiMinusMode : ℚ → ℂ
+  flowedPsiThreeMode : ℚ → ℂ
+  flowedCurrentPlusMode : ℤ → ℂ
+  flowedCurrentMinusMode : ℤ → ℂ
+  flowedCurrentThreeMode : ℤ → ℝ
+  flowedVirasoroMode : ℤ → ℝ
+  flowedSupercurrentMode : ℚ → ℂ
+
+/-- `(NS,NS)` supersymmetric `hatSL(2)_k` spectral-flow package:
+`psi'^±_r = psi^±_(r ± w)`, `psi'^3_r = psi^3_r`,
+`J'^±_n = J^±_(n ± w)`, `J'^3_n = J^3_n - (k/2)w delta_{n,0}`,
+`L'_n = L_n + w J_n^3 - (k/4)w^2 delta_{n,0}`,
+`G'_r = G_r + w psi_r^3`. -/
+def AdS3NsnsSl2SpectralFlowAutomorphism
+    (data : AdS3NsnsSl2SpectralFlowData) : Prop :=
+  data.levelK > 0 /\
+  (forall r : ℚ,
+    data.flowedPsiPlusMode r = data.psiPlusMode (r + (data.flowW : ℚ))) /\
+  (forall r : ℚ,
+    data.flowedPsiMinusMode r = data.psiMinusMode (r - (data.flowW : ℚ))) /\
+  (forall r : ℚ, data.flowedPsiThreeMode r = data.psiThreeMode r) /\
+  (forall n : ℤ,
+    data.flowedCurrentPlusMode n = data.currentPlusMode (n + data.flowW)) /\
+  (forall n : ℤ,
+    data.flowedCurrentMinusMode n = data.currentMinusMode (n - data.flowW)) /\
+  (forall n : ℤ,
+    data.flowedCurrentThreeMode n =
+      data.currentThreeMode n -
+        (data.levelK / 2) * (data.flowW : ℝ) * kroneckerDeltaInt n 0) /\
+  (forall n : ℤ,
+    data.flowedVirasoroMode n =
+      data.virasoroMode n + (data.flowW : ℝ) * data.currentThreeMode n -
+        (data.levelK / 4) * (data.flowW : ℝ) ^ (2 : Nat) * kroneckerDeltaInt n 0) /\
+  (forall r : ℚ,
+    data.flowedSupercurrentMode r =
+      data.supercurrentMode r + ((data.flowW : ℂ) * data.psiThreeMode r))
+
+/-- Assumed `(NS,NS)` supersymmetric `hatSL(2)_k` spectral-flow package in the 2D CFT lane. -/
+theorem ads3_nsns_sl2_spectral_flow_automorphism
+    (data : AdS3NsnsSl2SpectralFlowData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dAds3NsnsSl2SpectralFlowAutomorphism
+      (AdS3NsnsSl2SpectralFlowAutomorphism data)) :
+    AdS3NsnsSl2SpectralFlowAutomorphism data := by
+  exact h_phys
+
+/-- `(NS,NS)` superstring mass-shell/BPS data in the AdS3/S3/M4 worldsheet SCFT. -/
+structure AdS3NsnsSuperstringMassShellData where
+  levelK : ℝ
+  spinJ : ℝ
+  mQuantum : ℝ
+  flowW : ℤ
+  adsDescendantLevel : ℝ
+  suDescendantLevel : ℝ
+  internalWeight : ℝ
+  suSpin : ℝ
+  j0Three : ℝ
+  flowedLZero : ℝ
+
+/-- `(NS,NS)` superstring mass-shell package:
+`L0^flow = -j(j-1)/k - w m - k w^2/4 + N`,
+`L0^flow + N_su + h_int = 1/2`,
+`J_0^3 = m + k w/2`,
+and BPS lower bound `J_0^3 >= j' + h_int`. -/
+def AdS3NsnsSuperstringMassShellBpsPackage
+    (data : AdS3NsnsSuperstringMassShellData) : Prop :=
+  data.levelK > 0 /\
+  data.adsDescendantLevel >= 0 /\
+  data.suDescendantLevel >= 0 /\
+  data.internalWeight >= 0 /\
+  data.j0Three = data.mQuantum + (data.levelK / 2) * (data.flowW : ℝ) /\
+  data.flowedLZero =
+    -(data.spinJ * (data.spinJ - 1)) / data.levelK -
+      (data.flowW : ℝ) * data.mQuantum -
+      (data.levelK / 4) * (data.flowW : ℝ) ^ (2 : Nat) +
+      data.adsDescendantLevel /\
+  data.flowedLZero + data.suDescendantLevel + data.internalWeight = (1 / 2 : ℝ) /\
+  data.j0Three >= data.suSpin + data.internalWeight
+
+/-- Assumed `(NS,NS)` superstring mass-shell/BPS package in the 2D CFT lane. -/
+theorem ads3_nsns_superstring_mass_shell_bps_package
+    (data : AdS3NsnsSuperstringMassShellData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dAds3NsnsSuperstringMassShellBps
+      (AdS3NsnsSuperstringMassShellBpsPackage data)) :
+    AdS3NsnsSuperstringMassShellBpsPackage data := by
+  exact h_phys
+
 end PhysicsLogic.QFT.CFT.TwoDimensional

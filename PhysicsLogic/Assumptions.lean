@@ -181,6 +181,10 @@ def cft2dAds3Sl2MassShellEnergyRelation : String := "qft.cft.2d.ads3_sl2_mass_sh
 def cft2dAds3NsnsWorldsheetMatterScft : String := "qft.cft.2d.ads3_nsns_worldsheet_matter_scft"
 def cft2dAds3NsnsAffineLevelShift : String := "qft.cft.2d.ads3_nsns_affine_level_shift"
 def cft2dAds3NsnsSpinFieldGsoConstraints : String := "qft.cft.2d.ads3_nsns_spin_field_gso_constraints"
+def cft2dAds3NsnsSl2SpectralFlowAutomorphism : String :=
+  "qft.cft.2d.ads3_nsns_sl2_spectral_flow_automorphism"
+def cft2dAds3NsnsSuperstringMassShellBps : String :=
+  "qft.cft.2d.ads3_nsns_superstring_mass_shell_bps"
 def cft2dSuperspace11DerivativeAlgebra : String :=
   "qft.cft.2d.superspace_11_derivative_algebra"
 def cft2dN1SuperconformalAlgebra : String :=
@@ -1033,6 +1037,10 @@ def assumptionRegistry : List AssumptionEntry :=
       "The `(NS,NS)` AdS3/S3 affine-level-shift package (`sl` bosonic level `k+2`, `su` bosonic level `k-2`, and fermion-bilinear current shifts to superconformal descendants) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dAds3NsnsSpinFieldGsoConstraints,
       "The AdS3 `(NS,NS)` Ramond spin-field/GSO package (`epsilon_1 epsilon_2 epsilon_3 = 1`, `epsilon_4 epsilon_5 = 1`, sign quantization `epsilon_I in {+1,-1}`, and 16 BRST-invariant supersymmetry currents) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dAds3NsnsSl2SpectralFlowAutomorphism,
+      "The supersymmetric `(NS,NS)` `hatSL(2)_k` spectral-flow package for fermion/current/Virasoro/supercurrent modes (`psi'^±_r = psi^±_{r±w}`, `J'^±_n = J^±_{n±w}`, `J'^3_n` and `L'_n` shifts, and `G'_r = G_r + w psi^3_r`) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dAds3NsnsSuperstringMassShellBps,
+      "The `(NS,NS)` AdS3 superstring mass-shell/BPS package (`L0^flow = -j(j-1)/k - wm - kw^2/4 + N`, `L0^flow + N' + h_int = 1/2`, `J_0^3 = m + kw/2`, and `J_0^3 >= j' + h_int`) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dSuperspace11DerivativeAlgebra,
       "The (1,1) superspace derivative/supercharge algebra (including anticommutation relations and D^2 identities) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dN1SuperconformalAlgebra,
