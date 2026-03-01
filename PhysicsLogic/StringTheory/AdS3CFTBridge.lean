@@ -385,4 +385,72 @@ theorem ads3_nsns_mass_shell_bridge_package
   exact ⟨h_string_mass_pkg, h_qft_spectral_pkg, h_qft_mass_pkg, h_k_mass, h_k_spectral,
     h_w_mass, h_w_spectral, h_j, h_m, h_n, h_nsu, h_hint, h_jprime, h_j0⟩
 
+/-- Cross-lane data for AdS3 mixed-flux worldsheet deformation and pulsating spectrum. -/
+structure AdS3MixedFluxBridgeData where
+  stringFlux : AdS3MixedFluxData
+  stringPulsating : AdS3MixedFluxPulsatingData
+  qftFlux : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxWorldsheetData
+  qftPulsating : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingSpectrumData
+
+/-- Bridge package:
+string-side mixed-flux parameter/spectrum packages aligned with QFT-side
+worldsheet-deformation and pulsating-spectrum constraints. -/
+def AdS3MixedFluxBridgePackage
+    (data : AdS3MixedFluxBridgeData) : Prop :=
+  AdS3MixedFluxPackage data.stringFlux /\
+  AdS3MixedFluxPulsatingPackage data.stringPulsating /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxWorldsheetDeformationPackage data.qftFlux /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingSpectrumPackage data.qftPulsating /\
+  data.stringFlux.stringCoupling = data.qftFlux.stringCoupling /\
+  data.stringFlux.alphaPrime = data.qftFlux.alphaPrime /\
+  data.stringFlux.nsFluxK5 = data.qftFlux.nsFluxK5 /\
+  data.stringFlux.rrFluxQ5 = data.qftFlux.rrFluxQ5 /\
+  data.stringFlux.radius = data.qftFlux.radius /\
+  data.stringFlux.mu = data.qftFlux.mu /\
+  data.stringPulsating.n = data.qftPulsating.excitationNumber /\
+  data.stringPulsating.k = data.qftPulsating.levelK /\
+  data.stringPulsating.mu = data.qftPulsating.mu /\
+  data.stringPulsating.delta = data.qftPulsating.delta
+
+/-- Assumed bridge package for AdS3 mixed-flux worldsheet and pulsating-spectrum data. -/
+theorem ads3_mixed_flux_bridge_package
+    (data : AdS3MixedFluxBridgeData)
+    (h_string_flux : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxParameterization
+      (AdS3MixedFluxPackage data.stringFlux))
+    (h_string_pulsating : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxPulsatingShift
+      (AdS3MixedFluxPulsatingPackage data.stringPulsating))
+    (h_qft_flux : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxWorldsheetDeformation
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxWorldsheetDeformationPackage data.qftFlux))
+    (h_qft_pulsating : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxPulsatingSpectrumShift
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingSpectrumPackage data.qftPulsating))
+    (h_g : data.stringFlux.stringCoupling = data.qftFlux.stringCoupling)
+    (h_alpha : data.stringFlux.alphaPrime = data.qftFlux.alphaPrime)
+    (h_k5 : data.stringFlux.nsFluxK5 = data.qftFlux.nsFluxK5)
+    (h_q5 : data.stringFlux.rrFluxQ5 = data.qftFlux.rrFluxQ5)
+    (h_r : data.stringFlux.radius = data.qftFlux.radius)
+    (h_mu_flux : data.stringFlux.mu = data.qftFlux.mu)
+    (h_n : data.stringPulsating.n = data.qftPulsating.excitationNumber)
+    (h_k : data.stringPulsating.k = data.qftPulsating.levelK)
+    (h_mu_pulsating : data.stringPulsating.mu = data.qftPulsating.mu)
+    (h_delta : data.stringPulsating.delta = data.qftPulsating.delta) :
+    AdS3MixedFluxBridgePackage data := by
+  have h_string_flux_pkg : AdS3MixedFluxPackage data.stringFlux :=
+    ads3_mixed_flux_package data.stringFlux h_string_flux
+  have h_string_pulsating_pkg : AdS3MixedFluxPulsatingPackage data.stringPulsating :=
+    ads3_mixed_flux_pulsating_package data.stringPulsating h_string_pulsating
+  have h_qft_flux_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxWorldsheetDeformationPackage data.qftFlux :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_worldsheet_deformation_package
+      data.qftFlux h_qft_flux
+  have h_qft_pulsating_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingSpectrumPackage data.qftPulsating :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_pulsating_spectrum_package
+      data.qftPulsating h_qft_pulsating
+  exact ⟨h_string_flux_pkg, h_string_pulsating_pkg, h_qft_flux_pkg, h_qft_pulsating_pkg,
+    h_g, h_alpha, h_k5, h_q5, h_r, h_mu_flux, h_n, h_k, h_mu_pulsating, h_delta⟩
+
 end PhysicsLogic.StringTheory

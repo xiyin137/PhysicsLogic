@@ -185,6 +185,10 @@ def cft2dAds3NsnsSl2SpectralFlowAutomorphism : String :=
   "qft.cft.2d.ads3_nsns_sl2_spectral_flow_automorphism"
 def cft2dAds3NsnsSuperstringMassShellBps : String :=
   "qft.cft.2d.ads3_nsns_superstring_mass_shell_bps"
+def cft2dAds3MixedFluxWorldsheetDeformation : String :=
+  "qft.cft.2d.ads3_mixed_flux_worldsheet_deformation"
+def cft2dAds3MixedFluxPulsatingSpectrumShift : String :=
+  "qft.cft.2d.ads3_mixed_flux_pulsating_spectrum_shift"
 def cft2dSuperspace11DerivativeAlgebra : String :=
   "qft.cft.2d.superspace_11_derivative_algebra"
 def cft2dN1SuperconformalAlgebra : String :=
@@ -1041,6 +1045,10 @@ def assumptionRegistry : List AssumptionEntry :=
       "The supersymmetric `(NS,NS)` `hatSL(2)_k` spectral-flow package for fermion/current/Virasoro/supercurrent modes (`psi'^±_r = psi^±_{r±w}`, `J'^±_n = J^±_{n±w}`, `J'^3_n` and `L'_n` shifts, and `G'_r = G_r + w psi^3_r`) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dAds3NsnsSuperstringMassShellBps,
       "The `(NS,NS)` AdS3 superstring mass-shell/BPS package (`L0^flow = -j(j-1)/k - wm - kw^2/4 + N`, `L0^flow + N' + h_int = 1/2`, `J_0^3 = m + kw/2`, and `J_0^3 >= j' + h_int`) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dAds3MixedFluxWorldsheetDeformation,
+      "The mixed `(NS,NS)`/`(R,R)` AdS3 worldsheet-deformation package (`R^2 = alpha' sqrt(K5^2 + g_B^2 Q5^2)`, `mu = g_B Q5 / K5`, and nonzero-`mu` long-string discretization constraints) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dAds3MixedFluxPulsatingSpectrumShift,
+      "The mixed-flux AdS3 circular-pulsating spectrum shift package (`Delta = -2n + 2sqrt(nk) + mu^2 (...)` at leading nontrivial order) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dSuperspace11DerivativeAlgebra,
       "The (1,1) superspace derivative/supercharge algebra (including anticommutation relations and D^2 identities) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dN1SuperconformalAlgebra,

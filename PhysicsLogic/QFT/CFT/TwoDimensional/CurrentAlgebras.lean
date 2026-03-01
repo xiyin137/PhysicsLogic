@@ -1,6 +1,7 @@
 import PhysicsLogic.Assumptions
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.Basic
+import Mathlib.Data.Real.Sqrt
 
 namespace PhysicsLogic.QFT.CFT.TwoDimensional
 
@@ -346,6 +347,76 @@ theorem ads3_nsns_superstring_mass_shell_bps_package
       AssumptionId.cft2dAds3NsnsSuperstringMassShellBps
       (AdS3NsnsSuperstringMassShellBpsPackage data)) :
     AdS3NsnsSuperstringMassShellBpsPackage data := by
+  exact h_phys
+
+/-- Mixed `(NS,NS)`/`(R,R)` AdS3 worldsheet deformation data in the 2D-CFT lane. -/
+structure AdS3MixedFluxWorldsheetData where
+  stringCoupling : ℝ
+  alphaPrime : ℝ
+  nsFluxK5 : ℕ
+  rrFluxQ5 : ℕ
+  radius : ℝ
+  mu : ℝ
+  longStringContinuumPresent : Bool
+  shortLongDistinctionSharp : Bool
+
+/-- Mixed-flux worldsheet deformation package:
+`R^2 = alpha' sqrt(K5^2 + g_B^2 Q5^2)`, `mu = g_B Q5 / K5`,
+and qualitative long-string-spectrum transition away from `mu=0`. -/
+def AdS3MixedFluxWorldsheetDeformationPackage
+    (data : AdS3MixedFluxWorldsheetData) : Prop :=
+  data.stringCoupling > 0 /\
+  data.alphaPrime > 0 /\
+  data.nsFluxK5 > 0 /\
+  data.radius > 0 /\
+  data.radius ^ (2 : Nat) =
+    data.alphaPrime *
+      Real.sqrt
+        ((data.nsFluxK5 : ℝ) ^ (2 : Nat) +
+          (data.stringCoupling * (data.rrFluxQ5 : ℝ)) ^ (2 : Nat)) /\
+  data.mu = data.stringCoupling * (data.rrFluxQ5 : ℝ) / (data.nsFluxK5 : ℝ) /\
+  (data.mu = 0 -> data.longStringContinuumPresent = true) /\
+  (data.mu ≠ 0 -> data.longStringContinuumPresent = false) /\
+  (data.mu ≠ 0 -> data.shortLongDistinctionSharp = false)
+
+/-- Assumed mixed-flux worldsheet deformation package in the 2D CFT lane. -/
+theorem ads3_mixed_flux_worldsheet_deformation_package
+    (data : AdS3MixedFluxWorldsheetData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxWorldsheetDeformation
+      (AdS3MixedFluxWorldsheetDeformationPackage data)) :
+    AdS3MixedFluxWorldsheetDeformationPackage data := by
+  exact h_phys
+
+/-- Semiclassical circular-pulsating spectrum data in mixed-flux AdS3 backgrounds. -/
+structure AdS3MixedFluxPulsatingSpectrumData where
+  excitationNumber : ℝ
+  levelK : ℝ
+  mu : ℝ
+  delta : ℝ
+
+/-- Mixed-flux circular-pulsating spectrum package:
+`Delta = -2n + 2sqrt(nk) + mu^2 (...)` to leading nontrivial order. -/
+def AdS3MixedFluxPulsatingSpectrumPackage
+    (data : AdS3MixedFluxPulsatingSpectrumData) : Prop :=
+  data.excitationNumber > 0 /\
+  data.levelK > 0 /\
+  data.mu >= 0 /\
+  data.delta =
+    -2 * data.excitationNumber + 2 * Real.sqrt (data.excitationNumber * data.levelK) +
+      data.mu ^ (2 : Nat) *
+        (Real.sqrt (data.excitationNumber * data.levelK) / 2 +
+          (2 * data.excitationNumber * data.levelK -
+              3 * data.excitationNumber * Real.sqrt (data.excitationNumber * data.levelK)) /
+            (2 * (2 * Real.sqrt data.excitationNumber - Real.sqrt data.levelK) ^ (2 : Nat)))
+
+/-- Assumed mixed-flux circular-pulsating spectrum package in the 2D CFT lane. -/
+theorem ads3_mixed_flux_pulsating_spectrum_package
+    (data : AdS3MixedFluxPulsatingSpectrumData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxPulsatingSpectrumShift
+      (AdS3MixedFluxPulsatingSpectrumPackage data)) :
+    AdS3MixedFluxPulsatingSpectrumPackage data := by
   exact h_phys
 
 end PhysicsLogic.QFT.CFT.TwoDimensional
