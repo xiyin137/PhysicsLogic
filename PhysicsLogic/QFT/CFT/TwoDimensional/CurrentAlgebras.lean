@@ -398,6 +398,47 @@ theorem ads3_mixed_flux_worldsheet_deformation_package
     AdS3MixedFluxWorldsheetDeformationPackage data := by
   exact h_phys
 
+/-- Data for mixed-flux pulsating Bohr-Sommerfeld quantization in the QFT lane. -/
+structure AdS3MixedFluxPulsatingBohrSommerfeldCftData where
+  alphaPrime : ℝ
+  radiusSquared : ℝ
+  k5Flux : ℝ
+  excitationNumber : ℤ
+  maximalRadius : ℝ
+  bohrSommerfeldPeriod : ℝ
+  bohrSommerfeldPeriodRepresentsTwoPi : Bool
+  bohrSommerfeldIntegral : ℝ
+  turningPointEnergy : ℝ
+
+/-- Mixed-flux pulsating Bohr-Sommerfeld package in the QFT lane:
+`2 ∮_0^{r0} dr (R^2/alpha') (dot r/(1+r^2)) = period * n` with
+`period` marked as `2pi`, and turning-point energy relation
+`Delta = (R^2/alpha') r0 sqrt(1+r0^2) - K5 r0^2`. -/
+def AdS3MixedFluxPulsatingBohrSommerfeldCftPackage
+    (data : AdS3MixedFluxPulsatingBohrSommerfeldCftData) : Prop :=
+  data.alphaPrime > 0 /\
+  data.radiusSquared > 0 /\
+  data.k5Flux > 0 /\
+  data.maximalRadius >= 0 /\
+  (data.excitationNumber : ℝ) >= 0 /\
+  data.bohrSommerfeldPeriod > 0 /\
+  data.bohrSommerfeldPeriodRepresentsTwoPi = true /\
+  data.bohrSommerfeldIntegral =
+    data.bohrSommerfeldPeriod * (data.excitationNumber : ℝ) /\
+  data.turningPointEnergy =
+    (data.radiusSquared / data.alphaPrime) * data.maximalRadius *
+      Real.sqrt (1 + data.maximalRadius ^ (2 : Nat)) -
+      data.k5Flux * data.maximalRadius ^ (2 : Nat)
+
+/-- Assumed mixed-flux pulsating Bohr-Sommerfeld package in the 2D CFT lane. -/
+theorem ads3_mixed_flux_pulsating_bohr_sommerfeld_cft_package
+    (data : AdS3MixedFluxPulsatingBohrSommerfeldCftData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxPulsatingBohrSommerfeld
+      (AdS3MixedFluxPulsatingBohrSommerfeldCftPackage data)) :
+    AdS3MixedFluxPulsatingBohrSommerfeldCftPackage data := by
+  exact h_phys
+
 /-- Semiclassical circular-pulsating spectrum data in mixed-flux AdS3 backgrounds. -/
 structure AdS3MixedFluxPulsatingSpectrumData where
   excitationNumber : ℝ

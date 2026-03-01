@@ -43,6 +43,7 @@
 - `AdS3NSNSSuperstringMassShellPackage`
 - `AdS3MixedFluxPackage`
 - `AdS3MixedFluxLongStringTransitionPackage`
+- `AdS3MixedFluxPulsatingBohrSommerfeldPackage`
 - `AdS3MixedFluxPulsatingPackage`
 - `AdS3MixedFluxPulsatingThresholdPackage`
 - `AdS3MixedFluxSftRrDeformationPackage`
@@ -66,6 +67,7 @@
 - `AdS3NsnsSl2SpectralFlowAutomorphism` (QFT lane)
 - `AdS3NsnsSuperstringMassShellBpsPackage` (QFT lane)
 - `AdS3MixedFluxWorldsheetDeformationPackage` (QFT lane)
+- `AdS3MixedFluxPulsatingBohrSommerfeldCftPackage` (QFT lane)
 - `AdS3MixedFluxPulsatingSpectrumPackage` (QFT lane)
 - `AdS3MixedFluxPulsatingThresholdCftPackage` (QFT lane)
 - `AdS3MixedFluxSftRrDeformationCftPackage` (QFT lane)
@@ -79,6 +81,7 @@
 - `AdS3NsnsGsoBridgePackage`
 - `AdS3NsnsMassShellBridgePackage`
 - `AdS3MixedFluxBridgePackage`
+- `AdS3MixedFluxPulsatingBohrSommerfeldBridgePackage`
 - `AdS3MixedFluxPulsatingThresholdBridgePackage`
 - `AdS3MixedFluxLongStringTransitionBridgePackage`
 - `AdS3MixedFluxSftMassShiftBridgePackage`
@@ -102,6 +105,7 @@
 - Candidate new `AssumptionId`: `stringAdS3NsnsSuperstringMassShell`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxParameterization`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxLongStringSpectrumTransition`.
+- Candidate new `AssumptionId`: `stringAdS3MixedFluxPulsatingBohrSommerfeld`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxPulsatingShift`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxPulsatingThresholdPole`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxSftRrDeformation`.
@@ -122,6 +126,7 @@
 - Candidate new `AssumptionId`: `cft2dAds3NsnsSl2SpectralFlowAutomorphism`.
 - Candidate new `AssumptionId`: `cft2dAds3NsnsSuperstringMassShellBps`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxWorldsheetDeformation`.
+- Candidate new `AssumptionId`: `cft2dAds3MixedFluxPulsatingBohrSommerfeld`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxPulsatingSpectrumShift`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxPulsatingThresholdPole`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxSftRrDeformation`.

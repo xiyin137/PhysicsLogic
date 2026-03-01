@@ -453,6 +453,62 @@ theorem ads3_mixed_flux_bridge_package
   exact ⟨h_string_flux_pkg, h_string_pulsating_pkg, h_qft_flux_pkg, h_qft_pulsating_pkg,
     h_g, h_alpha, h_k5, h_q5, h_r, h_mu_flux, h_n, h_k, h_mu_pulsating, h_delta⟩
 
+/-- Cross-lane data for mixed-flux pulsating Bohr-Sommerfeld quantization. -/
+structure AdS3MixedFluxPulsatingBohrSommerfeldBridgeData where
+  stringBohr : AdS3MixedFluxPulsatingBohrSommerfeldData
+  qftBohr : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingBohrSommerfeldCftData
+
+/-- Bridge package:
+string-side and QFT-side mixed-flux pulsating Bohr-Sommerfeld data aligned
+field-by-field. -/
+def AdS3MixedFluxPulsatingBohrSommerfeldBridgePackage
+    (data : AdS3MixedFluxPulsatingBohrSommerfeldBridgeData) : Prop :=
+  AdS3MixedFluxPulsatingBohrSommerfeldPackage data.stringBohr /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingBohrSommerfeldCftPackage
+    data.qftBohr /\
+  data.stringBohr.alphaPrime = data.qftBohr.alphaPrime /\
+  data.stringBohr.radiusSquared = data.qftBohr.radiusSquared /\
+  data.stringBohr.k5Flux = data.qftBohr.k5Flux /\
+  data.stringBohr.excitationNumber = data.qftBohr.excitationNumber /\
+  data.stringBohr.maximalRadius = data.qftBohr.maximalRadius /\
+  data.stringBohr.bohrSommerfeldPeriod = data.qftBohr.bohrSommerfeldPeriod /\
+  data.stringBohr.bohrSommerfeldPeriodRepresentsTwoPi =
+    data.qftBohr.bohrSommerfeldPeriodRepresentsTwoPi /\
+  data.stringBohr.bohrSommerfeldIntegral = data.qftBohr.bohrSommerfeldIntegral /\
+  data.stringBohr.turningPointEnergy = data.qftBohr.turningPointEnergy
+
+/-- Assumed bridge package for mixed-flux pulsating Bohr-Sommerfeld data. -/
+theorem ads3_mixed_flux_pulsating_bohr_sommerfeld_bridge_package
+    (data : AdS3MixedFluxPulsatingBohrSommerfeldBridgeData)
+    (h_string : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxPulsatingBohrSommerfeld
+      (AdS3MixedFluxPulsatingBohrSommerfeldPackage data.stringBohr))
+    (h_qft : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxPulsatingBohrSommerfeld
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingBohrSommerfeldCftPackage
+        data.qftBohr))
+    (h_alpha : data.stringBohr.alphaPrime = data.qftBohr.alphaPrime)
+    (h_r2 : data.stringBohr.radiusSquared = data.qftBohr.radiusSquared)
+    (h_k5 : data.stringBohr.k5Flux = data.qftBohr.k5Flux)
+    (h_n : data.stringBohr.excitationNumber = data.qftBohr.excitationNumber)
+    (h_r0 : data.stringBohr.maximalRadius = data.qftBohr.maximalRadius)
+    (h_period : data.stringBohr.bohrSommerfeldPeriod = data.qftBohr.bohrSommerfeldPeriod)
+    (h_period_two_pi :
+      data.stringBohr.bohrSommerfeldPeriodRepresentsTwoPi =
+        data.qftBohr.bohrSommerfeldPeriodRepresentsTwoPi)
+    (h_integral : data.stringBohr.bohrSommerfeldIntegral = data.qftBohr.bohrSommerfeldIntegral)
+    (h_delta : data.stringBohr.turningPointEnergy = data.qftBohr.turningPointEnergy) :
+    AdS3MixedFluxPulsatingBohrSommerfeldBridgePackage data := by
+  have h_string_pkg : AdS3MixedFluxPulsatingBohrSommerfeldPackage data.stringBohr :=
+    ads3_mixed_flux_pulsating_bohr_sommerfeld_package data.stringBohr h_string
+  have h_qft_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingBohrSommerfeldCftPackage
+        data.qftBohr :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_pulsating_bohr_sommerfeld_cft_package
+      data.qftBohr h_qft
+  exact ⟨h_string_pkg, h_qft_pkg, h_alpha, h_r2, h_k5, h_n, h_r0, h_period, h_period_two_pi,
+    h_integral, h_delta⟩
+
 /-- Cross-lane data for the mixed-flux pulsating-threshold relation. -/
 structure AdS3MixedFluxPulsatingThresholdBridgeData where
   stringThreshold : AdS3MixedFluxPulsatingThresholdData
