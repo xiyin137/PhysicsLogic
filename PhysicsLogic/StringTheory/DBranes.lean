@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import PhysicsLogic.StringTheory.EffectiveString
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.Basic
@@ -20,9 +21,9 @@ structure BosonicDbraneBoundaryData where
 
 /-- Bosonic D-brane boundary package:
 conformal/BRST-preserving boundary conditions with ND split and doubling-trick
-realization in critical 26D bosonic string theory. -/
+realization in a bosonic Weyl-anomaly-canceling background. -/
 def BosonicDbraneBoundaryPackage (data : BosonicDbraneBoundaryData) : Prop :=
-  data.spacetimeDimension = 26 /\
+  BosonicWeylAnomalyCancellation data.spacetimeDimension /\
   data.braneSpatialDimension < data.spacetimeDimension /\
   data.conformalStressTensorBoundaryCondition = true /\
   data.ghostBoundaryConditionsPreserveBrst = true /\

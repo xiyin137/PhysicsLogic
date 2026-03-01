@@ -1525,7 +1525,7 @@ def assumptionRegistry : List AssumptionEntry :=
   , ⟨AssumptionId.stringHeteroticShiftedVacuumSupersymmetryRestoration,
       "The shifted heterotic vacuum package (charged-scalar VEV cancels FI `D`-term and restores spacetime supersymmetry when both charge signs are present) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringDbraneBosonicBoundaryConditions,
-      "The bosonic D-brane boundary-condition package (conformal/BRST-preserving boundary constraints with Neumann-Dirichlet split and doubling-trick realization in 26D) is assumed in this abstraction layer."⟩
+      "The bosonic D-brane boundary-condition package (conformal/BRST-preserving boundary constraints with Neumann-Dirichlet split and doubling-trick realization in a bosonic Weyl-anomaly-canceling background) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringDbraneBosonicBoundaryStateNormalization,
       "The bosonic D-brane boundary-state package (oscillator/ghost gluing plus boundary-state normalization fixed by cylinder open/closed duality) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringDbraneOpenBosonicSpectrum,
