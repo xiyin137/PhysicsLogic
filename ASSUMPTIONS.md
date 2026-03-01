@@ -1,7 +1,7 @@
 # Physics Assumptions Report
 
-- Registered assumptions: `231`
-- Assumptions referenced in non-Papers modules: `231`
+- Registered assumptions: `233`
+- Assumptions referenced in non-Papers modules: `233`
 - Assumptions with zero references outside registry: `0`
 
 | AssumptionId | Payload | Core refs | Papers refs | Total refs | Description |
@@ -23,6 +23,7 @@
 | `bvDifferentialNilpotent` | `qft.bv.differential_nilpotent` | 2 | 0 | 2 | Nilpotency of the BV differential under the classical master equation is assumed in this abstraction layer. |
 | `bvGaugeIndependence` | `qft.bv.gauge_independence` | 1 | 0 | 1 | Gauge-fixing independence in BV via BV-exact variation is assumed in this abstraction layer. |
 | `cft2dAds3BosonicWzwLevelRadius` | `qft.cft.2d.ads3_bosonic_wzw_level_radius` | 2 | 0 | 2 | The bosonic AdS3 `SL(2,R)` WZW level/radius package (`k = R^2/alpha'`, with positive radius and slope) is assumed in this abstraction layer. |
+| `cft2dAds3MixedFluxFiniteKWzwFourPointReduction` | `qft.cft.2d.ads3_mixed_flux_finite_k_wzw_four_point_reduction` | 2 | 0 | 2 | The mixed-flux AdS3 finite-`k` WZW reduction package (RHS of the RR-deformation mass-shift equation reduced to bosonic `SL(2)_{k+2}` and `SU(2)_{k-2}` four-point functions with a pair of fundamental and a pair of generic primaries, and large-`k` agreement with semiclassical pulsating-string shifts) is assumed in this abstraction layer. |
 | `cft2dAds3MixedFluxMassShiftFromFourPoint` | `qft.cft.2d.ads3_mixed_flux_mass_shift_from_four_point` | 2 | 0 | 2 | The mixed-flux AdS3 RR-deformation mass-shift package (`Delta(mu)=Delta(0)-(alpha'/2)delta m^2`, `delta m^2\|_{mu^2}=mu^2 A_(0,4)/alpha'`, and no-zero-weight intermediate bracket conditions) is assumed in this abstraction layer. |
 | `cft2dAds3MixedFluxSftRrDeformation` | `qft.cft.2d.ads3_mixed_flux_sft_rr_deformation` | 2 | 0 | 2 | The mixed-flux AdS3 RR-deformation worldsheet-SFT package (`Q_B W^(2)=-(1/2)P^+[W^(1)⊗W^(1)]`, finite-`k` projected-bracket vanishing, and order-`mu^2` Siegel-resolvent correction) is assumed in this abstraction layer. |
 | `cft2dAds3NsnsAffineLevelShift` | `qft.cft.2d.ads3_nsns_affine_level_shift` | 2 | 0 | 2 | The `(NS,NS)` AdS3/S3 affine-level-shift package (`sl` bosonic level `k+2`, `su` bosonic level `k-2`, and fermion-bilinear current shifts to superconformal descendants) is assumed in this abstraction layer. |
@@ -94,6 +95,7 @@
 | `reissnerNordstromMetricWellFormed` | `gr.reissner_nordstrom_metric_well_formed` | 2 | 0 | 2 | Reissner-Nordstrom metric data is treated as a valid Lorentzian metric package in this abstraction layer. |
 | `schwarzschildMetricWellFormed` | `gr.schwarzschild_metric_well_formed` | 5 | 0 | 5 | Schwarzschild metric data is treated as a valid Lorentzian metric package in this abstraction layer. |
 | `spatialRotationPreservesMetric` | `spacetime.spatial_rotation_preserves_metric` | 1 | 0 | 1 | The explicit spatial z-rotation matrix preserves the Minkowski inner product. |
+| `stringAdS3MixedFluxFiniteKWzwFourPointReduction` | `string.ads3.mixed_flux_finite_k_wzw_four_point_reduction` | 2 | 0 | 2 | The mixed-flux AdS3 finite-`k` WZW reduction package (RR-deformation mass-shift equation reduced to bosonic `SL(2)_{k+2}` and `SU(2)_{k-2}` four-point functions with a pair of fundamental and a pair of generic primaries, and large-`k` agreement with semiclassical pulsating-string shifts) is assumed in this abstraction layer. |
 | `stringAdS3MixedFluxMassShiftFromFourPoint` | `string.ads3.mixed_flux_mass_shift_from_four_point` | 2 | 0 | 2 | The mixed-flux AdS3 RR-deformation spectrum-shift package from four-string amplitudes (`Delta(mu)=Delta(0)-(alpha'/2)delta m^2`, `delta m^2\|_{mu^2}=mu^2 A_(0,4)/alpha'`, and no-zero-weight intermediate bracket conditions) is assumed in this abstraction layer. |
 | `stringAdS3MixedFluxSftRrDeformation` | `string.ads3.mixed_flux_sft_rr_deformation` | 2 | 0 | 2 | The mixed-flux AdS3 RR-deformation closed-superstring-field-theory package (`Q_B W^(2)=-(1/2)P^+[W^(1)⊗W^(1)]`, finite-`k` projected-bracket vanishing, and order-`mu^2` Siegel-resolvent correction) is assumed in this abstraction layer. |
 | `stringAdSCftD3DecouplingLimit` | `string.adscft.d3_decoupling_limit` | 1 | 0 | 1 | The D3-brane low-energy decoupling-limit inequalities on string-scale and coupling-scale energies are assumed in this abstraction layer. |

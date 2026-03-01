@@ -522,4 +522,46 @@ theorem ads3_mixed_flux_mass_shift_from_four_point_package
     AdS3MixedFluxMassShiftFromFourPointPackage data := by
   exact h_phys
 
+/-- Finite-`k` WZW four-point-reduction data for mixed-flux AdS3 RR-deformation shifts. -/
+structure AdS3MixedFluxFiniteKWzwFourPointReductionData where
+  levelK : ℝ
+  mu : ℝ
+  slBosonicLevel : ℝ
+  suBosonicLevel : ℝ
+  usesSlFundamentalPair : Bool
+  usesSuFundamentalPair : Bool
+  usesSlGenericPair : Bool
+  usesSuGenericPair : Bool
+  reductionToSlFourPointFunctions : Bool
+  reductionToSuFourPointFunctions : Bool
+  largeKFiniteNOverKAgreementWithSemiclassical : Bool
+
+/-- Finite-`k` mixed-flux WZW reduction package:
+the RR-deformation mass-shift equation reduces to bosonic
+`SL(2)_{k+2}`/`SU(2)_{k-2}` four-point functions involving a pair of
+fundamental primaries and a pair of generic primaries, with large-`k`
+(`n/k` fixed) agreement with semiclassical pulsating-string shifts. -/
+def AdS3MixedFluxFiniteKWzwFourPointReductionPackage
+    (data : AdS3MixedFluxFiniteKWzwFourPointReductionData) : Prop :=
+  data.levelK > 2 ∧
+  data.mu >= 0 ∧
+  data.slBosonicLevel = data.levelK + 2 ∧
+  data.suBosonicLevel = data.levelK - 2 ∧
+  data.usesSlFundamentalPair = true ∧
+  data.usesSuFundamentalPair = true ∧
+  data.usesSlGenericPair = true ∧
+  data.usesSuGenericPair = true ∧
+  data.reductionToSlFourPointFunctions = true ∧
+  data.reductionToSuFourPointFunctions = true ∧
+  data.largeKFiniteNOverKAgreementWithSemiclassical = true
+
+/-- Assumed finite-`k` WZW four-point-reduction package for mixed-flux AdS3. -/
+theorem ads3_mixed_flux_finite_k_wzw_four_point_reduction_package
+    (data : AdS3MixedFluxFiniteKWzwFourPointReductionData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxFiniteKWzwFourPointReduction
+      (AdS3MixedFluxFiniteKWzwFourPointReductionPackage data)) :
+    AdS3MixedFluxFiniteKWzwFourPointReductionPackage data := by
+  exact h_phys
+
 end PhysicsLogic.StringTheory

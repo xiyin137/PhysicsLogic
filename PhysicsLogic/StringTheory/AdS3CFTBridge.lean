@@ -527,4 +527,52 @@ theorem ads3_mixed_flux_sft_mass_shift_bridge_package
   exact ⟨h_string_sft_pkg, h_string_mass_pkg, h_qft_sft_pkg, h_qft_mass_pkg,
     h_mu_sft, h_k_sft, h_coeff, h_mu_mass, h_alpha, h_delta_mu, h_delta_zero, h_dm2, h_a04⟩
 
+/-- Cross-lane data for finite-`k` WZW four-point reduction in mixed-flux AdS3. -/
+structure AdS3MixedFluxFiniteKWzwReductionBridgeData where
+  stringReduction : AdS3MixedFluxFiniteKWzwFourPointReductionData
+  qftReduction :
+    PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxFiniteKWzwFourPointReductionCftData
+
+/-- Bridge package:
+string-side finite-`k` mixed-flux WZW four-point reduction aligned with
+QFT-side finite-`k` reduction package. -/
+def AdS3MixedFluxFiniteKWzwReductionBridgePackage
+    (data : AdS3MixedFluxFiniteKWzwReductionBridgeData) : Prop :=
+  AdS3MixedFluxFiniteKWzwFourPointReductionPackage data.stringReduction /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxFiniteKWzwFourPointReductionCftPackage
+    data.qftReduction /\
+  data.stringReduction.levelK = data.qftReduction.levelK /\
+  data.stringReduction.mu = data.qftReduction.mu /\
+  data.stringReduction.slBosonicLevel = data.qftReduction.slBosonicLevel /\
+  data.stringReduction.suBosonicLevel = data.qftReduction.suBosonicLevel /\
+  data.stringReduction.largeKFiniteNOverKAgreementWithSemiclassical =
+    data.qftReduction.largeKFiniteNOverKAgreementWithSemiclassical
+
+/-- Assumed bridge package for finite-`k` WZW four-point reduction data. -/
+theorem ads3_mixed_flux_finite_k_wzw_reduction_bridge_package
+    (data : AdS3MixedFluxFiniteKWzwReductionBridgeData)
+    (h_string : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxFiniteKWzwFourPointReduction
+      (AdS3MixedFluxFiniteKWzwFourPointReductionPackage data.stringReduction))
+    (h_qft : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxFiniteKWzwFourPointReduction
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxFiniteKWzwFourPointReductionCftPackage
+        data.qftReduction))
+    (h_k : data.stringReduction.levelK = data.qftReduction.levelK)
+    (h_mu : data.stringReduction.mu = data.qftReduction.mu)
+    (h_sl : data.stringReduction.slBosonicLevel = data.qftReduction.slBosonicLevel)
+    (h_su : data.stringReduction.suBosonicLevel = data.qftReduction.suBosonicLevel)
+    (h_largek :
+      data.stringReduction.largeKFiniteNOverKAgreementWithSemiclassical =
+        data.qftReduction.largeKFiniteNOverKAgreementWithSemiclassical) :
+    AdS3MixedFluxFiniteKWzwReductionBridgePackage data := by
+  have h_string_pkg : AdS3MixedFluxFiniteKWzwFourPointReductionPackage data.stringReduction :=
+    ads3_mixed_flux_finite_k_wzw_four_point_reduction_package data.stringReduction h_string
+  have h_qft_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxFiniteKWzwFourPointReductionCftPackage
+        data.qftReduction :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_finite_k_wzw_four_point_reduction_cft_package
+      data.qftReduction h_qft
+  exact ⟨h_string_pkg, h_qft_pkg, h_k, h_mu, h_sl, h_su, h_largek⟩
+
 end PhysicsLogic.StringTheory

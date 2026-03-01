@@ -191,6 +191,7 @@ def cft2dAds3MixedFluxPulsatingSpectrumShift : String :=
   "qft.cft.2d.ads3_mixed_flux_pulsating_spectrum_shift"
 def cft2dAds3MixedFluxSftRrDeformation : String := "qft.cft.2d.ads3_mixed_flux_sft_rr_deformation"
 def cft2dAds3MixedFluxMassShiftFromFourPoint : String := "qft.cft.2d.ads3_mixed_flux_mass_shift_from_four_point"
+def cft2dAds3MixedFluxFiniteKWzwFourPointReduction : String := "qft.cft.2d.ads3_mixed_flux_finite_k_wzw_four_point_reduction"
 def cft2dSuperspace11DerivativeAlgebra : String :=
   "qft.cft.2d.superspace_11_derivative_algebra"
 def cft2dN1SuperconformalAlgebra : String :=
@@ -429,6 +430,7 @@ def stringAdS3MixedFluxPulsatingShift : String :=
   "string.ads3.mixed_flux_pulsating_shift"
 def stringAdS3MixedFluxSftRrDeformation : String := "string.ads3.mixed_flux_sft_rr_deformation"
 def stringAdS3MixedFluxMassShiftFromFourPoint : String := "string.ads3.mixed_flux_mass_shift_from_four_point"
+def stringAdS3MixedFluxFiniteKWzwFourPointReduction : String := "string.ads3.mixed_flux_finite_k_wzw_four_point_reduction"
 def stringAdS5IntegrabilityOneLoopSpinChain : String :=
   "string.ads5_integrability.one_loop_spin_chain"
 def stringAdS5IntegrabilitySingleMagnonDispersion : String :=
@@ -1057,6 +1059,8 @@ def assumptionRegistry : List AssumptionEntry :=
       "The mixed-flux AdS3 RR-deformation worldsheet-SFT package (`Q_B W^(2)=-(1/2)P^+[W^(1)⊗W^(1)]`, finite-`k` projected-bracket vanishing, and order-`mu^2` Siegel-resolvent correction) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dAds3MixedFluxMassShiftFromFourPoint,
       "The mixed-flux AdS3 RR-deformation mass-shift package (`Delta(mu)=Delta(0)-(alpha'/2)delta m^2`, `delta m^2|_{mu^2}=mu^2 A_(0,4)/alpha'`, and no-zero-weight intermediate bracket conditions) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dAds3MixedFluxFiniteKWzwFourPointReduction,
+      "The mixed-flux AdS3 finite-`k` WZW reduction package (RHS of the RR-deformation mass-shift equation reduced to bosonic `SL(2)_{k+2}` and `SU(2)_{k-2}` four-point functions with a pair of fundamental and a pair of generic primaries, and large-`k` agreement with semiclassical pulsating-string shifts) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dSuperspace11DerivativeAlgebra,
       "The (1,1) superspace derivative/supercharge algebra (including anticommutation relations and D^2 identities) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dN1SuperconformalAlgebra,
@@ -1339,6 +1343,8 @@ def assumptionRegistry : List AssumptionEntry :=
       "The mixed-flux AdS3 RR-deformation closed-superstring-field-theory package (`Q_B W^(2)=-(1/2)P^+[W^(1)⊗W^(1)]`, finite-`k` projected-bracket vanishing, and order-`mu^2` Siegel-resolvent correction) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringAdS3MixedFluxMassShiftFromFourPoint,
       "The mixed-flux AdS3 RR-deformation spectrum-shift package from four-string amplitudes (`Delta(mu)=Delta(0)-(alpha'/2)delta m^2`, `delta m^2|_{mu^2}=mu^2 A_(0,4)/alpha'`, and no-zero-weight intermediate bracket conditions) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringAdS3MixedFluxFiniteKWzwFourPointReduction,
+      "The mixed-flux AdS3 finite-`k` WZW reduction package (RR-deformation mass-shift equation reduced to bosonic `SL(2)_{k+2}` and `SU(2)_{k-2}` four-point functions with a pair of fundamental and a pair of generic primaries, and large-`k` agreement with semiclassical pulsating-string shifts) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringAdS5IntegrabilityOneLoopSpinChain,
       "The one-loop `SU(2)` planar `N=4` SYM spin-chain relation `H_1=(1/(8 pi^2)) sum_l (1-P_{l,l+1})` with anomalous-dimension map is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringAdS5IntegrabilitySingleMagnonDispersion,
