@@ -6,3 +6,7 @@ import PhysicsLogic.QFT.CFT.TwoDimensional.OPE
 import PhysicsLogic.QFT.CFT.TwoDimensional.ConformalBlocks
 import PhysicsLogic.QFT.CFT.TwoDimensional.ModularInvariance
 import PhysicsLogic.QFT.CFT.TwoDimensional.Examples
+import PhysicsLogic.QFT.CFT.TwoDimensional.DefectsOrbifolds
+import PhysicsLogic.QFT.CFT.TwoDimensional.SigmaModels
+import PhysicsLogic.QFT.CFT.TwoDimensional.Superconformal
+import PhysicsLogic.QFT.CFT.TwoDimensional.BoundaryCFT

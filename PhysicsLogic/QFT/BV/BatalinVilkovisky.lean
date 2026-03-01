@@ -432,6 +432,70 @@ theorem bv_gauge_independence (S : BVAction) (ab : Antibracket)
     (bvDifferential ab S F).functional := by
   exact h_phys
 
+/- ============= APPENDIX-C QUANTIZATION INTERFACES ============= -/
+
+/-- Minimal Faddeev-Popov gauge-slice package. -/
+structure FaddeevPopovGaugeSliceData (F : Type*) where
+  gaugeSlice : F → Prop
+  fpJacobian : F → ℝ
+
+/-- Regular gauge-slice condition: no FP-Jacobian degeneracy along the slice. -/
+def FaddeevPopovGaugeSliceRegular {F : Type*} (data : FaddeevPopovGaugeSliceData F) : Prop :=
+  ∀ φ : F, data.gaugeSlice φ → data.fpJacobian φ ≠ 0
+
+/-- Assumed regularity of the Faddeev-Popov gauge slice. -/
+theorem faddeev_popov_gauge_slice_regular {F : Type*}
+    (data : FaddeevPopovGaugeSliceData F)
+    (h_phys : PhysicsAssumption
+      AssumptionId.bvFaddeevPopovGaugeSliceRegular
+      (FaddeevPopovGaugeSliceRegular data)) :
+    FaddeevPopovGaugeSliceRegular data := by
+  exact h_phys
+
+/-- Closure hierarchy interface from BV master-equation expansion. -/
+def MasterEquationClosureHierarchy
+    (gaugeInvariance closureOnShell generalizedJacobiOnShell : Prop) : Prop :=
+  gaugeInvariance ∧ closureOnShell ∧ generalizedJacobiOnShell
+
+/-- Assumed closure hierarchy from BV-master-equation expansion. -/
+theorem bv_master_equation_closure_hierarchy
+    (gaugeInvariance closureOnShell generalizedJacobiOnShell : Prop)
+    (h_phys : PhysicsAssumption
+      AssumptionId.bvMasterEquationClosureHierarchy
+      (MasterEquationClosureHierarchy gaugeInvariance closureOnShell generalizedJacobiOnShell)) :
+    MasterEquationClosureHierarchy gaugeInvariance closureOnShell generalizedJacobiOnShell := by
+  exact h_phys
+
+/-- BRST recovery interface from BV gauge-fixing-fermion data. -/
+def BVGaugeFixingRecoversBRST
+    (fromBV fromBRST : ExtendedFieldSpace → ℝ) : Prop :=
+  ∀ s : ExtendedFieldSpace, fromBRST s = fromBV s
+
+/-- Assumed recovery of BRST gauge-fixed action from BV gauge-fixing data. -/
+theorem bv_gauge_fixing_fermion_recovers_brst
+    (fromBV fromBRST : ExtendedFieldSpace → ℝ)
+    (h_phys : PhysicsAssumption
+      AssumptionId.bvGaugeFixingFermionRecoversBrst
+      (BVGaugeFixingRecoversBRST fromBV fromBRST)) :
+    BVGaugeFixingRecoversBRST fromBV fromBRST := by
+  exact h_phys
+
+/-- Wilsonian coarse-graining preserves the chosen BV master-consistency predicate. -/
+def WilsonianMasterEquationPreserved
+    (masterConsistent : BVAction → Prop)
+    (Suv Sir : BVAction) : Prop :=
+  masterConsistent Suv → masterConsistent Sir
+
+/-- Assumed preservation of BV quantum-master equation under Wilsonian flow. -/
+theorem bv_wilsonian_master_equation_preserved
+    (masterConsistent : BVAction → Prop)
+    (Suv Sir : BVAction)
+    (h_phys : PhysicsAssumption
+      AssumptionId.bvWilsonianMasterEquationPreserved
+      (WilsonianMasterEquationPreserved masterConsistent Suv Sir)) :
+    WilsonianMasterEquationPreserved masterConsistent Suv Sir := by
+  exact h_phys
+
 /- ============= BV LAPLACIAN AND QUANTUM MASTER EQUATION ============= -/
 
 /-- BV Laplacian Δ

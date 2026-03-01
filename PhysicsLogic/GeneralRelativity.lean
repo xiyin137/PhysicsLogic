@@ -10,3 +10,4 @@ import PhysicsLogic.GeneralRelativity.BlackHoles
 import PhysicsLogic.GeneralRelativity.Singularities
 import PhysicsLogic.GeneralRelativity.GravitationalWaves
 import PhysicsLogic.GeneralRelativity.Cosmology
+import PhysicsLogic.GeneralRelativity.Supergravity

@@ -62,6 +62,7 @@ Core physics modules:
 - `PhysicsLogic/Quantum/`
 - `PhysicsLogic/QuantumInformation/`
 - `PhysicsLogic/QFT/`
+- `PhysicsLogic/StringTheory/`
 
 Paper-oriented modules:
 - `PhysicsLogic/Papers/` (Bell, AMPS, Phi4_2D, Coleman2D, VafaWitten, cTheorem, Kolmogorov, GlimmJaffe, Charge4eTSC)

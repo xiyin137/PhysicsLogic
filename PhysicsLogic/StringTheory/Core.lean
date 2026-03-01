@@ -1,0 +1,28 @@
+-- Core string-theory lane aggregator (physics-first organization)
+
+import PhysicsLogic.StringTheory.QuantumGravityInterface
+import PhysicsLogic.StringTheory.Worldsheet
+import PhysicsLogic.StringTheory.Quantization
+import PhysicsLogic.StringTheory.Backgrounds
+import PhysicsLogic.StringTheory.SuperstringGeneralBackgrounds
+import PhysicsLogic.StringTheory.PerturbativeScattering
+import PhysicsLogic.StringTheory.SuperstringPerturbation
+import PhysicsLogic.StringTheory.SuperstringExplicitComputations
+import PhysicsLogic.StringTheory.ClosedStringFieldTheory
+import PhysicsLogic.StringTheory.SuperstringFieldTheory
+import PhysicsLogic.StringTheory.HeteroticStringTheory
+import PhysicsLogic.StringTheory.DBranes
+import PhysicsLogic.StringTheory.DBraneDynamicsBosonic
+import PhysicsLogic.StringTheory.DBraneDynamicsTypeII
+import PhysicsLogic.StringTheory.OpenStringFieldTheory
+import PhysicsLogic.StringTheory.DInstantons
+import PhysicsLogic.StringTheory.Conventions
+import PhysicsLogic.StringTheory.Anomalies
+import PhysicsLogic.StringTheory.Holography
+import PhysicsLogic.StringTheory.AdSCFT
+import PhysicsLogic.StringTheory.MTheoryHolography
+import PhysicsLogic.StringTheory.AdS3CFT2
+import PhysicsLogic.StringTheory.AdS5Integrability
+import PhysicsLogic.StringTheory.AdS5MirrorTBAQSC
+import PhysicsLogic.StringTheory.WilsonLinesConfinement
+import PhysicsLogic.StringTheory.MatrixTheory

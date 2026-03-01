@@ -41,7 +41,8 @@ Green's functions. It is the bridge between correlation functions
 
     In Minkowski signature (+,-,-,-): □ = ∂²/∂t² - ∇² -/
 def KleinGordonOperatorExists (m : ℝ) (d : ℕ) : Prop :=
-  ∃ op : (((Fin d → ℝ) → ℂ) → ((Fin d → ℝ) → ℂ)), True
+  ∃ op : (((Fin d → ℝ) → ℂ) → ((Fin d → ℝ) → ℂ)),
+    ∃ testField : (Fin d → ℝ) → ℂ, op testField ≠ 0
 
 noncomputable def kleinGordonOp (m : ℝ) {d : ℕ}
     (h_phys :

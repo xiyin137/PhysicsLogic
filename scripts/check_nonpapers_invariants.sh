@@ -30,7 +30,7 @@ else
 fi
 
 echo "[check] no trivially satisfiable existentials in non-Papers modules"
-vacuous_exists_hits="$(rg -n "∃[[:space:]]*\\([^)]*\\),[[:space:]]*True\\b" PhysicsLogic --glob '*.lean' \
+vacuous_exists_hits="$(rg -n "∃[^\n]*,[[:space:]]*True\\b" PhysicsLogic --glob '*.lean' \
   | rg -v '^PhysicsLogic/Papers/' || true)"
 if [[ -n "$vacuous_exists_hits" ]]; then
   echo "$vacuous_exists_hits"

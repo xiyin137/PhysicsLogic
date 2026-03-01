@@ -20,32 +20,47 @@ set_option linter.unusedVariables false
 
 /- ============= PATH INTEGRAL ============= -/
 
-/-- Path integral data for a bosonic field theory.
-    Bundles the action functional and integration measure, defining the
-    path integral Z = ∫ Dφ e^{iS[φ]/ℏ} and all correlation functions.
-
-    The path integral is specified by:
-    1. An action functional S : F → ℝ
-    2. A functional measure μ : (F → ℂ) → ℂ
-    3. ℏ (Planck's constant, controlling quantum corrections)
-
-    From these, all physical quantities follow. -/
+/-- Path integral data for a bosonic field theory with real-valued action.
+    For the fully general complex-action interface, use `ComplexPathIntegralData`. -/
 structure PathIntegralData (F : Type*) where
   /-- Action functional S[φ] -/
   action : ActionFunctional F
   /-- Functional measure Dφ -/
   measure : FieldMeasure F
 
+/-- Path-integral data with fully general complex-valued action. -/
+structure ComplexPathIntegralData (F : Type*) where
+  /-- Complex action functional S[φ] ∈ ℂ -/
+  action : ComplexActionFunctional F
+  /-- Functional measure Dφ -/
+  measure : FieldMeasure F
+
+/-- Canonical inclusion of real-action path-integral data into complex-action data. -/
+def PathIntegralData.toComplex {F : Type*} (pid : PathIntegralData F) :
+    ComplexPathIntegralData F where
+  action := pid.action.toComplex
+  measure := pid.measure
+
 /-- The path integral Z = ∫ Dφ e^{iS[φ]/ℏ} (partition function).
     This is defined in terms of the measure's integration functional. -/
 noncomputable def pathIntegral {F : Type*} (pid : PathIntegralData F) (ℏ : ℝ) : ℂ :=
   pid.measure.integrate (fun φ => Complex.exp (Complex.I * ↑(pid.action.eval φ / ℏ)))
+
+/-- Complex-action path integral Z = ∫ Dφ exp(i S[φ] / ℏ). -/
+noncomputable def pathIntegralComplex {F : Type*} (pid : ComplexPathIntegralData F)
+    (ℏ : ℝ) : ℂ :=
+  pid.measure.integrate (fun φ => Complex.exp (Complex.I * (pid.action.eval φ / (ℏ : ℂ))))
 
 /-- Expectation value ⟨O⟩ = ∫ Dφ O(φ) e^{iS[φ]/ℏ} (unnormalized).
     To get the physical expectation value, divide by Z. -/
 noncomputable def expectationValue {F : Type*}
     (pid : PathIntegralData F) (O : F → ℂ) (ℏ : ℝ) : ℂ :=
   pid.measure.integrate (fun φ => O φ * Complex.exp (Complex.I * ↑(pid.action.eval φ / ℏ)))
+
+/-- Complex-action expectation value ⟨O⟩ = ∫ Dφ O(φ) exp(i S[φ]/ℏ) (unnormalized). -/
+noncomputable def expectationValueComplex {F : Type*}
+    (pid : ComplexPathIntegralData F) (O : F → ℂ) (ℏ : ℝ) : ℂ :=
+  pid.measure.integrate (fun φ => O φ * Complex.exp (Complex.I * (pid.action.eval φ / (ℏ : ℂ))))
 
 /-- Euclidean path integral Z_E = ∫ Dφ e^{-S_E[φ]}
     (better convergence due to damping instead of oscillation). -/

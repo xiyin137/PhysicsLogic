@@ -4,3 +4,5 @@ import PhysicsLogic.Symmetries.Poincare
 import PhysicsLogic.Symmetries.LieAlgebras
 import PhysicsLogic.Symmetries.Representations
 import PhysicsLogic.Symmetries.Discrete
+import PhysicsLogic.Symmetries.Spinors
+import PhysicsLogic.Symmetries.SuperPoincare

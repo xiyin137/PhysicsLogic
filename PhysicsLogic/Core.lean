@@ -9,3 +9,4 @@ import PhysicsLogic.GeneralRelativity
 import PhysicsLogic.Quantum
 import PhysicsLogic.QuantumInformation
 import PhysicsLogic.QuantumFieldTheory
+import PhysicsLogic.StringTheory

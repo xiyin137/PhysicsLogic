@@ -2,7 +2,7 @@
 -- Action functionals and path integral measures
 --
 -- The path integral Z = ∫ Dφ e^{iS[φ]/ℏ} has two ingredients:
--- 1. The action functional S[φ] : F → ℝ (specifies the theory)
+-- 1. The action functional S[φ] (in general ℂ-valued; often ℝ-valued in Euclidean setups)
 -- 2. The measure Dφ (formal integration over field space)
 --
 -- Together they define correlation functions ⟨O⟩ = (1/Z) ∫ Dφ O(φ) e^{iS[φ]/ℏ}
@@ -21,6 +21,19 @@ set_option linter.unusedVariables false
 structure ActionFunctional (F : Type*) where
   /-- Evaluation: S[φ] -/
   eval : F → ℝ
+
+/-- Complex-valued action functional.
+
+    This interface captures the fully general path-integral setting, where the
+    action may be complex (for instance in Lorentzian or complexified contours). -/
+structure ComplexActionFunctional (F : Type*) where
+  /-- Evaluation: S[φ] ∈ ℂ -/
+  eval : F → ℂ
+
+/-- Every real-valued action can be viewed canonically as a complex-valued action. -/
+def ActionFunctional.toComplex {F : Type*} (S : ActionFunctional F) :
+    ComplexActionFunctional F where
+  eval φ := (S.eval φ : ℂ)
 
 /-- An action functional is local if it can be written as the integral of a
     Lagrangian density: S[φ] = ∫ d^d x L(φ, ∂φ, ..., x).

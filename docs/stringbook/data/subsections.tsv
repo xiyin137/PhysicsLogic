@@ -1,0 +1,250 @@
+1.1	The case of quantum gravity	18
+1.2	Limitations of quantum field theory	20
+1.3	Yang-Mills theory as a string theory	22
+1.4	The road map	23
+2.1	Nambu-Goto theory	25
+2.2	The effective string	27
+2.3	Polyakov's formalism	29
+2.4	A first attempt at quantization	30
+2.5	Critical string theory	34
+3.1	BRST quantization	39
+3.2	BRST on the worldsheet	42
+3.3	Siegel constraint and BRST cohomology	45
+3.4	Equivalence to light cone gauge	49
+3.5	Equivalence to old covariant quantization	52
+3.6	DDF operators	53
+3.7	Deforming the spacetime background	54
+3.8	$c=1$ string theory	60
+4.1	Conformal gauge with moduli	63
+4.2	Reformulation in terms of holomorphic data	65
+4.3	The ghost number anomaly	69
+4.4	Boundaries of the moduli space	70
+4.5	The string S-matrix	73
+4.6	Consistency with unitarity	75
+4.7	Tree-level amplitudes in critical bosonic string theory	80
+4.8	One-loop amplitudes	82
+4.9	Higher loops	85
+4.10	Scattering amplitudes in $c=1$ string theory	88
+5.1	String field and off-shell amplitudes	90
+5.2	1PI effective action in Siegel gauge	93
+5.3	Classical string field theory	95
+5.4	Batalin-Vilkovisky formalism	99
+5.5	The BV formulation of quantum string field theory	101
+5.6	String vertices and field redefinition	103
+5.7	Perturbative classical solutions and diffeomorphism invariance	106
+5.8	Background independence	112
+6.1	Supersymmetric extension of Polyakov's action	117
+6.2	The superconformal ghost system	119
+6.3	The space of ghost states and picture number	121
+6.4	The Gliozzi-Scherk-Olive projection	124
+6.5	BRST symmetry	129
+6.6	The physical superstring states	131
+7.1	Superconformal gauge with supermoduli	137
+7.2	Reformulation in terms of super Riemann surfaces	139
+7.3	Superconformal field theory on a SRS	142
+7.4	The supermoduli space	147
+7.5	Unitarity of superstring amplitudes	152
+7.6	The picture changing operator formalism	154
+7.7	PCO from supermoduli and spurious singularities	157
+7.8	The full PCO contour with vertical integration	159
+8.1	Tree-level superstring amplitudes	164
+8.2	One-loop amplitudes of (NS,NS) states	169
+8.3	One-loop amplitudes involving Ramond states	174
+8.4	Ghost correlators on a higher genus surface	176
+8.5	Higher loop superstring amplitudes	180
+9.1	General (NS,NS) backgrounds	184
+9.2	Superstrings in Calabi-Yau spaces	186
+9.3	Green-Schwarz formulation of the (effective) superstring	191
+9.4	Superstring (effective) action in general massless backgrounds	194
+10.1	The space of NS and R string fields and off-shell superstring amplitudes	198
+10.2	The 1PI effective action of superstring field theory	201
+10.3	BV formulation of quantum superstring field theory	202
+10.4	The kinetic term of the RR fields	204
+10.5	The superstring field equation	206
+11.1	The worldsheet theory and string spectrum	209
+11.2	Perturbation theory and spacetime effective theory	211
+11.3	Mass renormalization	218
+11.4	Heterotic string in background fields	220
+11.5	Calabi-Yau compactification with gauge bundle	224
+11.6	A quantum-corrected heterotic vacuum	227
+12.1	D-branes in critical bosonic string theory	241
+12.2	BPS D-branes in type II superstring theory	248
+12.3	Non-BPS D-branes	253
+12.4	More general configurations of D-branes	255
+13.1	Open+closed bosonic string perturbation theory	261
+13.2	Disc amplitudes	264
+13.3	Cylinder amplitudes	266
+13.4	D-brane effective action	269
+13.5	Graviton-dilaton exchange amplitude between D$p$-branes	273
+13.6	D-branes in $c=1$ string theory	274
+14.1	Open+closed superstring perturbation theory	280
+14.2	Disc open string amplitudes	282
+14.3	Disc open+closed string amplitudes	285
+14.4	Cylinder amplitudes	286
+14.5	BPS D-brane effective action	288
+14.6	Some supersymmetric D-brane configurations	294
+14.7	Non-Abelian effective gauge theory of stacked D-branes	298
+14.8	Scattering and bound states of D0-branes	300
+15.1	Classical bosonic open string field theory	305
+15.2	Open string tachyon condensation	310
+15.3	More general solutions of the bosonic OSFT	316
+15.4	BV formulation of quantum open+closed string field theory	327
+15.5	Open+closed superstring field theory	329
+16.1	The effect of D-instantons	333
+16.2	D-instantons in $c=1$ string theory	336
+16.3	D-instantons in type IIB string theory	337
+16.4	Open+closed string field theory of D-instantons	342
+16.5	The normalization of D-instanton amplitudes	345
+16.6	Multiple D-instantons	349
+17.1	Unoriented strings	352
+17.2	The cross cap state	353
+17.3	Type I string theory	354
+17.4	Tadpole cancellation	358
+17.5	Type I string amplitudes	361
+17.6	D-branes in type I string theory	365
+17.7	Orientifold planes	369
+18.1	Heterotic/type I duality	372
+18.2	NS5-branes	374
+18.3	S-duality of type IIB string theory	379
+18.4	$(p,q)$-strings and 5-branes	382
+18.5	Black $p$-branes	385
+18.6	D7-branes and F-theory	388
+18.7	M-theory	392
+18.8	Heterotic M-theory	398
+18.9	D8-branes and massive IIA string theory	405
+19.1	NS5-branes and Taub-NUT space	409
+19.2	$\mathbb {C}^2/\mathbb {Z}_k$ orbifolds	411
+19.3	D-branes in orbifolds	416
+19.4	Double scaled little string theory	418
+19.5	Conifold in string theory	431
+19.6	Singularities in M-theory	452
+20.1	The decoupling limit of the black $p$-brane	458
+20.2	${\cal N}=4$ SYM as a superconformal field theory	460
+20.3	Vacuum configurations	464
+20.4	From Poincar\'e to global AdS	467
+20.5	Holographic correlators	470
+20.6	Supergraviton states	471
+20.7	Massive string states	474
+20.8	Giant gravitons	476
+20.9	Black holes in AdS and thermodynamics	479
+21.1	The decoupling limit of M2 and M5-branes	484
+21.2	The 3D ${\cal N}=8$ SYM and SCFT	486
+21.3	The ABJM theory	489
+21.4	The 6D $(0,2)$ SCFT	501
+22.1	The D1-D5 system and its low energy effective theory	507
+22.2	Supergravity description and the decoupling limit	512
+22.3	The conformal manifold and U-duality	514
+22.4	The role of the symmetric product orbifold CFT	517
+22.5	Bosonic strings in AdS$_3$	520
+22.6	Superstrings in purely (NS,NS) AdS$_3\times S^3\times M_4$	527
+22.7	The effect of RR flux	532
+23.1	Single-trace operators as spin chains	539
+23.2	The BMN/pp-wave limit	543
+23.3	The all-order magnon dispersion relation	549
+23.4	The magnon S-matrix: $su(2|2)$ invariance, analyticity, and crossing	553
+23.5	The crossing-symmetric dressing factor	557
+23.6	Asymptotic Bethe ansatz and the cusp anomalous dimension	559
+23.7	Nested Bethe ansatz	564
+23.8	Bethe-Yang equations	569
+23.9	Bound states	571
+24.1	Mirror model and thermodynamic Bethe ansatz	573
+24.2	Bethe strings of the mirror model	577
+24.3	Mirror TBA	580
+24.4	The $Y$-system	582
+24.5	Excited states in finite volume and asymptotic conditions	585
+24.6	The Konishi operator and wrapping corrections	588
+24.7	The quantum spectral curve	591
+24.8	Asymptotic conditions for the ${\bf P}\mu $-system	596
+24.9	String spectrum from the quantum spectral curve	599
+25.1	Maldacena-Wilson lines in ${\cal N}=4$ SYM	604
+25.2	Cuspy Wilson lines	605
+25.3	Bremsstrahlung	608
+25.4	Witten's model of holographic confinement	610
+25.5	Sakai-Sugimoto model of holographic QCD	613
+25.6	Klebanov-Witten theory	620
+25.7	Holographic RG cascade	627
+26.1	M-theory and the D0-brane quantum mechanics	636
+26.2	Thermodynamics of the D0-brane quantum mechanics	637
+26.3	The M-theory S-matrix: a conjecture	638
+26.4	Matrix string theory	640
+B.1	Path integral formulation of quantum mechanics	654
+B.2	Path integral with Grassmann-odd field variables	655
+B.3	Tunneling and instantons	658
+B.4	A supersymmetric model	659
+B.5	Borel resummation	668
+B.6	Lefschetz thimbles	670
+C.1	The Faddeev-Popov ansatz	672
+C.2	Batalin-Vilkovisky quantization of gauge theory	673
+D.1	Field operators	676
+D.2	Correlation functions	677
+D.3	Conformal symmetry	679
+D.4	Operator product expansion	679
+E.1	2D conventions	682
+E.2	2D conformal symmetry	682
+E.3	The Virasoro algebra	686
+E.4	Weyl anomaly	689
+E.5	Representations of Virasoro algebra	691
+E.6	Conformal correlators and conformal blocks	693
+E.7	Recurrence formulae and analytic property of conformal blocks	698
+F.1	The sphere	704
+F.2	The torus	705
+F.3	Genus $h\geq 2$	706
+F.4	Modular invariance of 2D CFT	708
+G.1	Free bosons	712
+G.2	Free boson on a Riemann surface	715
+G.3	Free fermions	717
+G.4	Free fermion on a Riemann surface	721
+H.1	The Ising CFT	723
+H.2	Topological defect lines	725
+H.3	Orbifolds	728
+H.4	Narain lattice	731
+I.1	Weyl anomaly in the nonlinear sigma model	733
+I.2	Some conformal nonlinear sigma models	735
+I.3	Buscher rules of T-duality	736
+I.4	Gauged WZW and coset models	738
+I.5	Liouville CFT	739
+J.1	$(1,1)$ superspace	744
+J.2	${\cal N}=1$ superconformal algebra	745
+J.3	$(2,2)$ superspace	748
+J.4	${\cal N}=2$ superconformal algebra	749
+J.5	${\cal N}=4$ superconformal algebra	751
+K.1	Landau-Ginzburg models	753
+K.2	Gauged linear sigma models	754
+K.3	The flows to Calabi-Yau and Landau-Ginzburg models	757
+K.4	Abelian duality of $(2,2)$ theories	759
+K.5	Mirror duality between ${\cal N}=2$ cigar and Liouville CFT	761
+L.1	Spinor representations from the Clifford algebra	763
+L.2	Majorana condition and conjugation	764
+L.3	$so(1,9)$ spinor conventions	765
+L.4	$so(1,3)$ spinor conventions	766
+L.5	$so(1,2)$ spinor conventions	767
+L.6	Euclidean spinors	767
+M.1	1-particle representations of supersymmetry	769
+M.2	4D ${\cal N}=1$ superspace	770
+M.3	(Non-)renormalization in 4D ${\cal N}=1$ gauge theories	774
+M.4	4D ${\cal N}=2$ gauge theories	776
+M.5	3D supersymmetric gauge theories	777
+N.1	Spinor fields in curved space	779
+N.2	11-dimensional supergravity	779
+N.3	Type II supergravity	780
+N.4	Type I supergravity	783
+N.5	4D ${\cal N}=2$ supergravity	784
+N.6	4D ${\cal N}=1$ supergravity	787
+O.1	Axial anomaly	789
+O.2	Gauge anomaly	792
+O.3	Gravitational anomaly	794
+O.4	Anomaly cancellation in superstring theories	799
+P.1	Conformal boundary conditions	801
+P.2	The boundary state	803
+P.3	Neumann and Dirichlet boundary conditions in the free boson CFT	804
+P.4	Neumann and Dirichlet boundary conditions in a free fermion CFT with diagonal GSO projection	807
+Q.1	One-matrix quantum mechanics	809
+Q.2	The $c=1$ MQM	810
+Q.3	Particle-hole scattering and non-perturbative effects in the $c=1$ MQM	813
+Q.4	Non-singlet sector and long string states	814
+R.1	The boundary condition on a bulk scalar field	816
+R.2	The two-point function	817
+R.3	Gauge field in AdS	818
+R.4	Gravity in AdS	819
+R.5	Witten diagrams	820
+R.6	Mellin amplitudes	821

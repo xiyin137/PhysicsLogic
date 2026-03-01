@@ -1,0 +1,133 @@
+3.7.1	Generalized Polyakov path integral	54
+3.7.2	Deforming the matter CFT	58
+4.6.1	The plumbing fixture	76
+4.6.2	Factorization of the string amplitude	78
+5.7.1	Flat string brackets	106
+5.7.2	Massless effective string field equations	108
+5.7.3	Diffeomorphism transformation of string fields	110
+6.4.1	Neveu-Schwarz and Ramond sectors of the matter CFT	124
+6.4.2	Chiral GSO projection	126
+6.4.3	Modular invariance on the torus	127
+6.4.4	Type IIA and IIB GSO projection	129
+6.6.1	Light cone and OCQ representation	132
+6.6.2	The superstring spectrum	133
+6.6.3	Spacetime supersymmetry	135
+7.3.1	Even and odd spin structures	143
+7.3.2	NS punctures	143
+7.3.3	R punctures	146
+7.4.1	Odd moduli	147
+7.4.2	Integration	149
+11.6.1	The 4D effective theory	228
+11.6.2	The 1-loop Fayet-Iliopoulos mass term	231
+11.6.3	The 2-loop vacuum energy	236
+11.6.4	Shifted vacuum and restoration of supersymmetry	240
+12.1.1	Open string states	244
+12.1.2	Deformations of a D$p$-brane	245
+12.1.3	Multiple D$p$-branes	247
+12.2.1	Open superstring states	249
+12.2.2	The boundary state	250
+12.4.1	Intersecting D-branes	255
+12.4.2	D-branes at angles	257
+13.4.1	Dilaton dependence	270
+13.4.2	Gauge field dependence	271
+13.6.1	The ZZ-brane and rolling tachyon	275
+13.6.2	The FZZT-brane and long strings	277
+14.5.1	Supersymmetry and $\kappa $ symmetry	288
+14.5.2	Coupling to massless closed string background	291
+14.5.3	Quantization of RR charge	292
+14.6.1	D2-brane wrapping a holomorphic curve	295
+14.6.2	D3-brane wrapping a special Lagrangian subspace	295
+14.6.3	Turning on the world volume field strength	296
+15.1.1	BV formulation of OSFT	305
+15.1.2	Equation of motion and gauge transformations	307
+15.1.3	Witten's cubic OSFT	308
+15.2.1	Wedge states and the $\mathtt {KBc}$ algebra	312
+15.2.2	The tachyon vacuum solution	314
+15.3.1	Marginal deformations	316
+15.3.2	Rolling tachyon revisited	320
+15.3.3	The Erler-Maccaferri solutions	324
+17.5.1	Vacuum amplitude	362
+17.5.2	Spacetime effective theory	363
+17.6.1	BPS D1 and D5-branes	365
+17.6.2	The non-BPS D0-brane	367
+18.2.1	NS5-branes in type II string theories	374
+18.2.2	Worldsheet description of the NS5-brane throat	376
+18.2.3	Heterotic NS5-brane and gauge instantons	377
+18.7.1	M2 and M5-branes	393
+18.7.2	Kaluza-Klein monopole	394
+18.7.3	From M to F-theory	395
+18.7.4	Corrections to 11D supergravity	396
+18.8.1	T-duality between hetE and hetO theories	398
+18.8.2	The strong coupling limit of hetE	400
+18.8.3	The effective action of M-theory with boundary	402
+18.8.4	Heterotic instanton and M5-brane	405
+19.2.1	Twist fields and marginal deformations	412
+19.2.2	Geometry of the conformal manifold	413
+19.2.3	Singular CFT and massless D-branes	415
+19.4.1	The ${\cal N}=2$ $SU(2)_k/U(1)$ coset CFT	420
+19.4.2	The ${\cal N}=2$ $SL(2,\mathbb {R})_k/U(1)$ coset CFT	423
+19.4.3	Relation to ${\cal N}=2$ Liouville theory	426
+19.4.4	The worldsheet theory of double scaled LST	427
+19.5.1	The conifold geometry	431
+19.5.2	Conifold transition in type IIB string theory	433
+19.5.3	Conifold in type IIA string theory	439
+19.5.4	Worldsheet instantons	444
+19.5.5	The singular CFT at the conifold point	451
+19.6.1	Orbifold singularities in M-theory	452
+19.6.2	$G_2$ holonomy and singularities	453
+19.6.3	Quantum moduli space of M-theory vacua with conical asymptotics	456
+21.1.1	M2-branes and AdS$_4\times S^7$	484
+21.1.2	M5-branes and AdS$_7\times S^4$	485
+21.3.1	Brane construction	490
+21.3.2	M-theory description and decoupling limit	493
+21.3.3	Moduli space of vacua	495
+21.3.4	Supersymmetry from the bulk perspective	497
+21.3.5	Topological charge and monopole operators	498
+21.4.1	The superconformal algebra and multiplets	501
+21.4.2	Relation to 5D gauge theory	503
+21.4.3	Moduli space of vacua and effective theory	504
+22.5.1	Current algebra and spectral flow	521
+22.5.2	Short and long strings	523
+22.5.3	Physical string spectrum	525
+22.6.1	The worldsheet SCFT and GSO projection	527
+22.6.2	Spectral flow of the supersymmetric $\setbox \z@ \hbox {\mathsurround \z@ $\textstyle {SL}(2)_k$}\mathaccent "0362{{SL}(2)_k}$	530
+22.6.3	Superstring spectrum	530
+22.7.1	Semi-classical limit	533
+22.7.2	String field theory description of the RR flux deformation	534
+22.7.3	RR flux correction to superstring spectrum	537
+23.2.1	GS action in AdS$_5\times S^5$	544
+23.2.2	GS action in pp-wave	546
+23.2.3	Lightcone gauge and the string spectrum in pp-wave	548
+23.6.1	The $SL(2)$ sector at 1-loop	559
+23.6.2	The cusp anomalous dimension to all orders	561
+23.7.1	Level II excitations	566
+23.7.2	Level II scattering	567
+23.7.3	Level III	568
+24.1.1	The case of one particle type	573
+24.1.2	Excited states	575
+24.1.3	TBA from Bethe-Yang equations	576
+24.7.1	Hirota system in the ${\cal T}$-gauge	591
+24.7.2	${\bf T}$-gauge	592
+24.7.3	${\mathbb T}$-gauge	593
+24.7.4	The ${\bf P}\mu $-system	594
+24.9.1	Weak coupling limit	599
+24.9.2	Small spin expansion	600
+24.9.3	Konishi at strong coupling	602
+25.5.1	Chiral symmetry breaking	615
+25.5.2	$U(1)_A$ anomaly and $\eta '$ meson	617
+25.5.3	Hadron spectrum	619
+25.6.1	D3-branes on the conifold	621
+25.6.2	The holographic dual	624
+25.6.3	From $S^5/\mathbb {Z}_2$ to $T^{1,1}$	626
+25.7.1	Fractional D3-branes	627
+25.7.2	The RG cascade	630
+25.7.3	The warped deformed conifold	633
+26.4.1	The symmetric product orbifold	641
+26.4.2	The DVV twist field	643
+26.4.3	String interaction from conformal perturbation theory	645
+26.4.4	The matrix string theory conjecture	649
+M.2.1	Chiral superfield	771
+M.2.2	Vector superfield	772
+N.5.1	Special K\"ahler geometry	785
+N.5.2	Quaternionic-K\"ahler geometry	786
+N.5.3	Recipes for gauging	787

@@ -25,7 +25,7 @@ set_option linter.unusedVariables false
     4. Higher-order fluctuation vertices (higher loops) -/
 structure SemiclassicalData (F : Type*) where
   /-- The action functional -/
-  action : ActionFunctional F
+  action : ComplexActionFunctional F
   /-- A classical solution (saddle point): δS/δφ = 0 -/
   classical_solution : F
   /-- The fluctuation operator: second variation of the action -/
@@ -41,7 +41,7 @@ structure SemiclassicalData (F : Type*) where
     This is the leading quantum correction to the classical approximation.
     Higher loops give corrections of order ℏ², ℏ³, ... -/
 noncomputable def oneLoopApproximation (F : Type*) (sd : SemiclassicalData F) (ℏ : ℝ) : ℂ :=
-  Complex.exp (Complex.I * ↑(sd.action.eval sd.classical_solution / ℏ)) *
+  Complex.exp (Complex.I * (sd.action.eval sd.classical_solution / (ℏ : ℂ))) *
   sd.functional_determinant
 
 /-- Loop expansion parameter: ℏ/S_cl.
@@ -96,7 +96,7 @@ noncomputable def multiInstantonContribution (F : Type*) (S_E : EuclideanAction 
     In field theory: the path integral is dominated by classical configurations. -/
 structure WKBData (F : Type*) where
   /-- The classical action -/
-  action : ActionFunctional F
+  action : ComplexActionFunctional F
   /-- The leading (classical) contribution -/
   classical_amplitude : F → ℂ
   /-- Quantum corrections order by order in ℏ -/
