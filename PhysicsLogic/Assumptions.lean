@@ -189,6 +189,8 @@ def cft2dAds3MixedFluxWorldsheetDeformation : String :=
   "qft.cft.2d.ads3_mixed_flux_worldsheet_deformation"
 def cft2dAds3MixedFluxPulsatingSpectrumShift : String :=
   "qft.cft.2d.ads3_mixed_flux_pulsating_spectrum_shift"
+def cft2dAds3MixedFluxSftRrDeformation : String := "qft.cft.2d.ads3_mixed_flux_sft_rr_deformation"
+def cft2dAds3MixedFluxMassShiftFromFourPoint : String := "qft.cft.2d.ads3_mixed_flux_mass_shift_from_four_point"
 def cft2dSuperspace11DerivativeAlgebra : String :=
   "qft.cft.2d.superspace_11_derivative_algebra"
 def cft2dN1SuperconformalAlgebra : String :=
@@ -425,6 +427,8 @@ def stringAdS3MixedFluxParameterization : String :=
   "string.ads3.mixed_flux_parameterization"
 def stringAdS3MixedFluxPulsatingShift : String :=
   "string.ads3.mixed_flux_pulsating_shift"
+def stringAdS3MixedFluxSftRrDeformation : String := "string.ads3.mixed_flux_sft_rr_deformation"
+def stringAdS3MixedFluxMassShiftFromFourPoint : String := "string.ads3.mixed_flux_mass_shift_from_four_point"
 def stringAdS5IntegrabilityOneLoopSpinChain : String :=
   "string.ads5_integrability.one_loop_spin_chain"
 def stringAdS5IntegrabilitySingleMagnonDispersion : String :=
@@ -1049,6 +1053,10 @@ def assumptionRegistry : List AssumptionEntry :=
       "The mixed `(NS,NS)`/`(R,R)` AdS3 worldsheet-deformation package (`R^2 = alpha' sqrt(K5^2 + g_B^2 Q5^2)`, `mu = g_B Q5 / K5`, and nonzero-`mu` long-string discretization constraints) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dAds3MixedFluxPulsatingSpectrumShift,
       "The mixed-flux AdS3 circular-pulsating spectrum shift package (`Delta = -2n + 2sqrt(nk) + mu^2 (...)` at leading nontrivial order) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dAds3MixedFluxSftRrDeformation,
+      "The mixed-flux AdS3 RR-deformation worldsheet-SFT package (`Q_B W^(2)=-(1/2)P^+[W^(1)⊗W^(1)]`, finite-`k` projected-bracket vanishing, and order-`mu^2` Siegel-resolvent correction) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dAds3MixedFluxMassShiftFromFourPoint,
+      "The mixed-flux AdS3 RR-deformation mass-shift package (`Delta(mu)=Delta(0)-(alpha'/2)delta m^2`, `delta m^2|_{mu^2}=mu^2 A_(0,4)/alpha'`, and no-zero-weight intermediate bracket conditions) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dSuperspace11DerivativeAlgebra,
       "The (1,1) superspace derivative/supercharge algebra (including anticommutation relations and D^2 identities) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dN1SuperconformalAlgebra,
@@ -1327,6 +1335,10 @@ def assumptionRegistry : List AssumptionEntry :=
       "The mixed `(NS,NS)`/`(R,R)` AdS3 flux parameterization with `R^2 = alpha' sqrt(K5^2 + g_B^2 Q5^2)` and `mu = g_B Q5 / K5` is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringAdS3MixedFluxPulsatingShift,
       "The small-`mu` semiclassical correction formula for circular pulsating-string energies in mixed-flux AdS3 backgrounds is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringAdS3MixedFluxSftRrDeformation,
+      "The mixed-flux AdS3 RR-deformation closed-superstring-field-theory package (`Q_B W^(2)=-(1/2)P^+[W^(1)⊗W^(1)]`, finite-`k` projected-bracket vanishing, and order-`mu^2` Siegel-resolvent correction) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.stringAdS3MixedFluxMassShiftFromFourPoint,
+      "The mixed-flux AdS3 RR-deformation spectrum-shift package from four-string amplitudes (`Delta(mu)=Delta(0)-(alpha'/2)delta m^2`, `delta m^2|_{mu^2}=mu^2 A_(0,4)/alpha'`, and no-zero-weight intermediate bracket conditions) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringAdS5IntegrabilityOneLoopSpinChain,
       "The one-loop `SU(2)` planar `N=4` SYM spin-chain relation `H_1=(1/(8 pi^2)) sum_l (1-P_{l,l+1})` with anomalous-dimension map is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringAdS5IntegrabilitySingleMagnonDispersion,

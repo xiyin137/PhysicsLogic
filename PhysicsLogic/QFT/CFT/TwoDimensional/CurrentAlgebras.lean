@@ -419,4 +419,73 @@ theorem ads3_mixed_flux_pulsating_spectrum_package
     AdS3MixedFluxPulsatingSpectrumPackage data := by
   exact h_phys
 
+/-- `(NS,NS)/(R,R)` mixed-flux RR-deformation data in the worldsheet-SFT/CFT lane. -/
+structure AdS3MixedFluxSftRrDeformationCftData where
+  mu : ℝ
+  levelK : ℝ
+  firstOrderRrVertexUsed : Bool
+  projectedTwoStringBracketVanishesAtFiniteK : Bool
+  secondOrderFieldSetToZero : Bool
+  secondOrderCorrectionUsesSiegelResolvent : Bool
+  secondOrderEquationCoefficient : ℝ
+  largeKNormalizationMatchingUsed : Bool
+
+/-- Worldsheet-SFT RR-deformation package for mixed-flux AdS3 backgrounds:
+`Q_B W^(2) = -(1/2) P^+ [W^(1) ⊗ W^(1)]`, finite-`k` vanishing of projected
+two-string bracket, and resulting order-`mu^2` Siegel-resolvent correction. -/
+def AdS3MixedFluxSftRrDeformationCftPackage
+    (data : AdS3MixedFluxSftRrDeformationCftData) : Prop :=
+  data.mu >= 0 /\
+  data.levelK > 0 /\
+  data.firstOrderRrVertexUsed = true /\
+  data.projectedTwoStringBracketVanishesAtFiniteK = true /\
+  data.secondOrderFieldSetToZero = true /\
+  data.secondOrderCorrectionUsesSiegelResolvent = true /\
+  data.secondOrderEquationCoefficient = (-(1 / 2 : ℝ)) /\
+  data.largeKNormalizationMatchingUsed = true
+
+/-- Assumed mixed-flux RR-deformation SFT package in the 2D CFT lane. -/
+theorem ads3_mixed_flux_sft_rr_deformation_cft_package
+    (data : AdS3MixedFluxSftRrDeformationCftData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxSftRrDeformation
+      (AdS3MixedFluxSftRrDeformationCftPackage data)) :
+    AdS3MixedFluxSftRrDeformationCftPackage data := by
+  exact h_phys
+
+/-- Mass-shift data from RR-deformation four-point amplitudes in mixed-flux AdS3. -/
+structure AdS3MixedFluxMassShiftFromFourPointCftData where
+  mu : ℝ
+  alphaPrime : ℝ
+  scalingDimensionMu : ℝ
+  scalingDimensionZero : ℝ
+  massSquaredShift : ℝ
+  fourPointAmplitude : ℝ
+  noZeroWeightInWOneBracket : Bool
+  noZeroWeightInNestedBracket : Bool
+
+/-- RR-deformation mass-shift package:
+`Delta(mu) = Delta(0) - (alpha'/2) delta m^2` and
+`delta m^2|_{mu^2} = mu^2 A_(0,4) / alpha'` with no-zero-weight intermediate
+states in the relevant nested brackets. -/
+def AdS3MixedFluxMassShiftFromFourPointCftPackage
+    (data : AdS3MixedFluxMassShiftFromFourPointCftData) : Prop :=
+  data.mu >= 0 /\
+  data.alphaPrime > 0 /\
+  data.noZeroWeightInWOneBracket = true /\
+  data.noZeroWeightInNestedBracket = true /\
+  data.scalingDimensionMu =
+    data.scalingDimensionZero - (data.alphaPrime / 2) * data.massSquaredShift /\
+  data.massSquaredShift =
+    data.mu ^ (2 : Nat) * data.fourPointAmplitude / data.alphaPrime
+
+/-- Assumed RR-deformation mass-shift package in the 2D CFT lane. -/
+theorem ads3_mixed_flux_mass_shift_from_four_point_cft_package
+    (data : AdS3MixedFluxMassShiftFromFourPointCftData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxMassShiftFromFourPoint
+      (AdS3MixedFluxMassShiftFromFourPointCftPackage data)) :
+    AdS3MixedFluxMassShiftFromFourPointCftPackage data := by
+  exact h_phys
+
 end PhysicsLogic.QFT.CFT.TwoDimensional

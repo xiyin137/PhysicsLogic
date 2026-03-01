@@ -453,4 +453,78 @@ theorem ads3_mixed_flux_bridge_package
   exact ⟨h_string_flux_pkg, h_string_pulsating_pkg, h_qft_flux_pkg, h_qft_pulsating_pkg,
     h_g, h_alpha, h_k5, h_q5, h_r, h_mu_flux, h_n, h_k, h_mu_pulsating, h_delta⟩
 
+/-- Cross-lane data for mixed-flux RR-deformation SFT recursion and mass-shift packages. -/
+structure AdS3MixedFluxSftMassShiftBridgeData where
+  stringSft : AdS3MixedFluxSftRrDeformationData
+  stringMassShift : AdS3MixedFluxMassShiftFromFourPointData
+  qftSft : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxSftRrDeformationCftData
+  qftMassShift :
+    PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxMassShiftFromFourPointCftData
+
+/-- Bridge package:
+string-side mixed-flux RR-deformation SFT/mass-shift packages aligned with
+QFT-side worldsheet-CFT/SFT abstractions of the same data. -/
+def AdS3MixedFluxSftMassShiftBridgePackage
+    (data : AdS3MixedFluxSftMassShiftBridgeData) : Prop :=
+  AdS3MixedFluxSftRrDeformationPackage data.stringSft /\
+  AdS3MixedFluxMassShiftFromFourPointPackage data.stringMassShift /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxSftRrDeformationCftPackage data.qftSft /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxMassShiftFromFourPointCftPackage
+    data.qftMassShift /\
+  data.stringSft.mu = data.qftSft.mu /\
+  data.stringSft.levelK = data.qftSft.levelK /\
+  data.stringSft.secondOrderEquationCoefficient = data.qftSft.secondOrderEquationCoefficient /\
+  data.stringMassShift.mu = data.qftMassShift.mu /\
+  data.stringMassShift.alphaPrime = data.qftMassShift.alphaPrime /\
+  data.stringMassShift.scalingDimensionMu = data.qftMassShift.scalingDimensionMu /\
+  data.stringMassShift.scalingDimensionZero = data.qftMassShift.scalingDimensionZero /\
+  data.stringMassShift.massSquaredShift = data.qftMassShift.massSquaredShift /\
+  data.stringMassShift.fourPointAmplitude = data.qftMassShift.fourPointAmplitude
+
+/-- Assumed bridge package for mixed-flux RR-deformation SFT recursion and mass-shift data. -/
+theorem ads3_mixed_flux_sft_mass_shift_bridge_package
+    (data : AdS3MixedFluxSftMassShiftBridgeData)
+    (h_string_sft : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxSftRrDeformation
+      (AdS3MixedFluxSftRrDeformationPackage data.stringSft))
+    (h_string_mass : PhysicsAssumption
+      AssumptionId.stringAdS3MixedFluxMassShiftFromFourPoint
+      (AdS3MixedFluxMassShiftFromFourPointPackage data.stringMassShift))
+    (h_qft_sft : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxSftRrDeformation
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxSftRrDeformationCftPackage
+        data.qftSft))
+    (h_qft_mass : PhysicsAssumption
+      AssumptionId.cft2dAds3MixedFluxMassShiftFromFourPoint
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxMassShiftFromFourPointCftPackage
+        data.qftMassShift))
+    (h_mu_sft : data.stringSft.mu = data.qftSft.mu)
+    (h_k_sft : data.stringSft.levelK = data.qftSft.levelK)
+    (h_coeff :
+      data.stringSft.secondOrderEquationCoefficient = data.qftSft.secondOrderEquationCoefficient)
+    (h_mu_mass : data.stringMassShift.mu = data.qftMassShift.mu)
+    (h_alpha : data.stringMassShift.alphaPrime = data.qftMassShift.alphaPrime)
+    (h_delta_mu :
+      data.stringMassShift.scalingDimensionMu = data.qftMassShift.scalingDimensionMu)
+    (h_delta_zero :
+      data.stringMassShift.scalingDimensionZero = data.qftMassShift.scalingDimensionZero)
+    (h_dm2 : data.stringMassShift.massSquaredShift = data.qftMassShift.massSquaredShift)
+    (h_a04 : data.stringMassShift.fourPointAmplitude = data.qftMassShift.fourPointAmplitude) :
+    AdS3MixedFluxSftMassShiftBridgePackage data := by
+  have h_string_sft_pkg : AdS3MixedFluxSftRrDeformationPackage data.stringSft :=
+    ads3_mixed_flux_sft_rr_deformation_package data.stringSft h_string_sft
+  have h_string_mass_pkg : AdS3MixedFluxMassShiftFromFourPointPackage data.stringMassShift :=
+    ads3_mixed_flux_mass_shift_from_four_point_package data.stringMassShift h_string_mass
+  have h_qft_sft_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxSftRrDeformationCftPackage data.qftSft :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_sft_rr_deformation_cft_package
+      data.qftSft h_qft_sft
+  have h_qft_mass_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxMassShiftFromFourPointCftPackage
+        data.qftMassShift :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_mass_shift_from_four_point_cft_package
+      data.qftMassShift h_qft_mass
+  exact ⟨h_string_sft_pkg, h_string_mass_pkg, h_qft_sft_pkg, h_qft_mass_pkg,
+    h_mu_sft, h_k_sft, h_coeff, h_mu_mass, h_alpha, h_delta_mu, h_delta_zero, h_dm2, h_a04⟩
+
 end PhysicsLogic.StringTheory

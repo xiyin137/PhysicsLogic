@@ -24,7 +24,8 @@
   representation ranges and mass-shell relations.
 - Extends to superstrings in purely `(NS,NS)` flux with
   `hatSL(2)_k x hatSU(2)_k x M_4`, then tracks mixed `(NS,NS)`/`(R,R)` flux
-  deformation and semiclassical pulsating-string energy shifts.
+  deformation, RR-deformation SFT recursion, and semiclassical/quantum
+  mass-shift relations.
 
 ## Candidate Formalization Units
 - `D1D5InstantonChargeMap`
@@ -42,6 +43,8 @@
 - `AdS3NSNSSuperstringMassShellPackage`
 - `AdS3MixedFluxPackage`
 - `AdS3MixedFluxPulsatingPackage`
+- `AdS3MixedFluxSftRrDeformationPackage`
+- `AdS3MixedFluxMassShiftFromFourPointPackage`
 - `D1D5ConformalManifoldGeometryPackage` (QFT lane)
 - `D1D5AttractorTauGamma0Package` (QFT lane)
 - `D1D5SymmetricProductOrbifoldLocusPackage` (QFT lane)
@@ -59,12 +62,15 @@
 - `AdS3NsnsSuperstringMassShellBpsPackage` (QFT lane)
 - `AdS3MixedFluxWorldsheetDeformationPackage` (QFT lane)
 - `AdS3MixedFluxPulsatingSpectrumPackage` (QFT lane)
+- `AdS3MixedFluxSftRrDeformationCftPackage` (QFT lane)
+- `AdS3MixedFluxMassShiftFromFourPointCftPackage` (QFT lane)
 - `AdS3BosonicWzwBridgePackage`
 - `AdS3SpectralMassShellBridgePackage`
 - `AdS3NsnsWorldsheetBridgePackage`
 - `AdS3NsnsGsoBridgePackage`
 - `AdS3NsnsMassShellBridgePackage`
 - `AdS3MixedFluxBridgePackage`
+- `AdS3MixedFluxSftMassShiftBridgePackage`
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `stringAdS3D1D5InstantonChargeMap`.
@@ -82,6 +88,8 @@
 - Candidate new `AssumptionId`: `stringAdS3NsnsSuperstringMassShell`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxParameterization`.
 - Candidate new `AssumptionId`: `stringAdS3MixedFluxPulsatingShift`.
+- Candidate new `AssumptionId`: `stringAdS3MixedFluxSftRrDeformation`.
+- Candidate new `AssumptionId`: `stringAdS3MixedFluxMassShiftFromFourPoint`.
 - Candidate new `AssumptionId`: `cft2dD1D5ConformalManifoldQuaternionicQuotient`.
 - Candidate new `AssumptionId`: `cft2dD1D5AttractorTauGamma0Level`.
 - Candidate new `AssumptionId`: `cft2dD1D5SymmetricProductOrbifoldLocus`.
@@ -96,6 +104,8 @@
 - Candidate new `AssumptionId`: `cft2dAds3NsnsSuperstringMassShellBps`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxWorldsheetDeformation`.
 - Candidate new `AssumptionId`: `cft2dAds3MixedFluxPulsatingSpectrumShift`.
+- Candidate new `AssumptionId`: `cft2dAds3MixedFluxSftRrDeformation`.
+- Candidate new `AssumptionId`: `cft2dAds3MixedFluxMassShiftFromFourPoint`.
 
 ## Subsections
 - [x] 22.1 The D1-D5 system and its low energy effective theory (p.507)
