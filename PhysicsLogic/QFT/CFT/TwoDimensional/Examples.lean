@@ -103,25 +103,26 @@ noncomputable def momentum_winding_weight
     Central charge: c = 1
     Spectrum: continuous family of primaries with h = (n+αR)²/2 for n ∈ ℤ, α ∈ ℝ -/
 structure FreeBosonCFT (H : Type _) where
-  compactification_radius : ScalingDimension
-  radius_positive : compactification_radius > 0
+  compactification_radius_in_string_units : ScalingDimension
+  radius_positive : compactification_radius_in_string_units > 0
   /-- Primary operators V_{n,m} labeled by momentum n and winding m -/
   primary : ℤ → ℤ → Primary2D H
   /-- Weights match momentum-winding formula -/
   primary_weights : ∀ (n m : ℤ),
-    let (h_val, h_bar_val) := momentum_winding_weight compactification_radius n m
+    let (h_val, h_bar_val) := momentum_winding_weight compactification_radius_in_string_units n m
     (primary n m).h = h_val ∧ (primary n m).h_bar = h_bar_val
 
 /-- T-duality map: exchange R ↔ 1/R -/
 noncomputable def t_dual {H : Type _} (fb : FreeBosonCFT H)
     (h_phys :
-      PhysicsLogic.PhysicsAssumption
+        PhysicsLogic.PhysicsAssumption
         PhysicsLogic.AssumptionId.cftTDualWeightSymmetry
         (∀ (n m : ℤ),
-          let (h_val, h_bar_val) := momentum_winding_weight (1 / fb.compactification_radius) n m
+          let (h_val, h_bar_val) :=
+            momentum_winding_weight (1 / fb.compactification_radius_in_string_units) n m
           (fb.primary m n).h = h_val ∧ (fb.primary m n).h_bar = h_bar_val)) :
     FreeBosonCFT H where
-  compactification_radius := 1 / fb.compactification_radius
+  compactification_radius_in_string_units := 1 / fb.compactification_radius_in_string_units
   radius_positive := by
     apply div_pos
     · norm_num
