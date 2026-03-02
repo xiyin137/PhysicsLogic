@@ -208,4 +208,18 @@ else
   echo "[ok] AdS3 spectral-weight fields use semantic aliases in core modules"
 fi
 
+echo "[global-semantic-check] LSZ field-strength renormalization uses semantic alias"
+raw_field_strength_hits="$(
+  rg -n "^[[:space:]]+field_strength_Z[[:space:]]*:[[:space:]]*(ℝ|Real)([[:space:]]|$)" \
+    PhysicsLogic --glob '*.lean' \
+  | rg -v '^PhysicsLogic/Papers/' || true
+)"
+if [[ -n "$raw_field_strength_hits" ]]; then
+  echo "$raw_field_strength_hits"
+  echo "[fail] found raw ℝ/Real field_strength_Z declarations in non-Papers modules"
+  status=1
+else
+  echo "[ok] LSZ field-strength renormalization uses semantic alias in non-Papers modules"
+fi
+
 exit "$status"

@@ -221,7 +221,7 @@ structure HasSpectralRepresentation {d : ℕ} (theory : QFT d) where
 structure IsolatedMass {d : ℕ} (K : MassiveKernelData) (spec : SpectralDensity d)
     (m₀ : MassScale) where
   /-- The residue Z > 0 (field strength renormalization) -/
-  residue : ℝ
+  residue : WavefunctionRenormalization
   residue_pos : residue > 0
   /-- Pole contribution profile from the isolated mass shell m₀. -/
   poleContribution : EuclideanPoint d → ℝ

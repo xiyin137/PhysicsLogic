@@ -106,7 +106,7 @@ structure LSZData (d : ℕ) [NeZero d] where
       - Z = 1 for free field (no interactions)
       - Z < 1 for interacting field (wavefunction renormalization)
       - Z > 0 required for particle interpretation -/
-  field_strength_Z : ℝ
+  field_strength_Z : WavefunctionRenormalization
   field_strength_bounds : 0 < field_strength_Z ∧ field_strength_Z ≤ 1
 
   /-- Physical mass m_phys (location of pole in two-point function):
