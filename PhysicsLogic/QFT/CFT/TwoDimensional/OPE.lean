@@ -111,14 +111,32 @@ structure GlobalConformalTheory2D where
     Every state |ψ⟩ in the Hilbert space corresponds to a local operator O_ψ(0)
     via |ψ⟩ = O_ψ(0)|0⟩ -/
 structure StateOperatorCorrespondence2D where
-  /-- OPE exists as consequence of state-operator correspondence
-      φ_i(z) φ_j(w) |0⟩ = |ψ⟩ = ∑_k c_k |k⟩ where |k⟩ are energy eigenstates
-      Each |k⟩ corresponds to an operator O_k at the origin via state-operator map -/
-  ope_from_state_operator : ∀ {H : Type _}
+  /-- OPE state decomposition coefficients/states in a fixed channel. -/
+  opeDecomposition : ∀ {H : Type _}
     (φ_i φ_j : Primary2D H)
     (z w : ℂ)
     (vacuum : H),
-    ∃ (decomposition : List (ℂ × H)), decomposition.length > 0
+    List (ℂ × H)
+  /-- State produced by the operator product in radial quantization. -/
+  stateFromOperatorProduct : ∀ {H : Type _}
+    (φ_i φ_j : Primary2D H)
+    (z w : ℂ)
+    (vacuum : H), H
+  /-- The operator-product state is reconstructed by summing decomposition terms. -/
+  decomposition_reconstructs_state : ∀ {H : Type _} [AddCommMonoid H] [SMul ℂ H]
+    (φ_i φ_j : Primary2D H)
+    (z w : ℂ)
+    (vacuum : H),
+    stateFromOperatorProduct φ_i φ_j z w vacuum =
+      (opeDecomposition φ_i φ_j z w vacuum).foldl
+        (fun acc term => acc + term.1 • term.2) 0
+  /-- Nontrivial operator-product state requires a nonempty decomposition list. -/
+  nontrivial_state_implies_nonempty : ∀ {H : Type _} [AddCommMonoid H] [SMul ℂ H]
+    (φ_i φ_j : Primary2D H)
+    (z w : ℂ)
+    (vacuum : H),
+    stateFromOperatorProduct φ_i φ_j z w vacuum ≠ 0 →
+    (opeDecomposition φ_i φ_j z w vacuum) ≠ []
   /-- OPE coefficients determined by inner products of states -/
   ope_coeff_from_inner_product : ∀ {H : Type _}
     (φ_i φ_j φ_k : Primary2D H)

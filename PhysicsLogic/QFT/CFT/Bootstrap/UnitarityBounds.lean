@@ -108,11 +108,21 @@ def short_multiplet (d : ℕ) {H : Type _} (O : QuasiPrimary d H) (ℓ : ℕ) : 
     This implies all OPE coefficient-squareds are non-negative and
     all operator dimensions are real and bounded below. -/
 structure ReflectionPositivityTheory where
+  /-- OPE coefficient map for identical-external data in this positivity package. -/
+  opeCoefficient : ∀ {d : ℕ} {H : Type _},
+    QuasiPrimary d H → QuasiPrimary d H → ℂ
+  /-- Squared OPE coefficient extracted from `opeCoefficient`. -/
+  opeCoefficientSquared : ∀ {d : ℕ} {H : Type _},
+    QuasiPrimary d H → QuasiPrimary d H → ℝ
+  /-- Definition of squared coefficient as a norm square. -/
+  ope_coefficient_squared_def : ∀ {d : ℕ} {H : Type _}
+    (φ O : QuasiPrimary d H),
+    opeCoefficientSquared φ O = Complex.normSq (opeCoefficient φ O)
   /-- OPE coefficients squared are non-negative: C²_{φφO} ≥ 0.
       Fundamental consequence of unitarity in Euclidean signature. -/
   ope_coefficient_squared_positive : ∀ {d : ℕ} {H : Type _}
     (φ O : QuasiPrimary d H),
-    ∃ (C_squared : ℝ), C_squared ≥ 0
+    0 ≤ opeCoefficientSquared φ O
   /-- In unitary CFT, all operator dimensions are real and bounded below.
       Specifically, Δ ≥ (d-2)/2 for any primary operator. -/
   unitary_cft_real_dimensions : ∀ {d : ℕ} {H : Type _}

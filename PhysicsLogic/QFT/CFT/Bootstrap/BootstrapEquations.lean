@@ -161,12 +161,21 @@ structure FourPointFunctionTheory where
   blockExpansion : ∀ {d : ℕ} {H : Type _},
     QuasiPrimary d H → QuasiPrimary d H → QuasiPrimary d H → QuasiPrimary d H →
       List (ℂ × ℂ × (CrossRatios → ℂ))
+  /-- Evaluated four-point correlator for chosen external operators and insertion points. -/
+  fourPointValue : ∀ {d : ℕ} {H : Type _}
+    (φ₁ φ₂ φ₃ φ₄ : QuasiPrimary d H)
+    (x₁ x₂ x₃ x₄ : Fin d → ℝ), ℂ
+  /-- Evaluate a single block-expansion term at given cross ratios. -/
+  evaluateBlockTerm : CrossRatios → (ℂ × ℂ × (CrossRatios → ℂ)) → ℂ
   /-- Four-point function from OPE: apply OPE twice
       ⟨φ₁φ₂φ₃φ₄⟩ = ∑_p C_{12p} C_{34p} g_p(u,v) -/
   fourpoint_from_double_ope : ∀ {d : ℕ} {H : Type _}
     (φ₁ φ₂ φ₃ φ₄ : QuasiPrimary d H)
-    (x₁ x₂ x₃ x₄ : Fin d → ℝ),
-    (blockExpansion φ₁ φ₂ φ₃ φ₄).length > 0
+    (x₁ x₂ x₃ x₄ : Fin d → ℝ)
+    (uv : CrossRatios),
+    fourPointValue φ₁ φ₂ φ₃ φ₄ x₁ x₂ x₃ x₄ =
+        (blockExpansion φ₁ φ₂ φ₃ φ₄).foldl
+          (fun acc term => acc + evaluateBlockTerm uv term) 0
   /-- Canonical conformal block associated to an exchanged family. -/
   blockFromFamily : ∀ {d : ℕ} {H : Type _},
     (Δ_ext : Fin 4 → ℝ) → (Δ_p : ℝ) → (ℓ_p : SpinLabel) →

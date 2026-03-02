@@ -20,6 +20,13 @@ structure ConformalBlock2D where
   internal_weight : ℝ            -- h_p (exchanged primary)
   eval : ℂ → ℂ
 
+/-- Term in a four-point conformal-block expansion. -/
+structure FourPointBlockTerm where
+  leftOPECoefficient : ℂ
+  rightOPECoefficient : ℂ
+  holomorphicBlock : ConformalBlock2D
+  antiholomorphicBlock : ConformalBlock2D
+
 /-- Conformal block properties -/
 structure ConformalBlock2DTheory where
   /-- Conformal blocks are holomorphic: differentiable at z ∈ ℂ \ {0,1} -/
@@ -32,12 +39,28 @@ structure ConformalBlock2DTheory where
   fourpoint_block_terms : ∀ {H : Type _}
     (φ₁ φ₂ φ₃ φ₄ : Primary2D H)
     (z : ℂ),
-    List (ℂ × ℂ × ConformalBlock2D × ConformalBlock2D)
-  /-- Four-point block expansion is nontrivial (identity block at minimum). -/
-  fourpoint_block_expansion_nonempty : ∀ {H : Type _}
+    List FourPointBlockTerm
+  /-- Target four-point function value in the selected kinematics. -/
+  fourpoint_block_value : ∀ {H : Type _}
     (φ₁ φ₂ φ₃ φ₄ : Primary2D H)
     (z : ℂ),
-    (fourpoint_block_terms φ₁ φ₂ φ₃ φ₄ z).length > 0
+    ℂ
+  /-- Evaluation map for each block-expansion term. -/
+  evaluate_fourpoint_term : (z : ℂ) → FourPointBlockTerm → ℂ
+  /-- Four-point value is reconstructed by summing explicit block terms. -/
+  fourpoint_block_expansion : ∀ {H : Type _}
+    (φ₁ φ₂ φ₃ φ₄ : Primary2D H)
+    (z : ℂ),
+    fourpoint_block_value φ₁ φ₂ φ₃ φ₄ z =
+      (fourpoint_block_terms φ₁ φ₂ φ₃ φ₄ z).foldl
+        (fun acc term => acc + evaluate_fourpoint_term z term) 0
+  /-- Identity-exchange term is present in the four-point block decomposition. -/
+  identity_block_term_present : ∀ {H : Type _}
+    (φ₁ φ₂ φ₃ φ₄ : Primary2D H)
+    (z : ℂ),
+    ∃ term ∈ fourpoint_block_terms φ₁ φ₂ φ₃ φ₄ z,
+      term.holomorphicBlock.internal_weight = 0 ∧
+      term.antiholomorphicBlock.internal_weight = 0
   /-- Conformal blocks are universal: independent of which CFT.
       Given (c, h_ext, h_int), there exists a unique block function. -/
   blocks_universal : ∀
@@ -73,6 +96,11 @@ structure ConformalBlockODETheory where
 
 /- ============= RECURSION RELATIONS ============= -/
 
+/-- Term in a Zamolodchikov-style recursion step. -/
+structure RecursionBlockTerm where
+  coefficient : ℂ
+  shiftedBlock : ConformalBlock2D
+
 /-- Recursion relation theory for computing conformal blocks -/
 structure RecursionRelationTheory where
   /-- Zamolodchikov recursion relation: compute blocks level by level
@@ -82,21 +110,31 @@ structure RecursionRelationTheory where
     (h_ext : Fin 4 → ℝ)
     (h_p : ℝ)
     (level : ℕ),
-    ConformalBlock2D → List (ℂ × ConformalBlock2D)
-  /-- Recursion step always returns at least one contribution term. -/
-  zamolodchikov_recursion_nonempty : ∀
+    ConformalBlock2D → List RecursionBlockTerm
+  /-- Seed step at level zero: coefficient one with unchanged block. -/
+  zamolodchikov_recursion_seed : ∀
     (c : VirasoroCentralCharge)
     (h_ext : Fin 4 → ℝ)
     (h_p : ℝ)
     (level : ℕ)
     (block : ConformalBlock2D),
-    (zamolodchikov_recursion c h_ext h_p level block).length > 0
-  /-- Blocks can be computed iteratively using recursion -/
+    level = 0 →
+    zamolodchikov_recursion c h_ext h_p level block =
+      [{ coefficient := 1, shiftedBlock := block }]
+  /-- Truncated recursion approximation at level `max_level`. -/
+  blockApproximation : ConformalBlock2D → ℕ → ℂ → ℂ
+  /-- Rigorous error bound for the truncated approximation. -/
+  blockErrorBound : ConformalBlock2D → ℕ → ℂ → ℝ
+  /-- Approximation error is bounded by `blockErrorBound`. -/
   block_computation : ∀
     (block : ConformalBlock2D)
     (max_level : ℕ)
     (z : ℂ),
-    ∃ (approximation : ℂ) (error : ℝ), ‖block.eval z - approximation‖ < error
+    ‖block.eval z - blockApproximation block max_level z‖ ≤
+      blockErrorBound block max_level z
+  /-- Error bounds are nonnegative. -/
+  block_error_nonneg : ∀ (block : ConformalBlock2D) (max_level : ℕ) (z : ℂ),
+    0 ≤ blockErrorBound block max_level z
 
 /- ============= CROSSING SYMMETRY ============= -/
 
@@ -114,12 +152,26 @@ structure CrossingSymmetry2DTheory where
       Fₚˢ(z) = ∑_q F_{pq}(c, {h_i}) F_qᵗ(1-z)
       The kernel entry is a function of (c, h_ext, p, q). -/
   crossing_kernel : VirasoroCentralCharge → (Fin 4 → ℝ) → ℕ → ℕ → ℂ
+  /-- Coefficient weight used to sum a selected t-channel block. -/
+  t_channel_weight : ∀
+    (c : VirasoroCentralCharge)
+    (h_ext : Fin 4 → ℝ)
+    (block_s block_t : ConformalBlock2D), ℂ
   /-- Reconstructed t-channel value for the chosen s-channel input block. -/
   t_channel_reconstruction : ∀
     (c : VirasoroCentralCharge)
     (h_ext : Fin 4 → ℝ)
     (block_s : ConformalBlock2D)
     (z : ℂ), ℂ
+  /-- Reconstruction is the explicit weighted sum over selected t-channel blocks. -/
+  t_channel_reconstruction_formula : ∀
+    (c : VirasoroCentralCharge)
+    (h_ext : Fin 4 → ℝ)
+    (block_s : ConformalBlock2D)
+    (z : ℂ),
+    t_channel_reconstruction c h_ext block_s z =
+      (t_channel_blocks c h_ext block_s z).foldl
+        (fun acc block_t => acc + t_channel_weight c h_ext block_s block_t * block_t.eval (1 - z)) 0
   /-- Crossing symmetry as equality between s-channel block value and explicit
       t-channel reconstruction. -/
   crossing_symmetry : ∀
@@ -128,13 +180,13 @@ structure CrossingSymmetry2DTheory where
     (block_s : ConformalBlock2D)
     (z : ℂ),
     block_s.eval z = t_channel_reconstruction c h_ext block_s z
-  /-- The selected t-channel block family is nonempty. -/
-  t_channel_nonempty : ∀
+  /-- Identity-exchange block occurs in the selected t-channel family. -/
+  t_channel_identity_present : ∀
     (c : VirasoroCentralCharge)
     (h_ext : Fin 4 → ℝ)
     (block_s : ConformalBlock2D)
     (z : ℂ),
-    (t_channel_blocks c h_ext block_s z).length > 0
+    ∃ block_t ∈ t_channel_blocks c h_ext block_s z, block_t.internal_weight = 0
 
 /- ============= NORMALIZATION ============= -/
 
