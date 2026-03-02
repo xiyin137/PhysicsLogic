@@ -4,6 +4,7 @@
 - Source page start: 164
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/SuperstringExplicitComputations.lean`
+- QFT target: `PhysicsLogic/QFT/CFT/TwoDimensional/SuperstringVertices.lean`
 
 ## Reading Summary
 - Extracted tree-level PCO contour formulas for superstring amplitudes
@@ -63,6 +64,13 @@
 - Candidate new `AssumptionId`: `stringSuperExplicitHigherGenusGhostCorrelators`.
 - Candidate new `AssumptionId`: `stringSuperExplicitHigherLoopVacuumVanishing`.
 - Candidate new `AssumptionId`: `stringSuperExplicitFourGravitonCouplingFunction`.
+
+## Current Formalization Mapping
+- `PhysicsLogic/QFT/CFT/TwoDimensional/SuperstringVertices.lean`:
+  `NsnsPictureRaisingStateOperatorPackage` (state/operator encoding of
+  the picture-raised fixed-vertex and integrated-vertex conversion equations).
+- `PhysicsLogic/StringTheory/SuperstringExplicitComputations.lean`:
+  `NsnsPictureRaisingPackage` now delegates to the CFT state/operator package.
 
 ## Subsections
 - [x] 8.1 Tree-level superstring amplitudes (p.164)

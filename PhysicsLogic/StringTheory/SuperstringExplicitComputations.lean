@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import PhysicsLogic.QFT.CFT.TwoDimensional.SuperstringVertices
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.Basic
@@ -41,25 +42,16 @@ theorem tree_level_superstring_pco_package
     TreeLevelSuperstringPcoPackage data := by
   exact h_phys
 
-/-- Picture-raising and integrated-vertex conversion data for NS punctures. -/
-structure NsnsPictureRaisingData (CftState : Type*) [SMul ℂ CftState] where
-  /-- Local state obtained from the PCO-collision limit in the NS sector. -/
-  pcoCollisionLimitState : CftState
-  /-- Local picture-raised NS state. -/
-  localPictureRaisedState : CftState
-  /-- State produced after applying `b_{-1}\tilde b_{-1}` to the `(0,0)` insertion. -/
-  integratedStateAfterBGhosts : CftState
-  /-- Matter superdescendant state `G_{-1/2}\tilde G_{-1/2} V^m`. -/
-  matterSuperdescendantState : CftState
-  pcoCollisionRegular : Bool
+/-- Section-08 NSNS picture-raising data delegated to the 2D CFT state/operator
+layer (see `QFT/CFT/TwoDimensional/SuperstringVertices.lean`). -/
+abbrev NsnsPictureRaisingData (CftState : Type*) [SMul ℂ CftState] :=
+  PhysicsLogic.QFT.CFT.TwoDimensional.NsnsPictureRaisingStateOperatorData CftState
 
-/-- NS picture-raising package:
-collision limit exists and `b_{-1}\tilde b_{-1} V^{(0,0)} = (1/4) G_{-1/2}\tilde G_{-1/2} V^m`. -/
+/-- NS picture-raising package in Section 8.1, expressed using the 2D CFT
+state/operator interface. -/
 def NsnsPictureRaisingPackage {CftState : Type*} [SMul ℂ CftState]
     (data : NsnsPictureRaisingData CftState) : Prop :=
-  data.pcoCollisionRegular = true ∧
-  data.localPictureRaisedState = data.pcoCollisionLimitState ∧
-  data.integratedStateAfterBGhosts = (1 / 4 : ℂ) • data.matterSuperdescendantState
+  PhysicsLogic.QFT.CFT.TwoDimensional.NsnsPictureRaisingStateOperatorPackage data
 
 /-- Assumed NS picture-raising package from Section 8.1. -/
 theorem nsns_picture_raising_package
@@ -69,7 +61,7 @@ theorem nsns_picture_raising_package
       AssumptionId.stringSuperExplicitNsnsPictureRaising
       (NsnsPictureRaisingPackage data)) :
     NsnsPictureRaisingPackage data := by
-  exact h_phys
+  exact PhysicsLogic.QFT.CFT.TwoDimensional.nsns_picture_raising_state_operator_package data h_phys
 
 /-- Tree-level three-point NSNS/supergravity matching data. -/
 structure NsnsThreePointSupergravityData where

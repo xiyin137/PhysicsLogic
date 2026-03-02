@@ -11,4 +11,5 @@ import PhysicsLogic.QFT.CFT.TwoDimensional.SigmaModels
 import PhysicsLogic.QFT.CFT.TwoDimensional.ConformalManifolds
 import PhysicsLogic.QFT.CFT.TwoDimensional.CurrentAlgebras
 import PhysicsLogic.QFT.CFT.TwoDimensional.Superconformal
+import PhysicsLogic.QFT.CFT.TwoDimensional.SuperstringVertices
 import PhysicsLogic.QFT.CFT.TwoDimensional.BoundaryCFT
