@@ -74,11 +74,11 @@ noncomputable def flrwMetric (consts : GRConstants) (a : ℝ → ℝ) (k : ℤ)
   · exact h_inv
 
 /-- Hubble parameter: H(t) = ȧ(t)/a(t) -/
-noncomputable def hubbleParameter (a : ℝ → ℝ) (t : ℝ) : ℝ :=
+noncomputable def hubbleParameter (a : ℝ → ℝ) (t : ℝ) : FrequencyScale :=
   deriv a t / a t
 
 /-- Critical density: ρ_crit = 3H²/(8πG) -/
-noncomputable def criticalDensity (consts : GRConstants) (H : ℝ) : ℝ :=
+noncomputable def criticalDensity (consts : GRConstants) (H : FrequencyScale) : DensityScale :=
   3 * H^2 / (8 * Real.pi * consts.G)
 
 /-- Density parameter: Ω = ρ/ρ_crit -/
@@ -90,42 +90,48 @@ noncomputable def equationOfState (p ρ : ℝ) : ℝ :=
   p / ρ
 
 /-- First Friedmann equation: H² = (8πG/3)ρ - kc²/a² + Λc²/3 -/
-def satisfiesFriedmann1 (consts : GRConstants) (a : ℝ → ℝ) (ρ : ℝ → ℝ) (k : ℤ) : Prop :=
-  ∀ t, (hubbleParameter a t)^2 =
-       (8 * Real.pi * consts.G / 3) * ρ t - (k : ℝ) * consts.c^2 / (a t)^2 + consts.Λ * consts.c^2 / 3
+def satisfiesFriedmann1 (consts : GRConstants) (a : ℝ → ℝ) (ρ : ℝ → DensityScale) (k : ℤ) : Prop :=
+  ∀ t, (hubbleParameter a t).value^2 =
+       (8 * Real.pi * consts.G / 3) * (ρ t).value -
+         (k : ℝ) * consts.c^2 / (a t)^2 + consts.Λ.value * consts.c^2 / 3
 
 /-- Second Friedmann equation (acceleration equation):
     ä/a = -(4πG/3)(ρ + 3p/c²) + Λc²/3
 -/
-def satisfiesFriedmann2 (consts : GRConstants) (a : ℝ → ℝ) (ρ p : ℝ → ℝ) : Prop :=
+def satisfiesFriedmann2 (consts : GRConstants) (a : ℝ → ℝ)
+    (ρ p : ℝ → DensityScale) : Prop :=
   ∀ t, deriv (deriv a) t / a t =
-       -(4 * Real.pi * consts.G / 3) * (ρ t + 3 * p t / consts.c^2) + consts.Λ * consts.c^2 / 3
+       -(4 * Real.pi * consts.G / 3) *
+          ((ρ t).value + 3 * (p t).value / consts.c^2) +
+        consts.Λ.value * consts.c^2 / 3
 
 /-- Fluid equation (continuity): ρ̇ + 3H(ρ + p/c²) = 0 -/
-def satisfiesFluidEquation (consts : GRConstants) (a : ℝ → ℝ) (ρ p : ℝ → ℝ) : Prop :=
-  ∀ t, deriv ρ t + 3 * hubbleParameter a t * (ρ t + p t / consts.c^2) = 0
+def satisfiesFluidEquation (consts : GRConstants) (a : ℝ → ℝ)
+    (ρ p : ℝ → DensityScale) : Prop :=
+  ∀ t, deriv (fun s => (ρ s).value) t +
+    3 * (hubbleParameter a t).value * ((ρ t).value + (p t).value / consts.c^2) = 0
 
 /-- Structure for cosmological parameters -/
 structure CosmologicalParameters (consts : GRConstants) where
   /-- Scale factor a(t) describes cosmic expansion -/
-  scaleFactor : ℝ → ℝ
+  scaleFactor : ScalingDimension → ScalingDimension
   /-- Present-day Hubble constant H₀ ≈ 70 km/s/Mpc -/
-  hubbleConstant : ℝ
+  hubbleConstant : FrequencyScale
   /-- Hubble constant is positive -/
   hubbleConstant_positive : hubbleConstant > 0
   /-- Present time t₀ -/
-  presentTime : ℝ
+  presentTime : TimeScale
   /-- Hubble constant equals H at present time -/
-  hubble_at_present : hubbleParameter scaleFactor presentTime = hubbleConstant
+  hubble_at_present : hubbleParameter scaleFactor presentTime.value = hubbleConstant
 
 /-- Structure for FLRW cosmology solutions -/
 structure FLRWCosmology (consts : GRConstants) (k : ℤ) (hk : k = -1 ∨ k = 0 ∨ k = 1) where
   /-- Scale factor -/
   a : ℝ → ℝ
   /-- Density -/
-  ρ : ℝ → ℝ
+  ρ : ℝ → DensityScale
   /-- Pressure -/
-  p : ℝ → ℝ
+  p : ℝ → DensityScale
   /-- Assumed well-formedness of FLRW metric data. -/
   metric_well_formed :
     PhysicsLogic.PhysicsAssumption
@@ -143,42 +149,42 @@ structure FLRWCosmology (consts : GRConstants) (k : ℤ) (hk : k = -1 ∨ k = 0 
   satisfies_efe : ∀ (u : SpaceTimePoint → Fin 4 → ℝ),
     satisfiesEFE consts curvature
                  (perfectFluidStressEnergy (flrwMetric consts a k hk metric_well_formed)
-                   (fun x => ρ (x 0))
-                   (fun x => p (x 0))
+                   (fun x => (ρ (x 0)).value)
+                   (fun x => (p (x 0)).value)
                    u)
 
 /-- Structure for standard cosmological solutions -/
 structure CosmologicalSolutions (consts : GRConstants) where
   /-- Matter-dominated universe: w = 0, ρ ∝ a⁻³ -/
   matter_dominated : ∀ (k : ℤ),
-    ∃ (a : ℝ → ℝ) (ρ : ℝ → ℝ), satisfiesFriedmann1 consts a ρ k
+    ∃ (a : ℝ → ℝ) (ρ : ℝ → DensityScale), satisfiesFriedmann1 consts a ρ k
   /-- Radiation-dominated universe: w = 1/3, ρ ∝ a⁻⁴ -/
   radiation_dominated : ∀ (k : ℤ),
-    ∃ (a : ℝ → ℝ) (ρ : ℝ → ℝ), satisfiesFriedmann1 consts a ρ k
+    ∃ (a : ℝ → ℝ) (ρ : ℝ → DensityScale), satisfiesFriedmann1 consts a ρ k
   /-- Dark energy (cosmological constant): w = -1, ρ = const -/
   dark_energy_dominated : ∀ (k : ℤ),
-    ∃ (a : ℝ → ℝ) (ρ : ℝ → ℝ),
+    ∃ (a : ℝ → ℝ) (ρ : ℝ → DensityScale),
       (∀ (t₁ t₂ : ℝ), ρ t₁ = ρ t₂) ∧
       satisfiesFriedmann1 consts a ρ k
   /-- Flat matter-dominated: a ∝ t^(2/3) -/
-  flat_matter_scaling : ∃ (a ρ : ℝ → ℝ), satisfiesFriedmann1 consts a ρ 0
+  flat_matter_scaling : ∃ (a : ℝ → ℝ) (ρ : ℝ → DensityScale), satisfiesFriedmann1 consts a ρ 0
   /-- Flat radiation-dominated: a ∝ t^(1/2) -/
-  flat_radiation_scaling : ∃ (a ρ : ℝ → ℝ), satisfiesFriedmann1 consts a ρ 0
+  flat_radiation_scaling : ∃ (a : ℝ → ℝ) (ρ : ℝ → DensityScale), satisfiesFriedmann1 consts a ρ 0
 
 /-- de Sitter spacetime: Λ > 0, vacuum solution with exponential expansion -/
-noncomputable def deSitterMetric (consts : GRConstants) (Λ_val : ℝ) (_hΛ : Λ_val > 0)
+noncomputable def deSitterMetric (consts : GRConstants) (Λ_val : CurvatureScale) (_hΛ : Λ_val > 0)
     (h_phys :
       PhysicsLogic.PhysicsAssumption
         PhysicsLogic.AssumptionId.flrwMetricWellFormed
         (FLRWMetricWellFormed
           consts
-          (fun t => Real.exp (Real.sqrt (Λ_val / 3) * consts.c * t))
+          (fun t => Real.exp (Real.sqrt (Λ_val.value / 3) * consts.c * t))
           0
           (Or.inr (Or.inl rfl)))) :
     SpacetimeMetric :=
   flrwMetric
     consts
-    (fun t => Real.exp (Real.sqrt (Λ_val / 3) * consts.c * t))
+    (fun t => Real.exp (Real.sqrt (Λ_val.value / 3) * consts.c * t))
     0
     (Or.inr (Or.inl rfl))
     h_phys
@@ -186,7 +192,7 @@ noncomputable def deSitterMetric (consts : GRConstants) (Λ_val : ℝ) (_hΛ : �
 /-- Structure for de Sitter and anti-de Sitter spacetimes -/
 structure MaximalSymmetrySpacetimes (consts : GRConstants) where
   /-- Anti-de Sitter metric -/
-  antiDeSitterMetric : (Λ_val : ℝ) → Λ_val < 0 → SpacetimeMetric
+  antiDeSitterMetric : (Λ_val : CurvatureScale) → Λ_val < 0 → SpacetimeMetric
 
 /-- Cosmological redshift: z = a₀/a - 1 -/
 noncomputable def cosmologicalRedshift (a : ℝ → ℝ) (t₀ t : ℝ) : ℝ :=
@@ -195,14 +201,14 @@ noncomputable def cosmologicalRedshift (a : ℝ → ℝ) (t₀ t : ℝ) : ℝ :=
 /-- Structure for observational cosmology -/
 structure ObservationalCosmology (consts : GRConstants) where
   /-- Cosmic microwave background (CMB) temperature evolution: T ∝ 1/a -/
-  cmb_temperature_scaling : ∀ (a : ℝ → ℝ) (T₀ : ℝ) (t t₀ : ℝ),
-    ∃ T, T = T₀ * a t₀ / a t
+  cmb_temperature_scaling : ∀ (a : ℝ → ℝ) (T₀ : TemperatureScale) (t t₀ : ℝ),
+    ∃ T : TemperatureScale, T.value = T₀.value * a t₀ / a t
   /-- Age of universe from scale factor -/
-  universeAge : (a : ℝ → ℝ) → (present : ℝ) → ℝ
+  universeAge : (a : ℝ → ℝ) → (present : TimeScale) → TimeScale
   /-- Big Bang singularity at t = 0 (a → 0) -/
-  big_bang_singularity : ∀ (a ρ : ℝ → ℝ),
+  big_bang_singularity : ∀ (a : ℝ → ℝ) (ρ : ℝ → DensityScale),
     satisfiesFriedmann1 consts a ρ 0 →
-    (∀ ε > 0, ∃ t > 0, a t < ε) →
-    ∃ t > 0, a t < 1
+    (∀ ε > 0, ∃ t : TimeScale, t > 0 ∧ a t.value < ε) →
+    ∃ t : TimeScale, t > 0 ∧ a t.value < 1
 
 end PhysicsLogic.GeneralRelativity
