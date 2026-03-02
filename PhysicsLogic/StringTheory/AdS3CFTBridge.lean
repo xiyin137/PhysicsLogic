@@ -1335,6 +1335,75 @@ theorem ads3_mixed_flux_rr_spectrum_from_second_order_bridge_package
       data.qftFromSecondOrder h_qft
   exact ⟨h_string_pkg, h_qft_pkg, h_mu, h_alpha, h_delta_mu, h_delta_zero, h_dm2, h_a04⟩
 
+/-- Convert second-order-sourced cross-lane RR-spectrum reconstruction into
+the generic compositional RR-spectrum bridge package. -/
+theorem ads3_mixed_flux_rr_spectrum_compositional_bridge_from_second_order
+    (data : AdS3MixedFluxRrSpectrumFromSecondOrderBridgeData)
+    (h_string : AdS3MixedFluxRrSpectrumFromSecondOrderPackage data.stringFromSecondOrder)
+    (h_qft :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxRrSpectrumFromSecondOrderCftPackage
+        data.qftFromSecondOrder)
+    (h_mu : data.stringFromSecondOrder.massShift.mu = data.qftFromSecondOrder.massShift.mu)
+    (h_alpha :
+      data.stringFromSecondOrder.massShift.alphaPrime = data.qftFromSecondOrder.massShift.alphaPrime)
+    (h_delta_mu :
+      data.stringFromSecondOrder.massShift.scalingDimensionMu =
+        data.qftFromSecondOrder.massShift.scalingDimensionMu)
+    (h_delta_zero :
+      data.stringFromSecondOrder.massShift.scalingDimensionZero =
+        data.qftFromSecondOrder.massShift.scalingDimensionZero)
+    (h_dm2 :
+      data.stringFromSecondOrder.massShift.massSquaredShift =
+        data.qftFromSecondOrder.massShift.massSquaredShift)
+    (h_a04 :
+      data.stringFromSecondOrder.massShift.fourPointAmplitude =
+        data.qftFromSecondOrder.massShift.fourPointAmplitude) :
+    AdS3MixedFluxRrSpectrumCorrectionCompositionalBridgePackage
+      { stringCompositional :=
+          { sft := data.stringFromSecondOrder.secondOrder.sft
+            bracket := data.stringFromSecondOrder.secondOrder.bracket
+            reduction := data.stringFromSecondOrder.reduction
+            ope := data.stringFromSecondOrder.ope
+            massShift := data.stringFromSecondOrder.massShift }
+        qftCompositional :=
+          { sft := data.qftFromSecondOrder.secondOrder.sft
+            bracket := data.qftFromSecondOrder.secondOrder.bracket
+            reduction := data.qftFromSecondOrder.reduction
+            ope := data.qftFromSecondOrder.ope
+            massShift := data.qftFromSecondOrder.massShift } } := by
+  have h_string_comp :
+      AdS3MixedFluxRrSpectrumCorrectionCompositionalPackage
+        { sft := data.stringFromSecondOrder.secondOrder.sft
+          bracket := data.stringFromSecondOrder.secondOrder.bracket
+          reduction := data.stringFromSecondOrder.reduction
+          ope := data.stringFromSecondOrder.ope
+          massShift := data.stringFromSecondOrder.massShift } :=
+    ads3_mixed_flux_rr_spectrum_compositional_from_second_order
+      data.stringFromSecondOrder h_string
+  have h_qft_comp :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxRrSpectrumCorrectionCompositionalCftPackage
+        { sft := data.qftFromSecondOrder.secondOrder.sft
+          bracket := data.qftFromSecondOrder.secondOrder.bracket
+          reduction := data.qftFromSecondOrder.reduction
+          ope := data.qftFromSecondOrder.ope
+          massShift := data.qftFromSecondOrder.massShift } :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_rr_spectrum_compositional_from_second_order_cft
+      data.qftFromSecondOrder h_qft
+  exact ads3_mixed_flux_rr_spectrum_correction_compositional_bridge_package
+    { stringCompositional :=
+        { sft := data.stringFromSecondOrder.secondOrder.sft
+          bracket := data.stringFromSecondOrder.secondOrder.bracket
+          reduction := data.stringFromSecondOrder.reduction
+          ope := data.stringFromSecondOrder.ope
+          massShift := data.stringFromSecondOrder.massShift }
+      qftCompositional :=
+        { sft := data.qftFromSecondOrder.secondOrder.sft
+          bracket := data.qftFromSecondOrder.secondOrder.bracket
+          reduction := data.qftFromSecondOrder.reduction
+          ope := data.qftFromSecondOrder.ope
+          massShift := data.qftFromSecondOrder.massShift } }
+    h_string_comp h_qft_comp h_mu h_alpha h_delta_mu h_delta_zero h_dm2 h_a04
+
 /-- Cross-lane data for end-to-end matching of semiclassical pulsating and
 quantum RR-spectrum correction packages. -/
 structure AdS3MixedFluxSemiclassicalQuantumMatchBridgeData where

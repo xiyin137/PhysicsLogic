@@ -1069,6 +1069,29 @@ theorem ads3_mixed_flux_mass_shift_from_second_order_compositional_cft
       _ = true := h_proj_sft
   exact ⟨h_mu_nonneg_mass, h_alpha, h_nozero_one_true, h_nozero_nested_true, h_delta, h_dm2⟩
 
+/-- Convert the second-order-sourced RR-spectrum package in the QFT lane into
+the generic RR-spectrum compositional package. -/
+theorem ads3_mixed_flux_rr_spectrum_compositional_from_second_order_cft
+    (data : AdS3MixedFluxRrSpectrumFromSecondOrderCftData)
+    (h_pkg : AdS3MixedFluxRrSpectrumFromSecondOrderCftPackage data) :
+    AdS3MixedFluxRrSpectrumCorrectionCompositionalCftPackage
+      { sft := data.secondOrder.sft
+        bracket := data.secondOrder.bracket
+        reduction := data.reduction
+        ope := data.ope
+        massShift := data.massShift } := by
+  rcases h_pkg with
+    ⟨h_second, h_reduction, h_ope, h_mu_mass, h_mu_reduction, h_k_reduction, h_k_ope,
+      h_c_sl, h_c_su, h_nozero_one, h_nozero_nested, h_alpha, h_delta, h_dm2⟩
+  have h_sft :
+      AdS3MixedFluxSftRrDeformationCftPackage data.secondOrder.sft :=
+    ads3_mixed_flux_sft_rr_deformation_from_second_order_compositional_cft
+      data.secondOrder h_second
+  rcases h_second with ⟨h_bracket, h_k_bracket, h_mu_bracket, _, _, _, _, _, _⟩
+  exact ⟨h_sft, h_bracket, h_reduction, h_ope, h_mu_mass, h_mu_bracket, h_mu_reduction,
+    h_k_bracket, h_k_reduction, h_k_ope, h_c_sl, h_c_su, h_nozero_one, h_nozero_nested,
+    h_alpha, h_delta, h_dm2⟩
+
 /-- Data for end-to-end matching of semiclassical circular-pulsating shifts
 with quantum RR four-point mass-shift corrections in the QFT lane. -/
 structure AdS3MixedFluxSemiclassicalQuantumMatchCftData where
