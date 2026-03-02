@@ -21,11 +21,11 @@ noncomputable def realPowerRatio (x : ℝ) (num den : ℝ) : ℝ :=
 
 /-- BFSS uplift parameter data for the D0 near-horizon sector. -/
 structure BFSSUpliftParameterData where
-  stringCouplingIIA : ℝ
-  alphaPrime : ℝ
-  alphaPrimeSqrt : ℝ
-  mTheoryPlanckMass : ℝ
-  mTheoryCircleRadius : ℝ
+  stringCouplingIIA : DimensionlessCoupling
+  alphaPrime : StringSlope
+  alphaPrimeSqrt : StringLength
+  mTheoryPlanckMass : MassScale
+  mTheoryCircleRadius : LengthScale
   harmonicCoefficient : ℝ
 
 /-- BFSS uplift package:
@@ -59,8 +59,8 @@ structure BFSSNearHorizonData where
   d0Charge : ℕ
   radialDistance : ℝ
   harmonicProfile : ℝ
-  sourceDensityYY : ℝ
-  mTheoryCircleRadius : ℝ
+  sourceDensityYY : DensityScale
+  mTheoryCircleRadius : LengthScale
 
 /-- BFSS near-horizon package:
 `f0(r)=c0 N / r^7` and stress source scaling `T_yy ~ N/R10`. -/
@@ -85,9 +85,9 @@ theorem bfss_near_horizon_package
 structure BFSSBlackHoleThermalData where
   harmonicCoefficient : ℝ
   d0Charge : ℕ
-  horizonRadius : ℝ
-  beta : ℝ
-  hawkingTemperature : ℝ
+  horizonRadius : LengthScale
+  beta : InverseTemperatureScale
+  hawkingTemperature : TemperatureScale
 
 /-- BFSS black-hole thermodynamic package:
 `beta = (4π/7) r0 sqrt(c0 N / r0^7)` and `T_H = 1/beta`. -/
@@ -114,12 +114,12 @@ theorem bfss_black_hole_thermal_package
 /-- Canonical and microcanonical entropy-scaling data in BFSS thermodynamics. -/
 structure BFSSMicrocanonicalEntropyData where
   rankN : ℕ
-  betaBar : ℝ
-  energyOverM : ℝ
+  betaBar : InverseTemperatureScale
+  energyOverM : ScalingDimension
   canonicalPrefactor : ℝ
   microcanonicalPrefactor : ℝ
-  canonicalEntropy : ℝ
-  microcanonicalEntropy : ℝ
+  canonicalEntropy : EntropyMeasure
+  microcanonicalEntropy : EntropyMeasure
 
 /-- BFSS entropy-scaling package:
 canonical `S ~ N^(7/5) betaBar^(-9/5)` and
@@ -151,12 +151,12 @@ theorem bfss_microcanonical_entropy_package
 /-- Momentum/energy map data between D0 labels and asymptotic supergraviton kinematics. -/
 structure BFSSMomentumMapData where
   d0Charge : ℕ
-  mTheoryCircleRadius : ℝ
-  velocityNormSq : ℝ
+  mTheoryCircleRadius : LengthScale
+  velocityNormSq : VelocitySquared
   transverseVelocity : Fin 9 → ℝ
-  energy : ℝ
-  momentumY : ℝ
-  transverseMomentum : Fin 9 → ℝ
+  energy : Energy
+  momentumY : MomentumNorm
+  transverseMomentum : Fin 9 → MomentumNorm
 
 /-- BFSS momentum map package:
 `E = N v^2/(2R10)`, `P_y = N/R10`, and `P_i = N v_i/R10`. -/
@@ -181,8 +181,8 @@ theorem bfss_momentum_map_package
 
 /-- BFSS conjecture data: reduced amplitudes in gravity and MQM channels. -/
 structure BFSSSmatrixConjectureData where
-  gravitationalReducedAmplitude : ℂ
-  mqmReducedAmplitude : ℕ → ℂ
+  gravitationalReducedAmplitude : ComplexAmplitude
+  mqmReducedAmplitude : ℕ → ComplexAmplitude
 
 /-- BFSS conjecture package:
 large-`N` convergence of reduced MQM amplitudes to M-theory supergraviton amplitudes. -/
@@ -204,9 +204,9 @@ theorem bfss_smatrix_conjecture_package
 
 /-- Matrix-string gauge-coupling map data after S/T duality chain. -/
 structure MatrixStringGaugeCouplingData where
-  stringCouplingIIA : ℝ
-  gaugeCoupling2d : ℝ
-  circleRadius : ℝ
+  stringCouplingIIA : DimensionlessCoupling
+  gaugeCoupling2d : CouplingScale
+  circleRadius : LengthScale
 
 /-- Matrix-string gauge-coupling package:
 `g_A = 1 / (sqrt(2π) g_YM R)`. -/
@@ -257,7 +257,7 @@ theorem matrix_string_symmetric_orbifold_package
 
 /-- DVV twist-field deformation data. -/
 structure DVVTwistDeformationData where
-  gaugeCoupling2d : ℝ
+  gaugeCoupling2d : DimensionlessCoupling
   deformationConstant : ℝ
   twistWeightLeft : ℝ
   twistWeightRight : ℝ
@@ -306,13 +306,13 @@ structure MatrixStringTreeAmplitudeData where
   n1 : ℕ
   n2 : ℕ
   n3 : ℕ
-  kPlus1 : ℝ
-  kPlus2 : ℝ
-  kPlus3 : ℝ
-  mstAmplitude : ℂ
-  covariantAmplitude : ℂ
-  deltaPlusConservation : ℂ
-  normalizedCovariantAmplitude : ℂ
+  kPlus1 : DimensionlessMomentum
+  kPlus2 : DimensionlessMomentum
+  kPlus3 : DimensionlessMomentum
+  mstAmplitude : ComplexAmplitude
+  covariantAmplitude : ComplexAmplitude
+  deltaPlusConservation : ComplexAmplitude
+  normalizedCovariantAmplitude : ComplexAmplitude
 
 /-- Tree-level matching package:
 `k_i^+ = N_i`, `N_3 = N_1 + N_2`,
@@ -342,8 +342,8 @@ theorem matrix_string_tree_amplitude_package
 /-- Matrix-string conjecture data for connected amplitudes in the large-`N` limit. -/
 structure MatrixStringLargeNConjectureData where
   boostFactor : ℝ
-  targetAmplitude : ℂ
-  mstConnectedAmplitude : ℕ → ℂ
+  targetAmplitude : ComplexAmplitude
+  mstConnectedAmplitude : ℕ → ComplexAmplitude
 
 /-- Matrix-string large-`N` conjecture package:
 `(1/(C N)) A_MST^conn -> A_cov^conn / delta(sum k^+)`. -/

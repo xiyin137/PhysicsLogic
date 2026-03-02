@@ -64,7 +64,7 @@ theorem m5_near_horizon_package
 
 /-- D2/M-theory coupling-map data used in the 3D N=8 SYM decoupling argument. -/
 structure D2GaugeCouplingData where
-  typeIIAStringCoupling : CouplingScale
+  typeIIAStringCoupling : DimensionlessCoupling
   stringLength : StringLength
   planckMass : MassScale
   mTheoryCircleRadius : LengthScale

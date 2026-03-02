@@ -41,7 +41,7 @@ theorem unoriented_worldsheet_parity_package
 
 /-- Bosonic crosscap-state and Klein-bottle modular-crossing data. -/
 structure CrosscapStateBosonicData where
-  alphaPrime : Real
+  alphaPrime : StringSlope
   crosscapBoundaryIdentificationImposed : TypeIOrientifoldClaim
   oscillatorGluingConditionsSolved : TypeIOrientifoldClaim
   explicitCrosscapStateExponentialFormUsed : TypeIOrientifoldClaim
@@ -198,11 +198,11 @@ theorem type_i_vacuum_amplitude_package
 
 /-- Type-I spacetime effective-action data with gauge/gravity couplings. -/
 structure TypeIEffectiveActionData (FieldConfig : Type*) where
-  stringCoupling : Real
-  alphaPrime : Real
-  gravitationalCoupling : Real
-  yangMillsCouplingSq : Real
-  effectiveActionFunctional : FieldConfig → Complex
+  stringCoupling : DimensionlessCoupling
+  alphaPrime : StringSlope
+  gravitationalCoupling : CouplingScale
+  yangMillsCouplingSq : CouplingScale
+  effectiveActionFunctional : FieldConfig → ComplexActionValue
   sphereAndDiscDilatonWeightsIncluded : TypeIOrientifoldClaim
   gravityAndGaugeCouplingsMatchedToThreePointAmplitudes : TypeIOrientifoldClaim
   rrChernSimonsCouplingsToGaugeFieldsIncluded : TypeIOrientifoldClaim

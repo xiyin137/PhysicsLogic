@@ -360,7 +360,7 @@ theorem klebanov_witten_conifold_package
 /-- AdS5 x T^{1,1} dual-geometry data for Klebanov-Witten theory. -/
 structure KlebanovWittenAdSDualData where
   volumeT11 : Dimless
-  stringCoupling : CouplingScale
+  stringCoupling : DimensionlessCoupling
   rankN : ℕ
   alphaPrime : StringSlope
   adsRadius : LengthScale
@@ -391,7 +391,7 @@ theorem klebanov_witten_ads_dual_package
 structure KlebanovTseytlinRunningData where
   rankN : ℕ
   fluxM : FluxQuantum
-  stringCoupling : CouplingScale
+  stringCoupling : DimensionlessCoupling
   radialScale : LengthScale
   referenceScale : LengthScale
   effectiveRank : ScalingDimension

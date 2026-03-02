@@ -14,9 +14,9 @@ structure ModuliGaugeFixedAmplitudeData where
   genus : ℕ
   punctures : ℕ
   moduliRealDimension : ℤ
-  normalization : ℂ
-  moduliIntegral : ℂ
-  connectedAmplitude : ℂ
+  normalization : ComplexAmplitude
+  moduliIntegral : ComplexAmplitude
+  connectedAmplitude : ComplexAmplitude
 
 /-- Gauge-fixed perturbative package:
 `dim_R(M_{h,n}) = 6h-6+2n` and `A_h = N_{h,n} * ∫_{M_{h,n}} Ω`. -/
@@ -104,7 +104,7 @@ structure PlumbingFixtureDegenerationData where
   sewingParameter : ℂ
   localCoordinateZ : ℂ
   localCoordinateZPrime : ℂ
-  cylinderLength : ℝ
+  cylinderLength : ScalingDimension
 
 /-- Plumbing-fixture package:
 `z' = q/z`, `|q|<1`, and cylinder length `-log|q|`. -/
@@ -127,12 +127,12 @@ theorem plumbing_fixture_degeneration_package
 
 /-- Tree-level channel-factorization data for reduced amplitudes. -/
 structure TreeUnitarityFactorizationData where
-  channelMomentumSq : ℂ
-  intermediateMassSq : ℂ
+  channelMomentumSq : ComplexMomentumSquaredInvariant
+  intermediateMassSq : ComplexMassSquaredInvariant
   iEpsilon : ℝ
-  fullReducedAmplitude : ℂ
-  leftReducedAmplitude : ℂ
-  rightReducedAmplitude : ℂ
+  fullReducedAmplitude : ComplexAmplitude
+  leftReducedAmplitude : ComplexAmplitude
+  rightReducedAmplitude : ComplexAmplitude
 
 /-- Tree-level unitarity/factorization package:
 `A ~ A_L * 1/(P^2+M^2-iε) * A_R` near a one-particle channel pole. -/
@@ -155,12 +155,12 @@ theorem tree_unitarity_factorization_package
 
 /-- Normalization-recursion data from channel factorization. -/
 structure PerturbativeNormalizationRecursionData where
-  alphaPrime : ℝ
+  alphaPrime : StringSlope
   sphereNormalization : ℝ
-  leftChannelNormalization : ℂ
-  rightChannelNormalization : ℂ
-  parentChannelNormalization : ℂ
-  factorizationPrefactor : ℂ
+  leftChannelNormalization : ComplexAmplitude
+  rightChannelNormalization : ComplexAmplitude
+  parentChannelNormalization : ComplexAmplitude
+  factorizationPrefactor : ComplexAmplitude
 
 /-- Normalization-recursion package:
 `K_{S^2}=8π/α'` and channel factorization gives recursion among `N_{h,n}` factors. -/
@@ -184,13 +184,13 @@ theorem perturbative_normalization_recursion_package
 
 /-- Four-tachyon Virasoro-Shapiro data. -/
 structure VirasoroShapiroAmplitudeData where
-  alphaPrime : ℝ
-  stringCoupling : ℝ
+  alphaPrime : StringSlope
+  stringCoupling : DimensionlessCoupling
   mandelstamS : ℝ
   mandelstamT : ℝ
   mandelstamU : ℝ
-  virasoroShapiroKernel : ℂ
-  reducedAmplitude : ℂ
+  virasoroShapiroKernel : ComplexAmplitude
+  reducedAmplitude : ComplexAmplitude
 
 /-- Virasoro-Shapiro package:
 `s+t+u = 16/α'` (tachyon kinematics) and
@@ -220,8 +220,8 @@ structure OneLoopTorusMeasureData where
   tauIm : ℝ
   etaAbsFourth : ℝ
   ghostMeasureWeight : ℝ
-  matterIntegratedCorrelator : ℂ
-  oneLoopAmplitude : ℂ
+  matterIntegratedCorrelator : ComplexAmplitude
+  oneLoopAmplitude : ComplexAmplitude
 
 /-- One-loop torus-measure package:
 `tau` lies in the standard fundamental-domain inequalities and
@@ -247,10 +247,10 @@ theorem one_loop_torus_measure_package
 
 /-- `c=1` thermal-circle T-duality data in the one-loop vacuum sector. -/
 structure COneThermalDualityData where
-  alphaPrime : ℝ
-  thermalRadius : ℝ
-  dualRadius : ℝ
-  vacuumAmplitudeDensity : ℝ
+  alphaPrime : StringSlope
+  thermalRadius : LengthScale
+  dualRadius : LengthScale
+  vacuumAmplitudeDensity : DensityScale
 
 /-- `c=1` thermal duality package:
 `R_dual = α'/R` and

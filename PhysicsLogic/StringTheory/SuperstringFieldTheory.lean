@@ -46,9 +46,9 @@ structure SuperSftOffShellAmplitudeData where
   ramondPairsHolomorphic : ℕ
   nsPuncturesAntiholomorphic : ℕ
   ramondPairsAntiholomorphic : ℕ
-  normalization : ℂ
-  contourIntegral : ℂ
-  offShellAmplitude : ℂ
+  normalization : ComplexAmplitude
+  contourIntegral : ComplexAmplitude
+  offShellAmplitude : ComplexAmplitude
   verticalBoundaryOnly : SuperSftClaim
   coversAllSpinStructures : SuperSftClaim
 
@@ -175,7 +175,7 @@ theorem super_sft_bv_quantum_package
 
 /-- RR kinetic-sector data in closed super-SFT. -/
 structure SuperSftRrKineticData where
-  stringCoupling : ℝ
+  stringCoupling : DimensionlessCoupling
   rrFieldStrengthUnconstrainedOffShell : SuperSftClaim
   auxiliaryFieldsIncludedInKineticSector : SuperSftClaim
   rrTwoPointFunctionMatchesSupergravityKinetics : SuperSftClaim

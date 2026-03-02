@@ -13,8 +13,8 @@ abbrev GeometricSingularityClaim := Prop
 /-- NS5 with transverse-circle T-duality to Taub-NUT/orbifold data. -/
 structure Ns5TaubNutDualityData where
   ns5Count : Nat
-  transverseCircleRadius : Real
-  stringLengthSquared : Real
+  transverseCircleRadius : LengthScale
+  stringLengthSquared : StringSlope
   smearedHarmonicProfileUsed : GeometricSingularityClaim
   buscherDualityAlongTransverseCircleUsed : GeometricSingularityClaim
   taubNutMetricWithMonopoleConnectionUsed : GeometricSingularityClaim
@@ -103,7 +103,7 @@ theorem orbifold_conformal_manifold_package
 
 /-- Massless wrapped-brane and gauge-enhancement data near orbifold singular points. -/
 structure OrbifoldWrappedBraneGaugeEnhancementData where
-  typeIIAStringCoupling : Real
+  typeIIAStringCoupling : DimensionlessCoupling
   wrappedD2BpsMassFormulaUsed : GeometricSingularityClaim
   wrappedD2MassVanishesAtSingularPoint : GeometricSingularityClaim
   sixDimensionalAbelianToSUkEnhancementUsed : GeometricSingularityClaim
@@ -161,8 +161,8 @@ theorem orbifold_fractional_brane_package
 /-- DSLST double-scaling background and exact coset realization data. -/
 structure DslstDoubleScalingData where
   ns5Count : Nat
-  asymptoticStringCoupling : Real
-  ringRadiusScale : Real
+  asymptoticStringCoupling : DimensionlessCoupling
+  ringRadiusScale : LengthScale
   doubleScalingLimitRhoZeroWithFixedRescaledCouplingUsed : GeometricSingularityClaim
   tDualCigarTimesBellWithZkQuotientUsed : GeometricSingularityClaim
   exactSl2TimesSu2CosetQuotientDescriptionUsed : GeometricSingularityClaim
@@ -339,7 +339,7 @@ theorem conifold_geometry_package
 /-- Type-IIB conifold transition data with wrapped D3-hypermultiplet resolution. -/
 structure ConifoldTypeIibTransitionData where
   complexStructurePeriod : Complex
-  wrappedD3Mass : Real
+  wrappedD3Mass : InvariantMass
   holomorphicThreeFormPeriodsUsed : GeometricSingularityClaim
   specialKahlerMetricFromPeriodsUsed : GeometricSingularityClaim
   logarithmicMetricBehaviorNearConifoldPointUsed : GeometricSingularityClaim
@@ -373,7 +373,7 @@ theorem conifold_type_iib_transition_package
 /-- Type-IIA conifold transition data with complexified Kahler modulus and wrapped D2 states. -/
 structure ConifoldTypeIiaTransitionData where
   complexifiedKahlerModulus : Complex
-  wrappedD2Mass : Real
+  wrappedD2Mass : InvariantMass
   harmonicOneOneModeForKahlerVariationUsed : GeometricSingularityClaim
   complexifiedKahlerPeriodDefinitionUsed : GeometricSingularityClaim
   perturbativeCubicPrepotentialFromPecceiQuinnSymmetryUsed : GeometricSingularityClaim
@@ -409,7 +409,7 @@ structure ConifoldWorldsheetInstantonData where
   windingNumber : Nat
   windingNumberOf : InstantonConfiguration → Nat
   complexifiedKahlerModulus : Complex
-  instantonActionFunctional : InstantonConfiguration → Complex
+  instantonActionFunctional : InstantonConfiguration → ComplexActionValue
   holomorphicMapsToExceptionalSphereUsed : GeometricSingularityClaim
   rationalMapModuliSpaceWithNonzeroResultantUsed : GeometricSingularityClaim
   topologicalTwistLocalizationUsed : GeometricSingularityClaim
@@ -472,8 +472,8 @@ theorem conifold_singular_cft_package
 /-- M-theory orbifold-singularity data from the `C^2/Z_k` locus. -/
 structure MTheoryOrbifoldSingularityData where
   orbifoldOrder : Nat
-  elevenDimensionalPlanckMass : Real
-  sevenDimensionalGaugeCoupling : Real
+  elevenDimensionalPlanckMass : MassScale
+  sevenDimensionalGaugeCoupling : CouplingScale
   mTheoryLimitOfCoincidentD6BranesUsed : GeometricSingularityClaim
   localizedSevenDimensionalSUkGaugeSectorUsed : GeometricSingularityClaim
   gaugeCouplingIndependentOfMTheoryCircleRadiusUsed : GeometricSingularityClaim
@@ -504,8 +504,8 @@ theorem m_theory_orbifold_singularity_package
 
 /-- `G_2` cone smoothing data and three-branch geometric transition structure. -/
 structure MTheoryGTwoConeData where
-  coneScale : Real
-  cThreePeriodAngle : Real
+  coneScale : LengthScale
+  cThreePeriodAngle : Angle
   gTwoHolonomyFromCovariantlyConstantSpinorUsed : GeometricSingularityClaim
   associativeAndCoassociativeClosedFormsUsed : GeometricSingularityClaim
   coneOverS3TimesS3QuotientGeometryUsed : GeometricSingularityClaim

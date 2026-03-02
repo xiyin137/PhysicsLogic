@@ -13,10 +13,10 @@ abbrev DbraneBosonicClaim := Prop
 
 /-- Open+closed perturbative bosonic-string data in the presence of D-brane boundaries. -/
 structure OpenClosedBosonicPerturbationData where
-  alphaPrime : Real
-  openStringNormalizationKo : Real
-  representativeAmplitude : Complex
-  representativeReducedAmplitude : Complex
+  alphaPrime : StringSlope
+  openStringNormalizationKo : ScalingDimension
+  representativeAmplitude : ComplexAmplitude
+  representativeReducedAmplitude : ComplexAmplitude
   moduliIntegralAmplitudeFunctionalComplex : DbraneBosonicClaim
   openClosedAmplitudeHasGenusBoundaryExpansion : DbraneBosonicClaim
   moduliDimensionRuleApplied : DbraneBosonicClaim
@@ -53,9 +53,9 @@ theorem open_closed_bosonic_perturbation_package
 
 /-- Disc-level open-string tachyon amplitude data on a D-brane. -/
 structure DiscOpenTachyonAmplitudeData where
-  alphaPrime : Real
-  openCoupling : Real
-  reducedThreeTachyonAmplitude : Real
+  alphaPrime : StringSlope
+  openCoupling : DimensionlessCoupling
+  reducedThreeTachyonAmplitude : ScalingDimension
   discGhostMatterNormalizationFixed : DbraneBosonicClaim
   tachyonCubicEffectiveInteractionMatchesThreePoint : DbraneBosonicClaim
   fourTachyonVenezianoChannelDecomposition : DbraneBosonicClaim
@@ -143,9 +143,9 @@ theorem cylinder_bosonic_dbrane_amplitude_package
 
 /-- Nambu-Goto and tension-matching data for bosonic D-branes. -/
 structure DbraneNambuGotoTensionData where
-  alphaPrime : Real
-  openCoupling : Real
-  braneTension : Real
+  alphaPrime : StringSlope
+  openCoupling : DimensionlessCoupling
+  braneTension : TensionScale
   worldvolumeReparameterizationGaugeRedundancy : DbraneBosonicClaim
   inducedMetricFromEmbeddingFields : DbraneBosonicClaim
   staticGaugeExpansionToQuarticDerivativeOrder : DbraneBosonicClaim
@@ -178,11 +178,11 @@ theorem dbrane_nambu_goto_tension_package
 
 /-- Dilaton and T-duality data for bosonic D-brane effective actions. -/
 structure DbraneDilatonTDualityData where
-  alphaPrime : Real
-  compactRadius : Real
-  dualRadius : Real
-  stringCoupling : Real
-  dualStringCoupling : Real
+  alphaPrime : StringSlope
+  compactRadius : LengthScale
+  dualRadius : LengthScale
+  stringCoupling : DimensionlessCoupling
+  dualStringCoupling : DimensionlessCoupling
   dilatonExponentialPrefactorInAction : DbraneBosonicClaim
   leftRightReflectionInDualCoordinate : DbraneBosonicClaim
   tensionDimensionalReductionRelationUsed : DbraneBosonicClaim
@@ -241,9 +241,9 @@ theorem dbrane_born_infeld_gauge_package
 
 /-- Graviton/dilaton-exchange data for separated parallel bosonic D-branes. -/
 structure DbraneGravitonDilatonExchangeData where
-  alphaPrime : Real
-  kappa : Real
-  braneTension : Real
+  alphaPrime : StringSlope
+  kappa : CouplingScale
+  braneTension : TensionScale
   einsteinFrameRescalingUsed : DbraneBosonicClaim
   linearizedBraneCouplingsExtracted : DbraneBosonicClaim
   deDonderGaugeFixingUsed : DbraneBosonicClaim
@@ -278,9 +278,9 @@ theorem dbrane_graviton_dilaton_exchange_package
 
 /-- `c=1` ZZ-brane and rolling-tachyon data. -/
 structure COneZzRollingTachyonData where
-  alphaPrime : Real
-  stringCoupling : Real
-  zzBraneMass : Real
+  alphaPrime : StringSlope
+  stringCoupling : DimensionlessCoupling
+  zzBraneMass : InvariantMass
   zzBoundaryStateFromCylinderCrossing : DbraneBosonicClaim
   zzOpenSpectrumContainsTachyon : DbraneBosonicClaim
   zzMassMatchesMqmFermionThreshold : DbraneBosonicClaim
@@ -312,9 +312,9 @@ theorem cone_zz_rolling_tachyon_package
 
 /-- `c=1` FZZT-brane and long-string data. -/
 structure COneFzztLongStringData where
-  alphaPrime : Real
+  alphaPrime : StringSlope
   sParameter : Real
-  zzFzztOpenStringEnergy : Real
+  zzFzztOpenStringEnergy : Energy
   fzztBoundaryWavefunctionFromCylinderCrossing : DbraneBosonicClaim
   fzztUnitaryRangeConstraintUsed : DbraneBosonicClaim
   fzztStableRangeWithoutRelevantBoundaryDeformation : DbraneBosonicClaim

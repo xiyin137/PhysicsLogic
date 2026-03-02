@@ -73,8 +73,8 @@ theorem heterotic_lambda_gso_package
 
 /-- Physical-state and spectrum data for the heterotic BRST construction. -/
 structure HeteroticSpectrumData where
-  alphaPrime : ℝ
-  momentumSq : ℝ
+  alphaPrime : StringSlope
+  momentumSq : MomentumSquaredScale
   leftOscillatorLevel : ℤ
   rightOscillatorLevel : ℤ
   brstCohomologyWithSiegelConstraint : HeteroticClaim
@@ -88,8 +88,8 @@ BRST/Siegel cohomology with level matching and right-moving GSO, yielding
 tachyon-free spectrum with 10D `N=1` supergravity plus gauge multiplets. -/
 def HeteroticSpectrumPackage (data : HeteroticSpectrumData) : Prop :=
   data.alphaPrime > 0 ∧
-  (-data.alphaPrime / 4) * data.momentumSq = (data.leftOscillatorLevel : ℝ) ∧
-  (-data.alphaPrime / 4) * data.momentumSq = (data.rightOscillatorLevel : ℝ) ∧
+  ((-data.alphaPrime / 4) * data.momentumSq).value = (data.leftOscillatorLevel : ℝ) ∧
+  ((-data.alphaPrime / 4) * data.momentumSq).value = (data.rightOscillatorLevel : ℝ) ∧
   data.leftOscillatorLevel ≥ -1 ∧
   data.rightOscillatorLevel ≥ 0 ∧
   data.brstCohomologyWithSiegelConstraint ∧
@@ -113,9 +113,9 @@ structure HeteroticAmplitudePrescriptionData where
   punctures : ℕ
   oddSupermoduliComplexDimension : ℤ
   phasePower : ℤ
-  normalizationPrefactor : ℂ
-  contourIntegral : ℂ
-  amplitude : ℂ
+  normalizationPrefactor : ComplexAmplitude
+  contourIntegral : ComplexAmplitude
+  amplitude : ComplexAmplitude
   antiholomorphicSupermoduliOnly : HeteroticClaim
   pcoReplacementEquivalent : HeteroticClaim
   spuriousSingularitiesControlled : HeteroticClaim
@@ -144,10 +144,10 @@ theorem heterotic_amplitude_prescription_package
 
 /-- Tree-level coupling data in the 10D heterotic effective description. -/
 structure HeteroticTreeEffectiveCouplingData where
-  stringCoupling : ℝ
-  alphaPrime : ℝ
-  gravitationalCoupling : ℝ
-  yangMillsCoupling : ℝ
+  stringCoupling : DimensionlessCoupling
+  alphaPrime : StringSlope
+  gravitationalCoupling : CouplingScale
+  yangMillsCoupling : CouplingScale
   gravitonThreePointContainsRiemannSqCorrection : HeteroticClaim
   gravitonThreePointHasNoRiemannCubeCorrection : HeteroticClaim
   gaugeThreePointMatchesYangMillsWithoutFcube : HeteroticClaim
@@ -208,11 +208,11 @@ theorem heterotic_green_schwarz_package
 
 /-- Data for non-BPS `SO(32)` spinor-state mass renormalization. -/
 structure HeteroticNonBpsSpinorMassRenormalizationData where
-  alphaPrime : ℝ
-  stringCoupling : ℝ
-  classicalMassSq : ℝ
-  oneLoopMassShiftSq : ℝ
-  correctedMassSq : ℝ
+  alphaPrime : StringSlope
+  stringCoupling : DimensionlessCoupling
+  classicalMassSq : MassSquaredScale
+  oneLoopMassShiftSq : MassSquaredScale
+  correctedMassSq : MassSquaredScale
   has128BosonsAnd128Fermions : HeteroticClaim
   stableAgainstDecayToMasslessStates : HeteroticClaim
   offShellOnePiFrameworkRequired : HeteroticClaim
@@ -245,8 +245,8 @@ theorem heterotic_non_bps_spinor_mass_renormalization_package
 /-- Background-field `(0,1)` sigma-model data for heterotic strings. -/
 structure HeteroticBackgroundNlsmData where
   Configuration : Type
-  actionFunctional : Configuration → ℂ
-  alphaPrime : ℝ
+  actionFunctional : Configuration → ComplexActionValue
+  alphaPrime : StringSlope
   hasMetricBackground : HeteroticClaim
   hasBFieldBackground : HeteroticClaim
   hasGaugeBundleBackground : HeteroticClaim
@@ -355,13 +355,13 @@ theorem heterotic_strominger_system_package
 
 /-- 4D effective-theory/FI-potential data in quantum-corrected heterotic vacua. -/
 structure HeteroticFourDEffectiveTheoryData where
-  kappa4 : ℝ
-  alphaPrime : ℝ
+  kappa4 : CouplingScale
+  alphaPrime : StringSlope
   anomalyCoefficient : ℤ
-  inverseDilatonRealPart : ℝ
-  chargedScalarQuadraticContribution : ℝ
-  uOneMomentMap : ℝ
-  dTermPotentialContribution : ℝ
+  inverseDilatonRealPart : DimensionlessCoupling
+  chargedScalarQuadraticContribution : MassSquaredScale
+  uOneMomentMap : MassSquaredScale
+  dTermPotentialContribution : PotentialScale
   axionShiftCancelsUOneAnomaly : HeteroticClaim
   dilatonInChiralMultiplet : HeteroticClaim
 
@@ -394,11 +394,11 @@ theorem heterotic_four_d_effective_theory_package
 /-- One-loop Fayet-Iliopoulos mass-term data for charged heterotic scalars. -/
 structure HeteroticOneLoopFiMassTermData where
   charge : ℤ
-  kappa4 : ℝ
-  alphaPrime : ℝ
+  kappa4 : CouplingScale
+  alphaPrime : StringSlope
   h21 : ℕ
   h11 : ℕ
-  deltaMassSq : ℝ
+  deltaMassSq : MassSquaredScale
   offShellRegularizationUsed : HeteroticClaim
   oddSpinStructureContributionVanishes : HeteroticClaim
   ramondIndexTraceDeterminesIntegral : HeteroticClaim
@@ -430,7 +430,7 @@ theorem heterotic_one_loop_fi_mass_term_package
 /-- Two-loop vacuum-energy data in the quantum-corrected heterotic vacuum analysis. -/
 structure HeteroticTwoLoopVacuumEnergyData where
   anomalyCoefficient : ℤ
-  twoLoopVacuumAmplitude : ℂ
+  twoLoopVacuumAmplitude : ComplexAmplitude
   boundaryOfGenusTwoModuliControlsAmplitude : HeteroticClaim
   spuriousSingularityResiduesRequired : HeteroticClaim
   factorizesIntoTorusCurrentIntegrals : HeteroticClaim

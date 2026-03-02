@@ -13,10 +13,10 @@ abbrev TypeIIDbraneClaim := Prop
 
 /-- Open+closed type-II perturbative data on super Riemann surfaces with boundary. -/
 structure OpenClosedTypeIIPerturbationData where
-  alphaPrime : Real
-  openStringNormalizationKo : Real
-  representativeAmplitude : Complex
-  representativeReducedAmplitude : Complex
+  alphaPrime : StringSlope
+  openStringNormalizationKo : ScalingDimension
+  representativeAmplitude : ComplexAmplitude
+  representativeReducedAmplitude : ComplexAmplitude
   boundarySuperRiemannSurfaceTransitionRulesUsed : TypeIIDbraneClaim
   supermoduliDimensionRuleApplied : TypeIIDbraneClaim
   boundarySpinStructureSummationIncluded : TypeIIDbraneClaim
@@ -51,9 +51,9 @@ theorem open_closed_typeII_perturbation_package
 
 /-- Disc open-superstring gauge-amplitude data on stacked BPS D-branes. -/
 structure DiscOpenGaugeAmplitudeData where
-  alphaPrime : Real
-  openCoupling : Real
-  yMGaugeCoupling : Real
+  alphaPrime : StringSlope
+  openCoupling : DimensionlessCoupling
+  yMGaugeCoupling : CouplingScale
   stackSize : Nat
   chanPatonTraceOrderingIncluded : TypeIIDbraneClaim
   threeGaugeBosonAmplitudeMatchesYangMillsVertex : TypeIIDbraneClaim
@@ -147,9 +147,9 @@ theorem cylinder_typeII_cancellation_package
 
 /-- Kappa-symmetric BPS D-brane action data in flat type-II superspace. -/
 structure BpsKappaSymmetricActionData where
-  alphaPrime : Real
-  openCoupling : Real
-  braneTension : Real
+  alphaPrime : StringSlope
+  openCoupling : DimensionlessCoupling
+  braneTension : TensionScale
   supersymmetryInvariantPiAndCalFConstructed : TypeIIDbraneClaim
   dbiPlusWessZuminoActionUsed : TypeIIDbraneClaim
   kappaSymmetryProjectorSquaresToOne : TypeIIDbraneClaim
@@ -211,8 +211,8 @@ theorem bps_background_coupling_package
 /-- RR-charge quantization data for electric/magnetic dual D-branes. -/
 structure RrChargeDiracQuantizationData where
   kappa : Real
-  rrChargeDensityDp : Real
-  rrChargeDensityDual : Real
+  rrChargeDensityDp : ChargeDensityScale
+  rrChargeDensityDual : ChargeDensityScale
   magneticFluxFromDualBraneSource : TypeIIDbraneClaim
   diracQuantizationFromBraneActionSingleValuedness : TypeIIDbraneClaim
   minimalChargeConditionSatisfied : TypeIIDbraneClaim
@@ -375,9 +375,9 @@ theorem stacked_dbrane_non_abelian_package
 
 /-- D0-brane scattering and BFSS matrix-quantum-mechanics data. -/
 structure D0ScatteringBfssData where
-  alphaPrime : Real
-  typeIIAStringCoupling : Real
-  d0Mass : Real
+  alphaPrime : StringSlope
+  typeIIAStringCoupling : DimensionlessCoupling
+  d0Mass : InvariantMass
   movingD0CylinderAmplitudeComputed : TypeIIDbraneClaim
   longDistancePotentialStartsAtV4OverR7 : TypeIIDbraneClaim
   lowEnergyLimitGivesMatrixQuantumMechanics : TypeIIDbraneClaim
