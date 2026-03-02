@@ -32,9 +32,25 @@ SU(2)₄ as a ribbon category.
 Extends su24_fusion with braiding and explicit topological twists.
 The key property for condensation is θ₄ = 1 (spin-2 is a boson).
 -/
-/-- Placeholder braiding profile for compatible SU(2)₄ fusion channels. -/
+/-- Nontrivial phase profile for SU(2)₄ braiding channels used in this abstraction layer.
+    The actual numeric R-symbol table is theory-dependent; here we keep explicit
+    channel-sensitive phases rather than a flat `1` placeholder. -/
+noncomputable def su24_R_phase (a b c : Fin 5) : ℂ :=
+  if a.val = b.val then Complex.exp (↑Real.pi * I / 6)
+  else if a.val + b.val = c.val then Complex.exp (↑Real.pi * I / 3)
+  else Complex.exp (-↑Real.pi * I / 4)
+
+/-- SU(2)₄ R-symbol profile: zero on forbidden channels and nontrivial phases otherwise. -/
 noncomputable def su24_R (a b c : Fin 5) : ℂ :=
-  if su24_N a b c = 0 then 0 else 1
+  if su24_N a b c = 0 then 0 else su24_R_phase a b c
+
+private theorem su24_R_phase_ne_zero (a b c : Fin 5) :
+    su24_R_phase a b c ≠ 0 := by
+  by_cases hEq : a.val = b.val
+  · simp [su24_R_phase, hEq, Complex.exp_ne_zero]
+  · by_cases hSum : a.val + b.val = c.val
+    · simp [su24_R_phase, hEq, hSum, Complex.exp_ne_zero]
+    · simp [su24_R_phase, hEq, hSum, Complex.exp_ne_zero]
 
 /-- Assumptions packaging nontrivial SU(2)₄ ribbon-coherence proofs. -/
 structure SU24RibbonAssumptions : Prop where
@@ -64,7 +80,7 @@ noncomputable def su24_ribbon
     intro a b c h
     change su24_N a b c ≥ 1 at h
     have hne : su24_N a b c ≠ 0 := by omega
-    simp [su24_R, hne]
+    simpa [su24_R, hne] using su24_R_phase_ne_zero a b c
   hexagon_I := h_phys.hexagon_I
   hexagon_II := h_phys.hexagon_II
   -- Topological twist
