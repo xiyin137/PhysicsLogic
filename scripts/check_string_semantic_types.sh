@@ -18,6 +18,18 @@ else
   echo "[ok] no scalar-typed state fields"
 fi
 
+echo "[semantic-check] no scalar-typed closed-SFT EOM/operator residual fields"
+eom_operator_hits="$(rg -n \
+  "^[[:space:]]+(brstComponent|higherBracketComponent|equationResidual|linearizedContribution|nestedBracketContribution|homotopyBalance)[[:space:]]*:[[:space:]]*.*→[[:space:]]*(ℂ|Complex|ℝ|Real)([[:space:]]|$)" \
+  PhysicsLogic/StringTheory --glob '*.lean' || true)"
+if [[ -n "$eom_operator_hits" ]]; then
+  echo "$eom_operator_hits"
+  echo "[fail] found scalar-typed closed-SFT EOM/operator residual fields"
+  status=1
+else
+  echo "[ok] closed-SFT EOM/operator residual fields are non-scalar"
+fi
+
 echo "[semantic-check] no scalar-typed operator fields in StringTheory data structures"
 operator_hits="$(rg -n \
   "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Oo]perator[[:space:]]*:[[:space:]]*(ℂ|Complex|ℝ|Real)([[:space:]]|$)" \

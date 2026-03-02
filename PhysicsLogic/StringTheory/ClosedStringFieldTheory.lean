@@ -7,22 +7,27 @@ namespace PhysicsLogic.StringTheory
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
+abbrev StringFieldOperator (StringField : Type*) := StringField → StringField
+abbrev StringFieldPairing (StringField : Type*) := StringField → StringField → ComplexAmplitude
+
 /-- Kinematic data for the closed-string field space `H_0 = ker b_0^- ∩ ker L_0^-`. -/
-structure ClosedStringFieldKinematicData (StringField : Type*) where
+structure ClosedStringFieldKinematicData (StringField : Type*) [Zero StringField] where
   field : StringField
-  b0Minus : StringField → ℂ
-  l0Minus : StringField → ℂ
+  b0Minus : StringFieldOperator StringField
+  l0Minus : StringFieldOperator StringField
 
 /-- Closed-string kinematic package:
 string fields satisfy `b_0^- Ψ = 0` and `L_0^- Ψ = 0`. -/
 def ClosedStringFieldKinematicPackage
-    {StringField : Type*} (data : ClosedStringFieldKinematicData StringField) : Prop :=
+    {StringField : Type*} [Zero StringField]
+    (data : ClosedStringFieldKinematicData StringField) : Prop :=
   data.b0Minus data.field = 0 ∧
   data.l0Minus data.field = 0
 
 /-- Assumed closed-string kinematic package for the `H_0` field space. -/
 theorem closed_string_field_kinematic_package
     {StringField : Type*}
+    [Zero StringField]
     (data : ClosedStringFieldKinematicData StringField)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSftClosedFieldSpaceHZero
@@ -56,18 +61,21 @@ theorem off_shell_amplitude_cycle_package
   exact h_phys
 
 /-- BRST variation data for the off-shell differential form `Ω[Ψ]`. -/
-structure BrstExteriorDerivativeData where
-  brstVariation : ℂ
-  exteriorDerivative : ℂ
+structure BrstExteriorDerivativeData (FormValue : Type*) [Neg FormValue] where
+  brstVariation : FormValue
+  exteriorDerivative : FormValue
 
 /-- BRST differential-form package:
 `Ω[Q_B Ψ] = - dΩ[Ψ]`. -/
-def BrstExteriorDerivativePackage (data : BrstExteriorDerivativeData) : Prop :=
+def BrstExteriorDerivativePackage {FormValue : Type*} [Neg FormValue]
+    (data : BrstExteriorDerivativeData FormValue) : Prop :=
   data.brstVariation = -data.exteriorDerivative
 
 /-- Assumed BRST-exterior-derivative identity for off-shell SFT forms. -/
 theorem brst_exterior_derivative_package
-    (data : BrstExteriorDerivativeData)
+    {FormValue : Type*}
+    [Neg FormValue]
+    (data : BrstExteriorDerivativeData FormValue)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSftBrstExteriorDerivativeIdentity
       (BrstExteriorDerivativePackage data)) :
@@ -146,15 +154,17 @@ theorem one_pi_effective_action_siegel_package
   exact h_phys
 
 /-- Classical closed-SFT equation-of-motion data. -/
-structure ClassicalStringFieldEquationData (StringField : Type*) where
-  brstComponent : StringField → ℂ
-  higherBracketComponent : StringField → ℂ
-  equationResidual : StringField → ℂ
+structure ClassicalStringFieldEquationData
+    (StringField : Type*) [Add StringField] [Zero StringField] where
+  brstComponent : StringFieldOperator StringField
+  higherBracketComponent : StringFieldOperator StringField
+  equationResidual : StringFieldOperator StringField
 
 /-- Classical SFT EOM package:
 `E[Ψ] = Q_B Ψ + Σ (1/n!) [Ψ^n] = 0`. -/
 def ClassicalStringFieldEquationPackage
-    {StringField : Type*} (data : ClassicalStringFieldEquationData StringField) : Prop :=
+    {StringField : Type*} [Add StringField] [Zero StringField]
+    (data : ClassicalStringFieldEquationData StringField) : Prop :=
   ∀ ψ : StringField,
     data.equationResidual ψ = data.brstComponent ψ + data.higherBracketComponent ψ ∧
     data.equationResidual ψ = 0
@@ -162,6 +172,8 @@ def ClassicalStringFieldEquationPackage
 /-- Assumed classical closed-SFT equation package. -/
 theorem classical_string_field_equation_package
     {StringField : Type*}
+    [Add StringField]
+    [Zero StringField]
     (data : ClassicalStringFieldEquationData StringField)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSftClassicalEquationWithBrackets
@@ -173,8 +185,8 @@ theorem classical_string_field_equation_package
 structure StringBracketDualityData (StringField : Type*) where
   braState : StringField
   ketState : StringField
-  dualPairing : StringField → StringField → ℂ
-  vertexFunctional : StringField → StringField → ℂ
+  dualPairing : StringFieldPairing StringField
+  vertexFunctional : StringFieldPairing StringField
 
 /-- String-bracket duality package:
 `⟨Φ|c_0^-|[Ψ^n]⟩ = {Φ,Ψ^n}_{0,n+1}`. -/
@@ -194,15 +206,17 @@ theorem string_bracket_duality_package
   exact h_phys
 
 /-- Data encoding the geometric-master-equation / homotopy-Lie identity balance. -/
-structure LInfinityHomotopyIdentityData (StringField : Type*) where
-  linearizedContribution : StringField → ℂ
-  nestedBracketContribution : StringField → ℂ
-  homotopyBalance : StringField → ℂ
+structure LInfinityHomotopyIdentityData
+    (StringField : Type*) [Add StringField] [Zero StringField] where
+  linearizedContribution : StringFieldOperator StringField
+  nestedBracketContribution : StringFieldOperator StringField
+  homotopyBalance : StringFieldOperator StringField
 
 /-- Homotopy-Lie package:
 the linearized and nested-bracket terms cancel (`Q_B E + [E,Ψ] + ... = 0`). -/
 def LInfinityHomotopyIdentityPackage
-    {StringField : Type*} (data : LInfinityHomotopyIdentityData StringField) : Prop :=
+    {StringField : Type*} [Add StringField] [Zero StringField]
+    (data : LInfinityHomotopyIdentityData StringField) : Prop :=
   ∀ ψ : StringField,
     data.homotopyBalance ψ =
       data.linearizedContribution ψ + data.nestedBracketContribution ψ ∧
@@ -211,6 +225,8 @@ def LInfinityHomotopyIdentityPackage
 /-- Assumed homotopy-Lie identity package for classical closed SFT. -/
 theorem l_infinity_homotopy_identity_package
     {StringField : Type*}
+    [Add StringField]
+    [Zero StringField]
     (data : LInfinityHomotopyIdentityData StringField)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSftLInfinityHomotopyIdentity
