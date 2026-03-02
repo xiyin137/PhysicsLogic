@@ -77,6 +77,39 @@ theorem RelativisticCovariance.poincare_covariance
     rfl
   exact h_rewrite.trans h_cov_raw
 
+/-- Translation covariance (Lorentz part set to identity):
+`W_n(x_i + a) = W_n(x_i)`. -/
+theorem RelativisticCovariance.translation_covariance
+    {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
+    {wft : WightmanFunctionTheory H d}
+    (h_cov : RelativisticCovariance H d wft)
+    (phi : FieldDistribution H d)
+    (a : Fin d → ℝ)
+    (n : ℕ)
+    (points : Fin n → (Fin d → ℝ)) :
+    wft.wightmanFunction phi n (fun i μ => points i μ + a μ) =
+    wft.wightmanFunction phi n points := by
+  have h_raw :
+      wft.wightmanFunction phi n
+        (fun i μ => ∑ ν, (LorentzTransformGen.id d).matrix μ ν * points i ν + a μ) =
+      wft.wightmanFunction phi n points :=
+    h_cov.relativistic_covariance phi (LorentzTransformGen.id d) a n points
+  simpa [LorentzTransformGen.id] using h_raw
+
+/-- Lorentz covariance at zero translation:
+`W_n(Λ x_i) = W_n(x_i)`. -/
+theorem RelativisticCovariance.lorentz_covariance_zero_translation
+    {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
+    {wft : WightmanFunctionTheory H d}
+    (h_cov : RelativisticCovariance H d wft)
+    (phi : FieldDistribution H d)
+    (Lambda : LorentzTransformGen d)
+    (n : ℕ)
+    (points : Fin n → (Fin d → ℝ)) :
+    wft.wightmanFunction phi n (fun i μ => ∑ ν, Lambda.matrix μ ν * points i ν) =
+    wft.wightmanFunction phi n points := by
+  simpa using h_cov.relativistic_covariance phi Lambda (fun _ => 0) n points
+
 /-- W1 covariance restricted to proper-orthochronous Lorentz transformations.
 This matches the standard physical statement before adding discrete symmetries. -/
 structure RestrictedRelativisticCovariance

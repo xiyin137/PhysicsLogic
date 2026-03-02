@@ -48,6 +48,25 @@ structure QFT (d : ℕ) where
   permutation_symmetric : ∀ n (points : Fin n → EuclideanPoint d) (σ : Equiv.Perm (Fin n)),
     schwinger n points = schwinger n (points ∘ σ)
 
+/-- Complex-valued Euclidean QFT interface.
+    This is the physically general case (charged fields/spin structures can
+    produce complex Schwinger functions), while `QFT` above keeps a lightweight
+    real-valued interface for minimal modules. -/
+structure ComplexQFT (d : ℕ) where
+  /-- Complex Schwinger functions ⟨φ(x₁)...φ(xₙ)⟩_E. -/
+  schwinger : (n : ℕ) → (Fin n → EuclideanPoint d) → ComplexAmplitude
+  /-- Translation invariance. -/
+  translation_invariant : ∀ n (points : Fin n → EuclideanPoint d) (a : EuclideanPoint d),
+    schwinger n points = schwinger n (fun i μ => points i μ + a μ)
+  /-- Rotational invariance under O(d). -/
+  rotation_invariant : ∀ n (points : Fin n → EuclideanPoint d)
+    (rotation : Fin d → Fin d → ℝ),
+    IsOrthogonal rotation →
+    schwinger n points = schwinger n (fun i μ => ∑ ν, rotation μ ν * points i ν)
+  /-- Bosonic permutation symmetry. -/
+  permutation_symmetric : ∀ n (points : Fin n → EuclideanPoint d) (σ : Equiv.Perm (Fin n)),
+    schwinger n points = schwinger n (points ∘ σ)
+
 /-- Combined Euclidean covariance from translation and rotational invariance. -/
 theorem QFT.euclidean_covariance {d : ℕ} (theory : QFT d)
     (n : ℕ)
@@ -76,6 +95,49 @@ theorem QFT.euclidean_covariance {d : ℕ} (theory : QFT d)
           congr
           funext i μ
           simp [add_comm]
+
+/-- Combined Euclidean covariance for the complex-valued interface. -/
+theorem ComplexQFT.euclidean_covariance {d : ℕ} (theory : ComplexQFT d)
+    (n : ℕ)
+    (rotation : Fin d → Fin d → ℝ)
+    (h_orthogonal : IsOrthogonal rotation)
+    (translation : EuclideanPoint d)
+    (points : Fin n → EuclideanPoint d) :
+    theory.schwinger n points =
+    theory.schwinger n (fun i μ => translation μ + ∑ ν, rotation μ ν * points i ν) := by
+  have h_rot :
+      theory.schwinger n points =
+      theory.schwinger n (fun i μ => ∑ ν, rotation μ ν * points i ν) :=
+    theory.rotation_invariant n points rotation h_orthogonal
+  have h_trans :
+      theory.schwinger n (fun i μ => ∑ ν, rotation μ ν * points i ν) =
+      theory.schwinger n (fun i μ => (∑ ν, rotation μ ν * points i ν) + translation μ) :=
+    theory.translation_invariant n (fun i μ => ∑ ν, rotation μ ν * points i ν) translation
+  calc
+    theory.schwinger n points =
+        theory.schwinger n (fun i μ => ∑ ν, rotation μ ν * points i ν) := h_rot
+    _ =
+        theory.schwinger n (fun i μ => (∑ ν, rotation μ ν * points i ν) + translation μ) :=
+          h_trans
+    _ =
+        theory.schwinger n (fun i μ => translation μ + ∑ ν, rotation μ ν * points i ν) := by
+          congr
+          funext i μ
+          simp [add_comm]
+
+/-- Embed a real-valued Euclidean QFT as a complex-valued one. -/
+def QFT.toComplex {d : ℕ} (theory : QFT d) : ComplexQFT d where
+  schwinger := fun n points => (theory.schwinger n points : ℂ)
+  translation_invariant := by
+    intro n points a
+    exact congrArg (fun r : ℝ => (r : ℂ)) (theory.translation_invariant n points a)
+  rotation_invariant := by
+    intro n points rotation h_orthogonal
+    exact congrArg (fun r : ℝ => (r : ℂ))
+      (theory.rotation_invariant n points rotation h_orthogonal)
+  permutation_symmetric := by
+    intro n points σ
+    exact congrArg (fun r : ℝ => (r : ℂ)) (theory.permutation_symmetric n points σ)
 
 /-- Vacuum expectation value ⟨φ⟩: the 1-point function at the origin -/
 def vev {d : ℕ} (theory : QFT d) : ℝ :=
