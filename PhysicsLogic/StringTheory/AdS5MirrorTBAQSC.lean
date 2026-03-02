@@ -116,7 +116,7 @@ theorem mirror_excited_state_quantization_package
 
 /-- Generic mirror Bethe-Yang factorization data. -/
 structure MirrorBetheYangFactorizationData (Excitation : Type*) where
-  spatialLength : ScalingDimension
+  mirrorVolume : ScalingDimension
   momentum : Excitation → ComplexDimensionless
   phaseFactor : Excitation → ComplexAmplitude
   factorizedScattering : Excitation → ComplexAmplitude
@@ -125,10 +125,10 @@ structure MirrorBetheYangFactorizationData (Excitation : Type*) where
 `exp(i p_A L) = product_B S^{BA}` in compressed form. -/
 def MirrorBetheYangFactorizationPackage {Excitation : Type*}
     (data : MirrorBetheYangFactorizationData Excitation) : Prop :=
-  data.spatialLength > 0 ∧
+  data.mirrorVolume > 0 ∧
   ∀ e : Excitation,
     data.phaseFactor e =
-        Complex.exp (Complex.I * data.momentum e * (data.spatialLength : ℂ)) ∧
+        Complex.exp (Complex.I * data.momentum e * (data.mirrorVolume : ℂ)) ∧
       data.phaseFactor e = data.factorizedScattering e
 
 /-- Assumed mirror Bethe-Yang factorization package. -/

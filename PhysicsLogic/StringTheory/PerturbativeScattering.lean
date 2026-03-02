@@ -104,17 +104,17 @@ structure PlumbingFixtureDegenerationData where
   sewingParameter : ℂ
   localCoordinateZ : ℂ
   localCoordinateZPrime : ℂ
-  cylinderLength : ScalingDimension
+  cylinderModulus : ScalingDimension
 
 /-- Plumbing-fixture package:
-`z' = q/z`, `|q|<1`, and cylinder length `-log|q|`. -/
+`z' = q/z`, `|q|<1`, and cylinder modulus `-log|q|`. -/
 def PlumbingFixtureDegenerationPackage
     (data : PlumbingFixtureDegenerationData) : Prop :=
   data.sewingParameter ≠ 0 ∧
   ‖data.sewingParameter‖ < 1 ∧
   data.localCoordinateZ ≠ 0 ∧
   data.localCoordinateZPrime = data.sewingParameter / data.localCoordinateZ ∧
-  data.cylinderLength = -Real.log ‖data.sewingParameter‖
+  data.cylinderModulus = -Real.log ‖data.sewingParameter‖
 
 /-- Assumed plumbing-fixture degeneration package. -/
 theorem plumbing_fixture_degeneration_package

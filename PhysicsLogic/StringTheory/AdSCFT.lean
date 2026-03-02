@@ -164,14 +164,14 @@ theorem poincare_global_coordinate_map
     PoincareGlobalCoordinateMap data := by
   exact h_phys
 
-/-- State/operator map data for global AdS energy and CFT dimension. -/
+/-- State/operator map data for global AdS energy (in AdS units) and CFT dimension. -/
 structure StateOperatorMapData where
   operatorDimension : ScalingDimension
-  globalAdSEnergy : ScalingDimension
+  globalAdSEnergyInAdSUnits : ScalingDimension
 
 /-- State/operator map relation: `E_global = Δ`. -/
 def StateOperatorMapRelation (data : StateOperatorMapData) : Prop :=
-  data.globalAdSEnergy = data.operatorDimension
+  data.globalAdSEnergyInAdSUnits = data.operatorDimension
 
 /-- Assumed global-AdS/CFT state-operator map relation. -/
 theorem state_operator_map_relation
