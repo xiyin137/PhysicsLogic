@@ -36,6 +36,23 @@
 - Candidate new `AssumptionId`: `stringAnomalyTypeIHeteroticFactorization`.
 - Candidate new `AssumptionId`: `stringAnomalyGreenSchwarzCancellation`.
 
+## Current Formalization Mapping
+- Implemented in `PhysicsLogic/QFT/PathIntegral/Anomalies.lean`:
+  `TwoDAxialCurrentAnomaly`,
+  `FourDAxialCurrentAnomaly`,
+  `U1ChiralGaugeVariationAnomaly`,
+  `MultiU1CubicAnomalyCoefficients`,
+  `MultiU1CountertermShift`,
+  `GaugeDescentRelations`,
+  `ChiralFermionGaugeAnomalyPolynomial`,
+  `GravitationalDescentRelations`,
+  `GravitationalAnomalyPolynomial`,
+  `D10MajoranaWeylAnomalyPolynomial`.
+- Implemented in `PhysicsLogic/StringTheory/Anomalies.lean`:
+  `TypeIIBAnomalyCancellation`,
+  `TypeIHeteroticFactorizedAnomaly`,
+  `GreenSchwarzCancellation`.
+
 ## Subsections
 - [x] O.1 Axial anomaly (p.789)
 - [x] O.2 Gauge anomaly (p.792)

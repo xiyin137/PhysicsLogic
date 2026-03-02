@@ -37,6 +37,20 @@
 - Candidate new `AssumptionId`: `qftSusy3dN2SigmaDtermRelation`.
 - Candidate new `AssumptionId`: `qftSusy3dN3QuarticSuperpotential`.
 
+## Current Formalization Mapping
+- Implemented in `PhysicsLogic/Symmetries/SuperPoincare.lean`:
+  `NExtendedSuperPoincareRelation`,
+  `MasslessSupermultipletDimension`,
+  `BpsBoundSaturation`,
+  `N1SuperspaceAlgebra`,
+  `N1ChiralConstraints`,
+  `N1VectorGaugeFieldStrengthPackage`,
+  `N1HolomorphicOneLoopBeta`,
+  `NsvzBetaRelation`,
+  `N2PrepotentialConstraints`,
+  `ThreeDN2SigmaDtermRelation`,
+  `ThreeDN3QuarticSuperpotential`.
+
 ## Subsections
 - [x] M.1 1-particle representations of supersymmetry (p.769)
 - [x] M.2 4D ${\cal N}=1$ superspace (p.770)

@@ -33,6 +33,18 @@
 - Candidate new `AssumptionId`: `grSupergravityN2GaugedScalarPotential`.
 - Candidate new `AssumptionId`: `grSupergravityN1GaugeAndPotentialPackage`.
 
+## Current Formalization Mapping
+- Implemented in `PhysicsLogic/GeneralRelativity/Supergravity.lean`:
+  `CurvedSpinorGeometryCompatibility`,
+  `ElevenDSugraCorePackage`,
+  `TypeIIAFormRelations`,
+  `TypeIIBPseudoActionConstraints`,
+  `TypeIGreenSchwarzHatH`,
+  `N2SpecialKahlerPotential`,
+  `QuaternionicKahlerRicciRelation`,
+  `N2GaugedScalarPotentialDecomposition`,
+  `N1SupergravityGaugeAndPotentialPackage`.
+
 ## Subsections
 - [x] N.1 Spinor fields in curved space (p.779)
 - [x] N.2 11-dimensional supergravity (p.779)

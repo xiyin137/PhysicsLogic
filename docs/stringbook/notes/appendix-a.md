@@ -43,6 +43,15 @@
 - Candidate new `AssumptionId`: `stringConventionsTypeIIDimensionlessCouplings`.
 - Candidate new `AssumptionId`: `stringConventionsMTheoryScaleTensionRelations`.
 
+## Current Formalization Mapping
+- Implemented in `PhysicsLogic/StringTheory/Conventions.lean`:
+  `BosonicNormalizationConventionPackage`,
+  `GravitationalCouplingConventionPackage`,
+  `BosonicDbraneTensionConventionPackage`,
+  `TypeIIDbraneTensionConventionPackage`,
+  `TypeIIDimensionlessCouplingConventionPackage`,
+  `MTheoryScaleTensionConventionPackage`.
+
 ## Subsections
 - (none listed in TOC)
 

@@ -121,6 +121,7 @@ theorem bulk_boundary_one_point_relation
 /-- Cylinder modular-duality data between closed-channel and strip-channel descriptions. -/
 structure BoundaryCylinderDualityData where
   modulus : ℝ
+  openChannelModulus : ℝ
   closedChannelAmplitude : ℂ
   openChannelTrace : ℂ
 
@@ -128,6 +129,8 @@ structure BoundaryCylinderDualityData where
 `⟨⟨B| e^{-π t (L_0+L̃_0-c/12)} |B'⟩ = Tr_{H_{BB'}} e^{-(2π/t)(L_0-c/24)}`. -/
 def BoundaryCylinderModularDuality (data : BoundaryCylinderDualityData) : Prop :=
   data.modulus > 0 ∧
+  data.openChannelModulus = 2 / data.modulus ∧
+  data.openChannelModulus > 0 ∧
   data.closedChannelAmplitude = data.openChannelTrace
 
 /-- Assumed cylinder modular-duality relation from Appendix P. -/
@@ -156,7 +159,7 @@ def ChanPatonFactorization (data : ChanPatonBoundaryData) : Prop :=
   data.hBnmDim = data.hbbDim * data.matrixDim ∧
   (∀ i : Fin data.n, ∀ j k : Fin data.m, ∀ l : Fin data.n,
     data.matrixProductCoeff i j k l =
-      if j = k then (if i = l then 1 else 0) else 0)
+      if j = k then 1 else 0)
 
 /-- Assumed Chan-Paton factorization/multiplication package from Appendix P. -/
 theorem chan_paton_factorization

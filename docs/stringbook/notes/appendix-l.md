@@ -37,6 +37,20 @@
 - Candidate new `AssumptionId`: `symSpinorEuclideanD8TrialityRelations`.
 - Candidate new `AssumptionId`: `symSpinorEuclideanD6Su4GammaIdentity`.
 
+## Current Formalization Mapping
+- Implemented in `PhysicsLogic/Symmetries/Spinors.lean`:
+  `CliffordAlgebraRelation`,
+  `EvenCliffordFockRelation`,
+  `ChiralityEigenspaceDimensions`,
+  `MajoranaConditionAdmissibleEven`,
+  `MajoranaWeylAdmissible`,
+  `ChargeConjugationRelation`,
+  `So19ConventionPackage`,
+  `So13ConventionPackage`,
+  `So12ConventionPackage`,
+  `D8TrialityRelations`,
+  `D6Su4GammaIdentity`.
+
 ## Subsections
 - [x] L.1 Spinor representations from the Clifford algebra (p.763)
 - [x] L.2 Majorana condition and conjugation (p.764)

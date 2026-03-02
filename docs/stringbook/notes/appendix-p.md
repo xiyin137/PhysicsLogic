@@ -35,6 +35,20 @@
 - Candidate new `AssumptionId`: `cft2dBoundaryFreeFermionCoefficients`.
 - Candidate new `AssumptionId`: `cft2dBoundaryFreeFermionSectorIdentification`.
 
+## Current Formalization Mapping
+- Implemented in `PhysicsLogic/QFT/CFT/TwoDimensional/BoundaryCFT.lean`:
+  `BoundaryConformalInvariance`,
+  `BoundaryCorrelatorKinematics`,
+  `BoundaryStateGluing`,
+  `BulkBoundaryOnePointRelation`,
+  `BoundaryCylinderModularDuality`,
+  `ChanPatonFactorization`,
+  `FreeBosonNDBoundaryConditions`,
+  `FreeBosonBoundaryStateNormalization`,
+  `FreeFermionNDBoundaryConditions`,
+  `FreeFermionBoundaryStateCoefficients`,
+  `FreeFermionBoundarySectorIdentification`.
+
 ## Subsections
 - [x] P.1 Conformal boundary conditions (p.801)
 - [x] P.2 The boundary state (p.803)

@@ -36,6 +36,19 @@
 - Candidate new `AssumptionId`: `qftEuclideanMqmLongStringRenormalizedEnergy`.
 - Candidate new `AssumptionId`: `qftEuclideanMqmLongStringIntegralEquation`.
 
+## Current Formalization Mapping
+- Implemented in `PhysicsLogic/QFT/Euclidean/MatrixQuantumMechanics.lean`:
+  `MatrixCanonicalCommutationRelation`,
+  `MatrixModelSingletReduction`,
+  `COneInvertedHarmonicPotential`,
+  `COneFermiSeaProfile`,
+  `CollectiveFieldTauPackage`,
+  `CollectiveBornOneToTwoAmplitude`,
+  `ReflectionHoleRelation`,
+  `COneInstantonOneToNCorrection`,
+  `LongStringRenormalizedEnergyRelation`,
+  `LongStringIntegralEquationRelation`.
+
 ## Subsections
 - [x] Q.1 One-matrix quantum mechanics (p.809)
 - [x] Q.2 The $c=1$ MQM (p.810)

@@ -37,6 +37,19 @@
 - Candidate new `AssumptionId`: `stringHolographyMellinExchangePoleSeries`.
 - Candidate new `AssumptionId`: `stringHolographyMellinFlatSpaceLimit`.
 
+## Current Formalization Mapping
+- Implemented in `PhysicsLogic/StringTheory/Holography.lean`:
+  `ScalarStandardBoundaryCondition`,
+  `ScalarTwoPointFunction`,
+  `GaugeCurrentDictionary`,
+  `GravityStressTensorDictionary`,
+  `RegulatedAdSGravityAction`,
+  `ScalarCubicWittenThreePoint`,
+  `MellinConstraintSystem`,
+  `ContactMellinAmplitudeIsUnity`,
+  `MellinExchangePoleSeries`,
+  `MellinFlatSpaceLimitRelation`.
+
 ## Subsections
 - [x] R.1 The boundary condition on a bulk scalar field (p.816)
 - [x] R.2 The two-point function (p.817)
