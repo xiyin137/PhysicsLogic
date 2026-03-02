@@ -56,11 +56,14 @@ structure MomentumSpaceWavePacket (m : InvariantMass) where
 structure PositionSpaceSmearing where
   /-- Smooth test function g(x⃗) in 3-space -/
   g : (Fin 3 → ℝ) → ℂ
-  /-- Support radius (compact spatial support) -/
-  support_radius : ScalingDimension
+  /-- Support radius in physical length units (compact spatial support). -/
+  support_radius : LengthScale
   support_positive : support_radius > 0
-  /-- Amplitude bound -/
-  amplitude_bound : ∀ x : Fin 3 → ℝ, ‖g x‖ ≤ support_radius
+  /-- Uniform bound scale for the smearing profile amplitude. -/
+  amplitude_bound_scale : Dimless
+  amplitude_bound_nonneg : amplitude_bound_scale ≥ 0
+  /-- Amplitude bound. -/
+  amplitude_bound : ∀ x : Fin 3 → ℝ, ‖g x‖ ≤ amplitude_bound_scale
 
 /- ============= HAAG-RUELLE THEORY DATA ============= -/
 
