@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import Mathlib.Algebra.Algebra.Basic
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Real.Sqrt
@@ -7,6 +8,14 @@ namespace PhysicsLogic.StringTheory
 
 set_option autoImplicit false
 set_option linter.unusedVariables false
+
+/-- Endomorphisms of a complex state space. -/
+abbrev Endomorphism (State : Type*) [AddCommGroup State] [Module ℂ State] := Module.End ℂ State
+
+/-- Operator commutator on endomorphisms. -/
+def opComm {State : Type*} [AddCommGroup State] [Module ℂ State]
+    (A B : Endomorphism State) : Endomorphism State :=
+  A * B - B * A
 
 /-- Super-Polyakov gauge-fixed data package in the superconformal gauge.
 This abstracts the equations around `S[g, chi, X, psi]`, local worldsheet SUSY,
@@ -77,13 +86,13 @@ structure PictureNumberData where
   ghostChargeViolation : ℤ
   nsCanonicalPicture : ℤ
   ramondCanonicalPicture : ℚ
-  etaZeroConstraint : Bool
+  etaZeroModeValue : ℂ
 
 /-- Picture-number package:
 `eta_0`-constraint for `H'[A]`, anomaly `Delta q = 2g-2`,
 and canonical NS/R pictures `-1` and `-1/2`. -/
 def PictureNumberPackage (data : PictureNumberData) : Prop :=
-  data.etaZeroConstraint = true ∧
+  data.etaZeroModeValue = 0 ∧
   data.ghostChargeViolation = 2 * (data.genus : ℤ) - 2 ∧
   data.nsCanonicalPicture = -1 ∧
   data.ramondCanonicalPicture = (-1 / 2 : ℚ)
@@ -104,18 +113,18 @@ inductive TypeIIVariant where
 
 /-- Chiral GSO projection data for holomorphic/anti-holomorphic sectors. -/
 structure TypeIIGsoProjectionData where
-  holomorphicGso : Bool
-  antiholomorphicGso : Bool
-  antiholomorphicGsoPrime : Bool
+  holomorphicPhase : ℤ
+  antiholomorphicPhase : ℤ
+  antiholomorphicPrimePhase : ℤ
 
 /-- Type-II GSO package:
 IIA uses `(-)^F = (-)^F'~ = 1`, IIB uses `(-)^F = (-)^F~ = 1`. -/
 def TypeIIGsoProjectionPackage
     (variant : TypeIIVariant) (data : TypeIIGsoProjectionData) : Prop :=
-  data.holomorphicGso = true ∧
+  data.holomorphicPhase = 1 ∧
     match variant with
-    | .iia => data.antiholomorphicGsoPrime = true
-    | .iib => data.antiholomorphicGso = true
+    | .iia => data.antiholomorphicPrimePhase = 1
+    | .iib => data.antiholomorphicPhase = 1
 
 /-- Assumed type-II GSO projection package from Section 6.4. -/
 theorem type_ii_gso_projection_package
@@ -127,23 +136,27 @@ theorem type_ii_gso_projection_package
     TypeIIGsoProjectionPackage variant data := by
   exact h_phys
 
-/-- BRST superfield/current and mode-algebra data. -/
-structure SuperBRSTCurrentData where
-  superfieldRules : Bool
-  currentRules : Bool
-  oscillatorRules : Bool
+/-- BRST current and mode-algebra data on a state space. -/
+structure SuperBRSTCurrentData (State : Type*) [AddCommGroup State] [Module ℂ State] where
+  brstCharge : Endomorphism State
+  bMode : ℤ → Endomorphism State
+  betaMode : ℚ → Endomorphism State
+  virasoroMode : ℤ → Endomorphism State
+  supercurrentMode : ℚ → Endomorphism State
 
 /-- BRST package:
 superfield transformations, BRST current expressions, and mode relations
 (`{Q_B,b_n}=L_n`, `[Q_B,beta_r]=-(1/2)G_r`). -/
-def SuperBRSTCurrentPackage (data : SuperBRSTCurrentData) : Prop :=
-  data.superfieldRules = true ∧
-  data.currentRules = true ∧
-  data.oscillatorRules = true
+def SuperBRSTCurrentPackage {State : Type*} [AddCommGroup State] [Module ℂ State]
+    (data : SuperBRSTCurrentData State) : Prop :=
+  (∀ n : ℤ, opComm data.brstCharge (data.bMode n) = data.virasoroMode n) ∧
+  (∀ r : ℚ,
+    opComm data.brstCharge (data.betaMode r) = (-(1 / 2 : ℂ)) • data.supercurrentMode r)
 
 /-- Assumed BRST current package from Section 6.5. -/
 theorem super_brst_current_package
-    (data : SuperBRSTCurrentData)
+    {State : Type*} [AddCommGroup State] [Module ℂ State]
+    (data : SuperBRSTCurrentData State)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSuperstringBrstCurrentPackage
       (SuperBRSTCurrentPackage data)) :
@@ -243,9 +256,9 @@ theorem superstring_physical_cohomology_package
 /-- OCQ representative data in NS and R sectors. -/
 structure SuperstringOcqRepresentativeData where
   nsMatterWeight : ℚ
-  nsRepresentativeAgreement : Bool
-  ramondHighestWeightConstraints : Bool
-  ramondRepresentativeAgreement : Bool
+  nsRepresentativePicture : ℚ
+  ramondRepresentativePicture : ℚ
+  ramondHighestWeightSatisfiedUpTo : ℕ
 
 /-- OCQ representative package:
 NS representatives `c e^{-phi} V` with `h(V)=1/2`,
@@ -253,9 +266,9 @@ and R representatives `c e^{-phi/2} S` with super-Virasoro highest-weight data. 
 def SuperstringOcqRepresentativePackage
     (data : SuperstringOcqRepresentativeData) : Prop :=
   data.nsMatterWeight = (1 / 2 : ℚ) ∧
-  data.nsRepresentativeAgreement = true ∧
-  data.ramondHighestWeightConstraints = true ∧
-  data.ramondRepresentativeAgreement = true
+  data.nsRepresentativePicture = -1 ∧
+  data.ramondRepresentativePicture = (-1 / 2 : ℚ) ∧
+  data.ramondHighestWeightSatisfiedUpTo > 0
 
 /-- Assumed OCQ representative package for superstring BRST cohomology. -/
 theorem superstring_ocq_representative_package
@@ -293,35 +306,35 @@ theorem superstring_mass_spectrum_package
 /-- Massless `(NS,NS)` data. -/
 structure MasslessNSNSData where
   momentumSq : ℝ
-  leftTransversality : Bool
-  rightTransversality : Bool
+  leftTransversalityResidual : ℂ
+  rightTransversalityResidual : ℂ
 
 def MasslessNSNSPackage (data : MasslessNSNSData) : Prop :=
   data.momentumSq = 0 ∧
-  data.leftTransversality = true ∧
-  data.rightTransversality = true
+  data.leftTransversalityResidual = 0 ∧
+  data.rightTransversalityResidual = 0
 
 /-- Massless `(R,R)` data. -/
 structure MasslessRRData where
   momentumSq : ℝ
-  leftDiracConstraint : Bool
-  rightDiracConstraint : Bool
+  leftDiracResidual : ℂ
+  rightDiracResidual : ℂ
 
 def MasslessRRPackage (data : MasslessRRData) : Prop :=
   data.momentumSq = 0 ∧
-  data.leftDiracConstraint = true ∧
-  data.rightDiracConstraint = true
+  data.leftDiracResidual = 0 ∧
+  data.rightDiracResidual = 0
 
 /-- Massless `(R,NS)` and `(NS,R)` fermionic-sector data. -/
 structure MasslessFermionicData where
   momentumSq : ℝ
-  transversalityAndDirac : Bool
-  gaugeRedundancy : Bool
+  transversalityAndDiracResidual : ℂ
+  gaugeRedundancyResidual : ℂ
 
 def MasslessFermionicPackage (data : MasslessFermionicData) : Prop :=
   data.momentumSq = 0 ∧
-  data.transversalityAndDirac = true ∧
-  data.gaugeRedundancy = true
+  data.transversalityAndDiracResidual = 0 ∧
+  data.gaugeRedundancyResidual = 0
 
 /-- Combined massless-spectrum package for type-II superstrings. -/
 structure SuperstringMasslessSectorData where

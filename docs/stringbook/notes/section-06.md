@@ -68,6 +68,10 @@
   `SuperstringSiegelConstraintPackage` is encoded as operator-on-state
   constraints (b0, b0-tilde, and Ramond beta0) rather than
   scalar placeholders.
+- `PhysicsLogic/StringTheory/SuperstringQuantization.lean`:
+  `TypeIIGsoProjectionPackage`, `SuperBRSTCurrentPackage`,
+  `SuperstringOcqRepresentativePackage`, and massless-sector packages now use
+  phase/operator/residual equations instead of Bool flags.
 
 ## Subsections
 - [x] 6.1 Supersymmetric extension of Polyakov's action (p.117)
