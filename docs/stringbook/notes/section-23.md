@@ -1,6 +1,6 @@
 # Section 23: Strings from ${\cal N}=4$ SYM I: planar integrability and the asymptotic Bethe ansatz
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 539
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/AdS5Integrability.lean`
@@ -37,6 +37,14 @@
 - `CuspStrongCouplingPackage`
 - `BetheYangSystemPackage`
 - `BoundStateDispersionPackage`
+
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/AdS5Integrability.lean` with all
+  listed package units assumption-wired.
+- Physics-interface hardening pass:
+  verified the section-23 interfaces are already predicate-first (no checklist
+  boolean placeholders and no string-tag equality placeholders in package
+  predicates).
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `stringAdS5IntegrabilityOneLoopSpinChain`.
