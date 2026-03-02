@@ -13,7 +13,7 @@ abbrev DInstantonClaim := Prop
 /-- Non-perturbative transseries data for closed-string amplitudes with D-instanton sectors. -/
 structure DInstantonTransseriesData where
   stringCoupling : Real
-  instantonActionScale : Real
+  instantonSectorScale : Real
   perturbativeAmplitudeSectorIncluded : DInstantonClaim
   dInstantonAmplitudeSectorIncluded : DInstantonClaim
   higherNonperturbativeSectorIncluded : DInstantonClaim
@@ -28,7 +28,7 @@ non-perturbative D-instanton transseries, moduli-space integration, and
 disconnected-worldsheet exponentiation structure. -/
 def DInstantonTransseriesPackage (data : DInstantonTransseriesData) : Prop :=
   data.stringCoupling > 0 /\
-  data.instantonActionScale > 0 /\
+  data.instantonSectorScale > 0 /\
   data.perturbativeAmplitudeSectorIncluded /\
   data.dInstantonAmplitudeSectorIncluded /\
   data.higherNonperturbativeSectorIncluded /\
@@ -49,10 +49,12 @@ theorem d_instanton_transseries_package
 
 /-- Data for the ZZ-instanton sector in `c=1` string theory and its MQM dual match. -/
 structure COneZzInstantonData where
+  InstantonConfiguration : Type
+  selectedConfiguration : InstantonConfiguration
   stringCoupling : Real
   alphaPrime : Real
   matrixModelMu : Real
-  zzInstantonActionValue : Real
+  zzInstantonActionFunctional : InstantonConfiguration → Real
   zzActionFromBraneMassRelationUsed : DInstantonClaim
   matrixModelBounceDictionaryUsed : DInstantonClaim
   leadingOneToNAmplitudeFromDiscOnePointFunctions : DInstantonClaim
@@ -65,7 +67,8 @@ def COneZzInstantonPackage (data : COneZzInstantonData) : Prop :=
   data.stringCoupling > 0 /\
   data.alphaPrime > 0 /\
   data.matrixModelMu > 0 /\
-  data.zzInstantonActionValue = 1 / (2 * data.stringCoupling) /\
+  data.zzInstantonActionFunctional data.selectedConfiguration =
+    1 / (2 * data.stringCoupling) /\
   data.zzActionFromBraneMassRelationUsed /\
   data.matrixModelBounceDictionaryUsed /\
   data.leadingOneToNAmplitudeFromDiscOnePointFunctions /\
@@ -83,11 +86,13 @@ theorem c_one_zz_instanton_package
 
 /-- Type-IIB D(-1)-instanton data in axio-dilaton variables. -/
 structure TypeIIBDMinusOneInstantonData where
+  InstantonConfiguration : Type
+  selectedConfiguration : InstantonConfiguration
   tau1 : Real
   tau2 : Real
-  axioDilaton : Complex
-  dMinusOneActionValue : Complex
-  antiDMinusOneActionValue : Complex
+  axioDilatonField : InstantonConfiguration → Complex
+  dMinusOneActionFunctional : InstantonConfiguration → Complex
+  antiDMinusOneActionFunctional : InstantonConfiguration → Complex
   antiInstantonActionUsesConjugateAxioDilaton : DInstantonClaim
   nmInstantonActionUsed : DInstantonClaim
   axionShiftBrokenToIntegerSubgroup : DInstantonClaim
@@ -100,8 +105,14 @@ axio-dilaton-dependent non-perturbative amplitude structure. -/
 def TypeIIBDMinusOneInstantonPackage
     (data : TypeIIBDMinusOneInstantonData) : Prop :=
   data.tau2 > 0 /\
-  data.axioDilaton = data.tau1 + data.tau2 * Complex.I /\
-  data.dMinusOneActionValue = -2 * Real.pi * Complex.I * data.axioDilaton /\
+  data.axioDilatonField data.selectedConfiguration =
+    data.tau1 + data.tau2 * Complex.I /\
+  data.dMinusOneActionFunctional data.selectedConfiguration =
+    -2 * Real.pi * Complex.I *
+      data.axioDilatonField data.selectedConfiguration /\
+  data.antiDMinusOneActionFunctional data.selectedConfiguration =
+    -2 * Real.pi * Complex.I *
+      star (data.axioDilatonField data.selectedConfiguration) /\
   data.antiInstantonActionUsesConjugateAxioDilaton /\
   data.nmInstantonActionUsed /\
   data.axionShiftBrokenToIntegerSubgroup /\

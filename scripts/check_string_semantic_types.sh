@@ -42,6 +42,18 @@ else
   echo "[ok] no scalar-typed fields ending in Functional"
 fi
 
+echo "[semantic-check] ActionFunctional domains must be configuration spaces (not ℝ/ℂ)"
+action_functional_domain_hits="$(rg -n \
+  "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Aa]ction[Ff]unctional[[:space:]]*:[[:space:]]*(ℂ|Complex|ℝ|Real)[[:space:]]*→" \
+  PhysicsLogic/StringTheory --glob '*.lean' || true)"
+if [[ -n "$action_functional_domain_hits" ]]; then
+  echo "$action_functional_domain_hits"
+  echo "[fail] found ActionFunctional fields with scalar domains"
+  status=1
+else
+  echo "[ok] ActionFunctional domains are non-scalar"
+fi
+
 echo "[semantic-check] no scalar-typed raw vertex fields (unless explicitly *Value/*Amplitude/*Coefficient/*Kinematic*)"
 vertex_hits="$(rg -n \
   "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Vv]ertex[[:space:]]*:[[:space:]]*(ℂ|Complex|ℝ|Real)([[:space:]]|$)" \

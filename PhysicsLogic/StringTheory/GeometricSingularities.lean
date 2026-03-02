@@ -404,9 +404,12 @@ theorem conifold_type_iia_transition_package
 
 /-- Worldsheet-instanton data for the resolved-conifold prepotential. -/
 structure ConifoldWorldsheetInstantonData where
+  InstantonConfiguration : Type
+  selectedConfiguration : InstantonConfiguration
   windingNumber : Nat
+  windingNumberOf : InstantonConfiguration → Nat
   complexifiedKahlerModulus : Complex
-  instantonActionValue : Complex
+  instantonActionFunctional : InstantonConfiguration → Complex
   holomorphicMapsToExceptionalSphereUsed : GeometricSingularityClaim
   rationalMapModuliSpaceWithNonzeroResultantUsed : GeometricSingularityClaim
   topologicalTwistLocalizationUsed : GeometricSingularityClaim
@@ -419,7 +422,8 @@ worldsheet-instanton expansion of conifold Yukawa coupling/prepotential. -/
 def ConifoldWorldsheetInstantonPackage
     (data : ConifoldWorldsheetInstantonData) : Prop :=
   data.windingNumber > 0 /\
-  data.instantonActionValue =
+  data.windingNumberOf data.selectedConfiguration = data.windingNumber /\
+  data.instantonActionFunctional data.selectedConfiguration =
     -2 * Real.pi * Complex.I * (data.windingNumber : Complex) *
       data.complexifiedKahlerModulus /\
   data.holomorphicMapsToExceptionalSphereUsed /\

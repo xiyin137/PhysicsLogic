@@ -42,6 +42,18 @@ else
   echo "[ok] no scalar-typed Functional fields in QFT"
 fi
 
+echo "[qft-semantic-check] ActionFunctional domains must be configuration spaces (not ℝ/ℂ)"
+action_functional_domain_hits="$(rg -n \
+  "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Aa]ction[Ff]unctional[[:space:]]*:[[:space:]]*(ℂ|Complex|ℝ|Real)[[:space:]]*→" \
+  PhysicsLogic/QFT --glob '*.lean' || true)"
+if [[ -n "$action_functional_domain_hits" ]]; then
+  echo "$action_functional_domain_hits"
+  echo "[fail] found ActionFunctional fields with scalar domains in QFT"
+  status=1
+else
+  echo "[ok] ActionFunctional domains are non-scalar in QFT"
+fi
+
 echo "[qft-semantic-check] scalar action fields in QFT must be explicitly named"
 action_hits="$(
   rg -n "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[[:space:]]*:[[:space:]]*(ℂ|Complex|ℝ|Real)([[:space:]]|$)" \

@@ -113,29 +113,38 @@ structure CylinderCasimirShift where
 /-- Weyl-anomaly package for 2D CFT on curved worldsheet:
 trace anomaly, Polyakov anomaly functional, and partition-function ratio. -/
 structure WeylAnomalyFunctional where
+  WeylConfiguration : Type
+  selectedConfiguration : WeylConfiguration
   centralCharge : ℝ
-  scalarCurvature : ℝ
-  weylField : ℝ
-  kineticDensity : ℝ
-  traceStressTensor : ℝ
-  anomalyActionValue : ℝ
-  partitionFunctionRatio : ℝ
+  scalarCurvature : WeylConfiguration → ℝ
+  weylField : WeylConfiguration → ℝ
+  kineticDensity : WeylConfiguration → ℝ
+  traceStressTensor : WeylConfiguration → ℝ
+  anomalyActionFunctional : WeylConfiguration → ℝ
+  partitionFunctionRatio : WeylConfiguration → ℝ
   traceAnomalyFormula :
-    traceStressTensor = -(centralCharge / 12) * scalarCurvature
+    traceStressTensor selectedConfiguration =
+      -(centralCharge / 12) * scalarCurvature selectedConfiguration
   anomalyActionFormula :
-    anomalyActionValue =
+    anomalyActionFunctional selectedConfiguration =
       -(centralCharge / (24 * Real.pi)) *
-        (kineticDensity + weylField * scalarCurvature)
+        (kineticDensity selectedConfiguration +
+          weylField selectedConfiguration * scalarCurvature selectedConfiguration)
   partitionRatioFormula :
-    partitionFunctionRatio = Real.exp (-anomalyActionValue)
+    partitionFunctionRatio selectedConfiguration =
+      Real.exp (-(anomalyActionFunctional selectedConfiguration))
 
 /-- Propositional package form of the Weyl-anomaly data equations. -/
 def WeylAnomalyFunctionalPackage (data : WeylAnomalyFunctional) : Prop :=
-  data.traceStressTensor = -(data.centralCharge / 12) * data.scalarCurvature ∧
-  data.anomalyActionValue =
+  data.traceStressTensor data.selectedConfiguration =
+    -(data.centralCharge / 12) * data.scalarCurvature data.selectedConfiguration ∧
+  data.anomalyActionFunctional data.selectedConfiguration =
     -(data.centralCharge / (24 * Real.pi)) *
-      (data.kineticDensity + data.weylField * data.scalarCurvature) ∧
-  data.partitionFunctionRatio = Real.exp (-data.anomalyActionValue)
+      (data.kineticDensity data.selectedConfiguration +
+        data.weylField data.selectedConfiguration *
+          data.scalarCurvature data.selectedConfiguration) ∧
+  data.partitionFunctionRatio data.selectedConfiguration =
+    Real.exp (-(data.anomalyActionFunctional data.selectedConfiguration))
 
 /-- Assumed Appendix-E Weyl/Polyakov-anomaly functional package. -/
 theorem weyl_anomaly_polyakov_functional

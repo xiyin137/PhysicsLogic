@@ -59,7 +59,9 @@ def InstantonSemiclassicalWeight
 /-- Euclidean instanton-saddle data with one-loop weight and zero-mode
 collective-coordinate bookkeeping. -/
 structure InstantonSaddleData where
-  euclideanActionValue : ℝ
+  FieldConfiguration : Type
+  saddleConfiguration : FieldConfiguration
+  euclideanActionFunctional : FieldConfiguration → ℝ
   hbar : ℝ
   oneLoopPrefactor : ℂ
   amplitude : ℂ
@@ -68,10 +70,11 @@ structure InstantonSaddleData where
 
 /-- Instanton-saddle consistency package. -/
 def InstantonSaddlePackage (data : InstantonSaddleData) : Prop :=
-  data.euclideanActionValue > 0 ∧
+  data.euclideanActionFunctional data.saddleConfiguration > 0 ∧
   data.collectiveCoordinateMeasureIncluded ∧
   InstantonSemiclassicalWeight
-    data.euclideanActionValue data.hbar data.oneLoopPrefactor data.amplitude
+    (data.euclideanActionFunctional data.saddleConfiguration)
+    data.hbar data.oneLoopPrefactor data.amplitude
 
 /-- Assumed leading instanton semiclassical weighting relation. -/
 theorem instanton_semiclassical_weight
@@ -89,13 +92,15 @@ theorem instanton_saddle_package
     (h_phys : PhysicsAssumption
       AssumptionId.pathIntegralInstantonSemiclassicalWeight
       (InstantonSemiclassicalWeight
-        data.euclideanActionValue data.hbar data.oneLoopPrefactor data.amplitude))
-    (h_action : data.euclideanActionValue > 0)
+        (data.euclideanActionFunctional data.saddleConfiguration)
+        data.hbar data.oneLoopPrefactor data.amplitude))
+    (h_action : data.euclideanActionFunctional data.saddleConfiguration > 0)
     (h_zero_modes : data.collectiveCoordinateMeasureIncluded) :
     InstantonSaddlePackage data := by
   exact ⟨h_action, h_zero_modes,
     instanton_semiclassical_weight
-      data.euclideanActionValue data.hbar data.oneLoopPrefactor data.amplitude h_phys⟩
+      (data.euclideanActionFunctional data.saddleConfiguration)
+      data.hbar data.oneLoopPrefactor data.amplitude h_phys⟩
 
 /-- Sign contribution associated with a Morse index. -/
 def MorseParityContribution (morseIndex : ℕ) : ℤ :=
@@ -196,13 +201,17 @@ theorem borel_resummation_package
 
 /-- One Lefschetz-thimble sector contribution label. -/
 structure LefschetzSector where
+  FieldConfiguration : Type
+  saddleConfiguration : FieldConfiguration
+  actionFunctional : FieldConfiguration → ℂ
   coefficient : ℤ
-  saddleActionValue : ℂ
   fluctuationWeight : ℂ
 
 /-- Contribution of a single thimble sector. -/
 noncomputable def LefschetzSector.contribution (sector : LefschetzSector) : ℂ :=
-  (sector.coefficient : ℂ) * Complex.exp (-sector.saddleActionValue) * sector.fluctuationWeight
+  (sector.coefficient : ℂ) *
+    Complex.exp (-(sector.actionFunctional sector.saddleConfiguration)) *
+    sector.fluctuationWeight
 
 /-- Sum over finitely many Lefschetz-thimble sectors. -/
 noncomputable def LefschetzThimbleSum (sectors : List LefschetzSector) : ℂ :=

@@ -51,14 +51,17 @@ theorem four_d_axial_current_anomaly
 
 /-- 4D `U(1)` chiral-gauge anomaly data (`δ_ζ Γ` against `ζ F∧F`). -/
 structure U1ChiralGaugeAnomalyData where
-  effectiveActionVariationValue : ℝ
-  integratedZetaFF : ℝ
+  VariationSource : Type
+  sourceConfiguration : VariationSource
+  effectiveActionVariationFunctional : VariationSource → ℝ
+  integratedZetaFF : VariationSource → ℝ
 
 /-- 4D chiral `U(1)` gauge-anomaly variation relation.
 `δ_ζ Γ = -(1 / 96π²) ∫ ζ ε^{μνρσ} F_{μν} F_{ρσ}`. -/
 def U1ChiralGaugeVariationAnomaly (data : U1ChiralGaugeAnomalyData) : Prop :=
-  data.effectiveActionVariationValue =
-    -((1 / (96 * Real.pi ^ (2 : ℕ))) * data.integratedZetaFF)
+  data.effectiveActionVariationFunctional data.sourceConfiguration =
+    -((1 / (96 * Real.pi ^ (2 : ℕ))) *
+      data.integratedZetaFF data.sourceConfiguration)
 
 /-- Assumed 4D chiral `U(1)` gauge-anomaly variation relation from Appendix O. -/
 theorem u1_chiral_gauge_variation_anomaly

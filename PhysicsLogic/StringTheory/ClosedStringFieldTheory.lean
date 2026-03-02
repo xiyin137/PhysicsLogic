@@ -170,18 +170,23 @@ theorem classical_string_field_equation_package
   exact h_phys
 
 /-- Data for the string-bracket duality pairing with the `(n+1)`-string vertex. -/
-structure StringBracketDualityData where
-  dualPairingValue : ℂ
-  vertexFunctionalValue : ℂ
+structure StringBracketDualityData (StringField : Type*) where
+  braState : StringField
+  ketState : StringField
+  dualPairing : StringField → StringField → ℂ
+  vertexFunctional : StringField → StringField → ℂ
 
 /-- String-bracket duality package:
 `⟨Φ|c_0^-|[Ψ^n]⟩ = {Φ,Ψ^n}_{0,n+1}`. -/
-def StringBracketDualityPackage (data : StringBracketDualityData) : Prop :=
-  data.dualPairingValue = data.vertexFunctionalValue
+def StringBracketDualityPackage
+    {StringField : Type*} (data : StringBracketDualityData StringField) : Prop :=
+  data.dualPairing data.braState data.ketState =
+    data.vertexFunctional data.braState data.ketState
 
 /-- Assumed string-bracket duality package. -/
 theorem string_bracket_duality_package
-    (data : StringBracketDualityData)
+    {StringField : Type*}
+    (data : StringBracketDualityData StringField)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSftStringBracketDuality
       (StringBracketDualityPackage data)) :
@@ -252,15 +257,16 @@ theorem massless_field_dictionary_package
 
 /-- Background-independence data for infinitesimal maps between SFTs on nearby CFT backgrounds. -/
 structure BackgroundIndependenceMapData where
-  pulledBackSymplecticDifference : ℂ
-  pulledBackMeasureActionDifference : ℂ
+  FieldConfiguration : Type
+  pulledBackSymplecticDifference : FieldConfiguration → ℂ
+  pulledBackMeasureActionDifference : FieldConfiguration → ℂ
 
 /-- Background-independence package:
 the map preserves symplectic structure and measure-weighted action. -/
 def BackgroundIndependenceMapPackage
     (data : BackgroundIndependenceMapData) : Prop :=
-  data.pulledBackSymplecticDifference = 0 ∧
-  data.pulledBackMeasureActionDifference = 0
+  (∀ ψ : data.FieldConfiguration, data.pulledBackSymplecticDifference ψ = 0) ∧
+  (∀ ψ : data.FieldConfiguration, data.pulledBackMeasureActionDifference ψ = 0)
 
 /-- Assumed background-independence map package for closed SFT. -/
 theorem background_independence_map_package
