@@ -257,11 +257,11 @@ theorem matrix_string_symmetric_orbifold_package
 
 /-- DVV twist-field deformation data. -/
 structure DVVTwistDeformationData where
-  gaugeCoupling2d : DimensionlessCoupling
-  deformationConstant : ℝ
-  twistWeightLeft : ℝ
-  twistWeightRight : ℝ
-  deformationCoefficient : ℝ
+  gaugeCoupling2d : CouplingScale
+  deformationConstant : Dimless
+  twistWeightLeft : ScalingDimension
+  twistWeightRight : ScalingDimension
+  deformationCoefficient : LengthScale
 
 /-- DVV twist-field package:
 weight `(3/2,3/2)` operator and deformation coupling `a0/g_YM`. -/
@@ -283,7 +283,7 @@ theorem dvv_twist_deformation_package
 
 /-- DVV-coupling normalization data. -/
 structure DVVCoefficientNormalizationData where
-  deformationConstant : ℝ
+  deformationConstant : Dimless
 
 /-- DVV normalization package:
 `a0 = -2^(5/2) π^(3/2) = -(4 sqrt 2) (π sqrt π)`. -/
