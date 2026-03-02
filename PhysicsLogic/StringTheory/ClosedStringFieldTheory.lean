@@ -105,24 +105,27 @@ theorem plumbing_cycle_compatibility_package
     PlumbingCycleCompatibilityPackage data := by
   exact h_phys
 
-/-- Siegel-gauge propagator data for internal closed-string lines. -/
-structure SiegelGaugePropagatorData where
-  b0PlusFactor : ℂ
-  b0MinusFactor : ℂ
-  l0PlusEigenvalue : ℂ
-  propagatorKernel : ℂ
+/-- Siegel-gauge propagator data for internal closed-string lines.
+`b_0^+`, `b_0^-`, and `(L_0^+)^{-1}` are represented as operators on the
+closed-string field space, not scalar placeholders. -/
+structure SiegelGaugePropagatorData (StringField : Type*) where
+  b0PlusOperator : StringFieldOperator StringField
+  b0MinusOperator : StringFieldOperator StringField
+  l0PlusInverseOperator : StringFieldOperator StringField
+  propagatorOperator : StringFieldOperator StringField
 
 /-- Siegel-gauge propagator package:
-internal-line kernel has the form `b_0^+ b_0^- / L_0^+`. -/
+internal-line propagator has operator form `b_0^+ b_0^- (L_0^+)^{-1}`. -/
 def SiegelGaugePropagatorPackage
-    (data : SiegelGaugePropagatorData) : Prop :=
-  data.l0PlusEigenvalue ≠ 0 ∧
-  data.propagatorKernel =
-    data.b0PlusFactor * data.b0MinusFactor / data.l0PlusEigenvalue
+    {StringField : Type*} (data : SiegelGaugePropagatorData StringField) : Prop :=
+  ∀ ψ : StringField,
+    data.propagatorOperator ψ =
+      data.l0PlusInverseOperator (data.b0PlusOperator (data.b0MinusOperator ψ))
 
 /-- Assumed Siegel-gauge propagator package for off-shell factorization. -/
 theorem siegel_gauge_propagator_package
-    (data : SiegelGaugePropagatorData)
+    {StringField : Type*}
+    (data : SiegelGaugePropagatorData StringField)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSftSiegelGaugePropagator
       (SiegelGaugePropagatorPackage data)) :
@@ -234,37 +237,41 @@ theorem l_infinity_homotopy_identity_package
     LInfinityHomotopyIdentityPackage data := by
   exact h_phys
 
-/-- Massless-sector field-dictionary data in the flat-bracket frame. -/
-structure MasslessFieldDictionaryData where
-  metricFluctuation : ℝ
-  antisymmetricFluctuation : ℝ
-  dilatonField : ℝ
-  covariantMetricComponent : ℝ
-  covariantBFieldComponent : ℝ
-  covariantDilaton : ℝ
+/-- Massless-sector field-dictionary data in the flat-bracket frame.
+Fields are represented as coordinate-dependent components rather than
+single scalar values. -/
+structure MasslessFieldDictionaryData (Point : Type*) where
+  metricFluctuation : Point → ℝ
+  antisymmetricFluctuation : Point → ℝ
+  dilatonField : Point → ℝ
+  covariantMetricComponent : Point → ℝ
+  covariantBFieldComponent : Point → ℝ
+  covariantDilaton : Point → ℝ
 
 /-- Massless dictionary package (symbolic component-level truncation):
 `G = 1 + h + 1/2 h^2 + 1/2 b^2`,
 `B = b + h b`,
 `Φ = φ + h/4 + h^2/32 - 3 b^2/32`. -/
 def MasslessFieldDictionaryPackage
-    (data : MasslessFieldDictionaryData) : Prop :=
-  data.covariantMetricComponent =
-    1 + data.metricFluctuation +
-      (1 / 2 : ℝ) * data.metricFluctuation ^ (2 : ℕ) +
-      (1 / 2 : ℝ) * data.antisymmetricFluctuation ^ (2 : ℕ) ∧
-  data.covariantBFieldComponent =
-    data.antisymmetricFluctuation +
-      data.metricFluctuation * data.antisymmetricFluctuation ∧
-  data.covariantDilaton =
-    data.dilatonField +
-      data.metricFluctuation / 4 +
-      data.metricFluctuation ^ (2 : ℕ) / 32 -
-      3 * data.antisymmetricFluctuation ^ (2 : ℕ) / 32
+    {Point : Type*} (data : MasslessFieldDictionaryData Point) : Prop :=
+  ∀ x : Point,
+    data.covariantMetricComponent x =
+      1 + data.metricFluctuation x +
+        (1 / 2 : ℝ) * data.metricFluctuation x ^ (2 : ℕ) +
+        (1 / 2 : ℝ) * data.antisymmetricFluctuation x ^ (2 : ℕ) ∧
+    data.covariantBFieldComponent x =
+      data.antisymmetricFluctuation x +
+        data.metricFluctuation x * data.antisymmetricFluctuation x ∧
+    data.covariantDilaton x =
+      data.dilatonField x +
+        data.metricFluctuation x / 4 +
+        data.metricFluctuation x ^ (2 : ℕ) / 32 -
+        3 * data.antisymmetricFluctuation x ^ (2 : ℕ) / 32
 
 /-- Assumed massless-sector field dictionary in the flat-bracket frame. -/
 theorem massless_field_dictionary_package
-    (data : MasslessFieldDictionaryData)
+    {Point : Type*}
+    (data : MasslessFieldDictionaryData Point)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSftMasslessFieldDictionary
       (MasslessFieldDictionaryPackage data)) :

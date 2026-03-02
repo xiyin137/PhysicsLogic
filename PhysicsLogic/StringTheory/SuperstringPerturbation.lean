@@ -142,7 +142,8 @@ structure SuperstringPlumbingFactorizationData where
   channelMomentumSq : ComplexMomentumSquaredInvariant
   intermediateMassSq : ComplexMassSquaredInvariant
   iEpsilon : Dimless
-  propagator : ComplexAmplitude
+  propagatorKernel : ComplexMomentumSquaredInvariant → ComplexAmplitude
+  propagatorAtChannel : ComplexAmplitude
   leftReducedAmplitude : ComplexAmplitude
   rightReducedAmplitude : ComplexAmplitude
   fullReducedAmplitude : ComplexAmplitude
@@ -156,10 +157,11 @@ def SuperstringPlumbingFactorizationPackage
   data.localCoordinate ≠ 0 ∧
   data.dualLocalCoordinate = data.sewingParameter / data.localCoordinate ∧
   data.iEpsilon > 0 ∧
-  data.propagator =
+  data.propagatorAtChannel = data.propagatorKernel data.channelMomentumSq ∧
+  data.propagatorKernel data.channelMomentumSq =
     1 / (data.channelMomentumSq + data.intermediateMassSq - Complex.I * data.iEpsilon) ∧
   data.fullReducedAmplitude =
-    data.leftReducedAmplitude * data.propagator * data.rightReducedAmplitude
+    data.leftReducedAmplitude * data.propagatorAtChannel * data.rightReducedAmplitude
 
 /-- Assumed superstring plumbing/factorization package from Section 7.5. -/
 theorem superstring_plumbing_factorization_package
