@@ -237,36 +237,37 @@ structure CSOperatorMixing {d : ℕ} (rg : RGFramework d) where
 
 /- ============= QCD EXAMPLE ============= -/
 
-/-- QCD beta function coefficients
+/-- QCD beta-function coefficients in the convention `β(g) = β₀ g³ + β₁ g⁵ + …`.
+    With this convention, asymptotic freedom corresponds to `β₀ < 0`.
 
-    β₀ = (11 C_A - 4 T_F N_f) / (16π²)
-    β₁ = (34 C_A² - 20 C_A T_F N_f - 12 C_F T_F N_f) / (16π²)²
+    β₀ = -(11 C_A - 4 T_F N_f) / (16π²)
+    β₁ = -(34 C_A² - 20 C_A T_F N_f - 12 C_F T_F N_f) / (16π²)²
 
     For SU(3): C_A = 3, C_F = 4/3, T_F = 1/2 -/
 noncomputable def qcdBeta0 (N_f : ℕ) : BetaFunctionValue :=
-  (11 * 3 - 4 * (1 / 2 : ℝ) * (N_f : ℝ)) / (16 * Real.pi^2)
+  -((11 * 3 - 4 * (1 / 2 : ℝ) * (N_f : ℝ)) / (16 * Real.pi^2))
 
 noncomputable def qcdBeta1 (N_f : ℕ) : BetaFunctionValue :=
-  (34 * 9 - 20 * 3 * (1 / 2 : ℝ) * (N_f : ℝ) -
-      12 * (4 / 3 : ℝ) * (1 / 2 : ℝ) * (N_f : ℝ)) / (16 * Real.pi^2)^2
+  -((34 * 9 - 20 * 3 * (1 / 2 : ℝ) * (N_f : ℝ) -
+      12 * (4 / 3 : ℝ) * (1 / 2 : ℝ) * (N_f : ℝ)) / (16 * Real.pi^2)^2)
 
-/-- QCD one-loop coefficient is positive for `N_f < 33/2`.
-
-    With the convention β(g) = -β₀ g³ + O(g⁵), β₀ > 0 is asymptotic freedom. -/
+/-- QCD one-loop coefficient is negative for `N_f < 33/2`
+    in the `β(g) = β₀ g³ + O(g⁵)` convention. -/
 theorem qcd_asymptotic_freedom (N_f : ℕ) (_h_nf : N_f < 17)
     (h_phys :
       PhysicsLogic.PhysicsAssumption
         PhysicsLogic.AssumptionId.qcdAsymptoticFreedom
-        (0 < qcdBeta0 N_f)) :
-    0 < qcdBeta0 N_f := by
+        (qcdBeta0 N_f < 0)) :
+    qcdBeta0 N_f < 0 := by
   exact h_phys
 
 /-- Running strong coupling α_s(μ) = g²/(4π)
 
-    At one loop: α_s(μ) = α_s(M_Z) / (1 + (α_s(M_Z) β₀/(2π)) log(μ/M_Z)) -/
+    At one loop in this sign convention:
+    α_s(μ) = α_s(M_Z) / (1 - (α_s(M_Z) β₀/(2π)) log(μ/M_Z)) -/
 noncomputable def alphaStrong
     (μ M_Z : RenormScale) (alpha_MZ : DimensionlessCoupling) (N_f : ℕ) :
     DimensionlessCoupling :=
-  alpha_MZ / (1 + alpha_MZ * qcdBeta0 N_f / (2 * Real.pi) * Real.log (μ.μ / M_Z.μ))
+  alpha_MZ / (1 - alpha_MZ * qcdBeta0 N_f / (2 * Real.pi) * Real.log (μ.μ / M_Z.μ))
 
 end PhysicsLogic.QFT.RG.GellMannLow

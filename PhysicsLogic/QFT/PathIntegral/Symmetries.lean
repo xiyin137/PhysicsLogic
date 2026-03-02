@@ -107,24 +107,28 @@ structure ContinuousSymmetry (F : Type*) (S : ActionFunctional F) where
   /-- Each element preserves the action -/
   action_invariant : ∀ t, ActionInvariant S (family t)
 
-/-- Noether's theorem: continuous symmetry → conserved current.
-    If S[σ_t(φ)] = S[φ] for all t, then there exists a current J^μ
-    satisfying ∂_μ J^μ = 0 on-shell (when equations of motion hold).
+/-- Noether-current data for a fixed action and continuous symmetry.
+    If `S[σ_t(φ)] = S[φ]` for all `t`, Noether's theorem gives a current `J^μ`
+    conserved on shell (`∂_μ J^μ = 0` when equations of motion are satisfied).
 
     Examples:
     - Time translation → energy conservation
     - Space translation → momentum conservation
     - Rotation → angular momentum conservation
     - U(1) phase rotation → charge conservation -/
-structure NoetherCurrentData (F : Type*) (M : Type*) (d : ℕ) where
-  /-- The continuous symmetry -/
-  symmetry : ContinuousSymmetry F (ActionFunctional.mk (fun _ => 0))
-  /-- The conserved current J^μ(x) for a given field configuration -/
+structure NoetherCurrentData (F : Type*) (M : Type*) (d : ℕ)
+    (S : ActionFunctional F) where
+  /-- The continuous symmetry of `S`. -/
+  symmetry : ContinuousSymmetry F S
+  /-- The Noether current `J^μ(x)` for a field configuration. -/
   current : F → M → (Fin d → ℝ)
-  /-- Divergence operator for checking conservation -/
+  /-- Divergence operator `∂_μ J^μ`. -/
   divergence : (M → (Fin d → ℝ)) → (M → ℝ)
-  /-- Current is conserved on-shell: ∂_μ J^μ(x) = 0 for all x -/
-  conservation : ∀ (φ : F) (x : M), divergence (current φ) x = 0
+  /-- On-shell predicate (equations of motion hold). -/
+  onShell : F → Prop
+  /-- Current conservation on shell. -/
+  conservation_on_shell : ∀ (φ : F) (x : M),
+    onShell φ → divergence (current φ) x = 0
 
 /- ============= GAUGE SYMMETRY ============= -/
 
