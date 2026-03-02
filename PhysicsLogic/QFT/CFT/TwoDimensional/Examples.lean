@@ -1,5 +1,6 @@
 -- ModularPhysics/Core/QFT/CFT/TwoDimensional/Examples.lean
 import PhysicsLogic.QFT.CFT.TwoDimensional.ModularInvariance
+import PhysicsLogic.QFT.CFT.TwoDimensional.Superconformal
 import PhysicsLogic.Assumptions
 import Mathlib.Data.Complex.Basic
 
@@ -10,6 +11,42 @@ open CFT
 set_option linter.unusedVariables false
 
 /- ============= FREE BOSON ============= -/
+
+/-- Integer Kronecker delta in mode-index form. -/
+def kroneckerInt (k : ℤ) : ℂ := if k = 0 then 1 else 0
+
+/-- Free-boson oscillator-mode algebra interface:
+`[α_m, α_n] = m δ_{m+n,0}`, similarly for anti-holomorphic modes, and left/right commute. -/
+structure FreeBosonModeAlgebra2D (ModeOp : Type*) where
+  alpha : ℤ → ModeOp
+  alphaBar : ℤ → ModeOp
+  commutator : ModeOp → ModeOp → ℂ
+  left_heisenberg : ∀ m n : ℤ,
+    commutator (alpha m) (alpha n) = (m : ℂ) * kroneckerInt (m + n)
+  right_heisenberg : ∀ m n : ℤ,
+    commutator (alphaBar m) (alphaBar n) = (m : ℂ) * kroneckerInt (m + n)
+  chiral_decoupling : ∀ m n : ℤ,
+    commutator (alpha m) (alphaBar n) = 0
+
+/-- Normal-ordered vertex-operator interface for the free boson. -/
+structure NormalOrderedVertexOperators2D (VertexOp : Type*) where
+  vertex : ℝ → VertexOp
+  normalOrdered : VertexOp → Prop
+  opeSingularExponent : ℝ → ℝ → ℝ
+  all_vertex_normal_ordered : ∀ α : ℝ, normalOrdered (vertex α)
+  ope_singular_exponent_formula : ∀ α β : ℝ,
+    opeSingularExponent α β = α * β
+
+/-- Free-boson correlator data on a genus-`h` Riemann surface:
+Green-function/prime-form/period-matrix ingredients plus momentum conservation. -/
+structure FreeBosonGenusHCorrelatorData (Point : Type*) where
+  genus : ℕ
+  insertionCount : ℕ
+  momenta : Fin insertionCount → ℝ
+  primeForm : Point → Point → ℂ
+  periodMatrixEntry : Fin genus → Fin genus → ℂ
+  correlator : (Fin insertionCount → Point) → ℂ
+  momentumConservationHolds : Bool
 
 /-- Free boson central charge is always c = 1 -/
 def free_boson_central_charge : ℝ := 1
@@ -58,6 +95,60 @@ noncomputable def t_dual {H : Type _} (fb : FreeBosonCFT H)
 
 /-- Self-dual radius where R = 1/R -/
 def self_dual_radius : ℝ := 1
+
+/- ============= FREE FERMION ============= -/
+
+/-- Spin-structure parity (even/odd) for genus-`h` fermionic sectors. -/
+inductive SpinStructureParity where
+  | even
+  | odd
+deriving DecidableEq, Repr
+
+/-- Free-fermion NS/R-sector data with sector-compatible mode indexing
+and canonical Majorana central charge. -/
+structure FreeFermionSectorData2D where
+  sector : NSRSector
+  modeIndexPredicate : ℚ → Prop
+  modeIndexCompatibility : ∀ r : ℚ,
+    modeIndexPredicate r ↔ sectorCompatible sector r
+  fermionCentralCharge : ℝ
+  canonicalCentralCharge : fermionCentralCharge = 1 / 2
+  ramondSpinFieldWeight : ℝ
+  ramondSpinFieldWeightFormula :
+    sector = NSRSector.R → ramondSpinFieldWeight = 1 / 16
+
+/-- Szego-kernel spin-structure interface for genus-dependent fermion propagators. -/
+structure SzegoKernelSpinStructureData (Point : Type*) where
+  genus : ℕ
+  parity : SpinStructureParity
+  szegoKernel : Point → Point → ℂ
+  kernelAntisymmetry : ∀ x y : Point, szegoKernel x y = -szegoKernel y x
+  hasFermionZeroMode : Bool
+  zeroModeParityRule : (parity = SpinStructureParity.odd → hasFermionZeroMode = true) ∧
+    (parity = SpinStructureParity.even → hasFermionZeroMode = false)
+
+/-- Canonical free-field central-charge assignments from Appendix G:
+one free boson has `c=1`, one Majorana free fermion has `c=1/2`. -/
+structure FreeFieldCentralChargeAssignments where
+  bosonCentralCharge : ℝ
+  majoranaFermionCentralCharge : ℝ
+
+/-- Package for the canonical Appendix-G free-field central charges. -/
+def FreeFieldCentralChargeAssignmentsPackage
+    (data : FreeFieldCentralChargeAssignments) : Prop :=
+  data.bosonCentralCharge = 1 ∧
+  data.majoranaFermionCentralCharge = 1 / 2
+
+/-- One free boson + one Majorana fermion has total central charge `3/2`. -/
+theorem free_boson_plus_majorana_total_c
+    (data : FreeFieldCentralChargeAssignments)
+    (h_data : FreeFieldCentralChargeAssignmentsPackage data) :
+    data.bosonCentralCharge + data.majoranaFermionCentralCharge = 3 / 2 := by
+  rcases h_data with ⟨h_b, h_f⟩
+  calc
+    data.bosonCentralCharge + data.majoranaFermionCentralCharge
+        = 1 + (1 / 2 : ℝ) := by rw [h_b, h_f]
+    _ = 3 / 2 := by ring
 
 /- ============= ISING MODEL ============= -/
 

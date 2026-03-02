@@ -20,6 +20,17 @@
 - `SzegoKernelSpinStructureData`: fermion propagator interfaces parameterized by spin structure.
 - `FreeFieldCentralChargeAssignments`: canonical `c=1` boson and `c=1/2` fermion consistency interfaces.
 
+## Formalization Progress
+- Implemented in `PhysicsLogic/QFT/CFT/TwoDimensional/Examples.lean`:
+  `FreeBosonModeAlgebra2D`,
+  `NormalOrderedVertexOperators2D`,
+  `FreeBosonGenusHCorrelatorData`,
+  `FreeFermionSectorData2D`,
+  `SzegoKernelSpinStructureData`,
+  `FreeFieldCentralChargeAssignments`,
+  `FreeFieldCentralChargeAssignmentsPackage`,
+  `free_boson_plus_majorana_total_c`.
+
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `cft2dFreeBosonVertexOperatorStateMap`.
 - Candidate new `AssumptionId`: `cft2dFreeBosonHigherGenusCorrelatorFormula`.
