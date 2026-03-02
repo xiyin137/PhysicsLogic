@@ -43,11 +43,14 @@ of asymptotic particle states and the S-matrix in relativistic QFT.
 structure MomentumSpaceWavePacket (m : InvariantMass) where
   /-- Smooth function f(p⃗) in 3-momentum space -/
   f : (Fin 3 → ℝ) → ℂ
-  /-- Maximum momentum (compact support in momentum space) -/
-  P_max : ℝ
-  P_max_positive : P_max > 0
-  /-- Amplitude bound (Schwartz-like decay) -/
-  amplitude_bound : ∀ p : Fin 3 → ℝ, ‖f p‖ ≤ P_max
+  /-- Maximum momentum scale (compact support in momentum space). -/
+  momentum_cutoff : MomentumNorm
+  momentum_cutoff_positive : momentum_cutoff > 0
+  /-- Uniform bound scale for wave-packet amplitude. -/
+  amplitude_bound_scale : Dimless
+  amplitude_bound_nonneg : amplitude_bound_scale ≥ 0
+  /-- Amplitude bound (Schwartz-like decay). -/
+  amplitude_bound : ∀ p : Fin 3 → ℝ, ‖f p‖ ≤ amplitude_bound_scale
   /-- Normalization bound (ensures L² integrability) -/
   norm_bound : ℝ
   norm_positive : norm_bound > 0
