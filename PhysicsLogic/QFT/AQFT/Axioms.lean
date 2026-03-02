@@ -21,80 +21,32 @@ open SpaceTime Symmetries
    The d-dimensional Poincaré group acts on Minkowski spacetime ℝ^{1,d-1}
    by x ↦ Λx + a where Λ is a Lorentz transformation and a is a translation.
 
-   NOTE: The 4D Poincaré group is in Symmetries/Poincare.lean.
-   TODO: Unify these into a single dimension-generic definition there. -/
+   NOTE: The shared dimension-generic transform data lives in
+   `PhysicsLogic.SpaceTime.Minkowski`. The 4D legacy group is in
+   `Symmetries/Poincare.lean`. -/
 
-/-- Poincaré transformation in d dimensions: x ↦ Λx + a -/
-structure PoincareTransformGen (d : ℕ) [NeZero d] where
-  /-- Lorentz transformation Λ (preserves Minkowski metric) -/
-  lorentz : LorentzTransformGen d
-  /-- Translation vector a -/
-  translation : Fin d → ℝ
+/-- Shared dimension-generic Poincaré transformation alias. -/
+abbrev PoincareTransformGen (d : ℕ) [NeZero d] := SpaceTime.PoincareTransformGen d
 
-/-- Apply d-dimensional Poincaré transformation to a spacetime point -/
-def PoincareTransformGen.apply {d : ℕ} [NeZero d]
-    (g : PoincareTransformGen d) (x : Fin d → ℝ) : Fin d → ℝ :=
-  fun μ => (∑ ν, g.lorentz.matrix μ ν * x ν) + g.translation μ
+/-- Shared restricted (proper-orthochronous) Poincaré alias. -/
+abbrev RestrictedPoincareTransformGen (d : ℕ) [NeZero d] :=
+  SpaceTime.RestrictedPoincareTransformGen d
 
-/-- Image of a spacetime region under Poincaré transformation -/
-def poincareImageGen {d : ℕ} [NeZero d]
-    (g : PoincareTransformGen d) (O : Set (Fin d → ℝ)) : Set (Fin d → ℝ) :=
-  {x | ∃ y ∈ O, x = g.apply y}
+/-- Shared image operation alias for spacetime regions. -/
+abbrev poincareImageGen {d : ℕ} [NeZero d] := SpaceTime.poincareImageGen (d := d)
+
+/-- Shared restricted-image operation alias for spacetime regions. -/
+abbrev restrictedPoincareImageGen {d : ℕ} [NeZero d] :=
+  SpaceTime.restrictedPoincareImageGen (d := d)
 
 /-- Identity Poincaré transformation -/
-noncomputable def PoincareTransformGen.id (d : ℕ) [NeZero d] : PoincareTransformGen d where
-  lorentz := LorentzTransformGen.id d
-  translation := fun _ => 0
+noncomputable def PoincareTransformGen.id (d : ℕ) [NeZero d] : PoincareTransformGen d :=
+  SpaceTime.PoincareTransformGen.id d
 
 /-- Poincaré composition: (Λ₁,a₁) ∘ (Λ₂,a₂) = (Λ₁Λ₂, Λ₁a₂ + a₁) -/
 noncomputable def PoincareTransformGen.compose {d : ℕ} [NeZero d]
-    (g₁ g₂ : PoincareTransformGen d) : PoincareTransformGen d where
-  lorentz :=
-    { matrix := fun μ ν => ∑ κ, g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν
-      preserves_metric := by
-        intro x y
-        let x' : Fin d → ℝ := fun κ => ∑ ν, g₂.lorentz.matrix κ ν * x ν
-        let y' : Fin d → ℝ := fun κ => ∑ ν, g₂.lorentz.matrix κ ν * y ν
-        have h₂ : minkowskiInnerProductGen x y = minkowskiInnerProductGen x' y' := by
-          simpa [x', y'] using g₂.lorentz.preserves_metric x y
-        have h₁ :
-            minkowskiInnerProductGen x' y' =
-            minkowskiInnerProductGen
-              (fun μ => ∑ κ, g₁.lorentz.matrix μ κ * x' κ)
-              (fun μ => ∑ κ, g₁.lorentz.matrix μ κ * y' κ) := by
-          simpa [x', y'] using g₁.lorentz.preserves_metric x' y'
-        have hx :
-            (fun μ => ∑ κ, g₁.lorentz.matrix μ κ * x' κ) =
-            (fun μ => ∑ ν, (∑ κ, g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) * x ν) := by
-          ext μ
-          unfold x'
-          calc
-            ∑ κ, g₁.lorentz.matrix μ κ * (∑ ν, g₂.lorentz.matrix κ ν * x ν)
-                = ∑ κ, ∑ ν, g₁.lorentz.matrix μ κ * (g₂.lorentz.matrix κ ν * x ν) := by
-                    simp [Finset.mul_sum]
-            _ = ∑ κ, ∑ ν, x ν * (g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) := by
-                  simp [mul_left_comm, mul_comm]
-            _ = ∑ ν, ∑ κ, x ν * (g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) := by
-                  rw [Finset.sum_comm]
-            _ = ∑ ν, (∑ κ, g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) * x ν := by
-                  simp [mul_comm, Finset.mul_sum]
-        have hy :
-            (fun μ => ∑ κ, g₁.lorentz.matrix μ κ * y' κ) =
-            (fun μ => ∑ ν, (∑ κ, g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) * y ν) := by
-          ext μ
-          unfold y'
-          calc
-            ∑ κ, g₁.lorentz.matrix μ κ * (∑ ν, g₂.lorentz.matrix κ ν * y ν)
-                = ∑ κ, ∑ ν, g₁.lorentz.matrix μ κ * (g₂.lorentz.matrix κ ν * y ν) := by
-                    simp [Finset.mul_sum]
-            _ = ∑ κ, ∑ ν, y ν * (g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) := by
-                  simp [mul_left_comm, mul_comm]
-            _ = ∑ ν, ∑ κ, y ν * (g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) := by
-                  rw [Finset.sum_comm]
-            _ = ∑ ν, (∑ κ, g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) * y ν := by
-                  simp [mul_comm, Finset.mul_sum]
-        exact h₂.trans (h₁.trans (by simp [hx, hy])) }
-  translation := fun μ => g₁.translation μ + ∑ ν, g₁.lorentz.matrix μ ν * g₂.translation ν
+    (g₁ g₂ : PoincareTransformGen d) : PoincareTransformGen d :=
+  SpaceTime.PoincareTransformGen.compose g₁ g₂
 
 /- ============= SPACELIKE SEPARATION (d-dimensional) =============
 
@@ -160,6 +112,24 @@ structure PoincareCovarianceData {d : ℕ} [NeZero d] (net : AlgebraNet d)
     (O : Set (SpaceTimePointD d)) (g : PoincareTransformGen d) where
   /-- The covariance map α_g : A(O) → A(g·O) -/
   alpha : net.Algebra O → net.Algebra (poincareImageGen g O)
+  /-- α_g is a *-homomorphism: respects multiplication -/
+  respects_mul : ∀ (A B : net.Algebra O),
+    alpha (net.mul A B) = net.mul (alpha A) (alpha B)
+  /-- α_g respects adjoint -/
+  respects_adjoint : ∀ (A : net.Algebra O),
+    alpha (net.adjoint A) = net.adjoint (alpha A)
+  /-- α_g respects the unit -/
+  respects_unit : alpha net.one = net.one
+  /-- α_g is isometric: ‖α_g(A)‖ = ‖A‖ -/
+  isometric : ∀ (A : net.Algebra O),
+    net.norm (alpha A) = net.norm A
+
+/-- AQFT covariance data restricted to the proper-orthochronous Poincaré subgroup.
+This is the standard physical covariance domain before adding discrete symmetries. -/
+structure RestrictedPoincareCovarianceData {d : ℕ} [NeZero d] (net : AlgebraNet d)
+    (O : Set (SpaceTimePointD d)) (g : RestrictedPoincareTransformGen d) where
+  /-- The covariance map α_g : A(O) → A(g·O) on the restricted group. -/
+  alpha : net.Algebra O → net.Algebra (restrictedPoincareImageGen g O)
   /-- α_g is a *-homomorphism: respects multiplication -/
   respects_mul : ∀ (A B : net.Algebra O),
     alpha (net.mul A B) = net.mul (alpha A) (alpha B)
@@ -264,6 +234,19 @@ theorem HaagKastlerQFT.inclusions_compose (qft : HaagKastlerQFT d)
     qft.net.inclusion (h12.trans h23) =
     qft.net.inclusion h23 ∘ qft.net.inclusion h12 :=
   qft.isotony.isotony O₁ O₂ O₃ h12 h23
+
+/-- Full covariance induces covariance on the proper-orthochronous
+Poincaré subgroup by restriction. -/
+def HaagKastlerQFT.restrictedCovarianceData (qft : HaagKastlerQFT d)
+    (O : Set (SpaceTimePointD d)) (g : RestrictedPoincareTransformGen d) :
+    RestrictedPoincareCovarianceData qft.net O g := by
+  let full := qft.covariance O g.toPoincare
+  exact
+    { alpha := full.alpha
+      respects_mul := full.respects_mul
+      respects_adjoint := full.respects_adjoint
+      respects_unit := full.respects_unit
+      isometric := full.isometric }
 
 /- ============= LEGACY 4D ALIASES ============= -/
 

@@ -8,6 +8,7 @@ materials into formalization-ready notes for `PhysicsLogic`.
 - `reading-index.md`: generated unit index (sections/appendices) and notebook map.
 - `ROADMAP.md`: phased incorporation plan and quality gates.
 - `appendix-qft-crosswalk.md`: mapping from appendices to `PhysicsLogic/QFT` targets.
+- `appendix-import-status.md`: appendix A-R import audit into active aggregators.
 - `physics-organization.md`: physics-first lane organization for formalization.
 - `reference-artifacts.md`: tracked index for gitignored notebook/figure artifacts
   under `references/stringbook/` and their Lean touchpoints.
@@ -25,6 +26,12 @@ Run:
 
 ```bash
 ./scripts/stringbook_sync_notes.sh
+```
+
+Validate appendix import coverage:
+
+```bash
+./scripts/check_stringbook_appendix_imports.sh
 ```
 
 To force-rewrite note templates (use only when you intentionally want to reset

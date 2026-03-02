@@ -31,23 +31,11 @@ structure TestFunctionSupportOps (d : ℕ) where
   /-- Test function support is contained in a region -/
   testFunctionSupport : SchwartzFunction d → Set (Fin d → ℝ)
 
-/-- Dimension-generic Poincaré transformation data `(Λ, a)` acting as
-`x ↦ Λx + a`. -/
-structure PoincareTransformGen (d : ℕ) [NeZero d] where
-  lorentz : LorentzTransformGen d
-  translation : Fin d → ℝ
+/-- Shared dimension-generic Poincaré transformation alias. -/
+abbrev PoincareTransformGen := SpaceTime.PoincareTransformGen
 
-/-- Apply a dimension-generic Poincaré transformation to a spacetime point. -/
-def PoincareTransformGen.apply {d : ℕ} [NeZero d]
-    (g : PoincareTransformGen d) (x : Fin d → ℝ) : Fin d → ℝ :=
-  fun μ => g.translation μ + ∑ ν, g.lorentz.matrix μ ν * x ν
-
-/-- Proper-orthochronous Lorentz transformation marker.
-`proper` and `orthochronous` are explicit interface predicates at this layer. -/
-structure RestrictedLorentzTransformGen (d : ℕ) [NeZero d] where
-  toLorentz : LorentzTransformGen d
-  proper : Prop
-  orthochronous : Prop
+/-- Shared proper-orthochronous Lorentz marker alias. -/
+abbrev RestrictedLorentzTransformGen := SpaceTime.RestrictedLorentzTransformGen
 
 /-- Wightman Axiom W1: Relativistic covariance (Poincaré invariance).
     The Wightman functions are Poincaré invariant:
@@ -85,9 +73,7 @@ theorem RelativisticCovariance.poincare_covariance
       wft.wightmanFunction phi n (fun i => g.apply (points i)) =
       wft.wightmanFunction phi n
         (fun i μ => ∑ ν, g.lorentz.matrix μ ν * points i ν + g.translation μ) := by
-    congr
-    funext i μ
-    simp [PoincareTransformGen.apply, add_comm]
+    rfl
   exact h_rewrite.trans h_cov_raw
 
 /-- W1 covariance restricted to proper-orthochronous Lorentz transformations.

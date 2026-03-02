@@ -80,6 +80,8 @@
 - No `axiom` declarations.
 - No raw string-literal IDs for `PhysicsAssumption`.
 - No non-Papers vacuous placeholders (`∃ ..., True`, `: True`, `→ True`).
+- Every appendix `A`-`R` must stay mapped to existing modules with aggregator
+  reachability tracked in `docs/stringbook/appendix-import-status.md`.
 - New assumptions must be:
   - added in `PhysicsLogic/Assumptions.lean`
   - added to `assumptionRegistry`

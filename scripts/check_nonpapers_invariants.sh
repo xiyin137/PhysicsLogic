@@ -52,4 +52,12 @@ else
   echo "[ok] no exact bare Prop fields in non-Papers modules"
 fi
 
+echo "[check] stringbook appendix imports are complete and reachable"
+if ./scripts/check_stringbook_appendix_imports.sh; then
+  echo "[ok] appendix import coverage check"
+else
+  echo "[fail] appendix import coverage check"
+  status=1
+fi
+
 exit "$status"

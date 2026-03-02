@@ -89,6 +89,117 @@ noncomputable def LorentzTransformGen.id (d : ℕ) [NeZero d] : LorentzTransform
     intro x y
     simp [minkowskiInnerProductGen]
 
+/-- Properness marker predicate for Lorentz transformations.
+At this abstraction level we track the interface without committing to a
+determinant formalization. -/
+def IsProperLorentzGen {d : ℕ} [NeZero d] (_Λ : LorentzTransformGen d) : Prop := True
+
+/-- Orthochronous marker predicate: forward time orientation is preserved. -/
+def IsOrthochronousLorentzGen {d : ℕ} [NeZero d] (Λ : LorentzTransformGen d) : Prop :=
+  Λ.matrix 0 0 ≥ 1
+
+/-- Proper-orthochronous Lorentz transformation marker in general dimension.
+`proper` and `orthochronous` are interface predicates at this abstraction layer. -/
+structure RestrictedLorentzTransformGen (d : ℕ) [NeZero d] where
+  toLorentz : LorentzTransformGen d
+  proper : IsProperLorentzGen toLorentz
+  orthochronous : IsOrthochronousLorentzGen toLorentz
+
+/-- Dimension-generic Poincaré transformation `(Λ, a)` acting as `x ↦ Λx + a`. -/
+structure PoincareTransformGen (d : ℕ) [NeZero d] where
+  /-- Lorentz part `Λ`. -/
+  lorentz : LorentzTransformGen d
+  /-- Translation part `a`. -/
+  translation : Fin d → ℝ
+
+/-- Apply a dimension-generic Poincaré transformation to a spacetime point. -/
+def PoincareTransformGen.apply {d : ℕ} [NeZero d]
+    (g : PoincareTransformGen d) (x : Fin d → ℝ) : Fin d → ℝ :=
+  fun μ => (∑ ν, g.lorentz.matrix μ ν * x ν) + g.translation μ
+
+/-- Image of a region under a dimension-generic Poincaré transformation. -/
+def poincareImageGen {d : ℕ} [NeZero d]
+    (g : PoincareTransformGen d) (O : Set (Fin d → ℝ)) : Set (Fin d → ℝ) :=
+  {x | ∃ y ∈ O, x = g.apply y}
+
+/-- Identity element of the dimension-generic Poincaré group. -/
+noncomputable def PoincareTransformGen.id (d : ℕ) [NeZero d] : PoincareTransformGen d where
+  lorentz := LorentzTransformGen.id d
+  translation := fun _ => 0
+
+/-- Poincaré composition in general dimension:
+`(Λ₁,a₁) ∘ (Λ₂,a₂) = (Λ₁Λ₂, Λ₁a₂ + a₁)`. -/
+noncomputable def PoincareTransformGen.compose {d : ℕ} [NeZero d]
+    (g₁ g₂ : PoincareTransformGen d) : PoincareTransformGen d where
+  lorentz :=
+    { matrix := fun μ ν => ∑ κ, g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν
+      preserves_metric := by
+        intro x y
+        let x' : Fin d → ℝ := fun κ => ∑ ν, g₂.lorentz.matrix κ ν * x ν
+        let y' : Fin d → ℝ := fun κ => ∑ ν, g₂.lorentz.matrix κ ν * y ν
+        have h₂ : minkowskiInnerProductGen x y = minkowskiInnerProductGen x' y' := by
+          simpa [x', y'] using g₂.lorentz.preserves_metric x y
+        have h₁ :
+            minkowskiInnerProductGen x' y' =
+            minkowskiInnerProductGen
+              (fun μ => ∑ κ, g₁.lorentz.matrix μ κ * x' κ)
+              (fun μ => ∑ κ, g₁.lorentz.matrix μ κ * y' κ) := by
+          simpa [x', y'] using g₁.lorentz.preserves_metric x' y'
+        have hx :
+            (fun μ => ∑ κ, g₁.lorentz.matrix μ κ * x' κ) =
+            (fun μ => ∑ ν, (∑ κ, g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) * x ν) := by
+          ext μ
+          unfold x'
+          calc
+            ∑ κ, g₁.lorentz.matrix μ κ * (∑ ν, g₂.lorentz.matrix κ ν * x ν)
+                = ∑ κ, ∑ ν, g₁.lorentz.matrix μ κ * (g₂.lorentz.matrix κ ν * x ν) := by
+                    simp [Finset.mul_sum]
+            _ = ∑ κ, ∑ ν, x ν * (g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) := by
+                  simp [mul_left_comm, mul_comm]
+            _ = ∑ ν, ∑ κ, x ν * (g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) := by
+                  rw [Finset.sum_comm]
+            _ = ∑ ν, (∑ κ, g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) * x ν := by
+                  simp [mul_comm, Finset.mul_sum]
+        have hy :
+            (fun μ => ∑ κ, g₁.lorentz.matrix μ κ * y' κ) =
+            (fun μ => ∑ ν, (∑ κ, g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) * y ν) := by
+          ext μ
+          unfold y'
+          calc
+            ∑ κ, g₁.lorentz.matrix μ κ * (∑ ν, g₂.lorentz.matrix κ ν * y ν)
+                = ∑ κ, ∑ ν, g₁.lorentz.matrix μ κ * (g₂.lorentz.matrix κ ν * y ν) := by
+                    simp [Finset.mul_sum]
+            _ = ∑ κ, ∑ ν, y ν * (g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) := by
+                  simp [mul_left_comm, mul_comm]
+            _ = ∑ ν, ∑ κ, y ν * (g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) := by
+                  rw [Finset.sum_comm]
+            _ = ∑ ν, (∑ κ, g₁.lorentz.matrix μ κ * g₂.lorentz.matrix κ ν) * y ν := by
+                  simp [mul_comm, Finset.mul_sum]
+        exact h₂.trans (h₁.trans (by simp [hx, hy])) }
+  translation := fun μ => g₁.translation μ + ∑ ν, g₁.lorentz.matrix μ ν * g₂.translation ν
+
+/-- Restricted (proper-orthochronous) Poincaré transformation in general dimension. -/
+structure RestrictedPoincareTransformGen (d : ℕ) [NeZero d] where
+  lorentz : RestrictedLorentzTransformGen d
+  translation : Fin d → ℝ
+
+/-- Forget the restriction markers and view a restricted Poincaré element
+as an ordinary Poincaré transformation. -/
+def RestrictedPoincareTransformGen.toPoincare {d : ℕ} [NeZero d]
+    (g : RestrictedPoincareTransformGen d) : PoincareTransformGen d where
+  lorentz := g.lorentz.toLorentz
+  translation := g.translation
+
+/-- Apply a restricted Poincaré transformation to a spacetime point. -/
+def RestrictedPoincareTransformGen.apply {d : ℕ} [NeZero d]
+    (g : RestrictedPoincareTransformGen d) (x : Fin d → ℝ) : Fin d → ℝ :=
+  (g.toPoincare).apply x
+
+/-- Image of a region under a restricted Poincaré transformation. -/
+def restrictedPoincareImageGen {d : ℕ} [NeZero d]
+    (g : RestrictedPoincareTransformGen d) (O : Set (Fin d → ℝ)) : Set (Fin d → ℝ) :=
+  poincareImageGen g.toPoincare O
+
 /-- In 4D, the general Minkowski inner product specializes to the explicit 4D form. -/
 theorem minkowskiInnerProductGen_four (x y : Fin 4 → ℝ) :
     minkowskiInnerProductGen x y = minkowskiInnerProduct x y := by

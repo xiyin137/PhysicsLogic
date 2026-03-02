@@ -6,7 +6,7 @@ appendix extraction directly informs non-Papers core development.
 ## Core QFT Foundations
 - Appendix B (Path integral): `PhysicsLogic/QFT/PathIntegral/*`
 - Appendix C (Gauge-theory path integral/BV): `PhysicsLogic/QFT/BV/*`, `PhysicsLogic/QFT/PathIntegral/*`
-- Appendix D (Local QFT basics): `PhysicsLogic/QFT/Wightman/*`, `PhysicsLogic/QFT/AQFT/*`
+- Appendix D (Local QFT basics): `PhysicsLogic/QFT/Wightman/*`, `PhysicsLogic/QFT/Euclidean/WickRotation.lean`
 
 ## CFT and 2D Structures
 - Appendix E (2D CFT properties): `PhysicsLogic/QFT/CFT/Basic.lean`, `PhysicsLogic/QFT/CFT/TwoDimensional/*`
@@ -33,3 +33,5 @@ appendix extraction directly informs non-Papers core development.
   - target module(s) from this crosswalk,
   - minimal declarations to add/update,
   - assumption candidates (new or reused).
+- Appendix D extraction is Wightman-first; AQFT is only in scope when explicitly
+  requested as a separate algebraic reformulation task.

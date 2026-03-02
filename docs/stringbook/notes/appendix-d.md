@@ -3,7 +3,7 @@
 - Status: initial extraction complete
 - Source page start: 676
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
-- Draft Lean target: `PhysicsLogic/QFT/Wightman/*`, `PhysicsLogic/QFT/AQFT/*`, `PhysicsLogic/QFT/CFT/*`
+- Draft Lean target: `PhysicsLogic/QFT/Wightman/*`, `PhysicsLogic/QFT/Euclidean/WickRotation.lean`, `PhysicsLogic/QFT/CFT/*`
 
 ## Reading Summary
 - Sets local QFT kinematics through Poincare-covariant local operators, microcausality, and stress-tensor conservation/current charges.
