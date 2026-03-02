@@ -61,38 +61,62 @@ structure ConformalBlock2DTheory where
     ∃ term ∈ fourpoint_block_terms φ₁ φ₂ φ₃ φ₄ z,
       term.holomorphicBlock.internal_weight = 0 ∧
       term.antiholomorphicBlock.internal_weight = 0
-  /-- Conformal blocks are universal: independent of which CFT.
-      Given (c, h_ext, h_int), there exists a unique block function. -/
-  blocks_universal : ∀
+  /-- Canonical universal block selected by `(c, h_ext, h_int)`. -/
+  universalBlock : VirasoroCentralCharge → (Fin 4 → ℝ) → ℝ → ConformalBlock2D
+  /-- The selected universal block carries the requested kinematic data. -/
+  universal_block_spec : ∀
     (c : VirasoroCentralCharge)
     (h_ext : Fin 4 → ℝ)
     (h_int : ℝ),
-    ∃! (block : ConformalBlock2D),
-      block.central_charge = c ∧
-      block.external_weights = h_ext ∧
-      block.internal_weight = h_int
+    (universalBlock c h_ext h_int).central_charge = c ∧
+    (universalBlock c h_ext h_int).external_weights = h_ext ∧
+    (universalBlock c h_ext h_int).internal_weight = h_int
+  /-- Uniqueness up to functional equality among blocks with fixed kinematic labels. -/
+  universal_block_unique : ∀
+    (c : VirasoroCentralCharge)
+    (h_ext : Fin 4 → ℝ)
+    (h_int : ℝ)
+    (block : ConformalBlock2D),
+    block.central_charge = c →
+    block.external_weights = h_ext →
+    block.internal_weight = h_int →
+    block.eval = (universalBlock c h_ext h_int).eval
 
 /- ============= DIFFERENTIAL EQUATIONS ============= -/
 
 /-- Conformal block differential equation theory -/
 structure ConformalBlockODETheory where
+  /-- Coefficient of the second-derivative term in the block ODE. -/
+  odeCoeffA : ConformalBlock2D → ℂ → ℂ
+  /-- Coefficient of the first-derivative term in the block ODE. -/
+  odeCoeffB : ConformalBlock2D → ℂ → ℂ
+  /-- Coefficient of the zeroth-order term in the block ODE. -/
+  odeCoeffC : ConformalBlock2D → ℂ → ℂ
   /-- Conformal blocks satisfy differential equations from Virasoro algebra
       L₋₁ and L₋₂ acting on states give second-order differential equation -/
   conformal_block_ode : ∀
     (block : ConformalBlock2D)
     (z : ℂ),
-    ∃ (a b c : ℂ → ℂ),
-      a z * (deriv (deriv block.eval)) z +
-      b z * (deriv block.eval) z +
-      c z * block.eval z = 0
+    odeCoeffA block z * (deriv (deriv block.eval)) z +
+      odeCoeffB block z * (deriv block.eval) z +
+      odeCoeffC block z * block.eval z = 0
+  /-- ODE is genuinely second order away from singular points (`z = 0,1`). -/
+  ode_second_order_nontrivial : ∀
+    (block : ConformalBlock2D)
+    (z : ℂ),
+    z ≠ 0 ∧ z ≠ 1 →
+    odeCoeffA block z ≠ 0
+  /-- Differential order selected by a null-state condition. -/
+  bpzDifferentialOrder :
+    KacDeterminantTheory → ConformalBlock2D → ℕ → ℕ
   /-- Null vector condition: when Kac determinant vanishes, get extra equations.
       These are the BPZ equations (Belavin-Polyakov-Zamolodchikov). -/
-  bpz_null_vector_equation : ∀
+  bpz_null_vector_order : ∀
     (kac_theory : KacDeterminantTheory)
     (block : ConformalBlock2D)
     (level : ℕ)
     (h_null : kac_theory.kacDeterminant block.central_charge block.internal_weight level = 0),
-    ∃ (differential_order : ℕ), differential_order = level
+    bpzDifferentialOrder kac_theory block level = level
 
 /- ============= RECURSION RELATIONS ============= -/
 
@@ -192,20 +216,29 @@ structure CrossingSymmetry2DTheory where
 
 /-- Normalization theory for conformal blocks -/
 structure NormalizationTheory where
-  /-- Identity operator gives trivial block F_{id}(z) = 1 -/
-  identity_block : ∀
+  /-- Canonical identity-exchange block for given `(c, h_ext)`. -/
+  identityBlock : VirasoroCentralCharge → (Fin 4 → ℝ) → ConformalBlock2D
+  /-- Identity block has zero internal weight and constant unit value. -/
+  identity_block_spec : ∀
     (c : VirasoroCentralCharge)
     (h_ext : Fin 4 → ℝ),
-    ∃ (block : ConformalBlock2D),
-      block.internal_weight = 0 ∧
-      ∀ z, block.eval z = 1
+    (identityBlock c h_ext).central_charge = c ∧
+    (identityBlock c h_ext).external_weights = h_ext ∧
+    (identityBlock c h_ext).internal_weight = 0 ∧
+    (∀ z, (identityBlock c h_ext).eval z = 1)
+  /-- Leading-power exponent in the small-`z` series. -/
+  seriesLeadingPower : ConformalBlock2D → ℝ
+  /-- Series coefficients in the expansion around `z = 0`. -/
+  seriesCoeff : ConformalBlock2D → ℕ → ℂ
   /-- Power series expansion near z = 0
       F(z) = z^{h_p - h_1 - h_2} (1 + a₁z + a₂z² + ...) -/
-  block_series_expansion : ∀
+  block_series_leading_power : ∀
     (block : ConformalBlock2D),
-    ∃ (leading_power : ℝ) (coeffs : ℕ → ℂ),
-      leading_power = block.internal_weight -
+    seriesLeadingPower block = block.internal_weight -
                       block.external_weights 0 -
                       block.external_weights 1
+  /-- Normalization of the series constant term to one. -/
+  block_series_constant_term : ∀ (block : ConformalBlock2D),
+    seriesCoeff block 0 = 1
 
 end PhysicsLogic.QFT.CFT.TwoDimensional
