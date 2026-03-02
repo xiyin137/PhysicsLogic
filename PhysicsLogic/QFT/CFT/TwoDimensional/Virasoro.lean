@@ -70,26 +70,25 @@ structure StressTensorPrimaryOPEData where
 
 /-- Virasoro commutator extracted from the stress-tensor OPE:
 `[L_n, L_m] = (n-m)L_{n+m} + (c/12)(n^3-n)δ_{n,-m}`. -/
-def VirasoroFromStressTensorOPE
+def VirasoroFromStressTensorOPE {H : Type _} [AddCommGroup H] [Module ℂ H]
     (centralCharge : ℂ)
-    (L : ℤ → ℂ)
-    (commutator : ℤ → ℤ → ℂ) : Prop :=
-  ∀ n m : ℤ,
-    commutator n m =
-      ((n - m : ℤ) : ℂ) * L (n + m) +
-      (centralCharge / 12) * ((n ^ (3 : ℕ) - n : ℤ) : ℂ) *
-        (if n = -m then 1 else 0)
+    (L : ℤ → H → H) : Prop :=
+  ∀ n m : ℤ, ∀ ψ : H,
+    L n (L m ψ) - L m (L n ψ) =
+      ((n - m : ℤ) : ℂ) • L (n + m) ψ +
+      ((centralCharge / 12) * ((n ^ (3 : ℕ) - n : ℤ) : ℂ) *
+        (if n = -m then 1 else 0)) • ψ
 
 /-- Assumed Appendix-E derivation of Virasoro mode commutators from the
 stress-tensor OPE. -/
 theorem virasoro_from_stress_tensor_ope
+    {H : Type _} [AddCommGroup H] [Module ℂ H]
     (centralCharge : ℂ)
-    (L : ℤ → ℂ)
-    (commutator : ℤ → ℤ → ℂ)
+    (L : ℤ → H → H)
     (h_phys : PhysicsAssumption
       AssumptionId.cft2dStressTensorOPEDefinesVirasoro
-      (VirasoroFromStressTensorOPE centralCharge L commutator)) :
-    VirasoroFromStressTensorOPE centralCharge L commutator := by
+      (VirasoroFromStressTensorOPE (H := H) centralCharge L)) :
+    VirasoroFromStressTensorOPE (H := H) centralCharge L := by
   exact h_phys
 
 /-- Cylinder energy/momentum Casimir shifts from the exponential map:
@@ -189,12 +188,13 @@ theorem virasoro_block_recurrence_validity
 
 /-- Crossing/associativity interface for sphere four-point conformal-block
 decompositions (equality of distinct OPE-channel reconstructions). -/
-def CrossingAssociativity (sChannelValue tChannelValue : ℂ) : Prop :=
-  sChannelValue = tChannelValue
+def CrossingAssociativity
+    (sChannelValue tChannelValue : CrossRatios 2 → ℂ) : Prop :=
+  ∀ uv : CrossRatios 2, sChannelValue uv = tChannelValue uv
 
 /-- Assumed crossing-equation/associativity consistency package. -/
 theorem crossing_associativity
-    (sChannelValue tChannelValue : ℂ)
+    (sChannelValue tChannelValue : CrossRatios 2 → ℂ)
     (h_phys : PhysicsAssumption
       AssumptionId.cft2dCrossingAssociativity
       (CrossingAssociativity sChannelValue tChannelValue)) :
@@ -425,8 +425,9 @@ structure StressTensor2DTheory where
     (T : StressTensor2D H)
     (z : ℂ)
     (h_nonzero : z ≠ 0),
-    ∃ (modes : ℤ → ℂ), (∃ n : ℤ, modes n ≠ 0) ∧
-      (∀ n : ℤ, modes (-n - 2) = modes n)
+    ∃ (modes : ℤ → (H → H)),
+      (∃ n : ℤ, ∃ ψ₁ ψ₂ : H, modes n ψ₁ ≠ modes n ψ₂) ∧
+      (∀ n : ℤ, modes n = T.mode n)
   /-- T(z)φ_h(w,w̄) OPE determines conformal weight:
       T(z)φ(w,w̄) ~ h φ(w,w̄)/(z-w)² + ∂φ(w,w̄)/(z-w)
       The coefficient of (z-w)⁻² gives the conformal weight h. -/
@@ -449,11 +450,13 @@ structure StressTensorOPE (c : VirasoroCentralCharge) where
   /-- The OPE is consistent with Virasoro algebra:
       the commutation relations [L_m, L_n] derived from the T(z)T(w) OPE
       reproduce the Virasoro algebra. -/
-  commutator_linear_coeff : ℤ → ℤ → ℂ
-  commutator_central_coeff : ℤ → ℤ → ℂ
-  virasoro_consistent : ∀ (m n : ℤ),
-    commutator_linear_coeff m n = (m - n : ℤ) ∧
-    commutator_central_coeff m n = (if m + n = 0 then central_charge_term else 0)
+  modeAction : ∀ {H : Type _}, ℤ → H → H
+  virasoro_consistent : ∀ {H : Type _} [AddCommGroup H] [Module ℂ H]
+    (m n : ℤ) (ψ : H),
+    modeAction m (modeAction n ψ) - modeAction n (modeAction m ψ) =
+      ((m - n : ℤ) : ℂ) • modeAction (m + n) ψ +
+      ((centralChargeValue c / 12) * ((m ^ (3 : ℕ) - m : ℤ) : ℂ) *
+        (if m = -n then 1 else 0)) • ψ
 
 /- ============= UNITARITY IN 2D ============= -/
 
