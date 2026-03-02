@@ -118,13 +118,15 @@ structure OPEAssociativityTheory where
   ope_associativity : ∀ {d : ℕ} {H : Type _}
     (φ_i φ_j φ_k : QuasiPrimary d H)
     (x_i x_j x_k : Fin d → ℝ), Prop
+  /-- Explicit list of bootstrap constraints extracted from associativity. -/
+  associativityConstraintSet : ∀ {d : ℕ} {H : Type _},
+    QuasiPrimary d H → QuasiPrimary d H → QuasiPrimary d H → QuasiPrimary d H → List Prop
   /-- Associativity implies constraints on OPE coefficients:
       "Bootstrap equations" at the level of OPE data.
       These are polynomial equations in the C_{ijk}. -/
   associativity_constraints : ∀ {d : ℕ} {H : Type _}
     (φ_i φ_j φ_k φ_l : QuasiPrimary d H),
-    ∃ (polynomial_equations : List Prop),
-      polynomial_equations ≠ []
+    (associativityConstraintSet φ_i φ_j φ_k φ_l).length > 0
 
 /- ============= RELATION TO 4-POINT FUNCTIONS ============= -/
 
@@ -133,21 +135,27 @@ structure OPEAssociativityTheory where
     The 4-point function is expressed as a sum over conformal blocks,
     each weighted by products of OPE coefficients. -/
 structure FourPointFunctionTheory where
+  /-- Explicit block expansion coefficients and block kernels for a 4-point function. -/
+  blockExpansion : ∀ {d : ℕ} {H : Type _},
+    QuasiPrimary d H → QuasiPrimary d H → QuasiPrimary d H → QuasiPrimary d H →
+      List (ℂ × ℂ × (CrossRatios → ℂ))
   /-- Four-point function from OPE: apply OPE twice
       ⟨φ₁φ₂φ₃φ₄⟩ = ∑_p C_{12p} C_{34p} g_p(u,v) -/
   fourpoint_from_double_ope : ∀ {d : ℕ} {H : Type _}
     (φ₁ φ₂ φ₃ φ₄ : QuasiPrimary d H)
     (x₁ x₂ x₃ x₄ : Fin d → ℝ),
-    ∃ (block_expansion : List (ℂ × ℂ × (CrossRatios → ℂ))),
-      block_expansion ≠ []
+    (blockExpansion φ₁ φ₂ φ₃ φ₄).length > 0
+  /-- Canonical conformal block associated to an exchanged family. -/
+  blockFromFamily : ∀ {d : ℕ} {H : Type _},
+    (Δ_ext : Fin 4 → ℝ) → (Δ_p : ℝ) → (ℓ_p : ℕ) →
+      ConformalMultiplet d H → CrossRatios → ℂ
   /-- Conformal block = contribution from primary + all descendants.
       Universal function determined by conformal symmetry. -/
   conformal_block_from_family : ∀ {d : ℕ} {H : Type _}
     (Δ_ext : Fin 4 → ℝ)
     (Δ_p : ℝ) (ℓ_p : ℕ)
     (multiplet : ConformalMultiplet d H),
-    ∃ (block : CrossRatios → ℂ),
-      ∃ (uv : CrossRatios), block uv ≠ 0
+    ∃ (uv : CrossRatios), blockFromFamily Δ_ext Δ_p ℓ_p multiplet uv ≠ 0
 
 /- ============= BOOTSTRAP PHILOSOPHY ============= -/
 
