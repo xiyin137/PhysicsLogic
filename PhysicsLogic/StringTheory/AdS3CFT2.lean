@@ -218,7 +218,7 @@ theorem d1_d5_symmetric_orbifold_package
 structure AdS3BosonicWZWData where
   radius : LengthScale
   alphaPrime : StringSlope
-  levelK : ℝ
+  levelK : ScalingDimension
 
 /-- Bosonic AdS3 WZW level/radius relation:
 `k = R^2/α'`. -/
@@ -238,7 +238,7 @@ theorem ads3_bosonic_wzw_level_radius_relation
 
 /-- Bosonic `SL(2,R)` spectral-flow mode-eigenvalue data. -/
 structure AdS3BosonicSpectralFlowData where
-  levelK : ℝ
+  levelK : ScalingDimension
   flowW : ℤ
   j3Mode : ℤ → ℝ
   virasoroMode : ℤ → ℝ
@@ -271,7 +271,7 @@ theorem ads3_bosonic_spectral_flow_package
 /-- Bosonic `SL(2,R)` spectral-flow data in operator form on a CFT state space. -/
 structure AdS3BosonicSpectralFlowOperatorData
     (H : Type*) [AddCommGroup H] [Module ℂ H] where
-  levelK : ℝ
+  levelK : ScalingDimension
   flowW : ℤ
   j3Mode : ℤ → ModeEndomorphism H
   virasoroMode : ℤ → ModeEndomorphism H
@@ -308,7 +308,7 @@ theorem ads3_bosonic_spectral_flow_operator_package
 
 /-- AdS3 bosonic-string representation-space data. -/
 structure AdS3BosonicPhysicalSpectrumData where
-  levelK : ℝ
+  levelK : ScalingDimension
   jDiscrete : ℝ
   jContinuousRealPart : ℝ
   continuousParameter : ℝ
@@ -339,7 +339,7 @@ theorem ads3_bosonic_physical_spectrum_package
 
 /-- Bosonic AdS3 string mass-shell/spacetime-energy data. -/
 structure AdS3BosonicMassShellData where
-  levelK : ℝ
+  levelK : ScalingDimension
   spinJ : ℝ
   mQuantum : ℝ
   flowW : ℤ
@@ -372,7 +372,7 @@ theorem ads3_bosonic_mass_shell_package
 
 /-- Purely `(NS,NS)` AdS3xS3xM4 superstring background data. -/
 structure AdS3NSNSSuperstringBackgroundData where
-  levelK : ℝ
+  levelK : ScalingDimension
   radius : LengthScale
   alphaPrime : StringSlope
   matterCentralCharge : CentralCharge
@@ -401,14 +401,14 @@ theorem ads3_nsns_superstring_background_package
 
 /-- `(NS,NS)` AdS3 superstring mass-shell/BPS data. -/
 structure AdS3NSNSSuperstringMassShellData where
-  levelK : ℝ
+  levelK : ScalingDimension
   spinJ : ℝ
   mQuantum : ℝ
   flowW : ℤ
   adsDescendantLevel : ℝ
   suDescendantLevel : ℝ
   internalWeight : ℝ
-  suSpin : ℝ
+  suSpin : ScalingDimension
   j0Three : ℝ
 
 /-- NSNS mass-shell package in the AdS3 sector:
@@ -443,7 +443,7 @@ structure AdS3MixedFluxData where
   nsFluxK5 : ℕ
   rrFluxQ5 : ℕ
   radius : LengthScale
-  mu : ℝ
+  mu : ScalingDimension
 
 /-- Mixed-flux package:
 `R^2 = α' sqrt(K5^2 + g_B^2 Q5^2)`,
@@ -472,12 +472,12 @@ theorem ads3_mixed_flux_package
 /-- Long-string transition data across `(NS,NS)` and mixed `(NS,NS)/(R,R)` AdS3 fluxes. -/
 structure AdS3MixedFluxLongStringTransitionData where
   nsFluxK5 : ℕ
-  mu : ℝ
+  mu : ScalingDimension
   longStringContinuumPresent : AdS3CftClaim
   longStringSpectrumDiscrete : AdS3CftClaim
   shortLongDistinctionSharp : AdS3CftClaim
   longStringsReachBoundaryAtFiniteEnergy : AdS3CftClaim
-  nsnsLongStringThresholdDimension : ℝ
+  nsnsLongStringThresholdDimension : ScalingDimension
 
 /-- Long-string transition package in mixed-flux AdS3:
 at `mu = 0` the continuum is present with threshold `Delta = K5/2`,
@@ -512,8 +512,8 @@ structure AdS3MixedFluxMuKDefinitionData where
   stringCoupling : DimensionlessCoupling
   rrFluxQ5 : ℕ
   nsFluxK5 : ℕ
-  mu : ℝ
-  levelK : ℝ
+  mu : ScalingDimension
+  levelK : ScalingDimension
 
 /-- Mixed-flux `mu`/`k` definition package:
 `mu = g_B Q5 / K5` and `k = K5`, with positive coupling and flux data. -/
@@ -589,11 +589,11 @@ def AdS3MixedFluxPulsatingIntegralQuantizationPackage
   data.alphaPrime > 0 ∧
   data.radiusSquared > 0 ∧
   data.maximalRadius ≥ 0 ∧
-  (data.excitationNumber : ℝ) ≥ 0 ∧
+  (data.excitationNumber : ScalingDimension) ≥ 0 ∧
   data.bohrSommerfeldPeriod > 0 ∧
   data.bohrSommerfeldPeriodRepresentsTwoPi ∧
   data.bohrSommerfeldIntegral =
-    data.bohrSommerfeldPeriod * (data.excitationNumber : ℝ)
+    data.bohrSommerfeldPeriod * (data.excitationNumber : ScalingDimension)
 
 /-- Assumed mixed-flux pulsating integral-quantization package in AdS3. -/
 theorem ads3_mixed_flux_pulsating_integral_quantization_package
@@ -631,10 +631,10 @@ theorem ads3_mixed_flux_pulsating_bohr_sommerfeld_package
 
 /-- Circular pulsating-string energy-shift data at small mixed-flux parameter `mu`. -/
 structure AdS3MixedFluxPulsatingData where
-  n : ℝ
-  k : ℝ
-  mu : ℝ
-  delta : ℝ
+  n : ScalingDimension
+  k : ScalingDimension
+  mu : ScalingDimension
+  delta : ScalingDimension
 
 /-- Semi-classical pulsating-string small-`mu` expansion package:
 `Delta = -2n + 2sqrt(nk) + mu^2 * (...)` up to order `mu^2`. -/
@@ -674,8 +674,8 @@ def AdS3MixedFluxPulsatingCompositionalPackage
   AdS3MixedFluxPulsatingBohrSommerfeldPackage data.bohr ∧
   data.pulsating.k = data.muK.levelK ∧
   data.pulsating.mu = data.muK.mu ∧
-  data.pulsating.n = (data.bohr.integral.excitationNumber : ℝ) ∧
-  (data.bohr.integral.excitationNumber : ℝ) > 0 ∧
+  data.pulsating.n = (data.bohr.integral.excitationNumber : ScalingDimension) ∧
+  (data.bohr.integral.excitationNumber : ScalingDimension) > 0 ∧
   data.pulsating.delta =
     -2 * data.pulsating.n + 2 * Real.sqrt (data.pulsating.n * data.pulsating.k) +
       data.pulsating.mu ^ (2 : ℕ) *
@@ -708,8 +708,8 @@ theorem ads3_mixed_flux_pulsating_package_from_compositional
 
 /-- Data for the mixed-flux pulsating-threshold relation in AdS3. -/
 structure AdS3MixedFluxPulsatingThresholdData where
-  excitationNumber : ℝ
-  levelK : ℝ
+  excitationNumber : ScalingDimension
+  levelK : ScalingDimension
   poleExcitationNumber : ℝ
   muOrderTwoCorrectionDenominator : ℝ
   shortStringEnergyAtPole : ScalingDimension
@@ -894,8 +894,8 @@ theorem ads3_mixed_flux_pulsating_mass_shift_consistency_from_packages
 
 /-- Finite-`k` WZW four-point-reduction data for mixed-flux AdS3 RR-deformation shifts. -/
 structure AdS3MixedFluxFiniteKWzwFourPointReductionData where
-  levelK : ℝ
-  mu : ℝ
+  levelK : ScalingDimension
+  mu : ScalingDimension
   slBosonicLevel : ℝ
   suBosonicLevel : ℝ
   usesSlFundamentalPair : AdS3CftClaim
@@ -936,7 +936,7 @@ theorem ads3_mixed_flux_finite_k_wzw_four_point_reduction_package
 
 /-- Finite-`k` WZW OPE-constant normalization data for mixed-flux AdS3 RR deformation. -/
 structure AdS3MixedFluxWzwOpeStructureConstantData where
-  levelK : ℝ
+  levelK : ScalingDimension
   cSuHalfHalfOne : ℝ
   cSlMinusHalfMinusHalfMinusOne : ℝ
   suIdentityOpeCoefficient : ℝ
@@ -970,8 +970,8 @@ theorem ads3_mixed_flux_wzw_ope_structure_constant_package
 
 /-- Data for the explicit mixed-flux RR-deformation two-string bracket `[W^(1) ⊗ W^(1)]`. -/
 structure AdS3MixedFluxRrTwoStringBracketData where
-  levelK : ℝ
-  mu : ℝ
+  levelK : ScalingDimension
+  mu : ScalingDimension
   z0Abs : ℝ
   normalizationN1 : ℝ
   overallCoefficient : ℝ
