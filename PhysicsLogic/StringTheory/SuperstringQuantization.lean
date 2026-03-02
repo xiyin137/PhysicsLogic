@@ -9,6 +9,9 @@ namespace PhysicsLogic.StringTheory
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
+/-- Claim type used for unresolved physics statements in this module. -/
+abbrev SuperstringQuantizationClaim := Prop
+
 /-- Endomorphisms of a complex state space. -/
 abbrev Endomorphism (State : Type*) [AddCommGroup State] [Module ℂ State] := Module.End ℂ State
 
@@ -199,8 +202,8 @@ structure SuperstringSiegelConstraintData (State : Type*) where
   beta0Right : State → State
   state : State
   zeroState : State
-  inRamondLeft : Bool
-  inRamondRight : Bool
+  inRamondLeftSector : SuperstringQuantizationClaim
+  inRamondRightSector : SuperstringQuantizationClaim
 
 /-- Superstring Siegel package:
 `b_0 = b~_0 = 0`, and `beta_0` constraints in Ramond sectors. -/
@@ -208,8 +211,8 @@ def SuperstringSiegelConstraintPackage {State : Type*}
     (data : SuperstringSiegelConstraintData State) : Prop :=
   data.b0Left data.state = data.zeroState ∧
   data.b0Right data.state = data.zeroState ∧
-  (if data.inRamondLeft then data.beta0Left data.state = data.zeroState else True) ∧
-  (if data.inRamondRight then data.beta0Right data.state = data.zeroState else True)
+  (data.inRamondLeftSector → data.beta0Left data.state = data.zeroState) ∧
+  (data.inRamondRightSector → data.beta0Right data.state = data.zeroState)
 
 /-- Assumed superstring Siegel-constraint package from Section 6.6. -/
 theorem superstring_siegel_constraint_package

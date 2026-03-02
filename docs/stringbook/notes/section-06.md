@@ -1,6 +1,6 @@
 # Section 06: Quantization of superstrings
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 117
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/SuperstringQuantization.lean`
@@ -72,6 +72,10 @@
   `TypeIIGsoProjectionPackage`, `SuperBRSTCurrentPackage`,
   `SuperstringOcqRepresentativePackage`, and massless-sector packages now use
   phase/operator/residual equations instead of Bool flags.
+- `PhysicsLogic/StringTheory/SuperstringQuantization.lean`:
+  Ramond-sector Siegel constraints now use explicit sector claims
+  (`inRamond*Sector : Prop`) with implication constraints rather than Bool
+  branching.
 
 ## Subsections
 - [x] 6.1 Supersymmetric extension of Polyakov's action (p.117)
