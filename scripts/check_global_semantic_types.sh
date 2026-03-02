@@ -291,6 +291,35 @@ else
   echo "[ok] AdSCFT dictionary fields are functional interfaces"
 fi
 
+echo "[global-semantic-check] AdSCFT Hawking-Page coupling/action labels are semantic"
+legacy_ads_hawking_hits="$(
+  {
+    rg -n "^[[:space:]]+kappaFive[[:space:]]*:[[:space:]](ℝ|Real)([[:space:]]|$)" \
+      PhysicsLogic/StringTheory/AdSCFT.lean
+    rg -n "^[[:space:]]+logPartitionShift[[:space:]]*:" \
+      PhysicsLogic/StringTheory/AdSCFT.lean
+  } || true
+)"
+if [[ -n "$legacy_ads_hawking_hits" ]]; then
+  echo "$legacy_ads_hawking_hits"
+  echo "[fail] found legacy AdSCFT Hawking-Page scalar labels/types"
+  status=1
+else
+  echo "[ok] AdSCFT Hawking-Page coupling/action labels use semantic types"
+fi
+
+echo "[global-semantic-check] AdSCFT Hawking-Page Euclidean action shift uses ActionScale"
+ads_hawking_action_shift_hits="$(
+  rg -n "^[[:space:]]+euclideanActionShift[[:space:]]*:[[:space:]]ActionScale([[:space:]]|$)" \
+    PhysicsLogic/StringTheory/AdSCFT.lean || true
+)"
+if [[ -z "$ads_hawking_action_shift_hits" ]]; then
+  echo "[fail] missing `euclideanActionShift : ActionScale` in AdSCFT Hawking-Page data"
+  status=1
+else
+  echo "[ok] AdSCFT Hawking-Page Euclidean action shift uses ActionScale"
+fi
+
 echo "[global-semantic-check] LSZ field-strength renormalization uses semantic alias"
 raw_field_strength_hits="$(
   rg -n "^[[:space:]]+field_strength_Z[[:space:]]*:[[:space:]]*(ℝ|Real)([[:space:]]|$)" \

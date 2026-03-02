@@ -310,11 +310,11 @@ structure HawkingPageTransitionData where
   horizonRadius : LengthScale
   criticalHorizonRadius : LengthScale
   fiveDimGravityCoupling : GravitationalCouplingScale
-  logPartitionShift : Dimful
+  euclideanActionShift : ActionScale
   criticalBeta : InverseTemperatureScale
 
 /-- Hawking-Page package:
-temperature-radius relation, critical inverse temperature, and BH/AdS free-energy shift. -/
+temperature-radius relation, critical inverse temperature, and BH/AdS Euclidean-action shift. -/
 def HawkingPageTransitionPackage (data : HawkingPageTransitionData) : Prop :=
   data.horizonRadius > 0 ∧
   data.criticalHorizonRadius > 0 ∧
@@ -324,7 +324,7 @@ def HawkingPageTransitionPackage (data : HawkingPageTransitionData) : Prop :=
   data.criticalHorizonRadius ^ (2 : ℕ) = 1 ∧
   data.criticalBeta = (((2 * Real.pi * data.criticalHorizonRadius) /
       (1 + 2 * data.criticalHorizonRadius ^ (2 : ℕ))) : InverseTemperatureScale) ∧
-  data.logPartitionShift =
+  data.euclideanActionShift =
     (((Real.pi ^ (2 : ℕ) : ℝ) : Dimful) * data.beta /
       data.fiveDimGravityCoupling ^ (2 : ℕ)) *
       data.horizonRadius ^ (2 : ℕ) * (data.horizonRadius ^ (2 : ℕ) - 1)
