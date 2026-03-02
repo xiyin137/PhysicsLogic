@@ -7,12 +7,12 @@ namespace PhysicsLogic.QFT.Wightman
 open SpaceTime Quantum
 
 /-- Integer-spin predicate for the spin-statistics interface. -/
-def IsIntegerSpin (s : ℚ) : Prop :=
-  ∃ n : ℤ, s = n
+def IsIntegerSpin (s : ScalingDimension) : Prop :=
+  ∃ n : ℤ, s = (n : ScalingDimension)
 
 /-- Half-integer-spin predicate for the spin-statistics interface. -/
-def IsHalfIntegerSpin (s : ℚ) : Prop :=
-  ∃ n : ℤ, s = n + (1 / 2 : ℚ)
+def IsHalfIntegerSpin (s : ScalingDimension) : Prop :=
+  ∃ n : ℤ, s = (n : ScalingDimension) + (1 / 2 : ScalingDimension)
 
 /-- PCT theorem (Pauli-Lüders theorem): Every Lorentz-invariant QFT admits an
     antiunitary PCT operator Θ such that the Wightman functions satisfy:
@@ -57,7 +57,7 @@ theorem pct_theorem {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
 theorem spin_statistics {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
   (qft : WightmanQFT H d)
   (phi : SmearedFieldOperator H d)
-  (spin : ℚ)  -- Spin as rational number (0, 1/2, 1, 3/2, ...)
+  (spin : ScalingDimension)  -- Physical spin value; quantization imposed by predicates below.
   (_h_nonneg : spin ≥ 0)
   (_h_quantized : IsIntegerSpin spin ∨ IsHalfIntegerSpin spin)
   (f g : SchwartzFunction d)

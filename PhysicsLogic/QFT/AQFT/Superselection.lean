@@ -225,7 +225,7 @@ theorem doplicher_roberts_reconstruction {d : ℕ} [NeZero d]
     E(d-2) for massless particles). -/
 structure SpinData (d : ℕ) (Sector : Type*) where
   /-- Spin of each sector (in units of ℏ) -/
-  spin : Sector → ℝ
+  spin : Sector → ScalingDimension
 
 /-- Spin-statistics theorem: spin determines statistics.
 
@@ -244,12 +244,14 @@ theorem spin_statistics {d : ℕ} {Sector : Type*}
     (spinData : SpinData d Sector)
     (_h_dim : d ≥ 4) (ρ : Sector) :
     PhysicsAssumption AssumptionId.aqftSpinStatistics
-      (((∃ n : ℤ, spinData.spin ρ = n) → selfStatistics stats ρ = 1) ∧
-      ((∃ n : ℤ, spinData.spin ρ = n + 1/2) → selfStatistics stats ρ = -1)) →
+      (((∃ n : ℤ, spinData.spin ρ = (n : ScalingDimension)) → selfStatistics stats ρ = 1) ∧
+      ((∃ n : ℤ, spinData.spin ρ = (n : ScalingDimension) + (1 / 2 : ScalingDimension)) →
+        selfStatistics stats ρ = -1)) →
     /- Integer spin implies Bose statistics -/
-    ((∃ n : ℤ, spinData.spin ρ = n) → selfStatistics stats ρ = 1) ∧
+    ((∃ n : ℤ, spinData.spin ρ = (n : ScalingDimension)) → selfStatistics stats ρ = 1) ∧
     /- Half-integer spin implies Fermi statistics -/
-    ((∃ n : ℤ, spinData.spin ρ = n + 1/2) → selfStatistics stats ρ = -1) := by
+    ((∃ n : ℤ, spinData.spin ρ = (n : ScalingDimension) + (1 / 2 : ScalingDimension)) →
+      selfStatistics stats ρ = -1) := by
   intro h_phys
   simpa [PhysicsAssumption] using h_phys
 

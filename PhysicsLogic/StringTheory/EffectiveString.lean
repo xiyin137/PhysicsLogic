@@ -1,9 +1,12 @@
 import PhysicsLogic.Assumptions
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Complex.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 namespace PhysicsLogic.StringTheory
+
+open PhysicsLogic.QFT.PathIntegral
 
 set_option autoImplicit false
 
@@ -34,18 +37,19 @@ def WorldsheetMetric.pullback (h : WorldsheetMetric) (ρ : Reparametrization) : 
 /-- Minimal Nambu-Goto data package. -/
 structure NambuGotoData (D : ℕ) where
   tension : TensionScale
-  action : Embedding D → ComplexActionValue
+  action : ComplexActionFunctional (Embedding D)
   reparam_invariant :
     ∀ (ρ : Reparametrization) (X : Embedding D),
-      action (Embedding.reparametrize X ρ) = action X
+      action.eval (Embedding.reparametrize X ρ) = action.eval X
 
 /-- Minimal Polyakov data package. -/
 structure PolyakovData (D : ℕ) where
   inverseStringTension : StringSlope
-  action : WorldsheetMetric → Embedding D → ComplexActionValue
+  action : ComplexActionFunctional (WorldsheetMetric × Embedding D)
   reparam_invariant :
     ∀ (ρ : Reparametrization) (h : WorldsheetMetric) (X : Embedding D),
-      action (WorldsheetMetric.pullback h ρ) (Embedding.reparametrize X ρ) = action h X
+      action.eval (WorldsheetMetric.pullback h ρ, Embedding.reparametrize X ρ) =
+        action.eval (h, X)
 
 /-- On-shell equivalence relation between NG and Polyakov actions.
     For each embedding `X`, there exists a worldsheet metric `h` (an on-shell
@@ -56,7 +60,7 @@ def NambuGotoPolyakovEquivalent {D : ℕ}
     ∀ (embedding : Embedding D),
       ∃ metric : WorldsheetMetric,
         onShellMetric metric embedding ∧
-          ng.action embedding = poly.action metric embedding
+          ng.action.eval embedding = poly.action.eval (metric, embedding)
 
 /-- Section-02 canonical interface name for Nambu-Goto worldsheet data. -/
 abbrev NambuGotoModel (D : ℕ) := NambuGotoData D

@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.Basic
@@ -6,6 +7,7 @@ import Mathlib.Data.Real.Basic
 namespace PhysicsLogic.StringTheory
 
 open scoped BigOperators
+open PhysicsLogic.QFT.PathIntegral
 
 set_option autoImplicit false
 set_option linter.unusedVariables false
@@ -116,18 +118,18 @@ theorem gravity_stress_tensor_dictionary
 /-- Regularized AdS gravity action data:
 Einstein-Hilbert bulk term + Gibbons-Hawking term + local counterterm. -/
 structure RegulatedAdSGravityActionData (BulkConfiguration : Type*) where
-  bulkEinsteinHilbertFunctional : BulkConfiguration → ComplexActionValue
-  gibbonsHawkingFunctional : BulkConfiguration → ComplexActionValue
-  localCountertermFunctional : BulkConfiguration → ComplexActionValue
-  totalActionFunctional : BulkConfiguration → ComplexActionValue
+  bulkEinsteinHilbertFunctional : ComplexActionFunctional BulkConfiguration
+  gibbonsHawkingFunctional : ComplexActionFunctional BulkConfiguration
+  localCountertermFunctional : ComplexActionFunctional BulkConfiguration
+  totalActionFunctional : ComplexActionFunctional BulkConfiguration
 
 /-- Composition rule for the regularized gravitational action. -/
 def RegulatedAdSGravityAction {BulkConfiguration : Type*}
     (data : RegulatedAdSGravityActionData BulkConfiguration) : Prop :=
   ∀ cfg : BulkConfiguration,
-    data.totalActionFunctional cfg =
-      data.bulkEinsteinHilbertFunctional cfg +
-        data.gibbonsHawkingFunctional cfg + data.localCountertermFunctional cfg
+    data.totalActionFunctional.eval cfg =
+      data.bulkEinsteinHilbertFunctional.eval cfg +
+        data.gibbonsHawkingFunctional.eval cfg + data.localCountertermFunctional.eval cfg
 
 /-- Assumed regularized AdS gravity action package from holographic renormalization. -/
 theorem regulated_ads_gravity_action

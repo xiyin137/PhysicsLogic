@@ -13,7 +13,7 @@ set_option linter.unusedVariables false
 
 /-- Candidate CFT data tested by bootstrap consistency constraints. -/
 structure BootstrapData where
-  scalingDimensions : List ℝ
+  scalingDimensions : List ScalingDimension
   spinLabels : List SpinLabel
   opeCoefficients : List ℂ
 
@@ -239,15 +239,15 @@ structure FourPointFunctionTheory where
           (fun acc term => acc + evaluateBlockTerm uv term) 0
   /-- Canonical conformal block associated to an exchanged family. -/
   blockFromFamily : ∀ {d : ℕ} {H : Type _},
-    (Δ_ext : Fin 4 → ℝ) → (Δ_p : ℝ) → (ℓ_p : SpinLabel) →
+    (Δ_ext : Fin 4 → ScalingDimension) → (Δ_p : ScalingDimension) → (ℓ_p : SpinLabel) →
       ConformalMultiplet d H → CrossRatios → ℂ
   /-- Selected reference cross-ratio used to evaluate block nontriviality for a family. -/
   referenceCrossRatio : ∀ {d : ℕ} {H : Type _}, ConformalMultiplet d H → CrossRatios
   /-- Conformal block = contribution from primary + all descendants.
       Universal function determined by conformal symmetry. -/
   conformal_block_from_family : ∀ {d : ℕ} {H : Type _}
-    (Δ_ext : Fin 4 → ℝ)
-    (Δ_p : ℝ) (ℓ_p : SpinLabel)
+    (Δ_ext : Fin 4 → ScalingDimension)
+    (Δ_p : ScalingDimension) (ℓ_p : SpinLabel)
     (multiplet : ConformalMultiplet d H),
     blockFromFamily Δ_ext Δ_p ℓ_p multiplet (referenceCrossRatio multiplet) ≠ 0
 
