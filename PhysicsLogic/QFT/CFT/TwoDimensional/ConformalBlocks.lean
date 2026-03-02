@@ -54,13 +54,21 @@ structure ConformalBlock2DTheory where
     fourpoint_block_value φ₁ φ₂ φ₃ φ₄ z =
       (fourpoint_block_terms φ₁ φ₂ φ₃ φ₄ z).foldl
         (fun acc term => acc + evaluate_fourpoint_term z term) 0
-  /-- Identity-exchange term is present in the four-point block decomposition. -/
-  identity_block_term_present : ∀ {H : Type _}
+  /-- Selected identity-exchange term in the four-point decomposition. -/
+  identityBlockTerm : ∀ {H : Type _}
+    (φ₁ φ₂ φ₃ φ₄ : Primary2D H)
+    (z : ℂ), FourPointBlockTerm
+  /-- The selected identity term belongs to the decomposition list. -/
+  identity_block_term_mem : ∀ {H : Type _}
     (φ₁ φ₂ φ₃ φ₄ : Primary2D H)
     (z : ℂ),
-    ∃ term ∈ fourpoint_block_terms φ₁ φ₂ φ₃ φ₄ z,
-      term.holomorphicBlock.internal_weight = 0 ∧
-      term.antiholomorphicBlock.internal_weight = 0
+    identityBlockTerm φ₁ φ₂ φ₃ φ₄ z ∈ fourpoint_block_terms φ₁ φ₂ φ₃ φ₄ z
+  /-- The selected identity term has vanishing internal weights in both sectors. -/
+  identity_block_term_weights : ∀ {H : Type _}
+    (φ₁ φ₂ φ₃ φ₄ : Primary2D H)
+    (z : ℂ),
+    (identityBlockTerm φ₁ φ₂ φ₃ φ₄ z).holomorphicBlock.internal_weight = 0 ∧
+    (identityBlockTerm φ₁ φ₂ φ₃ φ₄ z).antiholomorphicBlock.internal_weight = 0
   /-- Canonical universal block selected by `(c, h_ext, h_int)`. -/
   universalBlock : VirasoroCentralCharge → (Fin 4 → ℝ) → ℝ → ConformalBlock2D
   /-- The selected universal block carries the requested kinematic data. -/
@@ -222,12 +230,25 @@ structure CrossingSymmetry2DTheory where
     (z : ℂ),
     block_s.eval z = t_channel_reconstruction c h_ext block_s z
   /-- Identity-exchange block occurs in the selected t-channel family. -/
-  t_channel_identity_present : ∀
+  identityTChannelBlock : ∀
+    (c : VirasoroCentralCharge)
+    (h_ext : Fin 4 → ℝ)
+    (block_s : ConformalBlock2D)
+    (z : ℂ), ConformalBlock2D
+  /-- Selected identity t-channel block belongs to the chosen channel list. -/
+  t_channel_identity_mem : ∀
     (c : VirasoroCentralCharge)
     (h_ext : Fin 4 → ℝ)
     (block_s : ConformalBlock2D)
     (z : ℂ),
-    ∃ block_t ∈ t_channel_blocks c h_ext block_s z, block_t.internal_weight = 0
+    identityTChannelBlock c h_ext block_s z ∈ t_channel_blocks c h_ext block_s z
+  /-- Selected identity t-channel block has zero internal weight. -/
+  t_channel_identity_weight : ∀
+    (c : VirasoroCentralCharge)
+    (h_ext : Fin 4 → ℝ)
+    (block_s : ConformalBlock2D)
+    (z : ℂ),
+    (identityTChannelBlock c h_ext block_s z).internal_weight = 0
 
 /- ============= NORMALIZATION ============= -/
 

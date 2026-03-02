@@ -217,9 +217,10 @@ structure BootstrapPhilosophyTheory where
   bootstrap_constrains_ope : ∀ {d : ℕ}
     (assumptions : List Prop),
     isBootstrapConsistent assumptions
-  /-- Consistency is nontrivial: at least one candidate package is excluded. -/
-  bootstrap_excludes_inconsistent : ∀ {d : ℕ},
-    ∃ (candidate : List Prop), ¬ isBootstrapConsistent candidate
+  /-- Explicit witness that bootstrap consistency is nontrivial. -/
+  inconsistentCandidate : List Prop
+  /-- The witness candidate fails bootstrap consistency. -/
+  inconsistent_candidate_excluded : ¬ isBootstrapConsistent inconsistentCandidate
   /-- OPE coefficient for identical-external operators and exchanged family. -/
   selfOPECoefficient : ∀ {d : ℕ} {H : Type _},
     QuasiPrimary d H → QuasiPrimary d H → ℂ
