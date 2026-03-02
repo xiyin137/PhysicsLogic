@@ -229,10 +229,15 @@ structure MellinFlatSpaceLimitData where
   adsRadius : ℝ
   mellinAmplitude : ℂ
   transformedFlatAmplitude : ℂ
+  finiteRadiusCorrection : ℂ
 
-/-- Flat-space-limit relation: Mellin amplitude agrees with its flat-space transform. -/
+/-- Flat-space-limit relation:
+the transformed flat amplitude equals the Mellin amplitude up to a correction
+whose size is suppressed at large AdS radius. -/
 def MellinFlatSpaceLimitRelation (data : MellinFlatSpaceLimitData) : Prop :=
-  data.adsRadius > 0 ∧ data.mellinAmplitude = data.transformedFlatAmplitude
+  data.adsRadius > 0 ∧
+  data.transformedFlatAmplitude = data.mellinAmplitude + data.finiteRadiusCorrection ∧
+  Complex.normSq data.finiteRadiusCorrection ≤ (1 / data.adsRadius) ^ (2 : ℕ)
 
 /-- Assumed Mellin-to-flat-space transform relation in the large-radius limit. -/
 theorem mellin_flat_space_limit_relation

@@ -48,7 +48,8 @@
   `MellinConstraintSystem`,
   `ContactMellinAmplitudeIsUnity`,
   `MellinExchangePoleSeries`,
-  `MellinFlatSpaceLimitRelation`.
+  `MellinFlatSpaceLimitRelation`
+  (modeled with explicit finite-radius correction suppression).
 
 ## Subsections
 - [x] R.1 The boundary condition on a bulk scalar field (p.816)
