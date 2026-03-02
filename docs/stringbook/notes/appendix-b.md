@@ -1,6 +1,6 @@
 # Appendix B: The path integral
 
-- Status: extraction complete; supergeometry typing hardening in progress
+- Status: extraction complete; path-integral typing hardening in progress
 - Source page start: 654
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/QFT/PathIntegral/*`, `PhysicsLogic/QFT/BV/*`
@@ -30,6 +30,10 @@
 - Hardened in `PhysicsLogic/QFT/PathIntegral/Supergeometry.lean`:
   fermionic boundary-condition/constraint checks now use named proposition
   claims instead of Bool flags.
+- Hardened in `PhysicsLogic/QFT/PathIntegral/Nonperturbative.lean`:
+  discretized/instanton/Witten-index/Borel interfaces now use claim-typed
+  fields and parameters (`NonperturbativeClaim := Prop`) instead of Bool flags
+  and `= true` guard assumptions.
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `pathIntegralDiscretizedContinuumLimit`.

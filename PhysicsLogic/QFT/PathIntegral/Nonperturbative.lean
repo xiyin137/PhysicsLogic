@@ -7,6 +7,8 @@ import Mathlib.Data.Nat.Factorial.Basic
 namespace PhysicsLogic.QFT.PathIntegral
 
 set_option autoImplicit false
+
+abbrev NonperturbativeClaim := Prop
 open scoped BigOperators
 
 /-- Regulator-removal statement: discretized approximants converge to a continuum amplitude. -/
@@ -19,13 +21,13 @@ integration to the Lagrangian form. -/
 structure DiscretizedPhaseSpacePathIntegral where
   approximant : ℕ → ℂ
   continuumAmplitude : ℂ
-  gaussianMomentumIntegrationUsed : Bool
+  gaussianMomentumIntegrationUsed : NonperturbativeClaim
 
 /-- Package for discretized phase-space path integral with continuum limit. -/
 def DiscretizedPhaseSpacePathIntegralPackage
     (data : DiscretizedPhaseSpacePathIntegral) : Prop :=
   DiscretizedPathIntegralConverges data.approximant data.continuumAmplitude ∧
-  data.gaussianMomentumIntegrationUsed = true
+  data.gaussianMomentumIntegrationUsed
 
 /-- Assumed continuum limit for a discretized path-integral family. -/
 theorem discretized_path_integral_continuum_limit
@@ -43,7 +45,7 @@ theorem discretized_phase_space_path_integral_package
     (h_phys : PhysicsAssumption
       AssumptionId.pathIntegralDiscretizedContinuumLimit
       (DiscretizedPathIntegralConverges data.approximant data.continuumAmplitude))
-    (h_gauss : data.gaussianMomentumIntegrationUsed = true) :
+    (h_gauss : data.gaussianMomentumIntegrationUsed) :
     DiscretizedPhaseSpacePathIntegralPackage data := by
   exact ⟨discretized_path_integral_continuum_limit data.approximant data.continuumAmplitude h_phys,
     h_gauss⟩
@@ -62,12 +64,12 @@ structure InstantonSaddleData where
   oneLoopPrefactor : ℂ
   amplitude : ℂ
   zeroModeCount : ℕ
-  collectiveCoordinateMeasureIncluded : Bool
+  collectiveCoordinateMeasureIncluded : NonperturbativeClaim
 
 /-- Instanton-saddle consistency package. -/
 def InstantonSaddlePackage (data : InstantonSaddleData) : Prop :=
   data.euclideanActionValue > 0 ∧
-  data.collectiveCoordinateMeasureIncluded = true ∧
+  data.collectiveCoordinateMeasureIncluded ∧
   InstantonSemiclassicalWeight
     data.euclideanActionValue data.hbar data.oneLoopPrefactor data.amplitude
 
@@ -89,7 +91,7 @@ theorem instanton_saddle_package
       (InstantonSemiclassicalWeight
         data.euclideanActionValue data.hbar data.oneLoopPrefactor data.amplitude))
     (h_action : data.euclideanActionValue > 0)
-    (h_zero_modes : data.collectiveCoordinateMeasureIncluded = true) :
+    (h_zero_modes : data.collectiveCoordinateMeasureIncluded) :
     InstantonSaddlePackage data := by
   exact ⟨h_action, h_zero_modes,
     instanton_semiclassical_weight
@@ -108,8 +110,8 @@ def WittenIndexMorseComplex (wittenIndex : ℤ) (morseIndices : List ℕ) : Prop
 Morse-complex data. -/
 def WittenIndexTopologicalInvariance
     (wittenIndex : ℤ) (morseIndices : List ℕ)
-    (qExactDeformationPreservesIndex : Bool) : Prop :=
-  qExactDeformationPreservesIndex = true ∧
+    (qExactDeformationPreservesIndex : NonperturbativeClaim) : Prop :=
+  qExactDeformationPreservesIndex ∧
   WittenIndexMorseComplex wittenIndex morseIndices
 
 /-- Assumed Witten-index/Morse-complex identification. -/
@@ -125,11 +127,11 @@ theorem witten_index_morse_complex
 Witten-index/Morse-complex assumptions and Q-exact deformation tagging. -/
 theorem witten_index_topological_invariance
     (wittenIndex : ℤ) (morseIndices : List ℕ)
-    (qExactDeformationPreservesIndex : Bool)
+    (qExactDeformationPreservesIndex : NonperturbativeClaim)
     (h_phys : PhysicsAssumption
       AssumptionId.pathIntegralWittenIndexMorseComplex
       (WittenIndexMorseComplex wittenIndex morseIndices))
-    (h_q_exact : qExactDeformationPreservesIndex = true) :
+    (h_q_exact : qExactDeformationPreservesIndex) :
     WittenIndexTopologicalInvariance
       wittenIndex morseIndices qExactDeformationPreservesIndex := by
   exact ⟨h_q_exact, witten_index_morse_complex wittenIndex morseIndices h_phys⟩
@@ -154,13 +156,13 @@ structure BorelResummationData where
   coefficients : ℕ → ℂ
   remainderBoundA : ℝ
   remainderScaleSigma : ℝ
-  additionalSaddlesHandledByThimbleDecomposition : Bool
+  additionalSaddlesHandledByThimbleDecomposition : NonperturbativeClaim
 
 /-- Package for Borel reconstruction plus remainder control. -/
 def BorelResummationPackage (data : BorelResummationData) : Prop :=
   data.remainderBoundA > 0 ∧
   data.remainderScaleSigma > 0 ∧
-  data.additionalSaddlesHandledByThimbleDecomposition = true ∧
+  data.additionalSaddlesHandledByThimbleDecomposition ∧
   BorelSokalWatsonCriterion
     data.asymptoticSeries data.borelResummed
     data.coefficients data.remainderBoundA data.remainderScaleSigma
@@ -185,7 +187,7 @@ theorem borel_resummation_package
         data.coefficients data.remainderBoundA data.remainderScaleSigma))
     (h_A : data.remainderBoundA > 0)
     (h_sigma : data.remainderScaleSigma > 0)
-    (h_thimble : data.additionalSaddlesHandledByThimbleDecomposition = true) :
+    (h_thimble : data.additionalSaddlesHandledByThimbleDecomposition) :
     BorelResummationPackage data := by
   exact ⟨h_A, h_sigma, h_thimble,
     borel_sokal_watson_criterion
