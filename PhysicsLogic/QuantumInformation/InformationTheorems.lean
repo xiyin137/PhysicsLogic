@@ -32,10 +32,14 @@ structure QECCTheory (H : Type _) [QuantumStateSpace H] where
 
 /-- Structure for black hole information theory -/
 structure BlackHoleInformation where
-  /-- Page curve for evaporating black hole -/
-  page_curve : TimeScale → EntropyMeasure → EntropyMeasure
-  /-- Page time: when radiation entropy equals black hole entropy -/
-  page_time : EntropyMeasure → TimeScale
+  /-- Bekenstein-Hawking entropy of the black hole as a function of time. -/
+  blackHoleEntropy : TimeScale → EntropyMeasure
+  /-- Entanglement entropy of Hawking radiation as a function of time. -/
+  radiationEntropy : TimeScale → EntropyMeasure
+  /-- Page time where the two entropies cross. -/
+  pageTime : TimeScale
+  /-- Entropy balance at the Page time. -/
+  entropy_balance_at_page : radiationEntropy pageTime = blackHoleEntropy pageTime
 
 /-- Teleportation classical cost (2 classical bits for qubits) -/
 def teleportation_classical_cost : EntropyMeasure := 2
