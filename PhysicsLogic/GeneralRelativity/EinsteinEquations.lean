@@ -43,17 +43,18 @@ structure EFETheory (consts : GRConstants) (metric : SpacetimeMetric) where
   connection : ConnectionTheory metric
   /-- Curvature theory for this metric -/
   curvature : CurvatureTheory metric
-  /-- Einstein-Hilbert action: S_EH = (c⁴/16πG) ∫ (R - 2Λ) √(-g) d⁴x -/
-  einsteinHilbertAction : ℝ
-  /-- Matter action S_matter -/
-  matterAction : TensorField 4 4 → ℝ
+  /-- Einstein-Hilbert action functional:
+      `S_EH[g] = (c⁴/16πG) ∫ (R[g] - 2Λ) √(-g) d⁴x`. -/
+  einsteinHilbertActionFunctional : SpacetimeMetric → ℝ
+  /-- Matter action functional `S_matter[g, T]` in this abstraction layer. -/
+  matterActionFunctional : TensorField 4 4 → SpacetimeMetric → ℝ
   /-- EFE from variational principle: δS/δg_μν = 0 -/
   efe_from_variational_principle : ∀ (T : TensorField 4 4),
     satisfiesEFE consts curvature T
 
 /-- Total action: S = S_EH + S_matter -/
 noncomputable def totalAction (efe : EFETheory consts metric) (T : TensorField 4 4) : ℝ :=
-  efe.einsteinHilbertAction + efe.matterAction T
+  efe.einsteinHilbertActionFunctional metric + efe.matterActionFunctional T metric
 
 /-- Contracted Bianchi identity implies energy-momentum conservation:
     ∇_μ G^μν = 0  ⟹  ∇_μ T^μν = 0

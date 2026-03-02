@@ -1254,6 +1254,16 @@ noncomputable def phi4Theory2D
   translation_invariant := by
     intro n points a
     exact continuum_limit_translation_invariant latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n a points
+  rotation_invariant := by
+    intro n points rotation h_orthogonal
+    have h_euclidean :
+        (continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n) points =
+          (continuumLimit latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD phys n)
+            (fun i μ => (0 : EuclideanPoint 2) μ + ∑ ν, rotation μ ν * points i ν) :=
+      continuum_limit_euclidean_invariant
+        latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD
+        phys n rotation h_orthogonal (fun _ => 0) points
+    simpa using h_euclidean
   permutation_symmetric := by
     intro n points σ
     exact continuum_limit_permutation_symmetric latticeDifference roundToLatticeSite arzela_ascoli_lattice_limit renormalizationTheoryD h_integral_congr phys n σ points

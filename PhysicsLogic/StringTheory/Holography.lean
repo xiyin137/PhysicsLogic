@@ -115,20 +115,24 @@ theorem gravity_stress_tensor_dictionary
 
 /-- Regularized AdS gravity action data:
 Einstein-Hilbert bulk term + Gibbons-Hawking term + local counterterm. -/
-structure RegulatedAdSGravityActionData where
-  bulkEinsteinHilbert : ℂ
-  gibbonsHawkingTerm : ℂ
-  localCounterterm : ℂ
-  totalActionValue : ℂ
+structure RegulatedAdSGravityActionData (BulkConfiguration : Type*) where
+  bulkEinsteinHilbertFunctional : BulkConfiguration → ℂ
+  gibbonsHawkingFunctional : BulkConfiguration → ℂ
+  localCountertermFunctional : BulkConfiguration → ℂ
+  totalActionFunctional : BulkConfiguration → ℂ
 
 /-- Composition rule for the regularized gravitational action. -/
-def RegulatedAdSGravityAction (data : RegulatedAdSGravityActionData) : Prop :=
-  data.totalActionValue =
-    data.bulkEinsteinHilbert + data.gibbonsHawkingTerm + data.localCounterterm
+def RegulatedAdSGravityAction {BulkConfiguration : Type*}
+    (data : RegulatedAdSGravityActionData BulkConfiguration) : Prop :=
+  ∀ cfg : BulkConfiguration,
+    data.totalActionFunctional cfg =
+      data.bulkEinsteinHilbertFunctional cfg +
+        data.gibbonsHawkingFunctional cfg + data.localCountertermFunctional cfg
 
 /-- Assumed regularized AdS gravity action package from holographic renormalization. -/
 theorem regulated_ads_gravity_action
-    (data : RegulatedAdSGravityActionData)
+    {BulkConfiguration : Type*}
+    (data : RegulatedAdSGravityActionData BulkConfiguration)
     (h_phys : PhysicsAssumption
       AssumptionId.stringHolographyRegulatedGravityAction
       (RegulatedAdSGravityAction data)) :
