@@ -45,6 +45,15 @@ Rules:
 - always use `AssumptionId.*`,
 - keep IDs stable after introduction.
 
+## Physics-First Modeling Conventions
+
+- organize declarations by physics semantics and dependency structure, not source-book chapter order,
+- model actions as functionals on configuration spaces; for generic QFT/path-integral layers allow complex-valued actions unless an explicit Euclidean/classical-real restriction is intended,
+- model operators/states/functionals with operator/state/functional interfaces (not scalar stand-ins),
+- use semantic unit aliases from `PhysicsLogic/Units/Basic.lean` (`MassScale`, `LengthScale`, `ActionScale`, `DimensionlessCoupling`, etc.),
+- natural-unit interfaces (`c = ħ = 1`) are supported via `naturalUnitSystem`; keep explicit-unit interfaces when needed,
+- avoid hard-coded approximate decimal literals in non-Papers core modules.
+
 ## Repository Layout
 
 Top-level library entry points:
@@ -117,13 +126,22 @@ Important:
 ## Invariant And Governance Scripts
 
 Scripts are under `scripts/`:
-- `check_nonpapers_invariants.sh`
-- `check_physics_assumptions_registry.sh`
-- `check_physics_assumption_usage.sh`
 - `assumptions_report.sh`
-- `update_assumptions_catalog.sh`
+- `check_global_semantic_types.sh`
+- `check_no_ambiguous_dimensionless_names.sh`
+- `check_no_approx_decimals_core.sh`
+- `check_no_hardcoded_critical_dimension_defs.sh`
 - `check_no_new_nonpapers_sorry.sh`
+- `check_nonpapers_invariants.sh`
 - `check_nonpapers_sorry_budget.sh`
+- `check_physics_assumption_usage.sh`
+- `check_physics_assumptions_registry.sh`
+- `check_qft_semantic_types.sh`
+- `check_string_semantic_types.sh`
+- `check_stringbook_appendix_imports.sh`
+- `check_stringbook_note_coverage.sh`
+- `stringbook_sync_notes.sh`
+- `update_assumptions_catalog.sh`
 
 Recommended local pre-push run:
 
@@ -147,6 +165,14 @@ CI enforces:
 - no non-Papers `True` placeholders in declaration signatures,
 - no vacuous `∃ ..., True` non-Papers patterns,
 - no exact bare `field : Prop` in non-Papers structures,
+- stringbook appendix import coverage is complete and reachable,
+- stringbook note candidate coverage (units + assumptions) is tracked,
+- string-theory semantic typing guardrails pass,
+- qft semantic typing guardrails pass,
+- global semantic typing guardrails pass,
+- no approximate decimal literals in non-Papers core modules,
+- no hard-coded critical-dimension definitions in non-Papers core modules,
+- no ambiguous dimensionless field names in non-Papers core modules,
 - all `PhysicsAssumption` labels are defined,
 - all defined labels are listed in `assumptionRegistry`,
 - `AssumptionId` string payloads are unique,
