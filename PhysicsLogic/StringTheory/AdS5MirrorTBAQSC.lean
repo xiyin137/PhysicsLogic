@@ -254,7 +254,7 @@ theorem finite_volume_mirror_energy_package
 
 /-- Konishi wrapping-correction data in the mirror-TBA framework. -/
 structure KonishiWrappingData where
-  asymptoticEnergy : ScalingDimension
+  asymptoticScalingDimension : ScalingDimension
   wrappingCorrection : ScalingDimension
   fullScalingDimension : ScalingDimension
   circumference : ℕ
@@ -263,7 +263,7 @@ structure KonishiWrappingData where
 `Delta_K = Delta_ASY + Delta_wrap` with mirror-TBA circumference assignment. -/
 def KonishiWrappingCorrectionPackage (data : KonishiWrappingData) : Prop :=
   data.circumference = 4 ∧
-  data.fullScalingDimension = data.asymptoticEnergy + data.wrappingCorrection
+  data.fullScalingDimension = data.asymptoticScalingDimension + data.wrappingCorrection
 
 /-- Assumed Konishi wrapping-correction package. -/
 theorem konishi_wrapping_correction_package
