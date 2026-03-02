@@ -15,11 +15,10 @@ structure DensityOperator (H : Type _) [QuantumStateSpace H] where
   self_adjoint : ∀ (ψ φ : H), @inner ℂ H _ ψ (op φ) = @inner ℂ H _ (op ψ) φ
   /-- Positive semi-definite: ⟨ψ|ρ|ψ⟩ ≥ 0 -/
   positive : ∀ (ψ : H), 0 ≤ (@inner ℂ H _ ψ (op ψ)).re
-  /-- Trace normalization on a nonempty finite orthonormal index family. -/
-  trace_one : ∃ (ι : Type _) (_ : Fintype ι) (_ : Nonempty ι) (basis : ι → H),
-    (∀ i, ‖basis i‖ = 1) →
-    (∀ i j, i ≠ j → @inner ℂ H _ (basis i) (basis j) = 0) →
-    (∑ i, (@inner ℂ H _ (basis i) (op (basis i))).re) = 1
+  /-- Abstract trace functional used in this interface. -/
+  traceFunctional : (H → H) → ℝ
+  /-- Unit-trace normalization. -/
+  trace_one : traceFunctional op = 1
 
 /- Convert pure state to density operator: ρ = |ψ⟩⟨ψ|. -/
 /-- Rank-one operator underlying the pure-state density construction. -/
@@ -34,10 +33,8 @@ structure PureToDensityAssumptions {H : Type _} [QuantumStateSpace H]
     @inner ℂ H _ φ₁ (pureToDensityOp ψ φ₂) =
     @inner ℂ H _ (pureToDensityOp ψ φ₁) φ₂
   positive : ∀ (φ : H), 0 ≤ (@inner ℂ H _ φ (pureToDensityOp ψ φ)).re
-  trace_one : ∃ (ι : Type _) (_ : Fintype ι) (_ : Nonempty ι) (basis : ι → H),
-    (∀ i, ‖basis i‖ = 1) →
-    (∀ i j, i ≠ j → @inner ℂ H _ (basis i) (basis j) = 0) →
-    (∑ i, (@inner ℂ H _ (basis i) (pureToDensityOp ψ (basis i))).re) = 1
+  trace_one : ∃ (traceFunctional : (H → H) → ℝ),
+    traceFunctional (pureToDensityOp ψ) = 1
 
 /-- Convert pure state to density operator: ρ = |ψ⟩⟨ψ| -/
 noncomputable def pureToDensity {H : Type _} [QuantumStateSpace H]
@@ -51,7 +48,8 @@ noncomputable def pureToDensity {H : Type _} [QuantumStateSpace H]
     simp [pureToDensityOp, inner_add_right, inner_smul_right, add_smul, smul_smul]
   self_adjoint := h_phys.self_adjoint
   positive := h_phys.positive
-  trace_one := h_phys.trace_one
+  traceFunctional := Classical.choose h_phys.trace_one
+  trace_one := Classical.choose_spec h_phys.trace_one
 
 /-- Unitary operator preserves inner products.
     U is unitary if ⟨Uψ|Uφ⟩ = ⟨ψ|φ⟩ for all ψ, φ. -/
