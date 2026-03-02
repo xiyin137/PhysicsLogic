@@ -69,21 +69,29 @@ def applyUnitary {H : Type _} [QuantumStateSpace H] (U : UnitaryOp H) (ψ : H) :
 
 /-- Unitary operators preserve norms -/
 theorem unitary_preserves_norm {H : Type _} [QuantumStateSpace H]
-    (U : UnitaryOp H) (ψ : H)
-    (h_phys : PhysicsAssumption AssumptionId.quantumUnitaryPreservesNorm
-      (‖applyUnitary U ψ‖ = ‖ψ‖)) :
+    (U : UnitaryOp H) (ψ : H) :
     ‖applyUnitary U ψ‖ = ‖ψ‖ := by
-  exact h_phys
+  have h_inner :
+      @inner ℂ H _ (applyUnitary U ψ) (applyUnitary U ψ) = @inner ℂ H _ ψ ψ := by
+    simpa [applyUnitary] using U.unitary ψ ψ
+  have h_sq : ‖applyUnitary U ψ‖ ^ (2 : ℕ) = ‖ψ‖ ^ (2 : ℕ) := by
+    calc
+      ‖applyUnitary U ψ‖ ^ (2 : ℕ) =
+          (@inner ℂ H _ (applyUnitary U ψ) (applyUnitary U ψ)).re := by
+            simpa using (norm_sq_eq_re_inner (𝕜 := ℂ) (x := applyUnitary U ψ))
+      _ = (@inner ℂ H _ ψ ψ).re := by
+            simpa using congrArg Complex.re h_inner
+      _ = ‖ψ‖ ^ (2 : ℕ) := by
+            simpa using (norm_sq_eq_re_inner (𝕜 := ℂ) (x := ψ)).symm
+  exact (sq_eq_sq₀ (norm_nonneg (applyUnitary U ψ)) (norm_nonneg ψ)).1 h_sq
 
 /-- Unitary operators map pure states to pure states -/
 def UnitaryOp.applyPure {H : Type _} [QuantumStateSpace H]
-    (U : UnitaryOp H) (ψ : PureState H)
-    (h_phys : PhysicsAssumption AssumptionId.quantumUnitaryPreservesNorm
-      (‖applyUnitary U ψ.vec‖ = ‖ψ.vec‖)) :
+    (U : UnitaryOp H) (ψ : PureState H) :
     PureState H where
   vec := U.op ψ.vec
   normalized := by
-    have h := unitary_preserves_norm U ψ.vec h_phys
+    have h := unitary_preserves_norm U ψ.vec
     unfold applyUnitary at h
     rw [h, ψ.normalized]
 

@@ -1,7 +1,7 @@
 # Physics Assumptions Report
 
-- Registered assumptions: `264`
-- Assumptions referenced in non-Papers modules: `264`
+- Registered assumptions: `263`
+- Assumptions referenced in non-Papers modules: `263`
 - Assumptions with zero references outside registry: `0`
 
 | AssumptionId | Payload | Core refs | Papers refs | Total refs | Description |
@@ -110,7 +110,6 @@
 | `quantumPauliDirectionObservable` | `quantum.pauli_direction_observable` | 3 | 3 | 6 | Linearity and Hermiticity proof obligations for Bloch-sphere directional Pauli observables are assumed in this abstraction layer. |
 | `quantumPureToDensityAxioms` | `quantum.pure_to_density_axioms` | 5 | 1 | 6 | Self-adjointness/positivity/trace-one proof obligations for the pure-state density operator construction are assumed in this abstraction layer. |
 | `quantumSingletPauliCorrelation` | `quantum.singlet_pauli_correlation` | 1 | 2 | 3 | Singlet-state Pauli correlation formula is assumed in this abstraction layer. |
-| `quantumUnitaryPreservesNorm` | `quantum.unitary_preserves_norm` | 2 | 0 | 2 | Unitary norm preservation is assumed in this abstraction layer's quantum operator model. |
 | `reissnerNordstromMetricWellFormed` | `gr.reissner_nordstrom_metric_well_formed` | 2 | 0 | 2 | Reissner-Nordstrom metric data is treated as a valid Lorentzian metric package in this abstraction layer. |
 | `riemannSurfaceModuliPlumbingCoordinates` | `qft.cft.riemann_surface.moduli_plumbing_coordinates` | 1 | 0 | 1 | Plumbing-fixture coordinate description and corresponding genus-`h` moduli counting package for Riemann surfaces is assumed in this abstraction layer. |
 | `schwarzschildMetricWellFormed` | `gr.schwarzschild_metric_well_formed` | 5 | 0 | 5 | Schwarzschild metric data is treated as a valid Lorentzian metric package in this abstraction layer. |

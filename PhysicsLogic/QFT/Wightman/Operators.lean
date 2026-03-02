@@ -21,22 +21,21 @@ structure SchwartzFunctionTheory (d : ℕ) where
   conj : SchwartzFunctionType → SchwartzFunctionType
 
 /-- Placeholder type for Schwartz space test functions on d-dimensional Minkowski spacetime.
-    In a full formalization, this would be SchwartzMap (Fin d → ℝ) ℂ from Mathlib.
-    The data : Unit means all instances are definitionally equal — this type serves
-    only as a type-level marker in the axiom signatures. -/
+    In a full formalization, this would be SchwartzMap (Fin d → ℝ) ℂ from Mathlib. -/
 structure SchwartzFunction (d : ℕ) where
-  /-- Placeholder -/
-  data : Unit
+  /-- Underlying test-function profile on spacetime points. -/
+  eval : (Fin d → ℝ) → ℂ
 
 /-- Smeared quantum field operator φ(f) = ∫ d^d x f(x) φ(x).
     The integral is over Minkowski spacetime with measure d^d x.
     This is generally an UNBOUNDED operator, defined on a dense invariant domain D ⊂ H.
     Smearing against a Schwartz function ensures the operator is well-defined on D,
-    but does not make it bounded in general.
-    Placeholder type: data : Unit carries no information. -/
+    but does not make it bounded in general. -/
 structure SmearedFieldOperator (H : Type _) [QuantumStateSpace H] (d : ℕ) where
-  /-- Placeholder -/
-  data : Unit
+  /-- Underlying linear action on Hilbert-space states. -/
+  apply : H → H
+  /-- Smearing test function used to define this unbounded operator. -/
+  testFunction : SchwartzFunction d
 
 /-- Structure for quantum field operator operations -/
 structure FieldOperatorOps (H : Type _) [QuantumStateSpace H] (d : ℕ) where
@@ -50,16 +49,16 @@ structure FieldOperatorOps (H : Type _) [QuantumStateSpace H] (d : ℕ) where
 
 /-- Formal notation: φ(x) as operator-valued distribution.
     This is NOT a function but a distribution — only makes sense when integrated
-    against test functions. W_n(x₁,...,xₙ) = ⟨0|φ(x₁)...φ(xₙ)|0⟩ are tempered distributions.
-    Placeholder type: data : Unit carries no information. -/
+    against test functions. W_n(x₁,...,xₙ) = ⟨0|φ(x₁)...φ(xₙ)|0⟩ are tempered distributions. -/
 structure FieldDistribution (H : Type _) [QuantumStateSpace H] (d : ℕ) where
-  /-- Placeholder -/
-  data : Unit
+  /-- Distribution evaluation on test functions gives the associated smeared operator. -/
+  toSmeared : SchwartzFunction d → SmearedFieldOperator H d
 
 /-- Structure relating distributions to smeared operators -/
 structure DistributionToSmearedOps (H : Type _) [QuantumStateSpace H] (d : ℕ) where
   /-- The smeared field φ(f) corresponds to integrating the distribution φ(x) against f(x) -/
-  distribution_to_smeared : FieldDistribution H d → SmearedFieldOperator H d
+  distribution_to_smeared :
+    FieldDistribution H d → SchwartzFunction d → SmearedFieldOperator H d
 
 /-- Structure for vacuum state -/
 structure VacuumTheory (H : Type _) [QuantumStateSpace H] where

@@ -1,6 +1,6 @@
 # Appendix D: Local quantum field theories
 
-- Status: initial extraction complete
+- Status: extraction complete; operator-interface hardening in progress
 - Source page start: 676
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/QFT/Wightman/*`, `PhysicsLogic/QFT/Euclidean/WickRotation.lean`, `PhysicsLogic/QFT/CFT/*`
@@ -31,6 +31,10 @@
   in `PhysicsLogic/QFT/Euclidean/WickRotation.lean`,
   and `RadialQuantizationOPEConvergence`
   in `PhysicsLogic/QFT/CFT/Basic.lean`.
+- Hardened `PhysicsLogic/QFT/Wightman/Operators.lean` placeholder interfaces:
+  `SchwartzFunction` now carries an evaluation map,
+  `SmearedFieldOperator` carries operator/test-function data, and
+  `FieldDistribution` now exposes a distribution-to-smeared map.
 
 ## Assumption Candidates
 - Reuse existing: `wightmanTemperedness`, `wightmanSpinStatistics`, `wightmanPctTheorem`.

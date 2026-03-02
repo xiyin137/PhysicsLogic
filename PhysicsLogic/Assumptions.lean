@@ -24,7 +24,6 @@ def qiNoCloning : String := "qi.no_cloning"
 def qiNoDeleting : String := "qi.no_deleting"
 def qiNoBroadcasting : String := "qi.no_broadcasting"
 def quantumPureToDensityAxioms : String := "quantum.pure_to_density_axioms"
-def quantumUnitaryPreservesNorm : String := "quantum.unitary_preserves_norm"
 def quantumExpectationReal : String := "quantum.expectation_real"
 def quantumPauliDirectionObservable : String := "quantum.pauli_direction_observable"
 def quantumSingletPauliCorrelation : String := "quantum.singlet_pauli_correlation"
@@ -842,8 +841,6 @@ def assumptionRegistry : List AssumptionEntry :=
       "No-broadcasting impossibility statement is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.quantumPureToDensityAxioms,
       "Self-adjointness/positivity/trace-one proof obligations for the pure-state density operator construction are assumed in this abstraction layer."⟩
-  , ⟨AssumptionId.quantumUnitaryPreservesNorm,
-      "Unitary norm preservation is assumed in this abstraction layer's quantum operator model."⟩
   , ⟨AssumptionId.quantumExpectationReal,
       "Reality of expectation values for Hermitian observables is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.quantumPauliDirectionObservable,

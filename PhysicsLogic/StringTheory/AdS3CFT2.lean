@@ -9,6 +9,9 @@ namespace PhysicsLogic.StringTheory
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
+/-- Named proposition type for structural physics claims in AdS3/CFT2 data packages. -/
+abbrev AdS3CftClaim := Prop
+
 /-- Internal compact space choice for the D1-D5 system. -/
 inductive D1D5InternalSpace where
   | t4
@@ -43,7 +46,7 @@ theorem d1_d5_instanton_charge_map
 /-- Low-energy branch-structure data for the 2D `(4,4)` D1-D5 gauge theory. -/
 structure D1D5BranchStructureData where
   fiDeformationScale : ℝ
-  coulombBranchLifted : Bool
+  coulombBranchLifted : AdS3CftClaim
   higgsBranchTag : String
   adhmTag : String
 
@@ -52,7 +55,7 @@ FI deformation lifts the Coulomb branch and Higgs branch matches ADHM data. -/
 def D1D5BranchStructurePackage (data : D1D5BranchStructureData) : Prop :=
   data.higgsBranchTag = "Higgs branch from D-term quotient" ∧
   data.adhmTag = "ADHM instanton moduli space" ∧
-  (data.fiDeformationScale > 0 → data.coulombBranchLifted = true)
+  (data.fiDeformationScale > 0 → data.coulombBranchLifted)
 
 /-- Assumed D1-D5 branch-structure package with FI-induced lifting of Coulomb branch. -/
 theorem d1_d5_branch_structure_package
@@ -187,7 +190,7 @@ structure D1D5SymmetricOrbifoldData where
   fiDeformationScale : ℝ
   orbifoldTag : String
   parityLocusTag : String
-  coulombBranchLifted : Bool
+  coulombBranchLifted : AdS3CftClaim
 
 /-- Symmetric-orbifold package:
 `Sym^(Q1 Q5)(T^4)` locus and FI deformation lifting of the Coulomb branch. -/
@@ -196,7 +199,7 @@ def D1D5SymmetricOrbifoldPackage (data : D1D5SymmetricOrbifoldData) : Prop :=
   data.q5 > 0 ∧
   data.orbifoldTag = "Sym^(Q1 Q5)(T^4)" ∧
   data.parityLocusTag = "Re(tau)=1/2 orbifold-symmetric locus" ∧
-  (data.fiDeformationScale > 0 → data.coulombBranchLifted = true)
+  (data.fiDeformationScale > 0 → data.coulombBranchLifted)
 
 /-- Assumed symmetric-product orbifold/FI-lift package for D1-D5 CFT. -/
 theorem d1_d5_symmetric_orbifold_package
@@ -428,10 +431,10 @@ theorem ads3_mixed_flux_package
 structure AdS3MixedFluxLongStringTransitionData where
   nsFluxK5 : ℕ
   mu : ℝ
-  longStringContinuumPresent : Bool
-  longStringSpectrumDiscrete : Bool
-  shortLongDistinctionSharp : Bool
-  longStringsReachBoundaryAtFiniteEnergy : Bool
+  longStringContinuumPresent : AdS3CftClaim
+  longStringSpectrumDiscrete : AdS3CftClaim
+  shortLongDistinctionSharp : AdS3CftClaim
+  longStringsReachBoundaryAtFiniteEnergy : AdS3CftClaim
   nsnsLongStringThresholdDimension : ℝ
 
 /-- Long-string transition package in mixed-flux AdS3:
@@ -442,16 +445,16 @@ def AdS3MixedFluxLongStringTransitionPackage
     (data : AdS3MixedFluxLongStringTransitionData) : Prop :=
   data.nsFluxK5 > 0 ∧
   data.mu ≥ 0 ∧
-  (data.mu = 0 → data.longStringContinuumPresent = true) ∧
-  (data.mu = 0 → data.longStringSpectrumDiscrete = false) ∧
-  (data.mu = 0 → data.shortLongDistinctionSharp = true) ∧
-  (data.mu = 0 → data.longStringsReachBoundaryAtFiniteEnergy = true) ∧
+  (data.mu = 0 → data.longStringContinuumPresent) ∧
+  (data.mu = 0 → ¬ data.longStringSpectrumDiscrete) ∧
+  (data.mu = 0 → data.shortLongDistinctionSharp) ∧
+  (data.mu = 0 → data.longStringsReachBoundaryAtFiniteEnergy) ∧
   (data.mu = 0 →
     data.nsnsLongStringThresholdDimension = (data.nsFluxK5 : ℝ) / 2) ∧
-  (data.mu ≠ 0 → data.longStringContinuumPresent = false) ∧
-  (data.mu ≠ 0 → data.longStringSpectrumDiscrete = true) ∧
-  (data.mu ≠ 0 → data.shortLongDistinctionSharp = false) ∧
-  (data.mu ≠ 0 → data.longStringsReachBoundaryAtFiniteEnergy = false)
+  (data.mu ≠ 0 → ¬ data.longStringContinuumPresent) ∧
+  (data.mu ≠ 0 → data.longStringSpectrumDiscrete) ∧
+  (data.mu ≠ 0 → ¬ data.shortLongDistinctionSharp) ∧
+  (data.mu ≠ 0 → ¬ data.longStringsReachBoundaryAtFiniteEnergy)
 
 /-- Assumed mixed-flux long-string transition package in AdS3. -/
 theorem ads3_mixed_flux_long_string_transition_package
@@ -498,7 +501,7 @@ structure AdS3MixedFluxPulsatingTurningPointData where
   maximalRadius : ℝ
   turningPointEnergy : ℝ
   radialVelocityAtTurningPoint : ℝ
-  maximalRadiusIsTurningPoint : Bool
+  maximalRadiusIsTurningPoint : AdS3CftClaim
 
 /-- Mixed-flux pulsating turning-point package:
 `r0` is the maximal radius of oscillatory motion, with turning-point
@@ -510,7 +513,7 @@ def AdS3MixedFluxPulsatingTurningPointPackage
   data.radiusSquared > 0 ∧
   data.k5Flux > 0 ∧
   data.maximalRadius ≥ 0 ∧
-  data.maximalRadiusIsTurningPoint = true ∧
+  data.maximalRadiusIsTurningPoint ∧
   data.radialVelocityAtTurningPoint = 0 ∧
   data.turningPointEnergy =
     (data.radiusSquared / data.alphaPrime) * data.maximalRadius *
@@ -533,7 +536,7 @@ structure AdS3MixedFluxPulsatingIntegralQuantizationData where
   excitationNumber : ℤ
   maximalRadius : ℝ
   bohrSommerfeldPeriod : ℝ
-  bohrSommerfeldPeriodRepresentsTwoPi : Bool
+  bohrSommerfeldPeriodRepresentsTwoPi : AdS3CftClaim
   bohrSommerfeldIntegral : ℝ
 
 /-- Mixed-flux pulsating integral-quantization package:
@@ -546,7 +549,7 @@ def AdS3MixedFluxPulsatingIntegralQuantizationPackage
   data.maximalRadius ≥ 0 ∧
   (data.excitationNumber : ℝ) ≥ 0 ∧
   data.bohrSommerfeldPeriod > 0 ∧
-  data.bohrSommerfeldPeriodRepresentsTwoPi = true ∧
+  data.bohrSommerfeldPeriodRepresentsTwoPi ∧
   data.bohrSommerfeldIntegral =
     data.bohrSommerfeldPeriod * (data.excitationNumber : ℝ)
 
@@ -702,12 +705,12 @@ theorem ads3_mixed_flux_pulsating_threshold_package
 structure AdS3MixedFluxSftRrDeformationData where
   mu : ℝ
   levelK : ℝ
-  firstOrderRrVertexUsed : Bool
-  projectedTwoStringBracketVanishesAtFiniteK : Bool
-  secondOrderFieldSetToZero : Bool
-  secondOrderCorrectionUsesSiegelResolvent : Bool
+  firstOrderRrVertexUsed : AdS3CftClaim
+  projectedTwoStringBracketVanishesAtFiniteK : AdS3CftClaim
+  secondOrderFieldSetToZero : AdS3CftClaim
+  secondOrderCorrectionUsesSiegelResolvent : AdS3CftClaim
   secondOrderEquationCoefficient : ℝ
-  largeKNormalizationMatchingUsed : Bool
+  largeKNormalizationMatchingUsed : AdS3CftClaim
 
 /-- Mixed-flux RR-deformation SFT package:
 `Q_B W^(2) = -(1/2) P^+[W^(1)⊗W^(1)]`, finite-`k` vanishing of projected
@@ -716,12 +719,12 @@ def AdS3MixedFluxSftRrDeformationPackage
     (data : AdS3MixedFluxSftRrDeformationData) : Prop :=
   data.mu >= 0 ∧
   data.levelK > 0 ∧
-  data.firstOrderRrVertexUsed = true ∧
-  data.projectedTwoStringBracketVanishesAtFiniteK = true ∧
-  data.secondOrderFieldSetToZero = true ∧
-  data.secondOrderCorrectionUsesSiegelResolvent = true ∧
+  data.firstOrderRrVertexUsed ∧
+  data.projectedTwoStringBracketVanishesAtFiniteK ∧
+  data.secondOrderFieldSetToZero ∧
+  data.secondOrderCorrectionUsesSiegelResolvent ∧
   data.secondOrderEquationCoefficient = (-(1 / 2 : ℝ)) ∧
-  data.largeKNormalizationMatchingUsed = true
+  data.largeKNormalizationMatchingUsed
 
 /-- Assumed mixed-flux RR-deformation SFT package. -/
 theorem ads3_mixed_flux_sft_rr_deformation_package
@@ -740,8 +743,8 @@ structure AdS3MixedFluxMassShiftFromFourPointData where
   scalingDimensionZero : ℝ
   massSquaredShift : ℝ
   fourPointAmplitude : ℝ
-  noZeroWeightInWOneBracket : Bool
-  noZeroWeightInNestedBracket : Bool
+  noZeroWeightInWOneBracket : AdS3CftClaim
+  noZeroWeightInNestedBracket : AdS3CftClaim
 
 /-- RR-deformation mass-shift package:
 `Delta(mu) = Delta(0) - (alpha'/2) delta m^2` and
@@ -751,8 +754,8 @@ def AdS3MixedFluxMassShiftFromFourPointPackage
     (data : AdS3MixedFluxMassShiftFromFourPointData) : Prop :=
   data.mu >= 0 ∧
   data.alphaPrime > 0 ∧
-  data.noZeroWeightInWOneBracket = true ∧
-  data.noZeroWeightInNestedBracket = true ∧
+  data.noZeroWeightInWOneBracket ∧
+  data.noZeroWeightInNestedBracket ∧
   data.scalingDimensionMu =
     data.scalingDimensionZero - (data.alphaPrime / 2) * data.massSquaredShift ∧
   data.massSquaredShift =
@@ -842,13 +845,13 @@ structure AdS3MixedFluxFiniteKWzwFourPointReductionData where
   mu : ℝ
   slBosonicLevel : ℝ
   suBosonicLevel : ℝ
-  usesSlFundamentalPair : Bool
-  usesSuFundamentalPair : Bool
-  usesSlGenericPair : Bool
-  usesSuGenericPair : Bool
-  reductionToSlFourPointFunctions : Bool
-  reductionToSuFourPointFunctions : Bool
-  largeKFiniteNOverKAgreementWithSemiclassical : Bool
+  usesSlFundamentalPair : AdS3CftClaim
+  usesSuFundamentalPair : AdS3CftClaim
+  usesSlGenericPair : AdS3CftClaim
+  usesSuGenericPair : AdS3CftClaim
+  reductionToSlFourPointFunctions : AdS3CftClaim
+  reductionToSuFourPointFunctions : AdS3CftClaim
+  largeKFiniteNOverKAgreementWithSemiclassical : AdS3CftClaim
 
 /-- Finite-`k` mixed-flux WZW reduction package:
 the RR-deformation mass-shift equation reduces to bosonic
@@ -861,13 +864,13 @@ def AdS3MixedFluxFiniteKWzwFourPointReductionPackage
   data.mu >= 0 ∧
   data.slBosonicLevel = data.levelK + 2 ∧
   data.suBosonicLevel = data.levelK - 2 ∧
-  data.usesSlFundamentalPair = true ∧
-  data.usesSuFundamentalPair = true ∧
-  data.usesSlGenericPair = true ∧
-  data.usesSuGenericPair = true ∧
-  data.reductionToSlFourPointFunctions = true ∧
-  data.reductionToSuFourPointFunctions = true ∧
-  data.largeKFiniteNOverKAgreementWithSemiclassical = true
+  data.usesSlFundamentalPair ∧
+  data.usesSuFundamentalPair ∧
+  data.usesSlGenericPair ∧
+  data.usesSuGenericPair ∧
+  data.reductionToSlFourPointFunctions ∧
+  data.reductionToSuFourPointFunctions ∧
+  data.largeKFiniteNOverKAgreementWithSemiclassical
 
 /-- Assumed finite-`k` WZW four-point-reduction package for mixed-flux AdS3. -/
 theorem ads3_mixed_flux_finite_k_wzw_four_point_reduction_package
@@ -925,7 +928,7 @@ structure AdS3MixedFluxRrTwoStringBracketData where
   suPower : ℝ
   slRelativeSign : ℤ
   suRelativeSign : ℤ
-  projectedZeroWeightVanishesAtFiniteK : Bool
+  projectedZeroWeightVanishesAtFiniteK : AdS3CftClaim
 
 /-- Mixed-flux RR-deformation two-string-bracket package:
 `[W^(1) ⊗ W^(1)]` splits into `SL(2)` and `SU(2)` adjoint channels with
@@ -945,7 +948,7 @@ def AdS3MixedFluxRrTwoStringBracketPackage
   data.suPower = -data.slPower ∧
   data.slRelativeSign = -1 ∧
   data.suRelativeSign = 1 ∧
-  data.projectedZeroWeightVanishesAtFiniteK = true
+  data.projectedZeroWeightVanishesAtFiniteK
 
 /-- Assumed mixed-flux RR-deformation two-string-bracket package. -/
 theorem ads3_mixed_flux_rr_two_string_bracket_package
@@ -973,11 +976,11 @@ def AdS3MixedFluxSftRrSecondOrderCompositionalPackage
   data.sft.mu = data.bracket.mu ∧
   data.sft.projectedTwoStringBracketVanishesAtFiniteK =
     data.bracket.projectedZeroWeightVanishesAtFiniteK ∧
-  data.sft.firstOrderRrVertexUsed = true ∧
-  data.sft.secondOrderFieldSetToZero = true ∧
-  data.sft.secondOrderCorrectionUsesSiegelResolvent = true ∧
+  data.sft.firstOrderRrVertexUsed ∧
+  data.sft.secondOrderFieldSetToZero ∧
+  data.sft.secondOrderCorrectionUsesSiegelResolvent ∧
   data.sft.secondOrderEquationCoefficient = (-(1 / 2 : ℝ)) ∧
-  data.sft.largeKNormalizationMatchingUsed = true
+  data.sft.largeKNormalizationMatchingUsed
 
 /-- Reconstruct the mixed-flux RR-deformation SFT package from the compositional
 second-order bracket block. -/
@@ -992,11 +995,8 @@ theorem ads3_mixed_flux_sft_rr_deformation_from_second_order_compositional
     simpa [h_k] using h_k_pos_br
   have h_mu_nonneg : data.sft.mu >= 0 := by
     simpa [h_mu] using h_mu_nonneg_br
-  have h_proj : data.sft.projectedTwoStringBracketVanishesAtFiniteK = true := by
-    calc
-      data.sft.projectedTwoStringBracketVanishesAtFiniteK =
-          data.bracket.projectedZeroWeightVanishesAtFiniteK := h_proj_id
-      _ = true := h_proj_br
+  have h_proj : data.sft.projectedTwoStringBracketVanishesAtFiniteK := by
+    simpa [h_proj_id] using h_proj_br
   exact ⟨h_mu_nonneg, h_k_pos, h_first, h_proj, h_second_zero, h_siegel, h_coeff, h_largek⟩
 
 /-- Data for compositional reconstruction of the mixed-flux RR-spectrum
@@ -1049,16 +1049,10 @@ theorem ads3_mixed_flux_mass_shift_from_compositional
   rcases h_bracket with ⟨_, _, _, _, _, _, _, _, _, _, _, _, h_proj_bracket⟩
   have h_mu_nonneg_mass : data.massShift.mu >= 0 := by
     simpa [h_mu_mass] using h_mu_nonneg_sft
-  have h_nozero_one_true : data.massShift.noZeroWeightInWOneBracket = true := by
-    calc
-      data.massShift.noZeroWeightInWOneBracket =
-          data.bracket.projectedZeroWeightVanishesAtFiniteK := h_nozero_one
-      _ = true := h_proj_bracket
-  have h_nozero_nested_true : data.massShift.noZeroWeightInNestedBracket = true := by
-    calc
-      data.massShift.noZeroWeightInNestedBracket =
-          data.sft.projectedTwoStringBracketVanishesAtFiniteK := h_nozero_nested
-      _ = true := h_proj_sft
+  have h_nozero_one_true : data.massShift.noZeroWeightInWOneBracket := by
+    simpa [h_nozero_one] using h_proj_bracket
+  have h_nozero_nested_true : data.massShift.noZeroWeightInNestedBracket := by
+    simpa [h_nozero_nested] using h_proj_sft
   exact ⟨h_mu_nonneg_mass, h_alpha, h_nozero_one_true, h_nozero_nested_true, h_delta, h_dm2⟩
 
 /-- Data for reconstructing mixed-flux RR-spectrum correction from the
@@ -1108,16 +1102,10 @@ theorem ads3_mixed_flux_mass_shift_from_second_order_compositional
   rcases h_bracket with ⟨_, _, _, _, _, _, _, _, _, _, _, _, h_proj_bracket⟩
   have h_mu_nonneg_mass : data.massShift.mu >= 0 := by
     simpa [h_mu_mass] using h_mu_nonneg_sft
-  have h_nozero_one_true : data.massShift.noZeroWeightInWOneBracket = true := by
-    calc
-      data.massShift.noZeroWeightInWOneBracket =
-          data.secondOrder.bracket.projectedZeroWeightVanishesAtFiniteK := h_nozero_one
-      _ = true := h_proj_bracket
-  have h_nozero_nested_true : data.massShift.noZeroWeightInNestedBracket = true := by
-    calc
-      data.massShift.noZeroWeightInNestedBracket =
-          data.secondOrder.sft.projectedTwoStringBracketVanishesAtFiniteK := h_nozero_nested
-      _ = true := h_proj_sft
+  have h_nozero_one_true : data.massShift.noZeroWeightInWOneBracket := by
+    simpa [h_nozero_one] using h_proj_bracket
+  have h_nozero_nested_true : data.massShift.noZeroWeightInNestedBracket := by
+    simpa [h_nozero_nested] using h_proj_sft
   exact ⟨h_mu_nonneg_mass, h_alpha, h_nozero_one_true, h_nozero_nested_true, h_delta, h_dm2⟩
 
 /-- Convert the second-order-sourced RR-spectrum package into the generic

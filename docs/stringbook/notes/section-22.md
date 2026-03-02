@@ -1,6 +1,6 @@
 # Section 22: D1-D5 system and AdS$_3$/CFT$_2$
 
-- Status: initial extraction complete
+- Status: extraction complete; claim-typing hardening in progress
 - Source page start: 507
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/AdS3CFT2.lean`
@@ -26,6 +26,17 @@
   `hatSL(2)_k x hatSU(2)_k x M_4`, then tracks mixed `(NS,NS)`/`(R,R)` flux
   deformation, RR-deformation SFT recursion, and semiclassical/quantum
   mass-shift relations.
+
+## Hardening Notes
+- Replaced boolean marker fields by named proposition aliases
+  (`AdS3CftClaim` / `CftClaim`) in
+  `PhysicsLogic/StringTheory/AdS3CFT2.lean` and
+  `PhysicsLogic/QFT/CFT/TwoDimensional/CurrentAlgebras.lean`.
+- Updated mixed-flux and NSNS package clauses from `field = true/false`
+  constraints to logical predicates (`field`, `¬ field`) to prevent
+  truth-value smuggling.
+- Kept cross-lane compatibility with `PhysicsLogic/StringTheory/AdS3CFTBridge.lean`
+  while preserving existing compositional package interfaces.
 
 ## Candidate Formalization Units
 - `D1D5InstantonChargeMap`
