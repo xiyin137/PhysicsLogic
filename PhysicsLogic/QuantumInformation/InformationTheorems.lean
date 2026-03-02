@@ -9,10 +9,10 @@ open Quantum QuantumInformation
 /-- Structure for quantum information protocols -/
 structure InformationProtocols (H : Type _) [QuantumStateSpace H]
     (T : TensorProductSpace H H) where
-  /-- Reference ancilla state -/
-  ancilla : H
-  /-- Quantum teleportation protocol -/
-  teleportation : PureState H → DensityOperator T.carrier → H
+  /-- Reference ancilla input state for protocol initialization. -/
+  ancillaState : PureState H
+  /-- Quantum teleportation protocol output state on the receiver side. -/
+  teleportation : PureState H → DensityOperator T.carrier → DensityOperator H
   /-- Dense coding protocol -/
   denseCoding : DensityOperator T.carrier → ℝ
 
@@ -38,7 +38,7 @@ structure BlackHoleInformation where
   page_time : EntropyMeasure → TimeScale
 
 /-- Teleportation classical cost (2 classical bits for qubits) -/
-def teleportation_classical_cost : ℝ := 2
+def teleportation_classical_cost : EntropyMeasure := 2
 
 variable {H : Type _} [QuantumStateSpace H]
 
@@ -86,9 +86,9 @@ theorem no_cloning
   (ip : InformationProtocols H T)
   (h_phys : PhysicsAssumption AssumptionId.qiNoCloning
     (¬∃ (cloning : CloningMap H T),
-      ∀ (psi : H), cloning.map (T.tensor psi ip.ancilla) = T.tensor psi psi)) :
+      ∀ (psi : H), cloning.map (T.tensor psi ip.ancillaState.vec) = T.tensor psi psi)) :
   ¬∃ (cloning : CloningMap H T),
-    ∀ (psi : H), cloning.map (T.tensor psi ip.ancilla) = T.tensor psi psi := by
+    ∀ (psi : H), cloning.map (T.tensor psi ip.ancillaState.vec) = T.tensor psi psi := by
   exact h_phys
 
 /-- Linear deleting-channel candidates acting on two-copy inputs. -/

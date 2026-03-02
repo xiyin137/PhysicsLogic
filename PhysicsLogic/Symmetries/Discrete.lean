@@ -56,14 +56,18 @@ def CPTSymmetry.combined {H : Type*} [SMul ℂ H] (cpt : CPTSymmetry H) : H → 
   fun ψ => cpt.C.op (cpt.P.op_state (cpt.T.op ψ))
 
 /-- CPT theorem data: a Lorentz-invariant local QFT admits a CPT symmetry
-    such that the combined CPT operation Θ = CPT is antiunitary and involutive.
+    such that the combined CPT operation Θ = CPT squares to a two-torsion phase.
 
     The full PCT theorem for Wightman QFT (with proper Wightman function
     transformation law) is stated in QFT/Wightman/Theorems.lean. -/
 structure CPTTheorem (H : Type*) [SMul ℂ H] where
   /-- CPT symmetry instance -/
   cpt : CPTSymmetry H
-  /-- Combined CPT is involutive: (CPT)² = id -/
-  cpt_involutive : ∀ (ψ : H), cpt.combined (cpt.combined ψ) = ψ
+  /-- Wigner phase in `(CPT)^2 = η_{CPT}` (typically ±1 on irreducible sectors). -/
+  cpt_square_phase : ℂ
+  /-- `η_{CPT}` is two-torsion. -/
+  cpt_square_phase_square : cpt_square_phase * cpt_square_phase = 1
+  /-- Combined CPT squares to a phase on states. -/
+  cpt_squared_action : ∀ (ψ : H), cpt.combined (cpt.combined ψ) = cpt_square_phase • ψ
 
 end PhysicsLogic.Symmetries
