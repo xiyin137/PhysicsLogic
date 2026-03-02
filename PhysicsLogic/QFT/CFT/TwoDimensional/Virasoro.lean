@@ -188,13 +188,19 @@ theorem virasoro_block_recurrence_validity
 
 /-- Crossing/associativity interface for sphere four-point conformal-block
 decompositions (equality of distinct OPE-channel reconstructions). -/
+structure TwoDCrossRatios where
+  z : ℂ
+  zBar : ℂ
+
+/-- Crossing/associativity interface for sphere four-point conformal-block
+decompositions (equality of distinct OPE-channel reconstructions). -/
 def CrossingAssociativity
-    (sChannelValue tChannelValue : CrossRatios 2 → ℂ) : Prop :=
-  ∀ uv : CrossRatios 2, sChannelValue uv = tChannelValue uv
+    (sChannelValue tChannelValue : TwoDCrossRatios → ℂ) : Prop :=
+  ∀ uv : TwoDCrossRatios, sChannelValue uv = tChannelValue uv
 
 /-- Assumed crossing-equation/associativity consistency package. -/
 theorem crossing_associativity
-    (sChannelValue tChannelValue : CrossRatios 2 → ℂ)
+    (sChannelValue tChannelValue : TwoDCrossRatios → ℂ)
     (h_phys : PhysicsAssumption
       AssumptionId.cft2dCrossingAssociativity
       (CrossingAssociativity sChannelValue tChannelValue)) :
@@ -377,14 +383,36 @@ noncomputable def spin2D {H : Type _} (φ : Primary2D H) : ScalingDimension :=
     This is the defining property of a primary field - it transforms with
     a definite conformal weight under holomorphic coordinate changes. -/
 structure PrimaryTransformationTheory where
+  holomorphicJacobianFactor : ∀ {H : Type _}
+    (φ : Primary2D H)
+    (fHolomorphicDeriv : ℂ → ℂ)
+    (z : ℂ), ℂ
+  antiholomorphicJacobianFactor : ∀ {H : Type _}
+    (φ : Primary2D H)
+    (fAntiholomorphicDeriv : ℂ → ℂ)
+    (zBar : ℂ), ℂ
+  holomorphic_factor_nonzero : ∀ {H : Type _}
+    (φ : Primary2D H)
+    (fHolomorphicDeriv : ℂ → ℂ)
+    (z : ℂ),
+    holomorphicJacobianFactor φ fHolomorphicDeriv z ≠ 0
+  antiholomorphic_factor_nonzero : ∀ {H : Type _}
+    (φ : Primary2D H)
+    (fAntiholomorphicDeriv : ℂ → ℂ)
+    (zBar : ℂ),
+    antiholomorphicJacobianFactor φ fAntiholomorphicDeriv zBar ≠ 0
   primary_transformation : ∀ {H : Type _} [SMul ℂ H]
     (φ : Primary2D H)
-    (f : ℂ → ℂ)
-    (f_deriv : ℂ → ℂ)  -- f'(z)
+    (fHolomorphic : ℂ → ℂ)
+    (fAntiholomorphic : ℂ → ℂ)
+    (fHolomorphicDeriv : ℂ → ℂ)
+    (fAntiholomorphicDeriv : ℂ → ℂ)
     (z z_bar : ℂ)
     (state : H),
-    ∃ (transform_factor : ℂ), transform_factor ≠ 0 ∧
-      φ.field (f z) (f z_bar) state = transform_factor • φ.field z z_bar state
+    φ.field (fHolomorphic z) (fAntiholomorphic z_bar) state =
+      (holomorphicJacobianFactor φ fHolomorphicDeriv z *
+        antiholomorphicJacobianFactor φ fAntiholomorphicDeriv z_bar) •
+          φ.field z z_bar state
       -- The Jacobian factor `(f')^h (f̄')^h̄` rescales the field.
 
 /- ============= DESCENDANTS ============= -/
