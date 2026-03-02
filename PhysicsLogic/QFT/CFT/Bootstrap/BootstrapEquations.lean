@@ -23,14 +23,23 @@ structure OPETheoryDDim where
     (φ_i φ_j : QuasiPrimary d H)
     (x y : Fin d → ℝ),
     List (OPECoefficient d × QuasiPrimary d H)
-  /-- Leading term in OPE: dominant as x → y.
-      The operator with smallest Δ_k - Δ_i - Δ_j dominates. -/
-  ope_leading_behavior : ∀ {d : ℕ} {H : Type _}
+  /-- Selected leading exchanged operator for the OPE channel. -/
+  leadingOperator : ∀ {d : ℕ} {H : Type _}
+    (φ_i φ_j : QuasiPrimary d H)
+    (x y : Fin d → ℝ)
+    (h_close : euclideanDistance x y < 1), QuasiPrimary d H
+  /-- Selected leading power for the same OPE channel. -/
+  leadingPower : ∀ {d : ℕ} {H : Type _}
+    (φ_i φ_j : QuasiPrimary d H)
+    (x y : Fin d → ℝ)
+    (h_close : euclideanDistance x y < 1), ℝ
+  /-- Leading power is determined by scaling dimensions of the selected leading operator. -/
+  leading_power_formula : ∀ {d : ℕ} {H : Type _}
     (φ_i φ_j : QuasiPrimary d H)
     (x y : Fin d → ℝ)
     (h_close : euclideanDistance x y < 1),
-    ∃ (leading_op : QuasiPrimary d H) (power : ℝ),
-      power = leading_op.scaling_dim - φ_i.scaling_dim - φ_j.scaling_dim
+    leadingPower φ_i φ_j x y h_close =
+      (leadingOperator φ_i φ_j x y h_close).scaling_dim - φ_i.scaling_dim - φ_j.scaling_dim
   /-- OPE convergence: sum converges in operator sense.
       Acting on states, the sum converges for |x-y| small enough. -/
   ope_operator_convergence : ∀ {d : ℕ} {H : Type _}
@@ -180,13 +189,15 @@ structure FourPointFunctionTheory where
   blockFromFamily : ∀ {d : ℕ} {H : Type _},
     (Δ_ext : Fin 4 → ℝ) → (Δ_p : ℝ) → (ℓ_p : SpinLabel) →
       ConformalMultiplet d H → CrossRatios → ℂ
+  /-- Selected reference cross-ratio used to evaluate block nontriviality for a family. -/
+  referenceCrossRatio : ∀ {d : ℕ} {H : Type _}, ConformalMultiplet d H → CrossRatios
   /-- Conformal block = contribution from primary + all descendants.
       Universal function determined by conformal symmetry. -/
   conformal_block_from_family : ∀ {d : ℕ} {H : Type _}
     (Δ_ext : Fin 4 → ℝ)
     (Δ_p : ℝ) (ℓ_p : SpinLabel)
     (multiplet : ConformalMultiplet d H),
-    ∃ (uv : CrossRatios), blockFromFamily Δ_ext Δ_p ℓ_p multiplet uv ≠ 0
+    blockFromFamily Δ_ext Δ_p ℓ_p multiplet (referenceCrossRatio multiplet) ≠ 0
 
 /- ============= BOOTSTRAP PHILOSOPHY ============= -/
 
