@@ -119,7 +119,7 @@ theorem n8_sym_ir_fixed_point_package
 /-- Coulomb-branch quotient data for the `SU(2)` N=8 SYM effective theory. -/
 structure N8SymCoulombBranchSU2Data (VacuumPoint : Type*) where
   yangMillsCouplingSq : CouplingScale
-  sigmaPeriod : ℝ
+  sigmaPeriod : CouplingScale
   z2Action : VacuumPoint → VacuumPoint
   moduliSpaceMatchesS1R7Quotient : MTheoryHolographyClaim
 

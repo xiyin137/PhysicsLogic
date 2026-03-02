@@ -8,6 +8,7 @@
 -- - Supermanifolds (geometric structure of mixed bosonic/fermionic spaces)
 -- - Berezinian (superdeterminant, replaces Jacobian for fermions)
 import Mathlib.Data.Complex.Basic
+import PhysicsLogic.Units
 
 namespace PhysicsLogic.QFT.PathIntegral
 
@@ -60,7 +61,7 @@ and second-class-constraint handling via Dirac brackets. -/
 structure GrassmannPathIntegralData where
   grassmannAlgebra : GrassmannAlgebra
   berezinIntegral : BerezinIntegral grassmannAlgebra
-  thermalPeriod : ℝ
+  thermalPeriod : InverseTemperatureScale
   antiPeriodicBoundaryConditions : SupergeometryClaim
   secondClassConstraintsHandledByDiracBracket : SupergeometryClaim
 
