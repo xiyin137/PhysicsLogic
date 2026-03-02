@@ -47,11 +47,16 @@ structure PolyakovData (D : ℕ) where
     ∀ (ρ : Reparametrization) (h : WorldsheetMetric) (X : Embedding D),
       action (WorldsheetMetric.pullback h ρ) (Embedding.reparametrize X ρ) = action h X
 
-/-- Equality-level equivalence relation between NG and Polyakov actions. -/
+/-- On-shell equivalence relation between NG and Polyakov actions.
+    For each embedding `X`, there exists a worldsheet metric `h` (an on-shell
+    representative for that embedding) such that the two actions agree. -/
 def NambuGotoPolyakovEquivalent {D : ℕ}
     (ng : NambuGotoData D) (poly : PolyakovData D) : Prop :=
-  ∀ (metric : WorldsheetMetric) (embedding : Embedding D),
-    ng.action embedding = poly.action metric embedding
+  ∃ onShellMetric : WorldsheetMetric → Embedding D → Prop,
+    ∀ (embedding : Embedding D),
+      ∃ metric : WorldsheetMetric,
+        onShellMetric metric embedding ∧
+          ng.action embedding = poly.action metric embedding
 
 /-- Section-02 canonical interface name for Nambu-Goto worldsheet data. -/
 abbrev NambuGotoModel (D : ℕ) := NambuGotoData D
