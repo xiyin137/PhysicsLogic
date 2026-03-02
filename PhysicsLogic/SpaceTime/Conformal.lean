@@ -7,12 +7,12 @@ namespace PhysicsLogic.SpaceTime
 
 /-- Conformally related metrics: g₂ = Ω² g₁ -/
 def ConformallyRelated (g₁ g₂ : SpacetimeMetric) : Prop :=
-  ∃ Ω : SpaceTimePoint → ℝ,
+  ∃ Ω : SpaceTimePoint → Dimless,
     ∀ x μ ν, g₂.g x μ ν = (Ω x)^2 * g₁.g x μ ν
 
 /-- Conformal transformation (Weyl transformation) -/
 structure ConformalTransform (metric : SpacetimeMetric) where
-  conformal_factor : SpaceTimePoint → ℝ
+  conformal_factor : SpaceTimePoint → Dimless
   positive : ∀ x, conformal_factor x > 0
   new_metric : SpacetimeMetric
   conformally_related : ConformallyRelated metric new_metric
@@ -43,7 +43,7 @@ theorem conformal_preserves_causal_structure (g₁ g₂ : SpacetimeMetric)
 
 /-- Conformally flat: locally conformally equivalent to Minkowski -/
 def ConformallyFlat (metric : SpacetimeMetric) : Prop :=
-  ∀ x, ∃ (U : Set SpaceTimePoint) (Ω : SpaceTimePoint → ℝ),
+  ∀ x, ∃ (U : Set SpaceTimePoint) (Ω : SpaceTimePoint → Dimless),
     x ∈ U ∧ ∀ y ∈ U, ∀ μ ν,
       metric.g y μ ν = (Ω y)^2 * minkowskiMetric.g y μ ν
 
@@ -73,7 +73,7 @@ structure AsymptoticStructure (metric : SpacetimeMetric) where
   /-- Curvature theory for this metric -/
   curvature : CurvatureTheory metric
   /-- Asymptotic radial coordinate for defining falloff -/
-  asymptoticRadius : SpaceTimePoint → ℝ
+  asymptoticRadius : SpaceTimePoint → LengthScale
   /-- Null infinity (I⁺, I⁻, I⁰) -/
   nullInfinity : Set SpaceTimePoint
   /-- Future null infinity I⁺ -/
@@ -110,12 +110,12 @@ structure AsymptoticallyFlat (asymp : AsymptoticStructure metric) where
     asymp.asymptoticRadius x > 1 →
     |asymp.curvature.riemannTensor x μ ν ρ σ| ≤ C / (asymp.asymptoticRadius x)^3
   /-- The spacetime admits a conformal compactification with null infinity -/
-  admits_null_infinity : ∃ (Ω : SpaceTimePoint → ℝ),
+  admits_null_infinity : ∃ (Ω : SpaceTimePoint → Dimless),
     (∀ x, asymp.asymptoticRadius x > 1 → Ω x > 0) ∧
     (∀ x, asymp.asymptoticRadius x > 1 → Ω x ≤ 1 / asymp.asymptoticRadius x)
   /-- Bondi mass (mass measured at null infinity) -/
-  bondiMass : ℝ
+  bondiMass : MassScale
   /-- ADM mass (mass measured at spatial infinity) -/
-  admMass : ℝ
+  admMass : MassScale
 
 end PhysicsLogic.SpaceTime
