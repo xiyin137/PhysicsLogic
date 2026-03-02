@@ -26,6 +26,14 @@
 - Candidate new `AssumptionId`: `cft2dLiouvilleMarginality`.
 - Candidate new `AssumptionId`: `cft2dLiouvilleDozzRecursion`.
 
+## Current Formalization Mapping
+- Implemented in `PhysicsLogic/QFT/CFT/TwoDimensional/SigmaModels.lean`:
+  `NlsmWeylAnomalyVanishing`,
+  `BuscherRules`,
+  `GaugedWzwCosetFlow`,
+  `LiouvilleMarginalityData`,
+  `LiouvilleDozzRecursion`.
+
 ## Subsections
 - [x] I.1 Weyl anomaly in the nonlinear sigma model (p.733)
 - [x] I.2 Some conformal nonlinear sigma models (p.735)

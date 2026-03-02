@@ -30,6 +30,16 @@
 - Candidate new `AssumptionId`: `cft2dAbelianDualityTwistedSuperpotentialMatch`.
 - Candidate new `AssumptionId`: `cft2dCigarLiouvilleMirrorDuality`.
 
+## Current Formalization Mapping
+- Implemented in `PhysicsLogic/QFT/RG/TwoDimensionalFlows.lean`:
+  `LandauGinzburgMinimalModelFlow`,
+  `N2LandauGinzburgIRPackage`,
+  `AxialAnomalyThetaShift`,
+  `GlsmTwistedSuperpotentialOneLoop`,
+  `CalabiYauLandauGinzburgPhasePackage`,
+  `AbelianDualityTwistedSuperpotentialMatch`,
+  `CigarLiouvilleMirrorDuality`.
+
 ## Subsections
 - [x] K.1 Landau-Ginzburg models (p.753)
 - [x] K.2 Gauged linear sigma models (p.754)

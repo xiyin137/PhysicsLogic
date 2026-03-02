@@ -46,6 +46,8 @@ structure BuscherCircleData (Base : Type*) where
 
 /-- Buscher-rule interface: circle-radius inversion and dilaton shift. -/
 def BuscherRules {Base : Type*} (data : BuscherCircleData Base) : Prop :=
+  data.alphaPrime > 0 ∧
+  (∀ x : Base, data.metricCircle x > 0) ∧
   (∀ x : Base, data.dualMetricCircle x = data.alphaPrime ^ (2 : ℕ) / data.metricCircle x) ∧
   (∀ x : Base, data.dualDilaton x =
     data.dilaton x - (1 / 2 : ℝ) * Real.log ((1 / data.alphaPrime) * data.metricCircle x))
@@ -68,7 +70,11 @@ structure GaugedWzwCosetData where
 
 /-- IR-flow interface from gauged WZW description to a conformal coset model. -/
 def GaugedWzwCosetFlow (data : GaugedWzwCosetData) : Prop :=
-  data.radiusSq = data.alphaPrime * data.level ∧ Nonempty data.irCosetTheory
+  data.alphaPrime > 0 ∧
+  data.level > 0 ∧
+  data.radiusSq = data.alphaPrime * data.level ∧
+  data.radiusSq > 0 ∧
+  Nonempty data.irCosetTheory
 
 /-- Assumed gauged-WZW to coset-CFT flow relation. -/
 theorem gauged_wzw_coset_flow
