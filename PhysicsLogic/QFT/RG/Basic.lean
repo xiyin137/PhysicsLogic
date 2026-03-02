@@ -1,5 +1,6 @@
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import PhysicsLogic.Units
 
 namespace PhysicsLogic.QFT.RG
 
@@ -56,7 +57,7 @@ structure RGFramework (d : ℕ) where
   Operator : Type*
   /-- Mass (engineering) dimension of a local operator.
       Under rescaling x → λx, an operator O of dimension Δ scales as O → λ^(-Δ) O. -/
-  massDimension : Operator → ℝ
+  massDimension : Operator → ScalingDimension
   /-- Identity operator (dimension 0) -/
   identityOp : Operator
   /-- Product of local operators at coincident points -/
@@ -68,16 +69,19 @@ structure RGFramework (d : ℕ) where
     massDimension (operatorProduct O₁ O₂) = massDimension O₁ + massDimension O₂
   /-- Beta function β_O(g) for operator O.
       β_O = μ ∂g_O/∂μ describes how dimensionless coupling flows with scale. -/
-  betaFunction : Operator → (Operator → ℝ) → ℝ
+  betaFunction : Operator → (Operator → DimensionlessCoupling) → BetaFunctionValue
   /-- Anomalous dimension γ_O at a fixed point.
       At a fixed point, the full scaling dimension is Δ = Δ_classical + γ. -/
-  anomalousDimension : Operator → (Operator → ℝ) → ℝ
+  anomalousDimension : Operator → (Operator → DimensionlessCoupling) → ScalingDimension
   /-- UV limit of an RG trajectory (as μ → ∞) -/
-  uvLimit : (Scale → (Operator → ℝ)) → (Operator → ℝ)
+  uvLimit : (Scale → (Operator → DimensionlessCoupling)) →
+    (Operator → DimensionlessCoupling)
   /-- IR limit of an RG trajectory (as μ → 0) -/
-  irLimit : (Scale → (Operator → ℝ)) → (Operator → ℝ)
+  irLimit : (Scale → (Operator → DimensionlessCoupling)) →
+    (Operator → DimensionlessCoupling)
   /-- Stability matrix for linearized RG near a fixed point -/
-  stabilityMatrix : (Operator → ℝ) → Operator → Operator → ℝ
+  stabilityMatrix : (Operator → DimensionlessCoupling) →
+    Operator → Operator → ScalingDimension
   /-- The free theory (all couplings zero) is always a fixed point -/
   gaussian_is_fixed_point : ∀ (O : Operator),
     betaFunction O (fun _ => 0) = 0
@@ -85,12 +89,13 @@ structure RGFramework (d : ℕ) where
   gaussian_no_anomalous : ∀ (O : Operator),
     anomalousDimension O (fun _ => 0) = 0
   /-- Eigenvalue of stability matrix = scaling dimension - d -/
-  stability_eigenvalue_relation : ∀ (fp : Operator → ℝ)
+  stability_eigenvalue_relation : ∀ (fp : Operator → DimensionlessCoupling)
     (h : ∀ O : Operator, betaFunction O fp = 0) (O : Operator),
     stabilityMatrix fp O O = massDimension O + anomalousDimension O fp - d
 
 /-- Coupling configuration in an RG framework -/
-abbrev CouplingConfig {d : ℕ} (rg : RGFramework d) := rg.Operator → ℝ
+abbrev CouplingConfig {d : ℕ} (rg : RGFramework d) :=
+  rg.Operator → DimensionlessCoupling
 
 /- ============= OPERATOR CLASSIFICATION ============= -/
 
@@ -116,11 +121,11 @@ def Renormalizable {d : ℕ} (rg : RGFramework d) (O : rg.Operator) : Prop :=
 /-- Coupling constant g_i for operator O_i. Has mass dimension [g_i] = d - [O_i]. -/
 structure Coupling {d : ℕ} (rg : RGFramework d) where
   operator : rg.Operator
-  value : ℝ
+  value : DimensionlessCoupling
 
 /-- Dimensionless coupling: g̃ = g · Λ^([O] - d) -/
 noncomputable def dimensionlessCoupling {d : ℕ} (rg : RGFramework d)
-    (c : Coupling rg) (Λ : Cutoff) : ℝ :=
+    (c : Coupling rg) (Λ : Cutoff) : DimensionlessCoupling :=
   c.value * Λ.Λ ^ (rg.massDimension c.operator - d)
 
 /- ============= FIXED POINTS ============= -/
@@ -146,7 +151,7 @@ def InteractingFixedPoint {d : ℕ} (rg : RGFramework d) (g : CouplingConfig rg)
 
 /-- Full scaling dimension at a fixed point: Δ = Δ_classical + γ -/
 noncomputable def scalingDimension {d : ℕ} (rg : RGFramework d)
-    (O : rg.Operator) (fp : CouplingConfig rg) : ℝ :=
+    (O : rg.Operator) (fp : CouplingConfig rg) : ScalingDimension :=
   rg.massDimension O + rg.anomalousDimension O fp
 
 /-- At the Gaussian fixed point, anomalous dimensions vanish -/
