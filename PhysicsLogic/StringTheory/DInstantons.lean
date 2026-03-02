@@ -12,8 +12,8 @@ abbrev DInstantonClaim := Prop
 
 /-- Non-perturbative transseries data for closed-string amplitudes with D-instanton sectors. -/
 structure DInstantonTransseriesData where
-  stringCoupling : Real
-  instantonSectorScale : Real
+  stringCoupling : DimensionlessCoupling
+  instantonSectorScale : ActionScale
   perturbativeAmplitudeSectorIncluded : DInstantonClaim
   dInstantonAmplitudeSectorIncluded : DInstantonClaim
   higherNonperturbativeSectorIncluded : DInstantonClaim
@@ -51,10 +51,10 @@ theorem d_instanton_transseries_package
 structure COneZzInstantonData where
   InstantonConfiguration : Type
   selectedConfiguration : InstantonConfiguration
-  stringCoupling : Real
-  alphaPrime : Real
-  matrixModelMu : Real
-  zzInstantonActionFunctional : InstantonConfiguration → Real
+  stringCoupling : DimensionlessCoupling
+  alphaPrime : StringSlope
+  matrixModelMu : MassScale
+  zzInstantonActionFunctional : InstantonConfiguration → ComplexActionValue
   zzActionFromBraneMassRelationUsed : DInstantonClaim
   matrixModelBounceDictionaryUsed : DInstantonClaim
   leadingOneToNAmplitudeFromDiscOnePointFunctions : DInstantonClaim
@@ -68,7 +68,7 @@ def COneZzInstantonPackage (data : COneZzInstantonData) : Prop :=
   data.alphaPrime > 0 /\
   data.matrixModelMu > 0 /\
   data.zzInstantonActionFunctional data.selectedConfiguration =
-    1 / (2 * data.stringCoupling) /\
+    ((1 / (2 * data.stringCoupling) : ℝ) : ℂ) /\
   data.zzActionFromBraneMassRelationUsed /\
   data.matrixModelBounceDictionaryUsed /\
   data.leadingOneToNAmplitudeFromDiscOnePointFunctions /\
@@ -90,9 +90,9 @@ structure TypeIIBDMinusOneInstantonData where
   selectedConfiguration : InstantonConfiguration
   tau1 : Real
   tau2 : Real
-  axioDilatonField : InstantonConfiguration → Complex
-  dMinusOneActionFunctional : InstantonConfiguration → Complex
-  antiDMinusOneActionFunctional : InstantonConfiguration → Complex
+  axioDilatonField : InstantonConfiguration → ComplexDimensionless
+  dMinusOneActionFunctional : InstantonConfiguration → ComplexActionValue
+  antiDMinusOneActionFunctional : InstantonConfiguration → ComplexActionValue
   antiInstantonActionUsesConjugateAxioDilaton : DInstantonClaim
   nmInstantonActionUsed : DInstantonClaim
   axionShiftBrokenToIntegerSubgroup : DInstantonClaim
@@ -130,8 +130,8 @@ theorem type_iib_d_minus_one_instanton_package
 
 /-- Open+closed SFT data for D-instanton zero-mode and gauge-volume treatment. -/
 structure DInstantonOpenClosedSftZeroModeData (ClosedField OpenField : Type*) where
-  coupledBvActionFunctional : ClosedField → OpenField → Complex
-  closedEffectiveActionFunctional : ClosedField → Complex
+  coupledBvActionFunctional : ClosedField → OpenField → ComplexActionValue
+  closedEffectiveActionFunctional : ClosedField → ComplexActionValue
   lagrangianSubmanifoldInOpenFieldSpaceChosen : DInstantonClaim
   openCollectiveModesReparametrizeInstantonModuli : DInstantonClaim
   openFieldSpaceBackgroundIndependenceMapUsed : DInstantonClaim
@@ -167,8 +167,8 @@ theorem d_instanton_open_closed_sft_zero_mode_package
 /-- Normalization-extraction data for single D-instanton amplitudes in bosonic and type-IIB settings. -/
 structure DInstantonNormalizationData where
   tau2 : Real
-  alphaPrime : Real
-  singleInstantonNormalizationScale : Real
+  alphaPrime : StringSlope
+  singleInstantonNormalizationScale : Dimless
   bosonicZzNormalizationMatchesDualMatrixModel : DInstantonClaim
   typeIibZeroModeMeasureFromOpenSftDetermined : DInstantonClaim
   uOneGaugeAngleNormalizationFixedFromSpectatorBraneCoupling : DInstantonClaim
@@ -200,7 +200,7 @@ structure MultipleDInstantonIkktData where
   instantonNumber : Nat
   tau2 : Real
   ikktMatrixIntegralValue : Real
-  multiInstantonNormalizationScale : Real
+  multiInstantonNormalizationScale : Dimless
   chanPatonKToFourFactorIncluded : DInstantonClaim
   zeroModeMeasurePromotedToUKMatrices : DInstantonClaim
   matrixModelActionFromTenDimensionalSymReductionUsed : DInstantonClaim

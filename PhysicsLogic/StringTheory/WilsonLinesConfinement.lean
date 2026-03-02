@@ -14,14 +14,14 @@ abbrev WilsonConfinementClaim := Prop
 
 /-- Maldacena-Wilson loop saddle-point data at strong coupling. -/
 structure MaldacenaWilsonLoopSaddleData where
-  adsRadius : ℝ
-  alphaPrime : ℝ
-  cutoff : ℝ
-  contourLength : ℝ
+  adsRadius : LengthScale
+  alphaPrime : StringSlope
+  cutoff : LengthScale
+  contourLength : LengthScale
   WorldsheetConfiguration : Type
   saddleConfiguration : WorldsheetConfiguration
-  worldsheetActionFunctional : WorldsheetConfiguration → ℂ
-  expectationValue : ℂ
+  worldsheetActionFunctional : WorldsheetConfiguration → ComplexActionValue
+  expectationValue : ComplexAmplitude
 
 /-- Regulated holographic Wilson-loop saddle package:
 `W(C) ~ exp(-(S - (R/(2π α' ε))|C|))`. -/
@@ -35,7 +35,7 @@ def MaldacenaWilsonLoopSaddlePackage
     Complex.exp
       (-(data.worldsheetActionFunctional data.saddleConfiguration -
         (((data.adsRadius / (2 * Real.pi * data.alphaPrime * data.cutoff)) *
-            data.contourLength : ℝ) : ℂ)))
+            data.contourLength : LengthScale) : ℂ)))
 
 /-- Assumed strong-coupling saddle package for Maldacena-Wilson loops. -/
 theorem maldacena_wilson_loop_saddle_package
@@ -48,10 +48,10 @@ theorem maldacena_wilson_loop_saddle_package
 
 /-- Rectangular-loop quark-antiquark potential data in AdS5/CFT4. -/
 structure RectangularWilsonPotentialData where
-  tHooftCoupling : ℝ
-  separation : ℝ
-  gammaQuarter : ℝ
-  potential : ℝ
+  tHooftCoupling : DimensionlessCoupling
+  separation : LengthScale
+  gammaQuarter : Dimless
+  potential : Energy
 
 /-- Strong-coupling rectangular-loop potential package:
 `V(L) = -(4π sqrt(λ))/((Gamma(1/4))^4 L)` represented via `gammaQuarter`. -/
@@ -75,10 +75,10 @@ theorem rectangular_wilson_potential_package
 
 /-- Cuspy Wilson-line data in the large Lorentzian-angle regime. -/
 structure CuspLargeAngleData where
-  tHooftCoupling : ℝ
-  lorentzianAngle : ℝ
-  cuspAnomalousDimension : ℝ
-  cuspyLineDimension : ℝ
+  tHooftCoupling : DimensionlessCoupling
+  lorentzianAngle : Angle
+  cuspAnomalousDimension : ScalingDimension
+  cuspyLineDimension : ScalingDimension
 
 /-- Large-angle cusp package:
 `Gamma_cusp = sqrt(λ)/(2π)` and
@@ -102,12 +102,12 @@ theorem cusp_large_angle_package
 
 /-- Bremsstrahlung-function data for small-angle cusps and radiation. -/
 structure BremsstrahlungFunctionData where
-  tHooftCoupling : ℝ
+  tHooftCoupling : DimensionlessCoupling
   rankN : ℕ
-  smallDeflectionAngle : ℝ
-  bremsstrahlungFunction : ℝ
-  cuspAnomalousDimension : ℝ
-  radiationCoefficient : ℝ
+  smallDeflectionAngle : Angle
+  bremsstrahlungFunction : ScalingDimension
+  cuspAnomalousDimension : ScalingDimension
+  radiationCoefficient : ScalingDimension
   modifiedBesselI : ℕ → ℝ → ℝ
 
 /-- Bremsstrahlung package:
@@ -137,12 +137,12 @@ theorem bremsstrahlung_function_package
 
 /-- Witten D4-circle compactification data for holographic confinement. -/
 structure WittenCompactificationData where
-  adsScale : ℝ
-  capRadius : ℝ
-  circleLength : ℝ
-  gaugeCoupling5d : ℝ
-  gaugeCoupling4d : ℝ
-  kkMass : ℝ
+  adsScale : LengthScale
+  capRadius : LengthScale
+  circleLength : LengthScale
+  gaugeCoupling5d : CouplingScale
+  gaugeCoupling4d : DimensionlessCoupling
+  kkMass : InvariantMass
   fermionsAreAntiperiodicOnCircle : WilsonConfinementClaim
 
 /-- Witten compactification package:
@@ -170,15 +170,15 @@ theorem witten_compactification_package
 
 /-- Confining-string data in Witten's holographic model. -/
 structure WittenConfiningStringData where
-  alphaPrime : ℝ
-  capRadius : ℝ
-  adsScale : ℝ
-  separation : ℝ
-  quarkPotential : ℝ
-  stringTension : ℝ
-  gaugeCoupling4d : ℝ
+  alphaPrime : StringSlope
+  capRadius : LengthScale
+  adsScale : LengthScale
+  separation : LengthScale
+  quarkPotential : Energy
+  stringTension : TensionScale
+  gaugeCoupling4d : DimensionlessCoupling
   rankN : ℕ
-  kkMass : ℝ
+  kkMass : InvariantMass
 
 /-- Witten-model confining-string package:
 linear potential `V(l)=T l` and the tension relations from the background data. -/
@@ -234,24 +234,26 @@ theorem d8_holonomy_chiral_package
 
 /-- Pion/Skyrme effective-action coefficient data in Sakai-Sugimoto. -/
 structure SakaiSugimotoPionActionData where
-  capRadius : ℝ
-  adsScale : ℝ
-  effectivePrefactor : ℝ
-  skyrmeA : ℝ
-  skyrmeB : ℝ
-  pionDecayConstant : ℝ
-  kineticCoefficient : ℝ
+  capRadius : LengthScale
+  adsScale : LengthScale
+  skyrmeBCoefficient : Dimless
+  effectivePrefactor : Dimless
+  skyrmeA : MassSquaredScale
+  skyrmeB : Dimless
+  pionDecayConstant : InvariantMass
+  kineticCoefficient : MassSquaredScale
 
 /-- Sakai-Sugimoto pion-action package:
-`A = 9 r0/(4π)`, `B ~= 0.07829 R^3`,
+`A = 9 r0/(4π)`, `B = c_B R^3` with model-dependent positive `c_B`,
 and `kineticCoeff = (1/4) f_pi^2 = prefactor * A`. -/
 def SakaiSugimotoPionActionPackage
     (data : SakaiSugimotoPionActionData) : Prop :=
   data.capRadius > 0 ∧
   data.adsScale > 0 ∧
-  data.skyrmeA = 9 * data.capRadius / (4 * Real.pi) ∧
-  data.skyrmeB = 0.07829 * data.adsScale ^ (3 : ℕ) ∧
-  data.kineticCoefficient = data.effectivePrefactor * data.skyrmeA ∧
+  data.skyrmeBCoefficient > 0 ∧
+  data.skyrmeA.value = 9 * data.capRadius.value / (4 * Real.pi) ∧
+  data.skyrmeB.value = data.skyrmeBCoefficient.value * data.adsScale.value ^ (3 : ℕ) ∧
+  data.kineticCoefficient.value = data.effectivePrefactor.value * data.skyrmeA.value ∧
   data.kineticCoefficient = (1 / 4 : ℝ) * data.pionDecayConstant ^ (2 : ℕ)
 
 /-- Assumed Sakai-Sugimoto pion/Skyrme effective-action package. -/
@@ -265,11 +267,11 @@ theorem sakai_sugimoto_pion_action_package
 
 /-- Eta-prime mass data in Sakai-Sugimoto holographic QCD. -/
 structure SakaiSugimotoEtaPrimeMassData where
-  tHooftAtMkk : ℝ
+  tHooftAtMkk : DimensionlessCoupling
   rankN : ℕ
   flavorCount : ℕ
-  kkMass : ℝ
-  etaPrimeMassSq : ℝ
+  kkMass : InvariantMass
+  etaPrimeMassSq : MassSquaredScale
 
 /-- Sakai-Sugimoto eta-prime package:
 `m_eta'^2 = (lambda(M_KK)^2/(216 π^2)) (N_f/N) M_KK^2`. -/
@@ -295,20 +297,29 @@ theorem sakai_sugimoto_eta_prime_mass_package
 
 /-- Low-lying scalar/vector meson data from D8 fluctuation spectra. -/
 structure SakaiSugimotoMesonSpectrumData where
-  kkMass : ℝ
-  scalarMass1 : ℝ
-  scalarMass2 : ℝ
-  vectorMass1 : ℝ
-  vectorMass2 : ℝ
+  kkMass : InvariantMass
+  scalarMass1Ratio : Dimless
+  scalarMass2Ratio : Dimless
+  vectorMass1Ratio : Dimless
+  vectorMass2Ratio : Dimless
+  scalarMass1 : InvariantMass
+  scalarMass2 : InvariantMass
+  vectorMass1 : InvariantMass
+  vectorMass2 : InvariantMass
 
-/-- Sakai-Sugimoto meson-spectrum package with quoted leading mass ratios. -/
+/-- Sakai-Sugimoto meson-spectrum package:
+masses are tied to `M_KK` by dimensionless ratio inputs. -/
 def SakaiSugimotoMesonSpectrumPackage
     (data : SakaiSugimotoMesonSpectrumData) : Prop :=
   data.kkMass > 0 ∧
-  data.scalarMass1 = 1.39 * data.kkMass ∧
-  data.scalarMass2 = 1.99 * data.kkMass ∧
-  data.vectorMass1 = 0.82 * data.kkMass ∧
-  data.vectorMass2 = 1.26 * data.kkMass
+  data.scalarMass1Ratio > 0 ∧
+  data.scalarMass2Ratio > 0 ∧
+  data.vectorMass1Ratio > 0 ∧
+  data.vectorMass2Ratio > 0 ∧
+  data.scalarMass1.value = data.scalarMass1Ratio.value * data.kkMass.value ∧
+  data.scalarMass2.value = data.scalarMass2Ratio.value * data.kkMass.value ∧
+  data.vectorMass1.value = data.vectorMass1Ratio.value * data.kkMass.value ∧
+  data.vectorMass2.value = data.vectorMass2Ratio.value * data.kkMass.value
 
 /-- Assumed Sakai-Sugimoto hadron-spectrum package. -/
 theorem sakai_sugimoto_meson_spectrum_package
@@ -321,10 +332,10 @@ theorem sakai_sugimoto_meson_spectrum_package
 
 /-- Klebanov-Witten SCFT fixed-point data on the conifold branch. -/
 structure KlebanovWittenConifoldData where
-  anomalousDimensionAB : ℝ
-  operatorScalingDimension : ℝ
-  superpotentialRCharge : ℝ
-  superpotentialScalingDimension : ℝ
+  anomalousDimensionAB : ScalingDimension
+  operatorScalingDimension : ScalingDimension
+  superpotentialRCharge : ScalingDimension
+  superpotentialScalingDimension : ScalingDimension
   liesOnKlebanovWittenExactlyMarginalFamily : WilsonConfinementClaim
 
 /-- Klebanov-Witten fixed-point package:
@@ -348,24 +359,24 @@ theorem klebanov_witten_conifold_package
 
 /-- AdS5 x T^{1,1} dual-geometry data for Klebanov-Witten theory. -/
 structure KlebanovWittenAdSDualData where
-  volumeT11 : ℝ
-  stringCoupling : ℝ
+  volumeT11 : Dimless
+  stringCoupling : CouplingScale
   rankN : ℕ
-  alphaPrime : ℝ
-  adsRadius : ℝ
+  alphaPrime : StringSlope
+  adsRadius : LengthScale
 
 /-- Klebanov-Witten AdS dual package:
 `vol(T11)=16π^3/27` and
 `R^4 = 4π g_s N α'^2 π^3/vol(T11)`. -/
 def KlebanovWittenAdSDualPackage
     (data : KlebanovWittenAdSDualData) : Prop :=
-  data.volumeT11 = (16 / 27 : ℝ) * Real.pi ^ (3 : ℕ) ∧
+  data.volumeT11.value = (16 / 27 : ℝ) * Real.pi ^ (3 : ℕ) ∧
   data.stringCoupling > 0 ∧
   data.alphaPrime > 0 ∧
   data.adsRadius ^ (4 : ℕ) =
     4 * Real.pi * data.stringCoupling * (data.rankN : ℝ) *
       data.alphaPrime ^ (2 : ℕ) *
-      (Real.pi ^ (3 : ℕ) / data.volumeT11)
+      (Real.pi ^ (3 : ℕ) / data.volumeT11.value)
 
 /-- Assumed AdS5 x T^{1,1} geometric dictionary package. -/
 theorem klebanov_witten_ads_dual_package
@@ -378,12 +389,12 @@ theorem klebanov_witten_ads_dual_package
 
 /-- Klebanov-Tseytlin logarithmic effective-rank running data. -/
 structure KlebanovTseytlinRunningData where
-  rankN : ℝ
-  fluxM : ℝ
-  stringCoupling : ℝ
-  radialScale : ℝ
-  referenceScale : ℝ
-  effectiveRank : ℝ
+  rankN : ℕ
+  fluxM : FluxQuantum
+  stringCoupling : CouplingScale
+  radialScale : LengthScale
+  referenceScale : LengthScale
+  effectiveRank : ScalingDimension
 
 /-- KT running package:
 `N_eff = N + (3/(2π)) g_s M^2 log(r/r0)`. -/
@@ -392,7 +403,7 @@ def KlebanovTseytlinRunningPackage
   data.referenceScale > 0 ∧
   data.radialScale > 0 ∧
   data.effectiveRank =
-    data.rankN +
+    (data.rankN : ℝ) +
       (3 / (2 * Real.pi)) * data.stringCoupling * data.fluxM ^ (2 : ℕ) *
         Real.log (data.radialScale / data.referenceScale)
 
@@ -434,15 +445,15 @@ theorem cascade_seiberg_dual_step_package
 
 /-- Warped-deformed-conifold confinement-scale data. -/
 structure KlebanovStrasslerConfinementData where
-  warpFactorAtTip : ℝ
-  alphaPrime : ℝ
-  tipRadius : ℝ
-  tension : ℝ
-  kkMass : ℝ
-  a0 : ℝ
-  stringCoupling : ℝ
-  fluxM : ℝ
-  kkMassToTensionFactor : ℝ
+  warpFactorAtTip : Dimless
+  alphaPrime : StringSlope
+  tipRadius : LengthScale
+  tension : TensionScale
+  kkMass : InvariantMass
+  a0 : Dimless
+  stringCoupling : DimensionlessCoupling
+  fluxM : FluxQuantum
+  kkMassToTensionFactor : Dimless
 
 /-- KS confinement package:
 `T = (1/(2π α')) H(0)^(-1/2)`,
@@ -457,12 +468,12 @@ def KlebanovStrasslerConfinementPackage
   data.stringCoupling > 0 ∧
   data.fluxM > 0 ∧
   data.tension =
-    (1 / (2 * Real.pi * data.alphaPrime)) * (1 / Real.sqrt data.warpFactorAtTip) ∧
+    (1 / (2 * Real.pi * data.alphaPrime)) * (1 / Real.sqrt data.warpFactorAtTip.value) ∧
   data.kkMass =
-    (1 / Real.sqrt (Real.sqrt data.warpFactorAtTip)) / data.tipRadius ∧
+    (1 / Real.sqrt (Real.sqrt data.warpFactorAtTip.value)) / data.tipRadius ∧
   data.kkMassToTensionFactor =
     (Real.exp (Real.log 6 / 3) * Real.pi) /
-      (Real.sqrt data.a0 * data.stringCoupling * data.fluxM) ∧
+      (Real.sqrt data.a0.value * data.stringCoupling * data.fluxM) ∧
   data.kkMass ^ (2 : ℕ) = data.kkMassToTensionFactor * data.tension
 
 /-- Assumed KS warped-conifold confinement package. -/
