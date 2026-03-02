@@ -31,6 +31,14 @@ def BosonicDbraneBoundaryPackage (data : BosonicDbraneBoundaryData) : Prop :=
   data.doublingTrickAnalyticContinuation = true /\
   data.worldsheetDiffeomorphismInvariantBoundary = true
 
+/-- Any bosonic D-brane boundary package is automatically in the critical
+bosonic dimension by Weyl-anomaly cancellation. -/
+theorem BosonicDbraneBoundaryPackage.spacetime_dimension_eq_26
+    (data : BosonicDbraneBoundaryData)
+    (h : BosonicDbraneBoundaryPackage data) :
+    data.spacetimeDimension = 26 :=
+  bosonic_weyl_anomaly_cancellation_implies_dimension_26 h.1
+
 /-- Assumed bosonic D-brane boundary-condition package from Section 12.1. -/
 theorem bosonic_dbrane_boundary_package
     (data : BosonicDbraneBoundaryData)

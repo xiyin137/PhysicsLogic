@@ -84,10 +84,36 @@ structure BosonicWeylCriticalityData (D : ℕ) where
   ghost_charge : ghostCentralCharge = -26
   total_charge_cancel : matterCentralCharge + ghostCentralCharge = 0
 
+/-- In bosonic quantization, central-charge cancellation with the `bc` ghost sector
+forces the matter central charge to 26, hence `D = 26` for free bosons. -/
+theorem BosonicWeylCriticalityData.dimension_eq_26
+    {D : ℕ} (data : BosonicWeylCriticalityData D) : (D : ℤ) = 26 := by
+  have h_matter :
+      data.matterCentralCharge = -data.ghostCentralCharge :=
+    eq_neg_of_add_eq_zero_left data.total_charge_cancel
+  rw [data.ghost_charge] at h_matter
+  have h_matter26 : data.matterCentralCharge = 26 := by
+    simpa using h_matter
+  calc
+    (D : ℤ) = data.matterCentralCharge := by simpa [data.matter_charge]
+    _ = 26 := h_matter26
+
 /-- Weyl-anomaly cancellation package for bosonic string quantization.
 This is modeled as consistency data, not as a hard-coded numeric definition. -/
 def BosonicWeylAnomalyCancellation (D : ℕ) : Prop :=
   Nonempty (BosonicWeylCriticalityData D)
+
+/-- Weyl-anomaly cancellation in the bosonic theory implies `D = 26`
+as a theorem, not as a definitional abbreviation. -/
+theorem bosonic_weyl_anomaly_cancellation_implies_dimension_eq_26
+    {D : ℕ} (h : BosonicWeylAnomalyCancellation D) : (D : ℤ) = 26 := by
+  rcases h with ⟨data⟩
+  exact data.dimension_eq_26
+
+/-- Nat-valued form of bosonic criticality consequence: `D = 26`. -/
+theorem bosonic_weyl_anomaly_cancellation_implies_dimension_26
+    {D : ℕ} (h : BosonicWeylAnomalyCancellation D) : D = 26 := by
+  exact Int.ofNat.inj (bosonic_weyl_anomaly_cancellation_implies_dimension_eq_26 h)
 
 /-- Criticality assumption: bosonic-string Weyl-anomaly cancellation package. -/
 theorem bosonic_weyl_anomaly_cancellation
