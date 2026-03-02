@@ -31,39 +31,65 @@ structure TopologicalDefectFusionData (L : Type*) where
   multiplicity : DefectFusionMultiplicity L
   orientationReverse : L → L
 
-/-- H-junction/pentagon consistency interface for defect fusion/junction kernels. -/
-def DefectFusionPentagonConsistency {L : Type*} (data : TopologicalDefectFusionData L) : Prop :=
-  ∀ a b c d : L, ∃ e : L, data.multiplicity a b e > 0 ∧ data.multiplicity e c d > 0
+/-- H-junction crossing-kernel data for two inequivalent reassociation paths
+appearing in the defect-fusion pentagon relation. -/
+structure DefectFusionPentagonData (L : Type*) extends TopologicalDefectFusionData L where
+  leftPentagonKernel : L → L → L → L → L → ℂ
+  rightPentagonKernel : L → L → L → L → L → ℂ
+
+/-- H-junction/pentagon consistency interface for defect fusion/junction kernels:
+the two reassociation-channel kernels agree for every label choice. -/
+def DefectFusionPentagonConsistency {L : Type*} (data : DefectFusionPentagonData L) : Prop :=
+  ∀ a b c d e : L, data.leftPentagonKernel a b c d e = data.rightPentagonKernel a b c d e
 
 /-- Assumed pentagon-type consistency for topological defect lines. -/
 theorem defect_fusion_pentagon_consistency {L : Type*}
-    (data : TopologicalDefectFusionData L)
+    (data : DefectFusionPentagonData L)
     (h_phys : PhysicsAssumption
       AssumptionId.cft2dDefectFusionPentagon
       (DefectFusionPentagonConsistency data)) :
     DefectFusionPentagonConsistency data := by
   exact h_phys
 
+/-- Group-like structure used to organize orbifold twisted sectors. -/
+structure OrbifoldGroupData (G : Type*) where
+  mul : G → G → G
+  one : G
+  inv : G → G
+  mul_assoc : ∀ a b c : G, mul (mul a b) c = mul a (mul b c)
+  one_mul : ∀ a : G, mul one a = a
+  mul_one : ∀ a : G, mul a one = a
+  mul_left_inv : ∀ a : G, mul (inv a) a = one
+
 /-- Minimal orbifold-sector package indexed by group elements. -/
 structure OrbifoldSectorData (G : Type*) where
+  groupData : OrbifoldGroupData G
   SectorState : G → Type
-  conjugate : G → G → G
-  actionOnSectors :
-    ∀ h g : G, SectorState g → SectorState (conjugate h g)
+  actionOnSectors : ∀ h g : G, SectorState g →
+    SectorState (groupData.mul (groupData.mul h g) (groupData.inv h))
 
-/-- Orbifold partition-data interface: modular S/T closure conditions. -/
+/-- Commuting-twist admissibility condition for orbifold torus sectors. -/
+def OrbifoldTwistedSectorAdmissible {G : Type*}
+    (groupData : OrbifoldGroupData G) (g h : G) : Prop :=
+  groupData.mul g h = groupData.mul h g
+
+/-- Orbifold partition-data interface: modular `S`/`T` closure on commuting
+twisted sectors, as used in orbifold CFT constructions. -/
 def OrbifoldConstructionModularInvariant {G : Type*}
-    (Z : G → G → ℂ) : Prop :=
-  (∀ g h : G, Z g h = Z h g) ∧
-  (∀ g h : G, Z g h = Z g h)
+    (groupData : OrbifoldGroupData G) (Z : G → G → ℂ) : Prop :=
+  (∀ g h : G, OrbifoldTwistedSectorAdmissible groupData g h →
+    Z g h = Z h (groupData.inv g)) ∧
+  (∀ g h : G, OrbifoldTwistedSectorAdmissible groupData g h →
+    Z g h = Z g (groupData.mul g h))
 
 /-- Assumed modular consistency for orbifold construction from symmetry-line sectors. -/
 theorem orbifold_construction_modular_invariant {G : Type*}
+    (groupData : OrbifoldGroupData G)
     (Z : G → G → ℂ)
     (h_phys : PhysicsAssumption
       AssumptionId.cft2dOrbifoldConstructionModularInvariant
-      (OrbifoldConstructionModularInvariant Z)) :
-    OrbifoldConstructionModularInvariant Z := by
+      (OrbifoldConstructionModularInvariant groupData Z)) :
+    OrbifoldConstructionModularInvariant groupData Z := by
   exact h_phys
 
 /-- Narain-lattice data (left/right dimensions and lattice operation). -/
@@ -85,7 +111,8 @@ def NarainSelfDual (Γ : NarainLatticeData) (isDual : Γ.Point → Prop) : Prop 
 /-- Torus-partition modular-invariance interface for Narain lattice CFT. -/
 def NarainModularInvariantPartition (Γ : NarainLatticeData) (Z : ℂ → ℂ) : Prop :=
   let _ := Γ
-  ∀ τ : ℂ, τ ≠ 0 → Z τ = Z (-1 / τ)
+  (∀ τ : ℂ, τ ≠ 0 → Z τ = Z (-1 / τ)) ∧
+  (∀ τ : ℂ, Z (τ + 1) = Z τ)
 
 /-- Assumed implication: even/self-dual Narain data yields modular invariance. -/
 def NarainEvenSelfDualModularInvariant

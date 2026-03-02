@@ -27,6 +27,18 @@
 - Candidate new `AssumptionId`: `cft2dNarainEvenSelfDualModularInvariant`.
 - Candidate new `AssumptionId`: `cft2dNarainCocycleAssociative`.
 
+## Current Formalization Mapping
+- Implemented in `PhysicsLogic/QFT/CFT/TwoDimensional/DefectsOrbifolds.lean`:
+  `IsingSigmaFourPointCrossing`,
+  `TopologicalDefectFusionData`,
+  `DefectFusionPentagonData`,
+  `DefectFusionPentagonConsistency`,
+  `OrbifoldSectorData`,
+  `OrbifoldConstructionModularInvariant`,
+  `NarainLatticeData`,
+  `NarainEvenSelfDualModularInvariant`,
+  `NarainCocycleAssociative`.
+
 ## Subsections
 - [x] H.1 The Ising CFT (p.723)
 - [x] H.2 Topological defect lines (p.725)

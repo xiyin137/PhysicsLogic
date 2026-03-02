@@ -31,6 +31,16 @@
 - Candidate new `AssumptionId`: `cft2dN4SmallSuperconformalAlgebra`.
 - Candidate new `AssumptionId`: `cft2dN4SpectralFlowInnerAutomorphism`.
 
+## Current Formalization Mapping
+- Implemented in `PhysicsLogic/QFT/CFT/TwoDimensional/Superconformal.lean`:
+  `Superspace11DerivativeAlgebra`,
+  `N1SuperconformalAlgebraPackage`,
+  `Superspace22To11Reduction`,
+  `N2SuperconformalModeAlgebra`,
+  `N2SpectralFlowAutomorphism`,
+  `SmallN4ModeAlgebra`,
+  `SmallN4SpectralFlow`.
+
 ## Subsections
 - [x] J.1 $(1,1)$ superspace (p.744)
 - [x] J.2 ${\cal N}=1$ superconformal algebra (p.745)
