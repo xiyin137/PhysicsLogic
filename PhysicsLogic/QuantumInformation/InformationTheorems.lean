@@ -26,9 +26,9 @@ structure QubitInformationProtocols
 /-- Structure for quantum error correction -/
 structure QECCTheory (H : Type _) [QuantumStateSpace H] where
   /-- Type of quantum error correction codes [[n,k,d]] -/
-  QECC : ℕ → ℕ → Type _
+  QECC : ℕ → ℕ → ℕ → Type _
   /-- Quantum Hamming bound -/
-  quantum_hamming_bound : ℕ → ℕ → ℕ → Prop
+  quantum_hamming_bound : ∀ (n k d : ℕ), QECC n k d → Prop
 
 /-- Structure for black hole information theory -/
 structure BlackHoleInformation where
