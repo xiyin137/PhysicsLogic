@@ -80,10 +80,10 @@ theorem bosonic_dbrane_boundary_state_package
 
 /-- Open-bosonic-string spectrum data on a D-brane. -/
 structure OpenBosonicDbraneSpectrumData where
-  alphaPrime : Real
-  momentumParallelSq : Real
+  alphaPrime : StringSlope
+  momentumParallelSq : MomentumSquaredScale
   oscillatorLevel : Nat
-  massShellResidual : Real
+  massShellResidual : Dimless
   siegelConstraintUsed : DbraneClaim
   brstCohomologyUsed : DbraneClaim
   levelZeroTachyonPresent : DbraneClaim
@@ -97,7 +97,7 @@ def OpenBosonicDbraneSpectrumPackage
     (data : OpenBosonicDbraneSpectrumData) : Prop :=
   data.alphaPrime > 0 /\
   data.massShellResidual =
-    data.alphaPrime * data.momentumParallelSq + (data.oscillatorLevel : Real) - 1 /\
+    data.alphaPrime * data.momentumParallelSq + (data.oscillatorLevel : ScalingDimension) - 1 /\
   data.massShellResidual = 0 /\
   data.siegelConstraintUsed /\
   data.brstCohomologyUsed /\
@@ -145,9 +145,9 @@ theorem dbrane_worldvolume_deformation_package
 /-- Chan-Paton and gauge-enhancement data for multiple D-branes. -/
 structure DbraneChanPatonData where
   stackSize : Nat
-  alphaPrime : Real
-  transverseSeparation : Real
-  wBosonMass : Real
+  alphaPrime : StringSlope
+  transverseSeparationNorm : LengthScale
+  wBosonMass : InvariantMass
   chanPatonMatrixFactorization : DbraneClaim
   stretchedStringsCarryBifundamentalCharges : DbraneClaim
   coincidentLimitEnhancesGaugeGroupToUStackSize : DbraneClaim
@@ -158,7 +158,7 @@ structure DbraneChanPatonData where
 def DbraneChanPatonPackage (data : DbraneChanPatonData) : Prop :=
   data.stackSize > 0 /\
   data.alphaPrime > 0 /\
-  data.wBosonMass = |data.transverseSeparation| / (2 * Real.pi * data.alphaPrime) /\
+  data.wBosonMass = data.transverseSeparationNorm / (2 * Real.pi * data.alphaPrime) /\
   data.chanPatonMatrixFactorization /\
   data.stretchedStringsCarryBifundamentalCharges /\
   data.coincidentLimitEnhancesGaugeGroupToUStackSize
@@ -204,10 +204,10 @@ theorem type_ii_bps_dbrane_boundary_package
 
 /-- Open-superstring spectrum data on a BPS type-II D-brane. -/
 structure OpenSuperstringDbraneSpectrumData where
-  alphaPrime : Real
-  momentumParallelSq : Real
+  alphaPrime : StringSlope
+  momentumParallelSq : MomentumSquaredScale
   oscillatorWeight : Nat
-  massShellResidual : Real
+  massShellResidual : Dimless
   nsMasslessVectorAndTransverseScalarsPresent : DbraneClaim
   rMasslessGoldstinoMultipletPresent : DbraneClaim
   gsoProjectionRemovesNsTachyon : DbraneClaim
@@ -220,7 +220,7 @@ def OpenSuperstringDbraneSpectrumPackage
     (data : OpenSuperstringDbraneSpectrumData) : Prop :=
   data.alphaPrime > 0 /\
   data.massShellResidual =
-    data.alphaPrime * data.momentumParallelSq + (data.oscillatorWeight : Real) /\
+    data.alphaPrime * data.momentumParallelSq + (data.oscillatorWeight : ScalingDimension) /\
   data.massShellResidual = 0 /\
   data.nsMasslessVectorAndTransverseScalarsPresent /\
   data.rMasslessGoldstinoMultipletPresent /\
@@ -298,9 +298,9 @@ theorem non_bps_dbrane_construction_package
 
 /-- Intersecting D-brane spectrum and supersymmetry data. -/
 structure IntersectingDbraneNdData where
-  alphaPrime : Real
+  alphaPrime : StringSlope
   ndDirectionCount : Nat
-  nsIntersectionMassSq : Real
+  nsIntersectionMassSq : MassSquaredScale
   rIntersectionFermionsMassless : DbraneClaim
   ndCongruentZeroModFourPreservesQuarterBps : DbraneClaim
   ndCongruentTwoModFourBreaksSupersymmetry : DbraneClaim
@@ -312,7 +312,8 @@ def IntersectingDbraneNdPackage (data : IntersectingDbraneNdData) : Prop :=
   data.alphaPrime > 0 /\
   data.ndDirectionCount % 2 = 0 /\
   data.nsIntersectionMassSq =
-    ((data.ndDirectionCount : Real) / 8 - (1 / 2 : Real)) / data.alphaPrime /\
+    ((data.ndDirectionCount : ScalingDimension) / 8 - (1 / 2 : ScalingDimension)) /
+      data.alphaPrime /\
   data.rIntersectionFermionsMassless /\
   data.ndCongruentZeroModFourPreservesQuarterBps /\
   data.ndCongruentTwoModFourBreaksSupersymmetry
@@ -328,12 +329,12 @@ theorem intersecting_dbrane_nd_package
 
 /-- D-branes-at-angles data for low-lying open-string modes and BPS condition. -/
 structure DbranesAtAnglesData where
-  alphaPrime : Real
-  thetaOne : Real
-  thetaTwo : Real
-  d1d1PrimeLowestNsMassSq : Real
-  d2d2PrimeModeOneMassSq : Real
-  d2d2PrimeModeTwoMassSq : Real
+  alphaPrime : StringSlope
+  thetaOne : ThetaAngle
+  thetaTwo : ThetaAngle
+  d1d1PrimeLowestNsMassSq : MassSquaredScale
+  d2d2PrimeModeOneMassSq : MassSquaredScale
+  d2d2PrimeModeTwoMassSq : MassSquaredScale
   equalAnglesImpliesNoTachyon : DbraneClaim
   equalAnglesImpliesQuarterBps : DbraneClaim
 

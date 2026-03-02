@@ -32,11 +32,11 @@ structure FreeBosonModeAlgebra2D (ModeOp : Type*) where
 
 /-- Normal-ordered vertex-operator interface for the free boson. -/
 structure NormalOrderedVertexOperators2D (VertexOp : Type*) where
-  vertex : ℝ → VertexOp
+  vertex : ScalingDimension → VertexOp
   normalOrdered : VertexOp → Prop
-  opeSingularExponent : ℝ → ℝ → ℝ
-  all_vertex_normal_ordered : ∀ α : ℝ, normalOrdered (vertex α)
-  ope_singular_exponent_formula : ∀ α β : ℝ,
+  opeSingularExponent : ScalingDimension → ScalingDimension → ScalingDimension
+  all_vertex_normal_ordered : ∀ α : ScalingDimension, normalOrdered (vertex α)
+  ope_singular_exponent_formula : ∀ α β : ScalingDimension,
     opeSingularExponent α β = α * β
 
 /-- Appendix-G state/operator map interface for free-boson vertex operators. -/
@@ -46,7 +46,7 @@ def FreeBosonVertexOperatorStateMap
     (stateToVertex : State → VertexOp)
     (vertexToState : VertexOp → State) : Prop :=
   (∀ s : State, vertexToState (stateToVertex s) = s) ∧
-    (∀ α : ℝ, ∃ s : State, stateToVertex s = data.vertex α)
+    (∀ α : ScalingDimension, ∃ s : State, stateToVertex s = data.vertex α)
 
 /-- Assumed free-boson state/operator map for normal-ordered vertex operators. -/
 theorem free_boson_vertex_operator_state_map
@@ -65,7 +65,7 @@ Green-function/prime-form/period-matrix ingredients plus momentum conservation. 
 structure FreeBosonGenusHCorrelatorData (Point : Type*) where
   genus : ℕ
   insertionCount : ℕ
-  momenta : Fin insertionCount → ℝ
+  momenta : Fin insertionCount → ScalingDimension
   primeForm : Point → Point → ℂ
   periodMatrixEntry : Fin genus → Fin genus → ℂ
   correlator : (Fin insertionCount → Point) → ℂ
@@ -86,13 +86,14 @@ theorem free_boson_higher_genus_correlator_formula
   exact h_phys
 
 /-- Free boson central charge is always c = 1 -/
-def free_boson_central_charge : ℝ := 1
+def free_boson_central_charge : CentralCharge := 1
 
 /-- Vertex operator conformal weight: h = α²/2 -/
-noncomputable def vertex_operator_weight (α : ℝ) : ℝ := α^2 / 2
+noncomputable def vertex_operator_weight (α : ScalingDimension) : ScalingDimension := α^2 / 2
 
 /-- Momentum-winding primary conformal weights -/
-noncomputable def momentum_winding_weight (R : ℝ) (n m : ℤ) : ℝ × ℝ :=
+noncomputable def momentum_winding_weight
+    (R : ScalingDimension) (n m : ℤ) : ScalingDimension × ScalingDimension :=
   let h := ((n : ℝ)/R + m*R)^2 / 2
   let h_bar := ((n : ℝ)/R - m*R)^2 / 2
   (h, h_bar)
@@ -102,7 +103,7 @@ noncomputable def momentum_winding_weight (R : ℝ) (n m : ℤ) : ℝ × ℝ :=
     Central charge: c = 1
     Spectrum: continuous family of primaries with h = (n+αR)²/2 for n ∈ ℤ, α ∈ ℝ -/
 structure FreeBosonCFT (H : Type _) where
-  compactification_radius : ℝ
+  compactification_radius : ScalingDimension
   radius_positive : compactification_radius > 0
   /-- Primary operators V_{n,m} labeled by momentum n and winding m -/
   primary : ℤ → ℤ → Primary2D H
@@ -131,7 +132,7 @@ noncomputable def t_dual {H : Type _} (fb : FreeBosonCFT H)
     simpa using h_phys n m
 
 /-- Self-dual radius where R = 1/R -/
-def self_dual_radius : ℝ := 1
+def self_dual_radius : ScalingDimension := 1
 
 /- ============= FREE FERMION ============= -/
 
@@ -148,9 +149,9 @@ structure FreeFermionSectorData2D where
   modeIndexPredicate : ℚ → Prop
   modeIndexCompatibility : ∀ r : ℚ,
     modeIndexPredicate r ↔ sectorCompatible sector r
-  fermionCentralCharge : ℝ
+  fermionCentralCharge : CentralCharge
   canonicalCentralCharge : fermionCentralCharge = 1 / 2
-  ramondSpinFieldWeight : ℝ
+  ramondSpinFieldWeight : ScalingDimension
   ramondSpinFieldWeightFormula :
     sector = NSRSector.R → ramondSpinFieldWeight = 1 / 16
 
@@ -199,8 +200,8 @@ theorem szego_kernel_spin_structure_propagator
 /-- Canonical free-field central-charge assignments from Appendix G:
 one free boson has `c=1`, one Majorana free fermion has `c=1/2`. -/
 structure FreeFieldCentralChargeAssignments where
-  bosonCentralCharge : ℝ
-  majoranaFermionCentralCharge : ℝ
+  bosonCentralCharge : CentralCharge
+  majoranaFermionCentralCharge : CentralCharge
 
 /-- Package for the canonical Appendix-G free-field central charges. -/
 def FreeFieldCentralChargeAssignmentsPackage
@@ -229,7 +230,7 @@ theorem free_boson_plus_majorana_total_c
   rcases h_data with ⟨h_b, h_f⟩
   calc
     data.bosonCentralCharge + data.majoranaFermionCentralCharge
-        = 1 + (1 / 2 : ℝ) := by rw [h_b, h_f]
+        = 1 + (1 / 2 : CentralCharge) := by rw [h_b, h_f]
     _ = 3 / 2 := by ring
 
 /- ============= ISING MODEL ============= -/
@@ -249,30 +250,30 @@ structure IsingCFT (H : Type _) where
   spin_weight : spin.h = 1/16
 
 /-- Ising central charge -/
-noncomputable def ising_central_charge : ℝ := 1/2
+noncomputable def ising_central_charge : CentralCharge := 1 / 2
 
 /-- Identity operator weight -/
-def ising_identity_weight : ℝ := 0
+def ising_identity_weight : ScalingDimension := 0
 
 /-- Energy operator weight -/
-noncomputable def ising_energy_weight : ℝ := 1/2
+noncomputable def ising_energy_weight : ScalingDimension := 1/2
 
 /-- Spin operator weight -/
-noncomputable def ising_spin_weight : ℝ := 1/16
+noncomputable def ising_spin_weight : ScalingDimension := 1 / 16
 
 /-- Critical exponents computed from operator dimensions -/
-def ising_critical_exponent_nu : ℝ := 1  -- from energy operator
-noncomputable def ising_critical_exponent_beta : ℝ := 1/8  -- from spin operator
-noncomputable def ising_critical_exponent_gamma : ℝ := 7/4  -- from σ²
+def ising_critical_exponent_nu : ScalingDimension := 1  -- from energy operator
+noncomputable def ising_critical_exponent_beta : ScalingDimension := 1 / 8  -- from spin operator
+noncomputable def ising_critical_exponent_gamma : ScalingDimension := 7 / 4  -- from σ²
 
 /- ============= MINIMAL MODELS ============= -/
 
 /-- Minimal model central charge formula -/
-noncomputable def minimal_model_c (m : ℕ) : ℝ :=
+noncomputable def minimal_model_c (m : ℕ) : CentralCharge :=
   1 - 6 / (m * (m + 1))
 
 /-- Primary field conformal weight formula -/
-noncomputable def minimal_model_weight_formula (m r s : ℕ) : ℝ :=
+noncomputable def minimal_model_weight_formula (m r s : ℕ) : ScalingDimension :=
   (((m + 1 : ℝ) * r - m * s)^2 - 1) / (4 * m * (m + 1))
 
 /-- Virasoro minimal model M(m,m+1)
@@ -298,38 +299,42 @@ noncomputable def three_state_potts_m : ℕ := 5
 /- ============= LIOUVILLE THEORY ============= -/
 
 /-- Background charge Q = b + 1/b -/
-noncomputable def liouville_Q (b : ℝ) : ℝ :=
+noncomputable def liouville_Q (b : ScalingDimension) : ScalingDimension :=
   b + 1/b
 
 /-- Liouville central charge: c = 1 + 6Q² -/
-noncomputable def liouville_c (b : ℝ) : ℝ :=
+noncomputable def liouville_c (b : ScalingDimension) : CentralCharge :=
   let Q := liouville_Q b
   1 + 6 * Q^2
 
 /-- Primary operator conformal weight: h = α(Q - α) -/
-noncomputable def liouville_weight (b α : ℝ) : ℝ :=
+noncomputable def liouville_weight
+    (b α : ScalingDimension) : ScalingDimension :=
   let Q := liouville_Q b
   α * (Q - α)
 
 /-- Liouville CFT: non-rational CFT with continuous spectrum
     Parameterized by b > 0 (or equivalently central charge c > 1) -/
 structure LiouvilleCFT (H : Type _) where
-  b : ℝ
+  b : ScalingDimension
   b_positive : b > 0
   /-- Primary operators V_α parameterized by momentum α -/
-  primary : ℝ → Primary2D H
+  primary : ScalingDimension → Primary2D H
   /-- Weights match Liouville formula -/
-  primary_weight : ∀ (α : ℝ),
+  primary_weight : ∀ (α : ScalingDimension),
     (primary α).h = liouville_weight b α
 
 /-- Duality transformation b ↔ 1/b leaves c invariant -/
-noncomputable def liouville_dual_b (b : ℝ) (hb : b > 0) : ℝ := 1 / b
+noncomputable def liouville_dual_b
+    (b : ScalingDimension) (hb : b > 0) : ScalingDimension := 1 / b
 
 /-- DOZZ formula (Dorn-Otto-Zamolodchikov-Zamolodchikov):
     Structure constants for Liouville theory.
     This is the unique solution to crossing symmetry + conformal bootstrap for c > 1. -/
 structure DOZZTheory where
-  dozz_formula : ℝ → ℝ → ℝ → ℝ → ℂ  -- b, α₁, α₂, α₃ → C_{α₁α₂α₃}
+  dozz_formula :
+    ScalingDimension → ScalingDimension → ScalingDimension →
+      ScalingDimension → ComplexAmplitude  -- b, α₁, α₂, α₃ → C_{α₁α₂α₃}
 
 /- ============= WZW MODELS ============= -/
 
@@ -343,10 +348,10 @@ structure WZWModel (G : Type) (H : Type _) where
   primary : ℕ → Primary2D H
   /-- Weight formula -/
   primary_weight : ∀ (j : ℕ),
-    ∃ (h_val : ℝ), (primary j).h = h_val
+    ∃ (h_val : ScalingDimension), (primary j).h = h_val
 
 /-- WZW central charge formula -/
-noncomputable def wzw_c (level group_dim dual_coxeter : ℕ) : ℝ :=
+noncomputable def wzw_c (level group_dim dual_coxeter : ℕ) : CentralCharge :=
   (level * group_dim : ℝ) / (level + dual_coxeter)
 
 /-- SU(2)_k WZW model data -/
@@ -357,6 +362,6 @@ structure SU2WZWData (H : Type _) where
   dual_coxeter_eq : wzw.dual_coxeter = 2
   /-- SU(2) primary weight formula: h_j = j(j+1)/(k+2) -/
   su2_weight : ∀ (j : ℕ) (hj : 2 * j ≤ wzw.level),
-    (wzw.primary j).h = (j * (j + 1) : ℝ) / (wzw.level + 2)
+    (wzw.primary j).h = (j * (j + 1) : ScalingDimension) / (wzw.level + 2)
 
 end PhysicsLogic.QFT.CFT.TwoDimensional

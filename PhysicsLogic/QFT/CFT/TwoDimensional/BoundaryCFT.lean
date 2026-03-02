@@ -26,9 +26,9 @@ deriving DecidableEq, Repr
 
 /-- Data for conformal boundary conditions in a 2D CFT. -/
 structure BoundaryConformalData where
-  centralChargeLeft : ℝ
-  centralChargeRight : ℝ
-  boundaryStressMismatch : ℝ
+  centralChargeLeft : CentralCharge
+  centralChargeRight : CentralCharge
+  boundaryStressMismatch : ScalingDimension
 
 /-- Conformal boundary-condition package:
 `T = T̃` on the boundary and `c = c̃`. -/
@@ -47,18 +47,18 @@ theorem boundary_conformal_invariance
 
 /-- Kinematic data for boundary two-point and three-point functions. -/
 structure BoundaryCorrelatorData where
-  weightA : ℝ
-  weightB : ℝ
-  weightC : ℝ
-  twoPointExponent : ℝ
-  threePointExponent12 : ℝ
-  threePointExponent23 : ℝ
-  threePointExponent13 : ℝ
-  twoPointCoeffAB : ℂ
-  twoPointCoeffBA : ℂ
-  threePointCoeffABC : ℂ
-  threePointCoeffBCA : ℂ
-  threePointCoeffCAB : ℂ
+  weightA : ScalingDimension
+  weightB : ScalingDimension
+  weightC : ScalingDimension
+  twoPointExponent : ScalingDimension
+  threePointExponent12 : ScalingDimension
+  threePointExponent23 : ScalingDimension
+  threePointExponent13 : ScalingDimension
+  twoPointCoeffAB : ComplexAmplitude
+  twoPointCoeffBA : ComplexAmplitude
+  threePointCoeffABC : ComplexAmplitude
+  threePointCoeffBCA : ComplexAmplitude
+  threePointCoeffCAB : ComplexAmplitude
 
 /-- Boundary correlator-kinematics package from global conformal symmetry on the disc/UHP. -/
 def BoundaryCorrelatorKinematics (data : BoundaryCorrelatorData) : Prop :=
@@ -120,10 +120,10 @@ theorem bulk_boundary_one_point_relation
 
 /-- Cylinder modular-duality data between closed-channel and strip-channel descriptions. -/
 structure BoundaryCylinderDualityData where
-  modulus : ℝ
-  openChannelModulus : ℝ
-  closedChannelAmplitude : ℂ
-  openChannelTrace : ℂ
+  modulus : ScalingDimension
+  openChannelModulus : ScalingDimension
+  closedChannelAmplitude : ComplexAmplitude
+  openChannelTrace : ComplexAmplitude
 
 /-- Cylinder modular duality relation:
 `⟨⟨B| e^{-π t (L_0+L̃_0-c/12)} |B'⟩ = Tr_{H_{BB'}} e^{-(2π/t)(L_0-c/24)}`. -/
@@ -172,13 +172,13 @@ theorem chan_paton_factorization
 
 /-- Free-boson (`X`) Neumann/Dirichlet boundary-condition data. -/
 structure FreeBosonBoundaryData where
-  alphaPrime : ℝ
-  neumannDerivativeMismatch : ℝ
-  dirichletDerivativeMismatch : ℝ
-  boundaryXValue : ℝ
-  dirichletPosition : ℝ
-  neumannNorm : ℝ
-  dirichletNorm : ℝ
+  alphaPrime : StringSlope
+  neumannDerivativeMismatch : Dimless
+  dirichletDerivativeMismatch : Dimless
+  boundaryXValue : LengthScale
+  dirichletPosition : LengthScale
+  neumannNorm : ProbabilityWeight
+  dirichletNorm : ProbabilityWeight
 
 /-- Free-boson Neumann/Dirichlet conformal boundary-condition package. -/
 def FreeBosonNDBoundaryConditions (data : FreeBosonBoundaryData) : Prop :=
@@ -217,11 +217,11 @@ theorem free_boson_boundary_state_normalization
 /-- Free-fermion boundary-state data for Ising/diagonal-GSO boundary conditions. -/
 structure FreeFermionBoundaryData where
   spinStructure : BoundarySpinStructure
-  neumannBoundaryMismatch : ℂ
-  dirichletBoundaryMismatch : ℂ
-  n1 : ℝ
-  n2 : ℝ
-  n3 : ℝ
+  neumannBoundaryMismatch : ComplexAmplitude
+  dirichletBoundaryMismatch : ComplexAmplitude
+  n1 : ProbabilityWeight
+  n2 : ProbabilityWeight
+  n3 : ProbabilityWeight
   hNNGroundDegeneracy : ℕ
   hDDGroundDegeneracy : ℕ
   sectorNN : IsingBoundarySector

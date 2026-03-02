@@ -24,10 +24,10 @@ def opComm {State : Type*} [AddCommGroup State] [Module ℂ State]
 This abstracts the equations around `S[g, chi, X, psi]`, local worldsheet SUSY,
 super-Weyl symmetry, and the free `(X, psi)` CFT reduction. -/
 structure SuperPolyakovGaugeData (WorldsheetConfig : Type*) where
-  localSusyVariation : ℂ
-  superWeylVariation : ℂ
-  conformalGaugeAction : WorldsheetConfig → ℂ
-  freeMatterAction : WorldsheetConfig → ℂ
+  localSusyVariationCancels : SuperstringQuantizationClaim
+  superWeylVariationCancels : SuperstringQuantizationClaim
+  conformalGaugeAction : WorldsheetConfig → ComplexActionValue
+  freeMatterAction : WorldsheetConfig → ComplexActionValue
   spacetimeDimension : ℕ
   matterCentralCharge : ℚ
 
@@ -36,8 +36,8 @@ local SUSY and super-Weyl invariance hold, conformal gauge reduces to free field
 and the matter central charge obeys `c_m = (3/2) D`. -/
 def SuperPolyakovGaugePackage {WorldsheetConfig : Type*}
     (data : SuperPolyakovGaugeData WorldsheetConfig) : Prop :=
-  data.localSusyVariation = 0 ∧
-  data.superWeylVariation = 0 ∧
+  data.localSusyVariationCancels ∧
+  data.superWeylVariationCancels ∧
   (∀ cfg : WorldsheetConfig, data.conformalGaugeAction cfg = data.freeMatterAction cfg) ∧
   data.matterCentralCharge = (3 / 2 : ℚ) * (data.spacetimeDimension : ℚ)
 
@@ -53,13 +53,13 @@ theorem super_polyakov_gauge_package
 
 /-- Superconformal-ghost data for the `(bc)(beta gamma)` system. -/
 structure SuperconformalGhostData (GhostConfig : Type*) where
-  betaGammaAction : GhostConfig → ℂ
-  flatGaugeAction : GhostConfig → ℂ
+  betaGammaAction : GhostConfig → ComplexActionValue
+  flatGaugeAction : GhostConfig → ComplexActionValue
   betaGammaOpeSign : ℤ
   bcCentralCharge : ℤ
   betaGammaCentralCharge : ℤ
   totalGhostCentralCharge : ℤ
-  ghostSupercurrent : ℂ
+  ghostSupercurrentExists : SuperstringQuantizationClaim
 
 /-- Ghost-system package:
 flat-gauge action reduction, `beta(z) gamma(0) ~ -1/z`, and total ghost
@@ -84,25 +84,28 @@ theorem superconformal_ghost_package
   exact h_phys
 
 /-- Picture-number and ghost-state data in the `(phi, eta, xi)` description. -/
-structure PictureNumberData where
+structure PictureNumberData (GhostState : Type*) where
   genus : ℕ
   ghostChargeViolation : ℤ
   nsCanonicalPicture : ℤ
   ramondCanonicalPicture : ℚ
-  etaZeroModeValue : ℂ
+  etaZeroMode : GhostState → GhostState
+  selectedState : GhostState
+  zeroState : GhostState
 
 /-- Picture-number package:
 `eta_0`-constraint for `H'[A]`, anomaly `Delta q = 2g-2`,
 and canonical NS/R pictures `-1` and `-1/2`. -/
-def PictureNumberPackage (data : PictureNumberData) : Prop :=
-  data.etaZeroModeValue = 0 ∧
+def PictureNumberPackage {GhostState : Type*} (data : PictureNumberData GhostState) : Prop :=
+  data.etaZeroMode data.selectedState = data.zeroState ∧
   data.ghostChargeViolation = 2 * (data.genus : ℤ) - 2 ∧
   data.nsCanonicalPicture = -1 ∧
   data.ramondCanonicalPicture = (-1 / 2 : ℚ)
 
 /-- Assumed picture-number/ghost-state package from Section 6.3. -/
 theorem picture_number_package
-    (data : PictureNumberData)
+    {GhostState : Type*}
+    (data : PictureNumberData GhostState)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSuperstringPictureNumberPackage
       (PictureNumberPackage data)) :
@@ -284,8 +287,8 @@ theorem superstring_ocq_representative_package
 
 /-- Superstring mass-shell data after GSO projection. -/
 structure SuperstringMassSpectrumData where
-  alphaPrime : ℝ
-  massSq : ℝ
+  alphaPrime : StringSlope
+  massSq : MassSquaredScale
   leftLevel : ℕ
   rightLevel : ℕ
 
@@ -308,7 +311,7 @@ theorem superstring_mass_spectrum_package
 
 /-- Massless `(NS,NS)` data. -/
 structure MasslessNSNSData where
-  momentumSq : ℝ
+  momentumSq : MomentumSquaredScale
   leftTransversalityResidual : ℂ
   rightTransversalityResidual : ℂ
 
@@ -319,7 +322,7 @@ def MasslessNSNSPackage (data : MasslessNSNSData) : Prop :=
 
 /-- Massless `(R,R)` data. -/
 structure MasslessRRData where
-  momentumSq : ℝ
+  momentumSq : MomentumSquaredScale
   leftDiracResidual : ℂ
   rightDiracResidual : ℂ
 
@@ -330,7 +333,7 @@ def MasslessRRPackage (data : MasslessRRData) : Prop :=
 
 /-- Massless `(R,NS)` and `(NS,R)` fermionic-sector data. -/
 structure MasslessFermionicData where
-  momentumSq : ℝ
+  momentumSq : MomentumSquaredScale
   transversalityAndDiracResidual : ℂ
   gaugeRedundancyResidual : ℂ
 
@@ -360,29 +363,124 @@ theorem superstring_massless_sector_package
     SuperstringMasslessSectorPackage data := by
   exact h_phys
 
+/-- Compatibility data tying the level-zero mass formula to the massless sectors. -/
+structure SuperstringLevelZeroMasslessCompatibilityData where
+  spectrum : SuperstringMassSpectrumData
+  massless : SuperstringMasslessSectorData
+
+/-- Level-zero/massless compatibility package:
+the mass formula, massless-sector constraints, and level-zero identification
+are imposed simultaneously so all sectors share the same on-shell `p^2=0`. -/
+def SuperstringLevelZeroMasslessCompatibilityPackage
+    (data : SuperstringLevelZeroMasslessCompatibilityData) : Prop :=
+  SuperstringMassSpectrumPackage data.spectrum ∧
+  SuperstringMasslessSectorPackage data.massless ∧
+  data.spectrum.leftLevel = 0 ∧
+  data.spectrum.rightLevel = 0 ∧
+  data.massless.nsns.momentumSq = data.spectrum.massSq ∧
+  data.massless.rr.momentumSq = data.spectrum.massSq ∧
+  data.massless.fermionic.momentumSq = data.spectrum.massSq
+
+/-- In the level-zero sector, the superstring mass formula enforces `m^2 = 0`. -/
+theorem superstring_level_zero_implies_mass_sq_zero
+    (data : SuperstringLevelZeroMasslessCompatibilityData)
+    (h_pkg : SuperstringLevelZeroMasslessCompatibilityPackage data) :
+    data.spectrum.massSq = 0 := by
+  rcases h_pkg with ⟨_, h_massless, _, _, h_nsns_link, _, _⟩
+  rcases h_massless with ⟨h_nsns_pkg, _, _⟩
+  calc
+    data.spectrum.massSq = data.massless.nsns.momentumSq := h_nsns_link.symm
+    _ = 0 := h_nsns_pkg.1
+
+/-- Massless-sector momentum squares agree with level-zero mass formula:
+all NSNS/RR/fermionic sectors satisfy `p^2 = 0` consistently. -/
+theorem superstring_level_zero_massless_shell_consistency
+    (data : SuperstringLevelZeroMasslessCompatibilityData)
+    (h_pkg : SuperstringLevelZeroMasslessCompatibilityPackage data) :
+    data.spectrum.massSq = 0 ∧
+    data.massless.nsns.momentumSq = 0 ∧
+    data.massless.rr.momentumSq = 0 ∧
+    data.massless.fermionic.momentumSq = 0 := by
+  have h_mass_zero : data.spectrum.massSq = 0 :=
+    superstring_level_zero_implies_mass_sq_zero data h_pkg
+  rcases h_pkg with ⟨_, h_massless, _, _, h_nsns_link, h_rr_link, h_ferm_link⟩
+  rcases h_massless with ⟨h_nsns_pkg, h_rr_pkg, h_ferm_pkg⟩
+  rcases h_nsns_pkg with ⟨h_nsns_zero, _, _⟩
+  rcases h_rr_pkg with ⟨h_rr_zero, _, _⟩
+  rcases h_ferm_pkg with ⟨h_ferm_zero, _, _⟩
+  have h_nsns_zero_from_link : data.massless.nsns.momentumSq = 0 := by
+    calc
+      data.massless.nsns.momentumSq = data.spectrum.massSq := h_nsns_link
+      _ = 0 := h_mass_zero
+  have h_rr_zero_from_link : data.massless.rr.momentumSq = 0 := by
+    calc
+      data.massless.rr.momentumSq = data.spectrum.massSq := h_rr_link
+      _ = 0 := h_mass_zero
+  have h_ferm_zero_from_link : data.massless.fermionic.momentumSq = 0 := by
+    calc
+      data.massless.fermionic.momentumSq = data.spectrum.massSq := h_ferm_link
+      _ = 0 := h_mass_zero
+  exact ⟨h_mass_zero, h_nsns_zero_from_link, h_rr_zero_from_link, h_ferm_zero_from_link⟩
+
+/-- Quantization consistency package combining critical BRST nilpotency
+with level-zero/massless shell compatibility. -/
+structure SuperstringQuantizationConsistencyData where
+  spacetimeDimension : ℕ
+  brstComplex : SuperBRSTComplex
+  levelZeroCompatibility : SuperstringLevelZeroMasslessCompatibilityData
+
+/-- Critical-dimension quantization package:
+BRST nilpotency in `D=10` together with level-zero/massless shell consistency. -/
+def SuperstringQuantizationConsistencyPackage
+    (data : SuperstringQuantizationConsistencyData) : Prop :=
+  data.spacetimeDimension = 10 ∧
+  SuperBRSTNilpotentInCriticalDimension data.spacetimeDimension data.brstComplex ∧
+  SuperstringLevelZeroMasslessCompatibilityPackage data.levelZeroCompatibility
+
+/-- Consequence of the quantization-consistency package:
+BRST nilpotency and shared on-shell massless constraints. -/
+theorem superstring_quantization_consistency_consequences
+    (data : SuperstringQuantizationConsistencyData)
+    (h_pkg : SuperstringQuantizationConsistencyPackage data) :
+    SuperBRSTNilpotent data.brstComplex ∧
+    data.levelZeroCompatibility.spectrum.massSq = 0 ∧
+    data.levelZeroCompatibility.massless.nsns.momentumSq = 0 ∧
+    data.levelZeroCompatibility.massless.rr.momentumSq = 0 ∧
+    data.levelZeroCompatibility.massless.fermionic.momentumSq = 0 := by
+  rcases h_pkg with ⟨h_dim, h_brst_critical, h_level_pkg⟩
+  have h_brst_nil : SuperBRSTNilpotent data.brstComplex := by
+    exact h_brst_critical h_dim
+  have h_shell :=
+    superstring_level_zero_massless_shell_consistency data.levelZeroCompatibility h_level_pkg
+  rcases h_shell with ⟨h_mass, h_nsns, h_rr, h_ferm⟩
+  exact ⟨h_brst_nil, h_mass, h_nsns, h_rr, h_ferm⟩
+
 /-- Spacetime-supersymmetry current/algebra data from worldsheet construction. -/
-structure SpacetimeSupersymmetryAlgebraData where
-  alphaPrime : ℝ
-  leftAnticommutator : ℂ
-  rightAnticommutator : ℂ
-  gammaMomentumContraction : ℂ
-  leftRightAnticommutator : ℂ
+structure SpacetimeSupersymmetryAlgebraData
+    (State : Type*) [AddCommGroup State] [Module ℂ State] where
+  alphaPrime : StringSlope
+  leftAnticommutator : Endomorphism State
+  rightAnticommutator : Endomorphism State
+  gammaMomentumContraction : Endomorphism State
+  leftRightAnticommutator : Endomorphism State
 
 /-- Spacetime-supersymmetry package (up to picture-raising):
 `{Q,Q} = (sqrt(alpha')/4) Gamma.P`, same for right movers, and
 left-right supercharges anticommute. -/
 def SpacetimeSupersymmetryAlgebraPackage
-    (data : SpacetimeSupersymmetryAlgebraData) : Prop :=
+    {State : Type*} [AddCommGroup State] [Module ℂ State]
+    (data : SpacetimeSupersymmetryAlgebraData State) : Prop :=
   data.alphaPrime > 0 ∧
   data.leftAnticommutator =
-    (Real.sqrt data.alphaPrime / 4 : ℂ) * data.gammaMomentumContraction ∧
+    (Real.sqrt data.alphaPrime / 4 : ℂ) • data.gammaMomentumContraction ∧
   data.rightAnticommutator =
-    (Real.sqrt data.alphaPrime / 4 : ℂ) * data.gammaMomentumContraction ∧
+    (Real.sqrt data.alphaPrime / 4 : ℂ) • data.gammaMomentumContraction ∧
   data.leftRightAnticommutator = 0
 
 /-- Assumed spacetime-supersymmetry algebra package from Section 6.6.3. -/
 theorem spacetime_supersymmetry_algebra_package
-    (data : SpacetimeSupersymmetryAlgebraData)
+    {State : Type*} [AddCommGroup State] [Module ℂ State]
+    (data : SpacetimeSupersymmetryAlgebraData State)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSuperstringSpacetimeSusyAlgebra
       (SpacetimeSupersymmetryAlgebraPackage data)) :

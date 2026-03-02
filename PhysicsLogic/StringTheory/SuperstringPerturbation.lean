@@ -21,15 +21,15 @@ inductive WorldsheetSpinParity
 `action` is a configuration-space functional (not a single number). -/
 structure SupermoduliGaugeFixingData where
   Configuration : Type
-  action : Configuration → ℂ
-  pathIntegralWeight : Configuration → ℂ
+  action : Configuration → ComplexActionValue
+  pathIntegralWeight : Configuration → ComplexAmplitude
   genus : ℕ
   nsPunctures : ℕ
   evenModuliRealDim : ℤ
   oddModuliRealDim : ℤ
-  fpSuperJacobian : ℂ
-  reducedCorrelator : ℂ
-  connectedAmplitude : ℂ
+  fpSuperJacobian : ComplexAmplitude
+  reducedCorrelator : ComplexAmplitude
+  connectedAmplitude : ComplexAmplitude
 
 /-- Supermoduli gauge-fixing package:
 oscillatory weight `exp(i S)`, real supermoduli dimensions, and FP-reduced amplitude. -/
@@ -112,9 +112,9 @@ structure SupermoduliBerezinianIntegrationData where
   nsPunctures : ℕ
   berezinianEvenDegree : ℤ
   berezinianOddDegree : ℤ
-  localPatchContribution : ℂ
-  codimensionOneCorrection : ℂ
-  integratedAmplitude : ℂ
+  localPatchContribution : ComplexAmplitude
+  codimensionOneCorrection : ComplexAmplitude
+  integratedAmplitude : ComplexAmplitude
 
 /-- Supermoduli integration package:
 Berezinian degree bookkeeping and codimension-one corrected global integral. -/
@@ -136,16 +136,16 @@ theorem supermoduli_berezinian_integration_package
 
 /-- Superstring plumbing-fixture and unitarity-factorization data. -/
 structure SuperstringPlumbingFactorizationData where
-  sewingParameter : ℂ
-  localCoordinate : ℂ
-  dualLocalCoordinate : ℂ
-  channelMomentumSq : ℂ
-  intermediateMassSq : ℂ
-  iEpsilon : ℝ
-  propagator : ℂ
-  leftReducedAmplitude : ℂ
-  rightReducedAmplitude : ℂ
-  fullReducedAmplitude : ℂ
+  sewingParameter : ComplexDimensionless
+  localCoordinate : ComplexDimensionless
+  dualLocalCoordinate : ComplexDimensionless
+  channelMomentumSq : ComplexMomentumSquaredInvariant
+  intermediateMassSq : ComplexMassSquaredInvariant
+  iEpsilon : Dimless
+  propagator : ComplexAmplitude
+  leftReducedAmplitude : ComplexAmplitude
+  rightReducedAmplitude : ComplexAmplitude
+  fullReducedAmplitude : ComplexAmplitude
 
 /-- Superstring plumbing/unitarity package:
 `w' = q/w`, `|q|<1`, and one-particle channel factorization of reduced amplitudes. -/
@@ -199,10 +199,10 @@ theorem picture_changing_formalism_package
 
 /-- Spurious-singularity control data for the PCO description. -/
 structure SpuriousSingularityControlData where
-  betaGammaDeterminant : ℂ
-  thetaDenominatorSection : ℂ
-  numeratorCorrection : ℂ
-  regularizedIntegrand : ℂ
+  betaGammaDeterminant : ComplexAmplitude
+  thetaDenominatorSection : ComplexAmplitude
+  numeratorCorrection : ComplexAmplitude
+  regularizedIntegrand : ComplexAmplitude
   spuriousPolesCanceled : SuperPerturbativeClaim
 
 /-- Spurious-singularity package:
@@ -225,11 +225,11 @@ theorem spurious_singularity_control_package
 
 /-- Vertical-integration data for globally compatible PCO contours. -/
 structure VerticalIntegrationCompatibilityData where
-  horizontalContourContribution : ℂ
-  verticalContourContribution : ℂ
-  boundaryJump : ℂ
-  brstExactBridge : ℂ
-  totalAmplitude : ℂ
+  horizontalContourContribution : ComplexAmplitude
+  verticalContourContribution : ComplexAmplitude
+  boundaryJump : ComplexAmplitude
+  brstExactBridge : ComplexAmplitude
+  totalAmplitude : ComplexAmplitude
   compatibleWithPlumbing : SuperPerturbativeClaim
 
 /-- Vertical-integration package:
