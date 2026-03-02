@@ -1,6 +1,6 @@
 # Section 16: D-instantons
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 333
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/DInstantons.lean`
@@ -52,6 +52,15 @@
 - `DInstantonOpenClosedSftZeroModePackage`
 - `DInstantonNormalizationPackage`
 - `MultipleDInstantonIkktPackage`
+
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/DInstantons.lean` with all listed
+  package units assumption-wired.
+- Physics-interface hardening pass:
+  replaced checklist booleans in `*Data` structures with claim-typed fields
+  (`DInstantonClaim := Prop`) and removed `= true` placeholders from package
+  predicates, including transseries/effective-action and open+closed SFT
+  zero-mode interfaces.
 
 ## Assumption Candidates
 - Mapped `AssumptionId`: `stringDinstantonTransseriesAndModuliIntegral`.

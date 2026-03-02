@@ -8,18 +8,20 @@ namespace PhysicsLogic.StringTheory
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
+abbrev DInstantonClaim := Prop
+
 /-- Non-perturbative transseries data for closed-string amplitudes with D-instanton sectors. -/
 structure DInstantonTransseriesData where
   stringCoupling : Real
   instantonActionScale : Real
-  perturbativeAmplitudeSectorIncluded : Bool
-  dInstantonAmplitudeSectorIncluded : Bool
-  higherNonperturbativeSectorIncluded : Bool
-  moduliSpaceIntegralOverBoundaryConditionsIncluded : Bool
-  disconnectedWorldsheetExponentiationRuleUsed : Bool
-  openStringBoundaryDivergencesRequireNonperturbativePrescription : Bool
-  effectiveActionHandledAsFunctional : Bool
-  effectiveActionFunctionalAllowsComplexValues : Bool
+  perturbativeAmplitudeSectorIncluded : DInstantonClaim
+  dInstantonAmplitudeSectorIncluded : DInstantonClaim
+  higherNonperturbativeSectorIncluded : DInstantonClaim
+  moduliSpaceIntegralOverBoundaryConditionsIncluded : DInstantonClaim
+  disconnectedWorldsheetExponentiationRuleUsed : DInstantonClaim
+  openStringBoundaryDivergencesRequireNonperturbativePrescription : DInstantonClaim
+  effectiveActionHandledAsFunctional : DInstantonClaim
+  effectiveActionFunctionalAllowsComplexValues : DInstantonClaim
 
 /-- Section 16.1 package:
 non-perturbative D-instanton transseries, moduli-space integration, and
@@ -27,14 +29,14 @@ disconnected-worldsheet exponentiation structure. -/
 def DInstantonTransseriesPackage (data : DInstantonTransseriesData) : Prop :=
   data.stringCoupling > 0 /\
   data.instantonActionScale > 0 /\
-  data.perturbativeAmplitudeSectorIncluded = true /\
-  data.dInstantonAmplitudeSectorIncluded = true /\
-  data.higherNonperturbativeSectorIncluded = true /\
-  data.moduliSpaceIntegralOverBoundaryConditionsIncluded = true /\
-  data.disconnectedWorldsheetExponentiationRuleUsed = true /\
-  data.openStringBoundaryDivergencesRequireNonperturbativePrescription = true /\
-  data.effectiveActionHandledAsFunctional = true /\
-  data.effectiveActionFunctionalAllowsComplexValues = true
+  data.perturbativeAmplitudeSectorIncluded /\
+  data.dInstantonAmplitudeSectorIncluded /\
+  data.higherNonperturbativeSectorIncluded /\
+  data.moduliSpaceIntegralOverBoundaryConditionsIncluded /\
+  data.disconnectedWorldsheetExponentiationRuleUsed /\
+  data.openStringBoundaryDivergencesRequireNonperturbativePrescription /\
+  data.effectiveActionHandledAsFunctional /\
+  data.effectiveActionFunctionalAllowsComplexValues
 
 /-- Assumed Section 16.1 D-instanton transseries/moduli package. -/
 theorem d_instanton_transseries_package
@@ -51,11 +53,11 @@ structure COneZzInstantonData where
   alphaPrime : Real
   matrixModelMu : Real
   zzInstantonActionValue : Real
-  zzActionFromBraneMassRelationUsed : Bool
-  matrixModelBounceDictionaryUsed : Bool
-  leadingOneToNAmplitudeFromDiscOnePointFunctions : Bool
-  normalizationMatchedToParticleHoleDualAmplitude : Bool
-  nonperturbativeUnitarityDeficitInterpretedAsClosedToNonclosedTransition : Bool
+  zzActionFromBraneMassRelationUsed : DInstantonClaim
+  matrixModelBounceDictionaryUsed : DInstantonClaim
+  leadingOneToNAmplitudeFromDiscOnePointFunctions : DInstantonClaim
+  normalizationMatchedToParticleHoleDualAmplitude : DInstantonClaim
+  nonperturbativeUnitarityDeficitInterpretedAsClosedToNonclosedTransition : DInstantonClaim
 
 /-- Section 16.2 package:
 `c=1` ZZ-instanton action/normalization and dual matrix-model interpretation. -/
@@ -64,11 +66,11 @@ def COneZzInstantonPackage (data : COneZzInstantonData) : Prop :=
   data.alphaPrime > 0 /\
   data.matrixModelMu > 0 /\
   data.zzInstantonActionValue = 1 / (2 * data.stringCoupling) /\
-  data.zzActionFromBraneMassRelationUsed = true /\
-  data.matrixModelBounceDictionaryUsed = true /\
-  data.leadingOneToNAmplitudeFromDiscOnePointFunctions = true /\
-  data.normalizationMatchedToParticleHoleDualAmplitude = true /\
-  data.nonperturbativeUnitarityDeficitInterpretedAsClosedToNonclosedTransition = true
+  data.zzActionFromBraneMassRelationUsed /\
+  data.matrixModelBounceDictionaryUsed /\
+  data.leadingOneToNAmplitudeFromDiscOnePointFunctions /\
+  data.normalizationMatchedToParticleHoleDualAmplitude /\
+  data.nonperturbativeUnitarityDeficitInterpretedAsClosedToNonclosedTransition
 
 /-- Assumed Section 16.2 `c=1` ZZ-instanton package. -/
 theorem c_one_zz_instanton_package
@@ -86,11 +88,11 @@ structure TypeIIBDMinusOneInstantonData where
   axioDilaton : Complex
   dMinusOneActionValue : Complex
   antiDMinusOneActionValue : Complex
-  antiInstantonActionUsesConjugateAxioDilaton : Bool
-  nmInstantonActionUsed : Bool
-  axionShiftBrokenToIntegerSubgroup : Bool
-  leadingOneZeroSupermoduliIntegralUsed : Bool
-  fourGravitonR4CouplingGetsInstantonCorrections : Bool
+  antiInstantonActionUsesConjugateAxioDilaton : DInstantonClaim
+  nmInstantonActionUsed : DInstantonClaim
+  axionShiftBrokenToIntegerSubgroup : DInstantonClaim
+  leadingOneZeroSupermoduliIntegralUsed : DInstantonClaim
+  fourGravitonR4CouplingGetsInstantonCorrections : DInstantonClaim
 
 /-- Section 16.3 package:
 type-IIB D(-1)-instanton/anti-instanton action dictionary and
@@ -100,11 +102,11 @@ def TypeIIBDMinusOneInstantonPackage
   data.tau2 > 0 /\
   data.axioDilaton = data.tau1 + data.tau2 * Complex.I /\
   data.dMinusOneActionValue = -2 * Real.pi * Complex.I * data.axioDilaton /\
-  data.antiInstantonActionUsesConjugateAxioDilaton = true /\
-  data.nmInstantonActionUsed = true /\
-  data.axionShiftBrokenToIntegerSubgroup = true /\
-  data.leadingOneZeroSupermoduliIntegralUsed = true /\
-  data.fourGravitonR4CouplingGetsInstantonCorrections = true
+  data.antiInstantonActionUsesConjugateAxioDilaton /\
+  data.nmInstantonActionUsed /\
+  data.axionShiftBrokenToIntegerSubgroup /\
+  data.leadingOneZeroSupermoduliIntegralUsed /\
+  data.fourGravitonR4CouplingGetsInstantonCorrections
 
 /-- Assumed Section 16.3 type-IIB D(-1)-instanton package. -/
 theorem type_iib_d_minus_one_instanton_package
@@ -119,13 +121,13 @@ theorem type_iib_d_minus_one_instanton_package
 structure DInstantonOpenClosedSftZeroModeData (ClosedField OpenField : Type*) where
   coupledBvActionFunctional : ClosedField → OpenField → Complex
   closedEffectiveActionFunctional : ClosedField → Complex
-  lagrangianSubmanifoldInOpenFieldSpaceChosen : Bool
-  openCollectiveModesReparametrizeInstantonModuli : Bool
-  openFieldSpaceBackgroundIndependenceMapUsed : Bool
-  relaxedSiegelGaugeForZeroWeightModesUsed : Bool
-  faddeevPopovGhostIntegralReplacedByGaugeOrbitVolumeFactor : Bool
-  wickRotationForWrongSignZeroModesIncluded : Bool
-  openTachyonContourChosenByLefschetzOrEquivalentPrescription : Bool
+  lagrangianSubmanifoldInOpenFieldSpaceChosen : DInstantonClaim
+  openCollectiveModesReparametrizeInstantonModuli : DInstantonClaim
+  openFieldSpaceBackgroundIndependenceMapUsed : DInstantonClaim
+  relaxedSiegelGaugeForZeroWeightModesUsed : DInstantonClaim
+  faddeevPopovGhostIntegralReplacedByGaugeOrbitVolumeFactor : DInstantonClaim
+  wickRotationForWrongSignZeroModesIncluded : DInstantonClaim
+  openTachyonContourChosenByLefschetzOrEquivalentPrescription : DInstantonClaim
 
 /-- Section 16.4 package:
 D-instanton open+closed SFT formulation with zero-mode gauge-fixing repair and
@@ -133,13 +135,13 @@ non-Gaussian collective-mode treatment. -/
 def DInstantonOpenClosedSftZeroModePackage
     {ClosedField OpenField : Type*}
     (data : DInstantonOpenClosedSftZeroModeData ClosedField OpenField) : Prop :=
-  data.lagrangianSubmanifoldInOpenFieldSpaceChosen = true /\
-  data.openCollectiveModesReparametrizeInstantonModuli = true /\
-  data.openFieldSpaceBackgroundIndependenceMapUsed = true /\
-  data.relaxedSiegelGaugeForZeroWeightModesUsed = true /\
-  data.faddeevPopovGhostIntegralReplacedByGaugeOrbitVolumeFactor = true /\
-  data.wickRotationForWrongSignZeroModesIncluded = true /\
-  data.openTachyonContourChosenByLefschetzOrEquivalentPrescription = true
+  data.lagrangianSubmanifoldInOpenFieldSpaceChosen /\
+  data.openCollectiveModesReparametrizeInstantonModuli /\
+  data.openFieldSpaceBackgroundIndependenceMapUsed /\
+  data.relaxedSiegelGaugeForZeroWeightModesUsed /\
+  data.faddeevPopovGhostIntegralReplacedByGaugeOrbitVolumeFactor /\
+  data.wickRotationForWrongSignZeroModesIncluded /\
+  data.openTachyonContourChosenByLefschetzOrEquivalentPrescription
 
 /-- Assumed Section 16.4 open+closed SFT zero-mode package for D-instantons. -/
 theorem d_instanton_open_closed_sft_zero_mode_package
@@ -156,10 +158,10 @@ structure DInstantonNormalizationData where
   tau2 : Real
   alphaPrime : Real
   singleInstantonNormalizationScale : Real
-  bosonicZzNormalizationMatchesDualMatrixModel : Bool
-  typeIibZeroModeMeasureFromOpenSftDetermined : Bool
-  uOneGaugeAngleNormalizationFixedFromSpectatorBraneCoupling : Bool
-  leadingRFourInstantonCoefficientRecovered : Bool
+  bosonicZzNormalizationMatchesDualMatrixModel : DInstantonClaim
+  typeIibZeroModeMeasureFromOpenSftDetermined : DInstantonClaim
+  uOneGaugeAngleNormalizationFixedFromSpectatorBraneCoupling : DInstantonClaim
+  leadingRFourInstantonCoefficientRecovered : DInstantonClaim
 
 /-- Section 16.5 package:
 normalization of D-instanton amplitudes from open-string zero-mode measures and
@@ -168,10 +170,10 @@ def DInstantonNormalizationPackage (data : DInstantonNormalizationData) : Prop :
   data.tau2 > 0 /\
   data.alphaPrime > 0 /\
   data.singleInstantonNormalizationScale > 0 /\
-  data.bosonicZzNormalizationMatchesDualMatrixModel = true /\
-  data.typeIibZeroModeMeasureFromOpenSftDetermined = true /\
-  data.uOneGaugeAngleNormalizationFixedFromSpectatorBraneCoupling = true /\
-  data.leadingRFourInstantonCoefficientRecovered = true
+  data.bosonicZzNormalizationMatchesDualMatrixModel /\
+  data.typeIibZeroModeMeasureFromOpenSftDetermined /\
+  data.uOneGaugeAngleNormalizationFixedFromSpectatorBraneCoupling /\
+  data.leadingRFourInstantonCoefficientRecovered
 
 /-- Assumed Section 16.5 D-instanton normalization package. -/
 theorem d_instanton_normalization_package
@@ -188,11 +190,11 @@ structure MultipleDInstantonIkktData where
   tau2 : Real
   ikktMatrixIntegralValue : Real
   multiInstantonNormalizationScale : Real
-  chanPatonKToFourFactorIncluded : Bool
-  zeroModeMeasurePromotedToUKMatrices : Bool
-  matrixModelActionFromTenDimensionalSymReductionUsed : Bool
-  ikktLocalizationDivisorSumFormulaUsed : Bool
-  leadingRFourCoefficientScalesWithSqrtKTimesZk : Bool
+  chanPatonKToFourFactorIncluded : DInstantonClaim
+  zeroModeMeasurePromotedToUKMatrices : DInstantonClaim
+  matrixModelActionFromTenDimensionalSymReductionUsed : DInstantonClaim
+  ikktLocalizationDivisorSumFormulaUsed : DInstantonClaim
+  leadingRFourCoefficientScalesWithSqrtKTimesZk : DInstantonClaim
 
 /-- Section 16.6 package:
 multiple D-instantons with `U(k)` zero modes and IKKT matrix-integral
@@ -202,11 +204,11 @@ def MultipleDInstantonIkktPackage (data : MultipleDInstantonIkktData) : Prop :=
   data.tau2 > 0 /\
   data.ikktMatrixIntegralValue > 0 /\
   data.multiInstantonNormalizationScale > 0 /\
-  data.chanPatonKToFourFactorIncluded = true /\
-  data.zeroModeMeasurePromotedToUKMatrices = true /\
-  data.matrixModelActionFromTenDimensionalSymReductionUsed = true /\
-  data.ikktLocalizationDivisorSumFormulaUsed = true /\
-  data.leadingRFourCoefficientScalesWithSqrtKTimesZk = true
+  data.chanPatonKToFourFactorIncluded /\
+  data.zeroModeMeasurePromotedToUKMatrices /\
+  data.matrixModelActionFromTenDimensionalSymReductionUsed /\
+  data.ikktLocalizationDivisorSumFormulaUsed /\
+  data.leadingRFourCoefficientScalesWithSqrtKTimesZk
 
 /-- Assumed Section 16.6 multiple D-instanton IKKT package. -/
 theorem multiple_d_instanton_ikkt_package
