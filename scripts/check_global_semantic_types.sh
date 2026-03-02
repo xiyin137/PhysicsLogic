@@ -82,6 +82,20 @@ else
   echo "[ok] no raw scalar-codomain action/functionals in non-Papers modules"
 fi
 
+echo "[global-semantic-check] ActionFunctional fields use explicit functional structures"
+raw_action_functional_arrow_hits="$(
+  rg -n "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Aa]ction[Ff]unctional[[:space:]]*:[[:space:]].*→" \
+    PhysicsLogic --glob '*.lean' \
+  | rg -v '^PhysicsLogic/Papers/' || true
+)"
+if [[ -n "$raw_action_functional_arrow_hits" ]]; then
+  echo "$raw_action_functional_arrow_hits"
+  echo "[fail] found raw arrow-typed ActionFunctional fields in non-Papers modules"
+  status=1
+else
+  echo "[ok] ActionFunctional fields are explicit functional structures in non-Papers modules"
+fi
+
 echo "[global-semantic-check] no raw scalar-codomain action maps in non-Papers modules"
 raw_scalar_action_map_hits="$(
   rg -n "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[[:space:]]*:[[:space:]].*→[[:space:]]*(ℂ|Complex|ℝ|Real)[[:space:]]*$" \
