@@ -1,5 +1,6 @@
 import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import PhysicsLogic.Units
 
 namespace PhysicsLogic.QFT.Euclidean
 
@@ -12,15 +13,15 @@ abbrev EuclideanPoint (d : ℕ) := Fin d → ℝ
 def euclideanOrigin (d : ℕ) : EuclideanPoint d := fun _ => 0
 
 /-- Euclidean distance (positive definite metric) -/
-noncomputable def euclideanDistance {d : ℕ} (x y : EuclideanPoint d) : ℝ :=
-  sqrt (∑ μ, (x μ - y μ)^2)
+noncomputable def euclideanDistance {d : ℕ} (x y : EuclideanPoint d) : LengthScale :=
+  (sqrt (∑ μ, (x μ - y μ)^2) : ℝ)
 
 /-- Orthogonal matrix in `d` Euclidean dimensions. -/
 def IsOrthogonal {d : ℕ} (R : Fin d → Fin d → ℝ) : Prop :=
   ∀ μ ν, ∑ ρ, R μ ρ * R ν ρ = if μ = ν then 1 else 0
 
 /-- Radial distance from origin -/
-noncomputable def radialDistance {d : ℕ} (x : EuclideanPoint d) : ℝ :=
+noncomputable def radialDistance {d : ℕ} (x : EuclideanPoint d) : LengthScale :=
   euclideanDistance x (euclideanOrigin d)
 
 /-- A quantum field theory in d dimensions, characterized by its Schwinger functions.
@@ -85,22 +86,23 @@ noncomputable def correlationFunction {d : ℕ} (theory : QFT d) (x y : Euclidea
   theory.schwinger 2 (fun i => if i = 0 then x else y)
 
 /-- Correlation length ξ ~ 1/m -/
-noncomputable def correlationLength (m : ℝ) : ℝ := 1 / m
+noncomputable def correlationLength (m : MassScale) : LengthScale := 1 / m
 
 /-- A theory has a mass gap m > 0 if correlations decay exponentially
     with rate m. NOT all theories have a mass gap (e.g., massless theories). -/
-structure HasMassGap {d : ℕ} (theory : QFT d) (m : ℝ) where
+structure HasMassGap {d : ℕ} (theory : QFT d) (m : MassScale) where
   m_pos : m > 0
   /-- Correlations decay exponentially: |⟨φ(x)φ(y)⟩| ≤ C e^{-m|x-y|} -/
   decay_bound : ∃ C > 0, ∀ x y : EuclideanPoint d,
-    |correlationFunction theory x y| ≤ C * exp (-m * euclideanDistance x y)
+    |correlationFunction theory x y| ≤ C * exp (-(m * euclideanDistance x y).value)
 
 /-- Exponential decay of correlations (mass gap).
     For a theory WITH mass gap m > 0, correlations decay exponentially.
     NOTE: This is a property of specific theories, not a universal law. -/
-theorem exponential_decay {d : ℕ} (theory : QFT d) (m : ℝ) (h : HasMassGap theory m)
+theorem exponential_decay {d : ℕ} (theory : QFT d) (m : MassScale) (h : HasMassGap theory m)
   (x y : EuclideanPoint d) :
-  ∃ C > 0, |correlationFunction theory x y| ≤ C * exp (-m * euclideanDistance x y) := by
+  ∃ C > 0, |correlationFunction theory x y| ≤
+    C * exp (-(m * euclideanDistance x y).value) := by
   obtain ⟨C, hC_pos, hC_bound⟩ := h.decay_bound
   exact ⟨C, hC_pos, hC_bound x y⟩
 
@@ -114,24 +116,24 @@ theorem exponential_decay {d : ℕ} (theory : QFT d) (m : ℝ) (h : HasMassGap t
     Rigorous construction via Bessel functions belongs in RigorousQFT. -/
 structure MassiveKernelData where
   /-- The massive Euclidean propagator K_d(m, r) in d dimensions -/
-  kernel : (d : ℕ) → (m : ℝ) → (r : ℝ) → ℝ
+  kernel : (d : ℕ) → (m : MassScale) → (r : LengthScale) → ℝ
   /-- For any mass m > 0, the massive kernel decays exponentially in d dimensions -/
-  kernel_decay : ∀ {d : ℕ} (m : ℝ) (_hm : m > 0),
-    ∃ C > 0, ∀ r ≥ 0, |kernel d m r| ≤ C * exp (-m * r)
+  kernel_decay : ∀ {d : ℕ} (m : MassScale) (_hm : m > 0),
+    ∃ C > 0, ∀ r : LengthScale, r ≥ 0 → |kernel d m r| ≤ C * exp (-(m * r).value)
   /-- In 2D, the massless kernel K(0,r) has logarithmic behavior for large r -/
   massless_2d_logarithmic :
-    ∀ r > 1, ∃ ε_r : ℝ,
-      kernel 2 0 r = -log r + ε_r ∧
+    ∀ (r : LengthScale), r > 1 → ∃ ε_r : ℝ,
+      kernel 2 0 r = -log r.value + ε_r ∧
       |ε_r| ≤ 1
 
 /-- Spectral density ρ(m²) in the Källén-Lehmann representation. -/
 structure SpectralDensity (d : ℕ) where
   /-- The spectral weight function ρ(m²) ≥ 0 -/
-  ρ : ℝ → ℝ
+  ρ : MassSquaredScale → ℝ
   /-- Positivity: spectral density is non-negative -/
-  nonneg : ∀ m_sq ≥ 0, ρ m_sq ≥ 0
+  nonneg : ∀ mSq, mSq ≥ 0 → ρ mSq ≥ 0
   /-- Support: spectral density vanishes for negative mass² -/
-  support : ∀ m_sq < 0, ρ m_sq = 0
+  support : ∀ mSq, mSq < 0 → ρ mSq = 0
 
 /-- A QFT admits a spectral (Källén-Lehmann) representation if its 2-point
     function can be decomposed into a sum over mass eigenstates.
@@ -154,7 +156,8 @@ structure HasSpectralRepresentation {d : ℕ} (theory : QFT d) where
 
 /-- Isolated mass: a delta function contribution δ(m² - m₀²) to the spectral density,
     representing a stable single-particle state of mass m₀. -/
-structure IsolatedMass {d : ℕ} (K : MassiveKernelData) (spec : SpectralDensity d) (m₀ : ℝ) where
+structure IsolatedMass {d : ℕ} (K : MassiveKernelData) (spec : SpectralDensity d)
+    (m₀ : MassScale) where
   /-- The residue Z > 0 (field strength renormalization) -/
   residue : ℝ
   residue_pos : residue > 0
@@ -177,10 +180,10 @@ structure SpectralDecomposition {d : ℕ} (theory : QFT d)
   continuum_part : EuclideanPoint d → ℝ
   /-- If the continuum has a mass gap m_gap > 0 (i.e., ρ(m²) = 0 for 0 < m² < m_gap²),
       then it decays exponentially. This holds when all isolated poles are at discrete masses. -/
-  has_mass_gap : Option ℝ
+  has_mass_gap : Option MassScale
   /-- If has_mass_gap = some(m_gap) with m_gap > 0, then continuum decays exponentially -/
-  continuum_decay_with_gap : ∀ m_gap : ℝ, has_mass_gap = some m_gap → m_gap > 0 →
+  continuum_decay_with_gap : ∀ m_gap : MassScale, has_mass_gap = some m_gap → m_gap > 0 →
     ∃ C > 0, ∀ x : EuclideanPoint d,
-    |continuum_part x| ≤ C * exp (-m_gap * radialDistance x)
+    |continuum_part x| ≤ C * exp (-(m_gap * radialDistance x).value)
 
 end PhysicsLogic.QFT.Euclidean
