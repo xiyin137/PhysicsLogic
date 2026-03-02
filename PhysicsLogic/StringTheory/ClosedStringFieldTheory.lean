@@ -122,21 +122,23 @@ theorem siegel_gauge_propagator_package
   exact h_phys
 
 /-- 1PI effective-action data in the Siegel gauge. -/
-structure OnePIEffectiveActionSiegelData where
-  kineticContribution : ℂ
-  interactionContribution : ℂ
-  effectiveActionValue : ℂ
+structure OnePIEffectiveActionSiegelData (StringField : Type*) where
+  kineticContribution : StringField → ℂ
+  interactionContribution : StringField → ℂ
+  effectiveActionFunctional : StringField → ℂ
 
 /-- Siegel 1PI package:
 `Γ = kinetic - interaction`, matching the SFT 1PI decomposition. -/
 def OnePIEffectiveActionSiegelPackage
-    (data : OnePIEffectiveActionSiegelData) : Prop :=
-  data.effectiveActionValue =
-    data.kineticContribution - data.interactionContribution
+    {StringField : Type*} (data : OnePIEffectiveActionSiegelData StringField) : Prop :=
+  ∀ ψ : StringField,
+    data.effectiveActionFunctional ψ =
+      data.kineticContribution ψ - data.interactionContribution ψ
 
 /-- Assumed Siegel-gauge 1PI effective-action package. -/
 theorem one_pi_effective_action_siegel_package
-    (data : OnePIEffectiveActionSiegelData)
+    {StringField : Type*}
+    (data : OnePIEffectiveActionSiegelData StringField)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSftOnePiEffectiveActionSiegel
       (OnePIEffectiveActionSiegelPackage data)) :
@@ -144,21 +146,23 @@ theorem one_pi_effective_action_siegel_package
   exact h_phys
 
 /-- Classical closed-SFT equation-of-motion data. -/
-structure ClassicalStringFieldEquationData where
-  brstComponent : ℂ
-  higherBracketComponent : ℂ
-  equationResidual : ℂ
+structure ClassicalStringFieldEquationData (StringField : Type*) where
+  brstComponent : StringField → ℂ
+  higherBracketComponent : StringField → ℂ
+  equationResidual : StringField → ℂ
 
 /-- Classical SFT EOM package:
 `E[Ψ] = Q_B Ψ + Σ (1/n!) [Ψ^n] = 0`. -/
 def ClassicalStringFieldEquationPackage
-    (data : ClassicalStringFieldEquationData) : Prop :=
-  data.equationResidual = data.brstComponent + data.higherBracketComponent ∧
-  data.equationResidual = 0
+    {StringField : Type*} (data : ClassicalStringFieldEquationData StringField) : Prop :=
+  ∀ ψ : StringField,
+    data.equationResidual ψ = data.brstComponent ψ + data.higherBracketComponent ψ ∧
+    data.equationResidual ψ = 0
 
 /-- Assumed classical closed-SFT equation package. -/
 theorem classical_string_field_equation_package
-    (data : ClassicalStringFieldEquationData)
+    {StringField : Type*}
+    (data : ClassicalStringFieldEquationData StringField)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSftClassicalEquationWithBrackets
       (ClassicalStringFieldEquationPackage data)) :
@@ -185,22 +189,24 @@ theorem string_bracket_duality_package
   exact h_phys
 
 /-- Data encoding the geometric-master-equation / homotopy-Lie identity balance. -/
-structure LInfinityHomotopyIdentityData where
-  linearizedContribution : ℂ
-  nestedBracketContribution : ℂ
-  homotopyBalance : ℂ
+structure LInfinityHomotopyIdentityData (StringField : Type*) where
+  linearizedContribution : StringField → ℂ
+  nestedBracketContribution : StringField → ℂ
+  homotopyBalance : StringField → ℂ
 
 /-- Homotopy-Lie package:
 the linearized and nested-bracket terms cancel (`Q_B E + [E,Ψ] + ... = 0`). -/
 def LInfinityHomotopyIdentityPackage
-    (data : LInfinityHomotopyIdentityData) : Prop :=
-  data.homotopyBalance =
-    data.linearizedContribution + data.nestedBracketContribution ∧
-  data.homotopyBalance = 0
+    {StringField : Type*} (data : LInfinityHomotopyIdentityData StringField) : Prop :=
+  ∀ ψ : StringField,
+    data.homotopyBalance ψ =
+      data.linearizedContribution ψ + data.nestedBracketContribution ψ ∧
+    data.homotopyBalance ψ = 0
 
 /-- Assumed homotopy-Lie identity package for classical closed SFT. -/
 theorem l_infinity_homotopy_identity_package
-    (data : LInfinityHomotopyIdentityData)
+    {StringField : Type*}
+    (data : LInfinityHomotopyIdentityData StringField)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSftLInfinityHomotopyIdentity
       (LInfinityHomotopyIdentityPackage data)) :
