@@ -8,6 +8,8 @@ namespace PhysicsLogic.StringTheory
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
+abbrev MTheoryHolographyClaim := Prop
+
 /-- Near-horizon package for coincident M2-branes. -/
 structure M2NearHorizonData where
   planckMass : ℝ
@@ -92,17 +94,17 @@ theorem d2_gauge_coupling_relation
 /-- Minimal infrared fixed-point package for 3D N=8 SYM. -/
 structure N8SymIrFixedPointData where
   gaugeCouplingMassDimension : ℝ
-  uvRSymmetryTag : String
-  irRSymmetryTag : String
-  superconformalAlgebraTag : String
+  uvRSymmetryIsSo7 : MTheoryHolographyClaim
+  irRSymmetryEnhancedToSo8 : MTheoryHolographyClaim
+  hasOsp84SuperconformalAlgebra : MTheoryHolographyClaim
 
 /-- IR fixed-point package:
 3D coupling dimension `1/2`, `so(7)->so(8)` enhancement, and `osp(8|4)`. -/
 def N8SymIrFixedPointPackage (data : N8SymIrFixedPointData) : Prop :=
   data.gaugeCouplingMassDimension = (1 : ℝ) / 2 ∧
-  data.uvRSymmetryTag = "so(7)" ∧
-  data.irRSymmetryTag = "so(8)" ∧
-  data.superconformalAlgebraTag = "osp(8|4)"
+  data.uvRSymmetryIsSo7 ∧
+  data.irRSymmetryEnhancedToSo8 ∧
+  data.hasOsp84SuperconformalAlgebra
 
 /-- Assumed 3D N=8 SYM infrared superconformal package. -/
 theorem n8_sym_ir_fixed_point_package
@@ -118,7 +120,7 @@ structure N8SymCoulombBranchSU2Data (VacuumPoint : Type*) where
   yangMillsCouplingSq : ℝ
   sigmaPeriod : ℝ
   z2Action : VacuumPoint → VacuumPoint
-  moduliSpaceTag : String
+  moduliSpaceMatchesS1R7Quotient : MTheoryHolographyClaim
 
 /-- Coulomb-branch package for the `SU(2)` theory:
 periodicity `sigma ~ sigma + gYM^2` and a `Z2` quotient involution. -/
@@ -126,7 +128,7 @@ def N8SymCoulombBranchSU2Package {VacuumPoint : Type*}
     (data : N8SymCoulombBranchSU2Data VacuumPoint) : Prop :=
   data.yangMillsCouplingSq > 0 ∧
   data.sigmaPeriod = data.yangMillsCouplingSq ∧
-  data.moduliSpaceTag = "(S^1 x R^7)/Z_2" ∧
+  data.moduliSpaceMatchesS1R7Quotient ∧
   ∀ x : VacuumPoint, data.z2Action (data.z2Action x) = x
 
 /-- Assumed Coulomb-branch package for 3D N=8 SYM at rank 2. -/
@@ -142,12 +144,12 @@ theorem n8_sym_coulomb_branch_su2_package
 /-- Coulomb-branch package for `U(N)` 3D N=8 SYM. -/
 structure N8SymCoulombBranchUNData where
   rankN : ℕ
-  moduliSpaceTag : String
+  moduliSpaceMatchesS1R7SymmetricQuotient : MTheoryHolographyClaim
 
 /-- General-rank Coulomb-branch quotient relation. -/
 def N8SymCoulombBranchUNPackage (data : N8SymCoulombBranchUNData) : Prop :=
   data.rankN > 0 ∧
-  data.moduliSpaceTag = "(S^1 x R^7)^N/S_N"
+  data.moduliSpaceMatchesS1R7SymmetricQuotient
 
 /-- Assumed general-rank Coulomb-branch package for 3D N=8 SYM. -/
 theorem n8_sym_coulomb_branch_u_n_package
@@ -186,7 +188,7 @@ structure ABJMHolographicMapData where
   tHooftCoupling : ℝ
   stringCoupling : ℝ
   stringLength : ℝ
-  geometryTag : String
+  geometryIsAdS4TimesS7Orbifold : MTheoryHolographyClaim
 
 /-- ABJM holographic-map package:
 `AdS4 x S7/Z_k`, `R^6 M11^6 = 32 pi^2 kN`, `lambda = N/k`,
@@ -198,7 +200,7 @@ def ABJMHolographicMapPackage (data : ABJMHolographicMapData) : Prop :=
   data.curvatureRadius > 0 ∧
   data.stringCoupling > 0 ∧
   data.stringLength > 0 ∧
-  data.geometryTag = "AdS_4 x S^7/Z_k" ∧
+  data.geometryIsAdS4TimesS7Orbifold ∧
   data.curvatureRadius ^ (6 : ℕ) * data.planckMass ^ (6 : ℕ) =
     32 * Real.pi ^ (2 : ℕ) * (data.levelK : ℝ) * (data.rankN : ℝ) ∧
   data.tHooftCoupling = (data.rankN : ℝ) / (data.levelK : ℝ) ∧
@@ -218,14 +220,14 @@ theorem abjm_holographic_map_package
 structure ABJMVacuumModuliData where
   rankN : ℕ
   levelK : ℕ
-  moduliSpaceTag : String
+  moduliSpaceMatchesC4ZkSymmetricQuotient : MTheoryHolographyClaim
 
 /-- ABJM vacuum moduli-space relation:
 `M = (C^4/Z_k)^N / S_N`. -/
 def ABJMVacuumModuliPackage (data : ABJMVacuumModuliData) : Prop :=
   data.rankN > 0 ∧
   data.levelK > 0 ∧
-  data.moduliSpaceTag = "(C^4/Z_k)^N/S_N"
+  data.moduliSpaceMatchesC4ZkSymmetricQuotient
 
 /-- Assumed ABJM vacuum moduli-space package. -/
 theorem abjm_vacuum_moduli_package
@@ -239,18 +241,18 @@ theorem abjm_vacuum_moduli_package
 /-- ABJM supersymmetry-enhancement data for low levels `k=1,2`. -/
 structure ABJMKOneTwoEnhancementData where
   levelK : ℕ
-  genericSuperconformalAlgebraTag : String
-  enhancedSuperconformalAlgebraTag : String
-  topologicalSymmetryTag : String
+  genericHasOsp64SuperconformalAlgebra : MTheoryHolographyClaim
+  lowLevelEnhancedToOsp84 : MTheoryHolographyClaim
+  hasTopologicalU1T : MTheoryHolographyClaim
 
 /-- ABJM enhancement package:
 generic `osp(6|4)`, and for `k=1,2` enhancement to `osp(8|4)`. -/
 def ABJMKOneTwoEnhancementPackage (data : ABJMKOneTwoEnhancementData) : Prop :=
   data.levelK > 0 ∧
-  data.genericSuperconformalAlgebraTag = "osp(6|4)" ∧
-  data.topologicalSymmetryTag = "U(1)_T" ∧
+  data.genericHasOsp64SuperconformalAlgebra ∧
+  data.hasTopologicalU1T ∧
   ((data.levelK = 1 ∨ data.levelK = 2) →
-    data.enhancedSuperconformalAlgebraTag = "osp(8|4)")
+    data.lowLevelEnhancedToOsp84)
 
 /-- Assumed ABJM `k=1,2` supersymmetry-enhancement package. -/
 theorem abjm_k_one_two_enhancement_package
@@ -263,18 +265,18 @@ theorem abjm_k_one_two_enhancement_package
 
 /-- 6D `(0,2)` superconformal representation data. -/
 structure SixDZeroTwoSuperconformalData where
-  superconformalAlgebraTag : String
-  stressTensorMultipletTag : String
-  kkMultipletFamilyTag : String
+  hasOsp264SuperconformalAlgebra : MTheoryHolographyClaim
+  hasStressTensorMultipletD02 : MTheoryHolographyClaim
+  hasKkMultipletFamilyD0kForKGeTwo : MTheoryHolographyClaim
   primaryScalingDimension : ℕ → ℝ
   stressTensorPrimaryDimension : ℝ
 
 /-- 6D `(0,2)` multiplet package:
 `osp(2,6|4)`, stress tensor multiplet `D[0,2]`, and `D[0,k]` with `Delta=2k`. -/
 def SixDZeroTwoSuperconformalPackage (data : SixDZeroTwoSuperconformalData) : Prop :=
-  data.superconformalAlgebraTag = "osp(2,6|4)" ∧
-  data.stressTensorMultipletTag = "D[0,2]" ∧
-  data.kkMultipletFamilyTag = "D[0,k], k>=2" ∧
+  data.hasOsp264SuperconformalAlgebra ∧
+  data.hasStressTensorMultipletD02 ∧
+  data.hasKkMultipletFamilyD0kForKGeTwo ∧
   data.stressTensorPrimaryDimension = 4 ∧
   ∀ k : ℕ, k ≥ 2 → data.primaryScalingDimension k = 2 * (k : ℝ)
 
@@ -315,14 +317,14 @@ theorem six_d_zero_two_to_five_d_package
 structure SixDZeroTwoVacuumModuliData where
   rankN : ℕ
   effectiveTensorMultipletCount : ℕ
-  moduliSpaceTag : String
+  moduliSpaceMatchesCenterOfMassQuotient : MTheoryHolographyClaim
 
 /-- Vacuum-moduli package:
 center-of-mass quotient and `N-1` interacting tensor multiplets at generic vacua. -/
 def SixDZeroTwoVacuumModuliPackage (data : SixDZeroTwoVacuumModuliData) : Prop :=
   data.rankN > 0 ∧
   data.effectiveTensorMultipletCount = data.rankN - 1 ∧
-  data.moduliSpaceTag = "(R^5)^N/(R^5 x S_N)"
+  data.moduliSpaceMatchesCenterOfMassQuotient
 
 /-- Assumed 6D `(0,2)` vacuum-moduli package. -/
 theorem six_d_zero_two_vacuum_moduli_package

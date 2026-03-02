@@ -1,6 +1,6 @@
 # Section 21: M-theory and holography
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 484
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/MTheoryHolography.lean`
@@ -35,6 +35,15 @@
 - `SixDZeroTwoSuperconformalPackage`
 - `SixDZeroTwoToFiveDPackage`
 - `SixDZeroTwoVacuumModuliPackage`
+
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/MTheoryHolography.lean` with all
+  listed package units assumption-wired.
+- Physics-interface hardening pass:
+  replaced string-tag placeholders in the `N=8` SYM, ABJM, and 6D `(0,2)`
+  packages with claim-typed fields (`MTheoryHolographyClaim := Prop`) so
+  superconformal-algebra/moduli-space identifications are encoded as physics
+  claims rather than literal string equalities.
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `stringMTheoryM2NearHorizonPackage`.
