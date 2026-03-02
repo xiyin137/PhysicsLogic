@@ -53,8 +53,8 @@ structure TwoDConformalCoordinateData where
 /-- Stress-tensor OPE package with a Virasoro primary:
 second-order poles encode conformal weights and first-order poles encode derivatives. -/
 structure StressTensorPrimaryOPEData where
-  holomorphicWeight : ℝ
-  antiholomorphicWeight : ℝ
+  holomorphicWeight : ScalingDimension
+  antiholomorphicWeight : ScalingDimension
   tMaxPoleOrder : ℕ
   tBarMaxPoleOrder : ℕ
   tSecondPoleCoeff : ℂ
@@ -214,13 +214,13 @@ abbrev VirasoroGenerator (n : ℤ) := VirasoroGeneratorElement n
 
 /-- Central charge c (characterizes 2D CFT) -/
 structure VirasoroCentralChargeElement where
-  value : ℝ
+  value : CentralCharge
 
 /-- Central charge c -/
 abbrev VirasoroCentralCharge := VirasoroCentralChargeElement
 
 /-- Evaluate central charge as real number -/
-def centralChargeValue (c : VirasoroCentralCharge) : ℝ := c.value
+def centralChargeValue (c : VirasoroCentralCharge) : CentralCharge := c.value
 
 /-- Virasoro algebra structure.
     The algebra is defined by [L_m, L_n] = (m-n) L_{m+n} + (c/12) m(m²-1) δ_{m,-n}.
@@ -261,11 +261,11 @@ structure VirasoroRep (c : VirasoroCentralCharge) (H : Type _) where
   action : ∀ (n : ℤ), VirasoroGenerator n → (H → H)
   vacuum : H
   /-- L_0 eigenvalue: conformal weight h -/
-  conformal_weight : ℝ
+  conformal_weight : ScalingDimension
 
 /-- Highest weight representation: a representation with a highest weight state |h⟩
     satisfying L_0|h⟩ = h|h⟩ and L_n|h⟩ = 0 for n > 0. -/
-structure HighestWeightRep (c : VirasoroCentralCharge) (h : ℝ) (H : Type _) extends
+structure HighestWeightRep (c : VirasoroCentralCharge) (h : ScalingDimension) (H : Type _) extends
   VirasoroRep c H where
   highest_weight : h = conformal_weight
   /-- The highest weight state -/
@@ -286,21 +286,21 @@ structure HighestWeightRep (c : VirasoroCentralCharge) (h : ℝ) (H : Type _) ex
 /-- Verma module element: a state at definite level in the Verma module V_{c,h}.
     States are of the form L_{-n₁} L_{-n₂} ... L_{-nₖ} |h⟩ with n₁ ≥ n₂ ≥ ... ≥ nₖ > 0.
     The level is N = n₁ + n₂ + ... + nₖ. -/
-structure VermaModuleElement (c : VirasoroCentralCharge) (h : ℝ) where
+structure VermaModuleElement (c : VirasoroCentralCharge) (h : ScalingDimension) where
   /-- The level N of this state (sum of mode indices) -/
   level : ℕ
   /-- Coefficient in the basis of descendant states at this level -/
   coefficient : ℂ
 
 /-- Verma module V_{c,h} -/
-abbrev VermaModule (c : VirasoroCentralCharge) (h : ℝ) := VermaModuleElement c h
+abbrev VermaModule (c : VirasoroCentralCharge) (h : ScalingDimension) := VermaModuleElement c h
 
 /-- A null state is a descendant that is also a highest-weight vector in the
     descendant module (`L_n|χ⟩ = 0` for all `n>0`), with zero norm.
 
     This is modeled directly on a representation state space `H` so the object
     can carry both descendant bookkeeping and annihilation data. -/
-structure NullState (c : VirasoroCentralCharge) (h : ℝ) (H : Type _) where
+structure NullState (c : VirasoroCentralCharge) (h : ScalingDimension) (H : Type _) where
   /-- Underlying representation-space vector `|χ⟩`. -/
   stateVector : H
   /-- Descendant level `N > 0`. -/
@@ -334,16 +334,16 @@ structure KacDeterminantTheory where
   /-- State space carrying the Virasoro representation used for null-state data. -/
   StateSpace : Type _
   /-- Kac determinant function det M_N(c,h) -/
-  kacDeterminant : VirasoroCentralCharge → ℝ → ℕ → ℂ
+  kacDeterminant : VirasoroCentralCharge → ScalingDimension → ℕ → ℂ
   /-- Null states exist when Kac determinant vanishes at level N.
       The Kac formula gives h_{r,s}(c) = ((m+1)r - ms)² - 1 / 4m(m+1)
       where c = 1 - 6/m(m+1). -/
-  null_states_from_kac : ∀ (c : VirasoroCentralCharge) (h : ℝ) (N : ℕ),
+  null_states_from_kac : ∀ (c : VirasoroCentralCharge) (h : ScalingDimension) (N : ℕ),
     kacDeterminant c h N = 0 → ∃ (χ : NullState c h StateSpace), χ.level = N
 
 /-- Convenience accessor for the Kac determinant from a theory -/
 noncomputable def kacDeterminant (theory : KacDeterminantTheory)
-    (c : VirasoroCentralCharge) (h : ℝ) (level : ℕ) : ℂ :=
+    (c : VirasoroCentralCharge) (h : ScalingDimension) (level : ℕ) : ℂ :=
   theory.kacDeterminant c h level
 
 /- ============= PRIMARY FIELDS IN 2D (VIRASORO PRIMARY) ============= -/
@@ -355,18 +355,18 @@ noncomputable def kacDeterminant (theory : KacDeterminantTheory)
     φ(z,z̄) → (∂f/∂z)^h (∂f̄/∂z̄)^h̄ φ(f(z), f̄(z̄)) -/
 structure Primary2D (H : Type _) where
   field : ComplexCoordinate → ComplexCoordinate → (H → H)
-  h : ℝ  -- holomorphic conformal weight
-  h_bar : ℝ  -- antiholomorphic conformal weight
+  h : ScalingDimension  -- holomorphic conformal weight
+  h_bar : ScalingDimension  -- antiholomorphic conformal weight
   /-- Non-negative weights for unitarity -/
   h_nonneg : h ≥ 0
   h_bar_nonneg : h_bar ≥ 0
 
 /-- Scaling dimension Δ = h + h̄ -/
-noncomputable def scalingDim2D {H : Type _} (φ : Primary2D H) : ℝ :=
+noncomputable def scalingDim2D {H : Type _} (φ : Primary2D H) : ScalingDimension :=
   φ.h + φ.h_bar
 
 /-- Spin s = h - h̄ -/
-noncomputable def spin2D {H : Type _} (φ : Primary2D H) : ℝ :=
+noncomputable def spin2D {H : Type _} (φ : Primary2D H) : ScalingDimension :=
   φ.h - φ.h_bar
 
 /-- Transformation law for primary fields under conformal map z → f(z):
@@ -395,7 +395,7 @@ structure Descendant2D (H : Type _) where
   creation_operators : List ℤ
 
 /-- Virasoro-primary module (tower of descendants) -/
-structure VirasoroModule (c : VirasoroCentralCharge) (h : ℝ) (H : Type _) where
+structure VirasoroModule (c : VirasoroCentralCharge) (h : ScalingDimension) (H : Type _) where
   primary : Primary2D H
   descendants : ℕ → List (Descendant2D H)
   /-- Level N: number of partitions of N -/
@@ -475,7 +475,7 @@ structure IsUnitary2D (c : VirasoroCentralCharge) where
 structure MinimalModelUnitarityTheory where
   minimal_model_unitarity : ∀ (m : ℕ) (r s : ℕ),
     m ≥ 2 → 1 ≤ r ∧ r < m → 1 ≤ s ∧ s ≤ r →
-    ∃ (c : VirasoroCentralCharge) (h : ℝ),
+    ∃ (c : VirasoroCentralCharge) (h : ScalingDimension),
       centralChargeValue c = 1 - 6 / (m * (m + 1 : ℝ)) ∧
       h = (((m + 1 : ℝ) * r - m * s)^2 - 1) / (4 * m * (m + 1 : ℝ))
 
@@ -487,16 +487,16 @@ structure MinimalModelUnitarityTheory where
     of the Virasoro module. It is a key ingredient in modular invariance. -/
 structure CharacterTheory where
   /-- Virasoro character χ_h(q) = Tr_h q^{L_0 - c/24} -/
-  virasoroCharacter : VirasoroCentralCharge → ℝ → ℂ → ℂ
+  virasoroCharacter : VirasoroCentralCharge → ScalingDimension → ℂ → ℂ
   /-- Dedekind eta function η(τ) = q^{1/24} ∏_{n≥1} (1-q^n) -/
   dedekindEta : ℂ → ℂ
   /-- Numerator factor in the character expression before dividing by η. -/
-  characterPrefactor : VirasoroCentralCharge → ℝ → ℂ → ℂ
+  characterPrefactor : VirasoroCentralCharge → ScalingDimension → ℂ → ℂ
   /-- Character of generic Verma module (no null states):
       χ_h(q) = q^{h - c/24} / η(τ) where q = e^{2πiτ}
       For representations with null states, the character is reduced.
       The character converges for |q| < 1 (i.e., Im(τ) > 0). -/
-  character_formula : ∀ (c : VirasoroCentralCharge) (h : ℝ) (q : ℂ),
+  character_formula : ∀ (c : VirasoroCentralCharge) (h : ScalingDimension) (q : ℂ),
     virasoroCharacter c h q = characterPrefactor c h q / dedekindEta q
   /-- Rocha-Caridi formula for minimal model characters.
       For minimal models M(m, m+1), the character of φ_{r,s} is:
