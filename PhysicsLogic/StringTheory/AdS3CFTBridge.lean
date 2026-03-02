@@ -181,6 +181,14 @@ structure AdS3SpectralMassShellBridgeData where
   qftSpectral : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2SpectralFlowData
   qftMassShell : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2MassShellData
 
+/-- Operator-level cross-lane data for AdS3 spectral-flow and mass-shell matching. -/
+structure AdS3SpectralMassShellOperatorBridgeData
+    (H : Type*) [AddCommGroup H] [Module ℂ H] where
+  stringSpectral : AdS3BosonicSpectralFlowData
+  stringMassShell : AdS3BosonicMassShellData
+  qftSpectral : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2SpectralFlowOperatorData H
+  qftMassShell : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2MassShellData
+
 /-- Bridge package:
 string-side AdS3 spectral-flow/mass-shell packages aligned with QFT-side current-algebra constraints. -/
 def AdS3SpectralMassShellBridgePackage
@@ -188,6 +196,22 @@ def AdS3SpectralMassShellBridgePackage
   AdS3BosonicSpectralFlowPackage data.stringSpectral /\
   AdS3BosonicMassShellPackage data.stringMassShell /\
   PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2SpectralFlowAutomorphism data.qftSpectral /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2MassShellEnergyRelation data.qftMassShell /\
+  data.stringSpectral.levelK = data.qftSpectral.levelK /\
+  data.stringMassShell.levelK = data.qftMassShell.levelK /\
+  data.stringSpectral.flowW = data.qftSpectral.flowW /\
+  data.stringMassShell.flowW = data.qftMassShell.flowW /\
+  data.stringMassShell.j0Three = data.qftMassShell.j0Three
+
+/-- Operator-level bridge package:
+string-side AdS3 spectral-flow/mass-shell packages aligned with QFT-side
+operator-valued current-algebra constraints. -/
+def AdS3SpectralMassShellOperatorBridgePackage
+    {H : Type*} [AddCommGroup H] [Module ℂ H]
+    (data : AdS3SpectralMassShellOperatorBridgeData H) : Prop :=
+  AdS3BosonicSpectralFlowPackage data.stringSpectral /\
+  AdS3BosonicMassShellPackage data.stringMassShell /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2SpectralFlowOperatorAutomorphism data.qftSpectral /\
   PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2MassShellEnergyRelation data.qftMassShell /\
   data.stringSpectral.levelK = data.qftSpectral.levelK /\
   data.stringMassShell.levelK = data.qftMassShell.levelK /\
@@ -223,6 +247,42 @@ theorem ads3_spectral_mass_shell_bridge_package
   have h_qft_spectral_pkg :
       PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2SpectralFlowAutomorphism data.qftSpectral :=
     PhysicsLogic.QFT.CFT.TwoDimensional.ads3_sl2_spectral_flow_automorphism data.qftSpectral h_qft_spectral
+  have h_qft_mass_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2MassShellEnergyRelation data.qftMassShell :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_sl2_mass_shell_energy_relation data.qftMassShell h_qft_mass
+  exact ⟨h_string_spectral_pkg, h_string_mass_pkg, h_qft_spectral_pkg, h_qft_mass_pkg,
+    h_k_spectral, h_k_mass, h_w_spectral, h_w_mass, h_j0⟩
+
+/-- Assumed operator-level bridge package for AdS3 spectral-flow and mass-shell data. -/
+theorem ads3_spectral_mass_shell_operator_bridge_package
+    {H : Type*} [AddCommGroup H] [Module ℂ H]
+    (data : AdS3SpectralMassShellOperatorBridgeData H)
+    (h_string_spectral : PhysicsAssumption
+      AssumptionId.stringAdS3BosonicSpectralFlow
+      (AdS3BosonicSpectralFlowPackage data.stringSpectral))
+    (h_string_mass : PhysicsAssumption
+      AssumptionId.stringAdS3BosonicMassShell
+      (AdS3BosonicMassShellPackage data.stringMassShell))
+    (h_qft_spectral : PhysicsAssumption
+      AssumptionId.cft2dAds3Sl2SpectralFlowAutomorphism
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2SpectralFlowOperatorAutomorphism data.qftSpectral))
+    (h_qft_mass : PhysicsAssumption
+      AssumptionId.cft2dAds3Sl2MassShellEnergyRelation
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2MassShellEnergyRelation data.qftMassShell))
+    (h_k_spectral : data.stringSpectral.levelK = data.qftSpectral.levelK)
+    (h_k_mass : data.stringMassShell.levelK = data.qftMassShell.levelK)
+    (h_w_spectral : data.stringSpectral.flowW = data.qftSpectral.flowW)
+    (h_w_mass : data.stringMassShell.flowW = data.qftMassShell.flowW)
+    (h_j0 : data.stringMassShell.j0Three = data.qftMassShell.j0Three) :
+    AdS3SpectralMassShellOperatorBridgePackage data := by
+  have h_string_spectral_pkg : AdS3BosonicSpectralFlowPackage data.stringSpectral :=
+    ads3_bosonic_spectral_flow_package data.stringSpectral h_string_spectral
+  have h_string_mass_pkg : AdS3BosonicMassShellPackage data.stringMassShell :=
+    ads3_bosonic_mass_shell_package data.stringMassShell h_string_mass
+  have h_qft_spectral_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2SpectralFlowOperatorAutomorphism data.qftSpectral :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_sl2_spectral_flow_operator_automorphism
+      data.qftSpectral h_qft_spectral
   have h_qft_mass_pkg :
       PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2MassShellEnergyRelation data.qftMassShell :=
     PhysicsLogic.QFT.CFT.TwoDimensional.ads3_sl2_mass_shell_energy_relation data.qftMassShell h_qft_mass
@@ -329,6 +389,13 @@ structure AdS3NsnsMassShellBridgeData where
   qftSpectral : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSl2SpectralFlowData
   qftMassShell : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSuperstringMassShellData
 
+/-- Operator-level cross-lane data for `(NS,NS)` AdS3 supersymmetric spectral flow. -/
+structure AdS3NsnsMassShellOperatorBridgeData
+    (H : Type*) [AddCommGroup H] [Module ℂ H] where
+  stringMassShell : AdS3NSNSSuperstringMassShellData
+  qftSpectral : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSl2SpectralFlowOperatorData H
+  qftMassShell : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSuperstringMassShellData
+
 /-- Bridge package:
 string-side `(NS,NS)` AdS3 superstring mass-shell/BPS data aligned with QFT-side
 supersymmetric `hatSL(2)_k` spectral-flow and mass-shell constraints. -/
@@ -336,6 +403,27 @@ def AdS3NsnsMassShellBridgePackage
     (data : AdS3NsnsMassShellBridgeData) : Prop :=
   AdS3NSNSSuperstringMassShellPackage data.stringMassShell /\
   PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSl2SpectralFlowAutomorphism data.qftSpectral /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSuperstringMassShellBpsPackage data.qftMassShell /\
+  data.stringMassShell.levelK = data.qftMassShell.levelK /\
+  data.stringMassShell.levelK = data.qftSpectral.levelK /\
+  data.stringMassShell.flowW = data.qftMassShell.flowW /\
+  data.stringMassShell.flowW = data.qftSpectral.flowW /\
+  data.stringMassShell.spinJ = data.qftMassShell.spinJ /\
+  data.stringMassShell.mQuantum = data.qftMassShell.mQuantum /\
+  data.stringMassShell.adsDescendantLevel = data.qftMassShell.adsDescendantLevel /\
+  data.stringMassShell.suDescendantLevel = data.qftMassShell.suDescendantLevel /\
+  data.stringMassShell.internalWeight = data.qftMassShell.internalWeight /\
+  data.stringMassShell.suSpin = data.qftMassShell.suSpin /\
+  data.stringMassShell.j0Three = data.qftMassShell.j0Three
+
+/-- Operator-level bridge package for `(NS,NS)` AdS3 superstring mass shell:
+string-side data aligned with QFT-side operator-valued supersymmetric
+`hatSL(2)_k` spectral-flow constraints. -/
+def AdS3NsnsMassShellOperatorBridgePackage
+    {H : Type*} [AddCommGroup H] [Module ℂ H]
+    (data : AdS3NsnsMassShellOperatorBridgeData H) : Prop :=
+  AdS3NSNSSuperstringMassShellPackage data.stringMassShell /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSl2SpectralFlowOperatorAutomorphism data.qftSpectral /\
   PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSuperstringMassShellBpsPackage data.qftMassShell /\
   data.stringMassShell.levelK = data.qftMassShell.levelK /\
   data.stringMassShell.levelK = data.qftSpectral.levelK /\
@@ -378,6 +466,45 @@ theorem ads3_nsns_mass_shell_bridge_package
   have h_qft_spectral_pkg :
       PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSl2SpectralFlowAutomorphism data.qftSpectral :=
     PhysicsLogic.QFT.CFT.TwoDimensional.ads3_nsns_sl2_spectral_flow_automorphism
+      data.qftSpectral h_qft_spectral
+  have h_qft_mass_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSuperstringMassShellBpsPackage data.qftMassShell :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_nsns_superstring_mass_shell_bps_package
+      data.qftMassShell h_qft_mass
+  exact ⟨h_string_mass_pkg, h_qft_spectral_pkg, h_qft_mass_pkg, h_k_mass, h_k_spectral,
+    h_w_mass, h_w_spectral, h_j, h_m, h_n, h_nsu, h_hint, h_jprime, h_j0⟩
+
+/-- Assumed operator-level bridge package for `(NS,NS)` AdS3 supersymmetric
+spectral-flow/mass-shell data. -/
+theorem ads3_nsns_mass_shell_operator_bridge_package
+    {H : Type*} [AddCommGroup H] [Module ℂ H]
+    (data : AdS3NsnsMassShellOperatorBridgeData H)
+    (h_string_mass : PhysicsAssumption
+      AssumptionId.stringAdS3NsnsSuperstringMassShell
+      (AdS3NSNSSuperstringMassShellPackage data.stringMassShell))
+    (h_qft_spectral : PhysicsAssumption
+      AssumptionId.cft2dAds3NsnsSl2SpectralFlowAutomorphism
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSl2SpectralFlowOperatorAutomorphism data.qftSpectral))
+    (h_qft_mass : PhysicsAssumption
+      AssumptionId.cft2dAds3NsnsSuperstringMassShellBps
+      (PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSuperstringMassShellBpsPackage data.qftMassShell))
+    (h_k_mass : data.stringMassShell.levelK = data.qftMassShell.levelK)
+    (h_k_spectral : data.stringMassShell.levelK = data.qftSpectral.levelK)
+    (h_w_mass : data.stringMassShell.flowW = data.qftMassShell.flowW)
+    (h_w_spectral : data.stringMassShell.flowW = data.qftSpectral.flowW)
+    (h_j : data.stringMassShell.spinJ = data.qftMassShell.spinJ)
+    (h_m : data.stringMassShell.mQuantum = data.qftMassShell.mQuantum)
+    (h_n : data.stringMassShell.adsDescendantLevel = data.qftMassShell.adsDescendantLevel)
+    (h_nsu : data.stringMassShell.suDescendantLevel = data.qftMassShell.suDescendantLevel)
+    (h_hint : data.stringMassShell.internalWeight = data.qftMassShell.internalWeight)
+    (h_jprime : data.stringMassShell.suSpin = data.qftMassShell.suSpin)
+    (h_j0 : data.stringMassShell.j0Three = data.qftMassShell.j0Three) :
+    AdS3NsnsMassShellOperatorBridgePackage data := by
+  have h_string_mass_pkg : AdS3NSNSSuperstringMassShellPackage data.stringMassShell :=
+    ads3_nsns_superstring_mass_shell_package data.stringMassShell h_string_mass
+  have h_qft_spectral_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSl2SpectralFlowOperatorAutomorphism data.qftSpectral :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_nsns_sl2_spectral_flow_operator_automorphism
       data.qftSpectral h_qft_spectral
   have h_qft_mass_pkg :
       PhysicsLogic.QFT.CFT.TwoDimensional.AdS3NsnsSuperstringMassShellBpsPackage data.qftMassShell :=
