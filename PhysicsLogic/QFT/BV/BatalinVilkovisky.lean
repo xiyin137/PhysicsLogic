@@ -1,5 +1,6 @@
 import PhysicsLogic.QFT.BV.BRST
 import PhysicsLogic.Assumptions
+import Mathlib.Data.Complex.Basic
 
 namespace PhysicsLogic.QFT.BV
 
@@ -108,6 +109,24 @@ structure BVFunctional where
   ghost_number : GhostNumber
   /-- Grassmann parity -/
   parity : GrassmannParity
+
+/-- Complex-valued BV functional on the extended field space.
+
+    This is the general interface for Lorentzian/complex contour formulations
+    where functionals need not be real-valued. -/
+structure ComplexBVFunctional where
+  /-- The functional -/
+  functional : ExtendedFieldSpace → ℂ
+  /-- Ghost number -/
+  ghost_number : GhostNumber
+  /-- Grassmann parity -/
+  parity : GrassmannParity
+
+/-- Embed a real-valued BV functional into the complex-valued interface. -/
+def BVFunctional.toComplex (F : BVFunctional) : ComplexBVFunctional where
+  functional := fun s => (F.functional s : ℂ)
+  ghost_number := F.ghost_number
+  parity := F.parity
 
 /- ============= ODD SYMPLECTIC STRUCTURE ============= -/
 
@@ -299,6 +318,20 @@ structure BVAction where
   ghost_constraint : action.ghost_number = ⟨0⟩
   parity_constraint : action.parity = GrassmannParity.even
 
+/-- Complex-valued BV action S[φ, φ*]. -/
+structure ComplexBVAction where
+  space : ExtendedFieldSpace
+  action : ComplexBVFunctional
+  ghost_constraint : action.ghost_number = ⟨0⟩
+  parity_constraint : action.parity = GrassmannParity.even
+
+/-- Embed a real-valued BV action into the complex-valued interface. -/
+def BVAction.toComplex (S : BVAction) : ComplexBVAction where
+  space := S.space
+  action := S.action.toComplex
+  ghost_constraint := S.ghost_constraint
+  parity_constraint := S.parity_constraint
+
 /-- Classical master equation: (S, S) = 0 -/
 def ClassicalMasterEquation (ab : Antibracket) (S : BVAction) : Prop :=
   (ab.bracket S.action S.action).functional = fun _ => 0
@@ -309,6 +342,13 @@ structure ProperSolution where
   ab : Antibracket
   master_eq : ClassicalMasterEquation ab action
   classical_action : ExtendedFieldSpace → ℝ
+
+/-- Proper solution with complex-valued classical action. -/
+structure ComplexProperSolution where
+  action : BVAction
+  ab : Antibracket
+  master_eq : ClassicalMasterEquation ab action
+  classical_action : ExtendedFieldSpace → ℂ
 
 /-- BV differential s = (S, ·) -/
 def bvDifferential (ab : Antibracket) (S : BVAction) (F : BVFunctional) : BVFunctional :=
@@ -413,6 +453,11 @@ structure BVPathIntegral where
     This is what appears in the exponent of the path integral. -/
 noncomputable def gaugeFixedBVAction (S : BVAction) (L : LagrangianFromGF) :
     ExtendedFieldSpace → ℝ :=
+  S.action.functional
+
+/-- Complex-valued gauge-fixed action from a complex BV action. -/
+noncomputable def gaugeFixedComplexBVAction (S : ComplexBVAction) (L : LagrangianFromGF) :
+    ExtendedFieldSpace → ℂ :=
   S.action.functional
 
 /-- Stokes' theorem for BV: Independence of gauge-fixing choice
@@ -621,14 +666,22 @@ structure BVLaplacian where
     This is the condition for anomaly-free quantization.
     Solutions to QME define consistent quantum gauge theories.
 
-    We work with real functionals, so this becomes:
-    (S, S) = 0 AND ΔS = 0 (at ℏ = 0, classical limit)
-    or the full equation order by order in ℏ. -/
+    This `QuantumMasterEquation` is the real-valued compatibility condition used
+    in existing modules; the fully complex form is
+    `ComplexQuantumMasterEquation` below. -/
 def QuantumMasterEquation (ab : Antibracket) (Δ : BVLaplacian)
     (S : BVAction) (hbar : ℝ) : Prop :=
   ∀ s : ExtendedFieldSpace,
     (ab.bracket S.action S.action).functional s =
     2 * hbar * (Δ.laplacian S.action).functional s
+
+/-- Complex-valued quantum master equation in the standard BV normalization:
+    `(S,S) = 2 i ℏ ΔS`. -/
+def ComplexQuantumMasterEquation (ab : Antibracket) (Δ : BVLaplacian)
+    (S : BVAction) (hbar : ℝ) : Prop :=
+  ∀ s : ExtendedFieldSpace,
+    ((ab.bracket S.action S.action).functional s : ℂ) =
+      2 * Complex.I * (hbar : ℂ) * ((Δ.laplacian S.action).functional s : ℂ)
 
 /-- At ℏ = 0, QME reduces to CME -/
 theorem qme_classical_limit (ab : Antibracket) (Δ : BVLaplacian) (S : BVAction) :
@@ -644,6 +697,20 @@ theorem qme_classical_limit (ab : Antibracket) (Δ : BVLaplacian) (S : BVAction)
     have := congrFun h s
     simp only [mul_zero, zero_mul]
     exact this
+
+/-- At ℏ = 0, the complex QME also reduces to CME. -/
+theorem complex_qme_classical_limit (ab : Antibracket) (Δ : BVLaplacian) (S : BVAction) :
+    ComplexQuantumMasterEquation ab Δ S 0 ↔ ClassicalMasterEquation ab S := by
+  unfold ComplexQuantumMasterEquation ClassicalMasterEquation
+  constructor
+  · intro h
+    ext s
+    have hs : ((ab.bracket S.action S.action).functional s : ℂ) = 0 := by
+      simpa using h s
+    exact Complex.ofReal_inj.mp hs
+  · intro h s
+    have hs : (ab.bracket S.action S.action).functional s = 0 := congrFun h s
+    simp [hs]
 
 /-- Quantum BV action as expansion in ℏ
 
@@ -729,6 +796,11 @@ structure BVAnomaly where
 /-- Anomaly-free theory: QME can be satisfied -/
 def AnomalyFreeBV (ab : Antibracket) (Δ : BVLaplacian) (S : BVAction) (hbar : ℝ) : Prop :=
   QuantumMasterEquation ab Δ S hbar
+
+/-- Anomaly-free theory in the complex BV normalization `(S,S) = 2 i ℏ ΔS`. -/
+def ComplexAnomalyFreeBV (ab : Antibracket) (Δ : BVLaplacian)
+    (S : BVAction) (hbar : ℝ) : Prop :=
+  ComplexQuantumMasterEquation ab Δ S hbar
 
 /- ============= ZINN-JUSTIN EQUATION ============= -/
 
