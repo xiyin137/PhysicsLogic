@@ -48,6 +48,8 @@ abbrev Dimless := Dimful
 
 /-- Scaling/conformal dimensions are dimensionless real exponents. -/
 abbrev ScalingDimension := ℝ
+/-- Picture number in NSR superstring quantization (typically integral or half-integral). -/
+abbrev PictureNumber := ℚ
 abbrev DimensionlessCoupling := ℝ
 abbrev DimensionlessMomentum := ℝ
 abbrev DimensionlessEnergy := ℝ
@@ -159,6 +161,7 @@ namespace PhysicsLogic
 abbrev Dimful := Units.Dimful
 abbrev Dimless := Units.Dimless
 abbrev ScalingDimension := Units.ScalingDimension
+abbrev PictureNumber := Units.PictureNumber
 abbrev DimensionlessCoupling := Units.DimensionlessCoupling
 abbrev DimensionlessMomentum := Units.DimensionlessMomentum
 abbrev DimensionlessEnergy := Units.DimensionlessEnergy

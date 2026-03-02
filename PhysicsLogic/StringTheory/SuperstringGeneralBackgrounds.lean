@@ -13,8 +13,8 @@ abbrev SuperBackgroundClaim := Prop
 structure NsrSectorGsoData where
   totalMatterCentralChargeLeft : CentralCharge
   totalMatterCentralChargeRight : CentralCharge
-  pictureNumberNS : ℚ
-  pictureNumberR : ℚ
+  pictureNumberNS : PictureNumber
+  pictureNumberR : PictureNumber
   hilbertSpaceDecompositionBySectors : SuperBackgroundClaim
   chiralGsoProjectionModularInvariant : SuperBackgroundClaim
 
@@ -25,7 +25,7 @@ def NsrSectorGsoPackage (data : NsrSectorGsoData) : Prop :=
   data.totalMatterCentralChargeLeft = 15 ∧
   data.totalMatterCentralChargeRight = 15 ∧
   data.pictureNumberNS = -1 ∧
-  data.pictureNumberR = (-1 / 2 : ℚ) ∧
+  data.pictureNumberR = (-1 / 2 : PictureNumber) ∧
   data.hilbertSpaceDecompositionBySectors ∧
   data.chiralGsoProjectionModularInvariant
 

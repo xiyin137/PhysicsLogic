@@ -88,7 +88,7 @@ structure PictureNumberData (GhostState : Type*) where
   genus : ℕ
   ghostChargeViolation : ℤ
   nsCanonicalPicture : ℤ
-  ramondCanonicalPicture : ℚ
+  ramondCanonicalPicture : PictureNumber
   etaZeroMode : GhostState → GhostState
   selectedState : GhostState
   zeroState : GhostState
@@ -100,7 +100,7 @@ def PictureNumberPackage {GhostState : Type*} (data : PictureNumberData GhostSta
   data.etaZeroMode data.selectedState = data.zeroState ∧
   data.ghostChargeViolation = 2 * (data.genus : ℤ) - 2 ∧
   data.nsCanonicalPicture = -1 ∧
-  data.ramondCanonicalPicture = (-1 / 2 : ℚ)
+  data.ramondCanonicalPicture = (-1 / 2 : PictureNumber)
 
 /-- Assumed picture-number/ghost-state package from Section 6.3. -/
 theorem picture_number_package
@@ -262,8 +262,8 @@ theorem superstring_physical_cohomology_package
 /-- OCQ representative data in NS and R sectors. -/
 structure SuperstringOcqRepresentativeData where
   nsMatterWeight : ScalingDimension
-  nsRepresentativePicture : ScalingDimension
-  ramondRepresentativePicture : ScalingDimension
+  nsRepresentativePicture : PictureNumber
+  ramondRepresentativePicture : PictureNumber
   ramondHighestWeightSatisfiedUpTo : ℕ
 
 /-- OCQ representative package:
@@ -273,7 +273,7 @@ def SuperstringOcqRepresentativePackage
     (data : SuperstringOcqRepresentativeData) : Prop :=
   data.nsMatterWeight = (1 / 2 : ScalingDimension) ∧
   data.nsRepresentativePicture = -1 ∧
-  data.ramondRepresentativePicture = (-1 / 2 : ScalingDimension) ∧
+  data.ramondRepresentativePicture = (-1 / 2 : PictureNumber) ∧
   data.ramondHighestWeightSatisfiedUpTo > 0
 
 /-- Assumed OCQ representative package for superstring BRST cohomology. -/
