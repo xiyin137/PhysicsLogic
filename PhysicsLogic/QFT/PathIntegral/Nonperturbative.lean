@@ -50,14 +50,14 @@ theorem discretized_phase_space_path_integral_package
 
 /-- Leading instanton-sector amplitude: one-loop prefactor times semiclassical exponential. -/
 def InstantonSemiclassicalWeight
-    (euclideanAction hbar : ℝ) (oneLoopPrefactor amplitude : ℂ) : Prop :=
+    (euclideanActionValue hbar : ℝ) (oneLoopPrefactor amplitude : ℂ) : Prop :=
   hbar ≠ 0 ∧
-  amplitude = oneLoopPrefactor * Complex.exp (-(euclideanAction / hbar : ℂ))
+  amplitude = oneLoopPrefactor * Complex.exp (-(euclideanActionValue / hbar : ℂ))
 
 /-- Euclidean instanton-saddle data with one-loop weight and zero-mode
 collective-coordinate bookkeeping. -/
 structure InstantonSaddleData where
-  euclideanAction : ℝ
+  euclideanActionValue : ℝ
   hbar : ℝ
   oneLoopPrefactor : ℂ
   amplitude : ℂ
@@ -66,18 +66,18 @@ structure InstantonSaddleData where
 
 /-- Instanton-saddle consistency package. -/
 def InstantonSaddlePackage (data : InstantonSaddleData) : Prop :=
-  data.euclideanAction > 0 ∧
+  data.euclideanActionValue > 0 ∧
   data.collectiveCoordinateMeasureIncluded = true ∧
   InstantonSemiclassicalWeight
-    data.euclideanAction data.hbar data.oneLoopPrefactor data.amplitude
+    data.euclideanActionValue data.hbar data.oneLoopPrefactor data.amplitude
 
 /-- Assumed leading instanton semiclassical weighting relation. -/
 theorem instanton_semiclassical_weight
-    (euclideanAction hbar : ℝ) (oneLoopPrefactor amplitude : ℂ)
+    (euclideanActionValue hbar : ℝ) (oneLoopPrefactor amplitude : ℂ)
     (h_phys : PhysicsAssumption
       AssumptionId.pathIntegralInstantonSemiclassicalWeight
-      (InstantonSemiclassicalWeight euclideanAction hbar oneLoopPrefactor amplitude)) :
-    InstantonSemiclassicalWeight euclideanAction hbar oneLoopPrefactor amplitude := by
+      (InstantonSemiclassicalWeight euclideanActionValue hbar oneLoopPrefactor amplitude)) :
+    InstantonSemiclassicalWeight euclideanActionValue hbar oneLoopPrefactor amplitude := by
   exact h_phys
 
 /-- Build the instanton-saddle package from semiclassical weighting plus
@@ -87,13 +87,13 @@ theorem instanton_saddle_package
     (h_phys : PhysicsAssumption
       AssumptionId.pathIntegralInstantonSemiclassicalWeight
       (InstantonSemiclassicalWeight
-        data.euclideanAction data.hbar data.oneLoopPrefactor data.amplitude))
-    (h_action : data.euclideanAction > 0)
+        data.euclideanActionValue data.hbar data.oneLoopPrefactor data.amplitude))
+    (h_action : data.euclideanActionValue > 0)
     (h_zero_modes : data.collectiveCoordinateMeasureIncluded = true) :
     InstantonSaddlePackage data := by
   exact ⟨h_action, h_zero_modes,
     instanton_semiclassical_weight
-      data.euclideanAction data.hbar data.oneLoopPrefactor data.amplitude h_phys⟩
+      data.euclideanActionValue data.hbar data.oneLoopPrefactor data.amplitude h_phys⟩
 
 /-- Sign contribution associated with a Morse index. -/
 def MorseParityContribution (morseIndex : ℕ) : ℤ :=
@@ -195,12 +195,12 @@ theorem borel_resummation_package
 /-- One Lefschetz-thimble sector contribution label. -/
 structure LefschetzSector where
   coefficient : ℤ
-  saddleAction : ℂ
+  saddleActionValue : ℂ
   fluctuationWeight : ℂ
 
 /-- Contribution of a single thimble sector. -/
 noncomputable def LefschetzSector.contribution (sector : LefschetzSector) : ℂ :=
-  (sector.coefficient : ℂ) * Complex.exp (-sector.saddleAction) * sector.fluctuationWeight
+  (sector.coefficient : ℂ) * Complex.exp (-sector.saddleActionValue) * sector.fluctuationWeight
 
 /-- Sum over finitely many Lefschetz-thimble sectors. -/
 noncomputable def LefschetzThimbleSum (sectors : List LefschetzSector) : ℂ :=

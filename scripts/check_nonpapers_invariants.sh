@@ -68,4 +68,12 @@ else
   status=1
 fi
 
+echo "[check] qft semantic typing guardrails"
+if ./scripts/check_qft_semantic_types.sh; then
+  echo "[ok] qft semantic type checks"
+else
+  echo "[fail] qft semantic type checks"
+  status=1
+fi
+
 exit "$status"
