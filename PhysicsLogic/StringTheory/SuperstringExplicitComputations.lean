@@ -20,9 +20,9 @@ structure TreeLevelSuperstringPcoData where
   ramondPairsAntiholomorphic : ℕ
   holomorphicPcoCount : ℤ
   antiholomorphicPcoCount : ℤ
-  normalizationPhase : ℂ
-  contourIntegral : ℂ
-  amplitude : ℂ
+  normalizationPhase : ComplexAmplitude
+  contourIntegral : ComplexAmplitude
+  amplitude : ComplexAmplitude
 
 /-- Tree-level PCO package:
 `d_o = n_NS + n_R/2 - 2` in each chiral sector and
@@ -67,10 +67,10 @@ theorem nsns_picture_raising_package
 
 /-- Tree-level three-point NSNS/supergravity matching data. -/
 structure NsnsThreePointSupergravityData where
-  stringCoupling : ℝ
-  gravitationalCoupling : ℝ
-  worldsheetThreePointAmplitude : ℂ
-  einsteinHilbertKinematicValue : ℂ
+  stringCoupling : DimensionlessCoupling
+  gravitationalCoupling : CouplingScale
+  worldsheetThreePointAmplitude : ComplexAmplitude
+  einsteinHilbertKinematicValue : ComplexAmplitude
   excludesR2R3AtTree : SuperstringExplicitClaim
 
 /-- Three-point NSNS package:
@@ -94,14 +94,14 @@ theorem nsns_three_point_supergravity_package
 
 /-- Tree-level four-point NSNS amplitude data. -/
 structure NsnsFourPointTreeData where
-  alphaPrime : ℝ
-  stringCoupling : ℝ
+  alphaPrime : StringSlope
+  stringCoupling : DimensionlessCoupling
   mandelstamS : ℝ
   mandelstamT : ℝ
   mandelstamU : ℝ
-  nsKinematicTensor : ℂ
-  gammaKernel : ℂ
-  reducedAmplitude : ℂ
+  nsKinematicTensor : ComplexAmplitude
+  gammaKernel : ComplexAmplitude
+  reducedAmplitude : ComplexAmplitude
 
 /-- Four-point NSNS tree package:
 `s+t+u=0` for massless external states and
@@ -126,7 +126,7 @@ theorem nsns_four_point_tree_package
 
 /-- Low-energy expansion data for the four-point gamma kernel. -/
 structure FourPointLowEnergyExpansionData where
-  alphaPrime : ℝ
+  alphaPrime : StringSlope
   mandelstamS : ℝ
   mandelstamT : ℝ
   mandelstamU : ℝ
@@ -159,14 +159,14 @@ theorem four_point_low_energy_expansion_package
 
 /-- Tree-level four-point RR amplitude data. -/
 structure RrFourPointTreeData where
-  alphaPrime : ℝ
-  stringCoupling : ℝ
+  alphaPrime : StringSlope
+  stringCoupling : DimensionlessCoupling
   mandelstamS : ℝ
   mandelstamT : ℝ
   mandelstamU : ℝ
-  rrKinematicTensor : ℂ
-  gammaKernel : ℂ
-  reducedAmplitude : ℂ
+  rrKinematicTensor : ComplexAmplitude
+  gammaKernel : ComplexAmplitude
+  reducedAmplitude : ComplexAmplitude
   sphereFourRamondNeedsNoPco : SuperstringExplicitClaim
 
 /-- Four-point RR tree package:
@@ -194,9 +194,9 @@ theorem rr_four_point_tree_package
 structure OneLoopNsnsSpinStructureData where
   externalCount : ℕ
   contourDimension : ℤ
-  spinStructurePrefactor : ℂ
-  contourIntegral : ℂ
-  oneLoopAmplitude : ℂ
+  spinStructurePrefactor : ComplexAmplitude
+  contourIntegral : ComplexAmplitude
+  oneLoopAmplitude : ComplexAmplitude
   handlesZTwoRedundancy : SuperstringExplicitClaim
   oddOddUsesSeparatedPco : SuperstringExplicitClaim
 
@@ -225,7 +225,7 @@ structure OneLoopNsnsLowMultiplicityVanishingData where
   externalCount : ℕ
   jacobiIdentitiesUsed : SuperstringExplicitClaim
   transversalityUsed : SuperstringExplicitClaim
-  oneLoopAmplitude : ℂ
+  oneLoopAmplitude : ComplexAmplitude
 
 /-- Low-multiplicity one-loop NSNS package:
 for `n ≤ 3`, Jacobi-theta identities and transversality imply vanishing amplitude. -/
@@ -247,11 +247,11 @@ theorem one_loop_nsns_low_multiplicity_vanishing_package
 
 /-- One-loop four-point NSNS data near the leading low-energy term. -/
 structure OneLoopNsnsFourPointData where
-  stringCoupling : ℝ
-  alphaPrime : ℝ
-  nsKinematicTensor : ℂ
+  stringCoupling : DimensionlessCoupling
+  alphaPrime : StringSlope
+  nsKinematicTensor : ComplexAmplitude
   leadingModularIntegral : ℝ
-  reducedAmplitude : ℂ
+  reducedAmplitude : ComplexAmplitude
 
 /-- One-loop NSNS four-point package:
 leading modular integral gives `π/6`, and the prefactor scales as
@@ -276,11 +276,11 @@ theorem one_loop_nsns_four_point_package
 
 /-- One-loop four-point RR data. -/
 structure OneLoopRrFourPointData where
-  stringCoupling : ℝ
-  alphaPrime : ℝ
-  rrKinematicTensor : ℂ
-  bosonicIntegral : ℂ
-  reducedAmplitude : ℂ
+  stringCoupling : DimensionlessCoupling
+  alphaPrime : StringSlope
+  rrKinematicTensor : ComplexAmplitude
+  bosonicIntegral : ComplexAmplitude
+  reducedAmplitude : ComplexAmplitude
   ramondThetaIdentityUsed : SuperstringExplicitClaim
 
 /-- One-loop RR four-point package:
@@ -311,10 +311,10 @@ structure HigherGenusGhostCorrelatorData where
   bInsertions : ℤ
   cInsertions : ℤ
   anomalyDifference : ℤ
-  bcCorrelator : ℂ
-  partitionThetaPrimeFormFactor : ℂ
-  betaGammaDeltaCorrelator : ℂ
-  thetaDenominator : ℂ
+  bcCorrelator : ComplexAmplitude
+  partitionThetaPrimeFormFactor : ComplexAmplitude
+  betaGammaDeltaCorrelator : ComplexAmplitude
+  thetaDenominator : ComplexAmplitude
 
 /-- Higher-genus ghost package:
 ghost-number anomaly `n-m=(2λ-1)(h-1)`, factorized `bc` correlator structure,
@@ -342,9 +342,9 @@ structure HigherLoopVacuumVanishingData where
   genus : ℕ
   holomorphicPcos : ℤ
   antiholomorphicPcos : ℤ
-  correctedIntegrandBoundaryContribution : ℂ
-  boundaryIntegral : ℂ
-  vacuumAmplitude : ℂ
+  correctedIntegrandBoundaryContribution : ComplexAmplitude
+  boundaryIntegral : ComplexAmplitude
+  vacuumAmplitude : ComplexAmplitude
   boundaryIsVerticalSlitsOnly : SuperstringExplicitClaim
   xiPeriodIntegralZero : SuperstringExplicitClaim
   supersymmetryWardIdentityUsed : SuperstringExplicitClaim
@@ -375,14 +375,14 @@ theorem higher_loop_vacuum_vanishing_package
 
 /-- Full four-supergraviton coupling-function data across perturbative orders. -/
 structure FourGravitonCouplingFunctionData where
-  alphaPrime : ℝ
-  stringCoupling : ℝ
+  alphaPrime : StringSlope
+  stringCoupling : DimensionlessCoupling
   mandelstamS : ℝ
   mandelstamT : ℝ
   mandelstamU : ℝ
-  nsKinematicTensor : ℂ
-  couplingFunction : ℝ
-  fullAmplitude : ℂ
+  nsKinematicTensor : ComplexAmplitude
+  couplingFunction : Dimless
+  fullAmplitude : ComplexAmplitude
   oneLoopAZeroShift : ℝ
   higherLoopAZeroCorrectionAbsent : SuperstringExplicitClaim
 
@@ -396,7 +396,7 @@ def FourGravitonCouplingFunctionPackage
   data.mandelstamS + data.mandelstamT + data.mandelstamU = 0 ∧
   data.fullAmplitude =
     (((Real.pi ^ (2 : ℕ) * data.stringCoupling ^ (2 : ℕ) *
-        data.alphaPrime ^ (3 : ℕ) / 16 * data.couplingFunction : ℝ) : ℂ) *
+        data.alphaPrime ^ (3 : ℕ) / 16 * data.couplingFunction.value : ℝ) : ℂ) *
       data.nsKinematicTensor) ∧
   data.oneLoopAZeroShift =
     data.stringCoupling ^ (2 : ℕ) /
