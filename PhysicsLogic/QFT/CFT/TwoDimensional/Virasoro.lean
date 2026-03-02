@@ -95,12 +95,12 @@ theorem virasoro_from_stress_tensor_ope
 /-- Cylinder energy/momentum Casimir shifts from the exponential map:
 `H = L₀ + L̄₀ - (c+c̄)/24`, `P = L₀ - L̄₀ - (c-c̄)/24`. -/
 structure CylinderCasimirShift where
-  holomorphicCentralCharge : ℝ
-  antiholomorphicCentralCharge : ℝ
-  holomorphicZeroMode : ℝ
-  antiholomorphicZeroMode : ℝ
-  hamiltonian : ℝ
-  momentum : ℝ
+  holomorphicCentralCharge : CentralCharge
+  antiholomorphicCentralCharge : CentralCharge
+  holomorphicZeroMode : ScalingDimension
+  antiholomorphicZeroMode : ScalingDimension
+  hamiltonian : ScalingDimension
+  momentum : ScalingDimension
   hamiltonianFormula :
     hamiltonian =
       holomorphicZeroMode + antiholomorphicZeroMode -
@@ -115,36 +115,36 @@ trace anomaly, Polyakov anomaly functional, and partition-function ratio. -/
 structure WeylAnomalyFunctional where
   WeylConfiguration : Type
   selectedConfiguration : WeylConfiguration
-  centralCharge : ℝ
+  centralCharge : CentralCharge
   scalarCurvature : WeylConfiguration → ℝ
   weylField : WeylConfiguration → ℝ
   kineticDensity : WeylConfiguration → ℝ
   traceStressTensor : WeylConfiguration → ℝ
-  anomalyActionFunctional : WeylConfiguration → ℝ
-  partitionFunctionRatio : WeylConfiguration → ℝ
+  anomalyActionFunctional : WeylConfiguration → ComplexActionValue
+  partitionFunctionRatio : WeylConfiguration → ComplexAmplitude
   traceAnomalyFormula :
     traceStressTensor selectedConfiguration =
       -(centralCharge / 12) * scalarCurvature selectedConfiguration
   anomalyActionFormula :
     anomalyActionFunctional selectedConfiguration =
-      -(centralCharge / (24 * Real.pi)) *
+      (-(centralCharge / (24 * Real.pi)) *
         (kineticDensity selectedConfiguration +
-          weylField selectedConfiguration * scalarCurvature selectedConfiguration)
+          weylField selectedConfiguration * scalarCurvature selectedConfiguration) : ℂ)
   partitionRatioFormula :
     partitionFunctionRatio selectedConfiguration =
-      Real.exp (-(anomalyActionFunctional selectedConfiguration))
+      Complex.exp (-(anomalyActionFunctional selectedConfiguration))
 
 /-- Propositional package form of the Weyl-anomaly data equations. -/
 def WeylAnomalyFunctionalPackage (data : WeylAnomalyFunctional) : Prop :=
   data.traceStressTensor data.selectedConfiguration =
     -(data.centralCharge / 12) * data.scalarCurvature data.selectedConfiguration ∧
   data.anomalyActionFunctional data.selectedConfiguration =
-    -(data.centralCharge / (24 * Real.pi)) *
+    (-(data.centralCharge / (24 * Real.pi)) *
       (data.kineticDensity data.selectedConfiguration +
         data.weylField data.selectedConfiguration *
-          data.scalarCurvature data.selectedConfiguration) ∧
+          data.scalarCurvature data.selectedConfiguration) : ℂ) ∧
   data.partitionFunctionRatio data.selectedConfiguration =
-    Real.exp (-(data.anomalyActionFunctional data.selectedConfiguration))
+    Complex.exp (-(data.anomalyActionFunctional data.selectedConfiguration))
 
 /-- Assumed Appendix-E Weyl/Polyakov-anomaly functional package. -/
 theorem weyl_anomaly_polyakov_functional
@@ -295,22 +295,35 @@ structure VermaModuleElement (c : VirasoroCentralCharge) (h : ℝ) where
 /-- Verma module V_{c,h} -/
 abbrev VermaModule (c : VirasoroCentralCharge) (h : ℝ) := VermaModuleElement c h
 
-/-- A null state is a descendant that is also a highest weight state (L_n|χ⟩ = 0 for n > 0).
-    Null states have zero norm and must be quotiented out for unitarity.
+/-- A null state is a descendant that is also a highest-weight vector in the
+    descendant module (`L_n|χ⟩ = 0` for all `n>0`), with zero norm.
 
-    A descendant at level N > 0 is of the form L_{-n₁}...L_{-nₖ}|h⟩ with ∑nᵢ = N.
-    A null state is simultaneously a descendant AND annihilated by all positive modes,
-    meaning it is a "primary within a Verma module" — it generates a sub-representation. -/
-structure NullState (c : VirasoroCentralCharge) (h : ℝ) where
-  state : VermaModule c h
+    This is modeled directly on a representation state space `H` so the object
+    can carry both descendant bookkeeping and annihilation data. -/
+structure NullState (c : VirasoroCentralCharge) (h : ℝ) (H : Type _) where
+  /-- Underlying representation-space vector `|χ⟩`. -/
+  stateVector : H
+  /-- Descendant level `N > 0`. -/
   level : ℕ
   level_positive : level > 0
-  /-- The state is a descendant at the given level -/
-  is_descendant : state.level = level
-  /-- Candidate norm-squared functional on Verma states. -/
-  norm_sq : VermaModule c h → ℂ
-  /-- The state has zero norm (key property: null states decouple from physical spectrum) -/
-  zero_norm : norm_sq state = 0
+  /-- Descendant mode labels `(n₁,...,n_k)` with each `n_i > 0`
+      corresponding to `L_{-n_i}` insertions. -/
+  descendantModeIndices : List ℕ
+  descendantModeIndicesPositive :
+    ∀ n : ℕ, n ∈ descendantModeIndices → n > 0
+  descendantLevelFormula : descendantModeIndices.sum = level
+  /-- Virasoro action on the ambient state space. -/
+  action : ∀ (n : ℤ), VirasoroGenerator n → (H → H)
+  /-- Distinguished zero vector in `H`. -/
+  zeroVector : H
+  /-- Positive-mode annihilation: `L_n|χ⟩ = 0` for all `n>0`. -/
+  annihilatedByPositiveModes :
+    ∀ (n : ℕ), n > 0 → ∀ (L_n : VirasoroGenerator n),
+      action n L_n stateVector = zeroVector
+  /-- Candidate norm-squared functional on `H`. -/
+  normSq : H → ℂ
+  /-- Null condition: vanishing norm. -/
+  zeroNorm : normSq stateVector = 0
 
 /-- Kac determinant theory: the Kac determinant det M_N(c,h) at level N
     determines when the Verma module V_{c,h} has null states.
@@ -318,13 +331,15 @@ structure NullState (c : VirasoroCentralCharge) (h : ℝ) where
     The Kac determinant is the Gram matrix determinant of inner products
     of all level-N states. When it vanishes, there is a zero-norm state. -/
 structure KacDeterminantTheory where
+  /-- State space carrying the Virasoro representation used for null-state data. -/
+  StateSpace : Type _
   /-- Kac determinant function det M_N(c,h) -/
   kacDeterminant : VirasoroCentralCharge → ℝ → ℕ → ℂ
   /-- Null states exist when Kac determinant vanishes at level N.
       The Kac formula gives h_{r,s}(c) = ((m+1)r - ms)² - 1 / 4m(m+1)
       where c = 1 - 6/m(m+1). -/
   null_states_from_kac : ∀ (c : VirasoroCentralCharge) (h : ℝ) (N : ℕ),
-    kacDeterminant c h N = 0 → ∃ (χ : NullState c h), χ.level = N
+    kacDeterminant c h N = 0 → ∃ (χ : NullState c h StateSpace), χ.level = N
 
 /-- Convenience accessor for the Kac determinant from a theory -/
 noncomputable def kacDeterminant (theory : KacDeterminantTheory)
