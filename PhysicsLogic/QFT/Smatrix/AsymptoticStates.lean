@@ -1,6 +1,7 @@
 -- ModularPhysics/Core/QFT/Smatrix/AsymptoticStates.lean
 import PhysicsLogic.SpaceTime.Basic
 import PhysicsLogic.QFT.Wightman.Axioms
+import PhysicsLogic.Units
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Complex.Basic
 
@@ -40,9 +41,10 @@ where they are effectively free. The key mathematical structures are:
 
     Parametrized by the particle mass m. The mass shell condition
     is the relativistic energy-momentum relation in Minkowski signature (+,-,-,-). -/
-structure OnShellMomentum (m : ℝ) where
+structure OnShellMomentum (m : InvariantMass) where
   p : Fin 4 → ℝ
-  mass_shell : (p 0)^2 - (p 1)^2 - (p 2)^2 - (p 3)^2 = m^2
+  mass_shell :
+    (p 0)^2 - (p 1)^2 - (p 2)^2 - (p 3)^2 = m.value ^ (2 : ℕ)
   positive_energy : p 0 > 0
 
 /- ============= WAVE PACKETS ============= -/
@@ -53,20 +55,20 @@ structure OnShellMomentum (m : ℝ) where
 
     where f(p) is a smooth function with sufficient decay.
     Wave packets ARE normalizable and live in ℋ, not just Φ*. -/
-structure WavePacket (m : ℝ) where
+structure WavePacket (m : InvariantMass) where
   /-- Momentum-space amplitude f(p) -/
   amplitude : OnShellMomentum m → ℂ
   /-- Finite L² norm bound (ensures normalizability) -/
-  norm_bound : ℝ
+  norm_bound : ProbabilityWeight
   norm_positive : norm_bound > 0
   /-- Amplitude is bounded (Schwartz-like decay) -/
   amplitude_bounded : ∀ p : OnShellMomentum m, ‖amplitude p‖ ≤ norm_bound
 
 /-- Multi-particle wave packet (normalizable, in Fock space ⊂ ℋ) -/
-structure MultiWavePacket (n : ℕ) (masses : Fin n → ℝ) where
+structure MultiWavePacket (n : ℕ) (masses : Fin n → InvariantMass) where
   amplitude : ((i : Fin n) → OnShellMomentum (masses i)) → ℂ
   /-- Finite norm bound ensuring normalizability -/
-  norm_bound : ℝ
+  norm_bound : ProbabilityWeight
   norm_positive : norm_bound > 0
   /-- Amplitude is bounded -/
   amplitude_bounded : ∀ momenta, ‖amplitude momenta‖ ≤ norm_bound
@@ -147,11 +149,11 @@ structure ScatteringTheoryData where
       These are plane waves: NOT normalizable.
       They satisfy ⟨p|p'⟩ = 2E_p (2π)³ δ³(p⃗ - p⃗')
       which is a distribution, not a finite number. -/
-  momentumEigenstateIn : (m : ℝ) → OnShellMomentum m → DistSp
+  momentumEigenstateIn : (m : InvariantMass) → OnShellMomentum m → DistSp
   /-- Single-particle momentum eigenstate |p,out⟩ ∈ Φ* -/
-  momentumEigenstateOut : (m : ℝ) → OnShellMomentum m → DistSp
+  momentumEigenstateOut : (m : InvariantMass) → OnShellMomentum m → DistSp
   /-- Orthogonality in distributional sense -/
-  momentum_orthogonality : ∀ (m : ℝ) (p p' : OnShellMomentum m)
+  momentum_orthogonality : ∀ (m : InvariantMass) (p p' : OnShellMomentum m)
     (h_distinct : p.p ≠ p'.p) (f : TestSp),
     pairing (momentumEigenstateIn m p) f ≠ pairing (momentumEigenstateIn m p') f ∨
     pairing (momentumEigenstateIn m p) f = 0
@@ -159,23 +161,23 @@ structure ScatteringTheoryData where
   /- === Wave packet maps === -/
 
   /-- Wave packet creates an in-state in ℋ_in (and thus in ℋ via Møller) -/
-  wavePacketToIn : ∀ {m : ℝ}, WavePacket m → InH
+  wavePacketToIn : ∀ {m : InvariantMass}, WavePacket m → InH
   /-- Wave packet creates an out-state in ℋ_out -/
-  wavePacketToOut : ∀ {m : ℝ}, WavePacket m → OutH
+  wavePacketToOut : ∀ {m : InvariantMass}, WavePacket m → OutH
   /-- Multi-particle momentum eigenstate |p₁,...,pₙ,in⟩ ∈ Φ*
 
       |p₁,...,pₙ⟩ = a†(p₁)...a†(pₙ)|0⟩ ∈ Φ*
       For identical bosons: symmetric; for identical fermions: antisymmetric. -/
-  multiMomentumIn : (n : ℕ) → (masses : Fin n → ℝ) →
+  multiMomentumIn : (n : ℕ) → (masses : Fin n → InvariantMass) →
     ((i : Fin n) → OnShellMomentum (masses i)) → DistSp
   /-- Multi-particle momentum eigenstate (out) -/
-  multiMomentumOut : (n : ℕ) → (masses : Fin n → ℝ) →
+  multiMomentumOut : (n : ℕ) → (masses : Fin n → InvariantMass) →
     ((i : Fin n) → OnShellMomentum (masses i)) → DistSp
   /-- Multi-wave packet to in-state -/
-  multiWavePacketToIn : ∀ {n : ℕ} {masses : Fin n → ℝ},
+  multiWavePacketToIn : ∀ {n : ℕ} {masses : Fin n → InvariantMass},
     MultiWavePacket n masses → InH
   /-- Multi-wave packet to out-state -/
-  multiWavePacketToOut : ∀ {n : ℕ} {masses : Fin n → ℝ},
+  multiWavePacketToOut : ∀ {n : ℕ} {masses : Fin n → InvariantMass},
     MultiWavePacket n masses → OutH
 
   /- === Asymptotic completeness === -/
@@ -185,12 +187,12 @@ structure ScatteringTheoryData where
       Every state in ℋ can be approximated by in-states.
       Bound states (if any) live in the orthogonal complement of Range(Ω₊). -/
   asymptotic_completeness_in :
-    ∀ (ψ : H) (ε : ℝ), ε > 0 →
+    ∀ (ψ : H) (ε : ProbabilityWeight), ε > 0 →
       ∃ (φ : InH), ‖innerProduct ψ ψ - innerProduct (moller_in φ) (moller_in φ)‖ < ε ∧
                       ‖innerProduct ψ (moller_in φ)‖ > ‖innerProduct ψ ψ‖ - ε
   /-- Asymptotic completeness for out-states: Ω₋ has dense range -/
   asymptotic_completeness_out :
-    ∀ (ψ : H) (ε : ℝ), ε > 0 →
+    ∀ (ψ : H) (ε : ProbabilityWeight), ε > 0 →
       ∃ (φ : OutH), ‖innerProduct ψ ψ - innerProduct (moller_out φ) (moller_out φ)‖ < ε ∧
                        ‖innerProduct ψ (moller_out φ)‖ > ‖innerProduct ψ ψ‖ - ε
 
@@ -205,12 +207,12 @@ structure ScatteringTheoryData where
       ⟨wp1 ⊗ wp2_shifted | S | wp1 ⊗ wp2_shifted⟩ →
         ⟨wp1|S|wp1⟩ · ⟨wp2|S|wp2⟩ as R → ∞ -/
   cluster_decomposition : ∀ (n m : ℕ)
-    (masses1 : Fin n → ℝ) (masses2 : Fin m → ℝ)
+    (masses1 : Fin n → InvariantMass) (masses2 : Fin m → InvariantMass)
     (wp1 : MultiWavePacket n masses1)
     (wp2 : MultiWavePacket m masses2),
-    ∀ (ε : ℝ), ε > 0 →
-      ∃ (R_min : ℝ), R_min > 0 ∧
-        ∀ (separation : ℝ), separation > R_min →
+    ∀ (ε : ProbabilityWeight), ε > 0 →
+      ∃ (R_min : LengthScale), R_min > 0 ∧
+        ∀ (separation : LengthScale), separation > R_min →
           ∃ (amp1 amp2 amp_combined : ℂ),
             ‖amp_combined - amp1 * amp2‖ < ε
 
