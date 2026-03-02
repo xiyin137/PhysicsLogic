@@ -9,20 +9,22 @@ namespace PhysicsLogic.StringTheory
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
+abbrev DbraneBosonicClaim := Prop
+
 /-- Open+closed perturbative bosonic-string data in the presence of D-brane boundaries. -/
 structure OpenClosedBosonicPerturbationData where
   alphaPrime : Real
   openStringNormalizationKo : Real
   representativeAmplitude : Complex
   representativeReducedAmplitude : Complex
-  moduliIntegralAmplitudeFunctionalComplex : Bool
-  openClosedAmplitudeHasGenusBoundaryExpansion : Bool
-  moduliDimensionRuleApplied : Bool
-  boundaryOrientationConventionFixed : Bool
-  bpzStripConjugationDefined : Bool
-  openPlumbingFixtureMapUsed : Bool
-  openChannelFactorizationPoleMatching : Bool
-  momentumDeltaFactorSeparated : Bool
+  moduliIntegralAmplitudeFunctionalComplex : DbraneBosonicClaim
+  openClosedAmplitudeHasGenusBoundaryExpansion : DbraneBosonicClaim
+  moduliDimensionRuleApplied : DbraneBosonicClaim
+  boundaryOrientationConventionFixed : DbraneBosonicClaim
+  bpzStripConjugationDefined : DbraneBosonicClaim
+  openPlumbingFixtureMapUsed : DbraneBosonicClaim
+  openChannelFactorizationPoleMatching : DbraneBosonicClaim
+  momentumDeltaFactorSeparated : DbraneBosonicClaim
 
 /-- Section 13.1 package:
 open+closed amplitudes as moduli-space integrals with boundary orientation,
@@ -31,14 +33,14 @@ def OpenClosedBosonicPerturbationPackage
     (data : OpenClosedBosonicPerturbationData) : Prop :=
   data.alphaPrime > 0 /\
   data.openStringNormalizationKo = -(1 / data.alphaPrime) /\
-  data.moduliIntegralAmplitudeFunctionalComplex = true /\
-  data.openClosedAmplitudeHasGenusBoundaryExpansion = true /\
-  data.moduliDimensionRuleApplied = true /\
-  data.boundaryOrientationConventionFixed = true /\
-  data.bpzStripConjugationDefined = true /\
-  data.openPlumbingFixtureMapUsed = true /\
-  data.openChannelFactorizationPoleMatching = true /\
-  data.momentumDeltaFactorSeparated = true
+  data.moduliIntegralAmplitudeFunctionalComplex /\
+  data.openClosedAmplitudeHasGenusBoundaryExpansion /\
+  data.moduliDimensionRuleApplied /\
+  data.boundaryOrientationConventionFixed /\
+  data.bpzStripConjugationDefined /\
+  data.openPlumbingFixtureMapUsed /\
+  data.openChannelFactorizationPoleMatching /\
+  data.momentumDeltaFactorSeparated
 
 /-- Assumed Section 13.1 open+closed perturbation package. -/
 theorem open_closed_bosonic_perturbation_package
@@ -54,20 +56,20 @@ structure DiscOpenTachyonAmplitudeData where
   alphaPrime : Real
   openCoupling : Real
   reducedThreeTachyonAmplitude : Real
-  discGhostMatterNormalizationFixed : Bool
-  tachyonCubicEffectiveInteractionMatchesThreePoint : Bool
-  fourTachyonVenezianoChannelDecomposition : Bool
-  tachyonCondensationInterpretationRetained : Bool
+  discGhostMatterNormalizationFixed : DbraneBosonicClaim
+  tachyonCubicEffectiveInteractionMatchesThreePoint : DbraneBosonicClaim
+  fourTachyonVenezianoChannelDecomposition : DbraneBosonicClaim
+  tachyonCondensationInterpretationRetained : DbraneBosonicClaim
 
 /-- Section 13.2 disc-amplitude package:
 3-point tachyon coupling and 4-point Veneziano channel structure on the disc. -/
 def DiscOpenTachyonAmplitudePackage (data : DiscOpenTachyonAmplitudeData) : Prop :=
   data.alphaPrime > 0 /\
   data.reducedThreeTachyonAmplitude = -(2 * data.openCoupling / data.alphaPrime) /\
-  data.discGhostMatterNormalizationFixed = true /\
-  data.tachyonCubicEffectiveInteractionMatchesThreePoint = true /\
-  data.fourTachyonVenezianoChannelDecomposition = true /\
-  data.tachyonCondensationInterpretationRetained = true
+  data.discGhostMatterNormalizationFixed /\
+  data.tachyonCubicEffectiveInteractionMatchesThreePoint /\
+  data.fourTachyonVenezianoChannelDecomposition /\
+  data.tachyonCondensationInterpretationRetained
 
 /-- Assumed Section 13.2 disc tachyon-amplitude package. -/
 theorem disc_open_tachyon_amplitude_package
@@ -81,22 +83,22 @@ theorem disc_open_tachyon_amplitude_package
 /-- Chan-Paton and gauge-structure data from disc amplitudes. -/
 structure DiscChanPatonGaugeData where
   stackSize : Nat
-  chanPatonFactorizationUsed : Bool
-  threeTachyonAmplitudeHasTraceOrdering : Bool
-  gaugeBosonTwoTachyonAmplitudeCommutatorStructure : Bool
-  nonAbelianCovariantDerivativeInEffectiveAction : Bool
-  adjointTachyonRepresentationUsed : Bool
+  chanPatonFactorizationUsed : DbraneBosonicClaim
+  threeTachyonAmplitudeHasTraceOrdering : DbraneBosonicClaim
+  gaugeBosonTwoTachyonAmplitudeCommutatorStructure : DbraneBosonicClaim
+  nonAbelianCovariantDerivativeInEffectiveAction : DbraneBosonicClaim
+  adjointTachyonRepresentationUsed : DbraneBosonicClaim
 
 /-- Section 13.2 Chan-Paton package:
 disc amplitudes on coincident D-branes produce nonabelian trace/commutator
 structures and adjoint tachyon couplings. -/
 def DiscChanPatonGaugePackage (data : DiscChanPatonGaugeData) : Prop :=
   data.stackSize > 0 /\
-  data.chanPatonFactorizationUsed = true /\
-  data.threeTachyonAmplitudeHasTraceOrdering = true /\
-  data.gaugeBosonTwoTachyonAmplitudeCommutatorStructure = true /\
-  data.nonAbelianCovariantDerivativeInEffectiveAction = true /\
-  data.adjointTachyonRepresentationUsed = true
+  data.chanPatonFactorizationUsed /\
+  data.threeTachyonAmplitudeHasTraceOrdering /\
+  data.gaugeBosonTwoTachyonAmplitudeCommutatorStructure /\
+  data.nonAbelianCovariantDerivativeInEffectiveAction /\
+  data.adjointTachyonRepresentationUsed
 
 /-- Assumed Section 13.2 Chan-Paton/gauge package. -/
 theorem disc_chan_paton_gauge_package
@@ -109,12 +111,12 @@ theorem disc_chan_paton_gauge_package
 
 /-- Cylinder-amplitude data for bosonic D-brane dynamics. -/
 structure CylinderBosonicDbraneAmplitudeData where
-  cylinderOpenTraceRepresentation : Bool
-  cylinderClosedBoundaryStateRepresentation : Bool
-  openClosedChannelModularCrossingUsed : Bool
-  twoBoundaryInteractionPotentialInterpretation : Bool
-  tachyonExchangeIrDivergenceIdentified : Bool
-  masslessClosedExchangeTermExtracted : Bool
+  cylinderOpenTraceRepresentation : DbraneBosonicClaim
+  cylinderClosedBoundaryStateRepresentation : DbraneBosonicClaim
+  openClosedChannelModularCrossingUsed : DbraneBosonicClaim
+  twoBoundaryInteractionPotentialInterpretation : DbraneBosonicClaim
+  tachyonExchangeIrDivergenceIdentified : DbraneBosonicClaim
+  masslessClosedExchangeTermExtracted : DbraneBosonicClaim
   masslessClosedExchangeMultiplicity : Nat
 
 /-- Section 13.3 package:
@@ -122,12 +124,12 @@ cylinder amplitudes in open and closed channels with modular duality and
 massless-exchange extraction. -/
 def CylinderBosonicDbraneAmplitudePackage
     (data : CylinderBosonicDbraneAmplitudeData) : Prop :=
-  data.cylinderOpenTraceRepresentation = true /\
-  data.cylinderClosedBoundaryStateRepresentation = true /\
-  data.openClosedChannelModularCrossingUsed = true /\
-  data.twoBoundaryInteractionPotentialInterpretation = true /\
-  data.tachyonExchangeIrDivergenceIdentified = true /\
-  data.masslessClosedExchangeTermExtracted = true /\
+  data.cylinderOpenTraceRepresentation /\
+  data.cylinderClosedBoundaryStateRepresentation /\
+  data.openClosedChannelModularCrossingUsed /\
+  data.twoBoundaryInteractionPotentialInterpretation /\
+  data.tachyonExchangeIrDivergenceIdentified /\
+  data.masslessClosedExchangeTermExtracted /\
   data.masslessClosedExchangeMultiplicity = 24
 
 /-- Assumed Section 13.3 cylinder-amplitude package. -/
@@ -144,11 +146,11 @@ structure DbraneNambuGotoTensionData where
   alphaPrime : Real
   openCoupling : Real
   braneTension : Real
-  worldvolumeReparameterizationGaugeRedundancy : Bool
-  inducedMetricFromEmbeddingFields : Bool
-  staticGaugeExpansionToQuarticDerivativeOrder : Bool
-  masslessNgBosonsMatchedToOpenStringModes : Bool
-  tensionMatchedFromLowEnergyDiscAmplitude : Bool
+  worldvolumeReparameterizationGaugeRedundancy : DbraneBosonicClaim
+  inducedMetricFromEmbeddingFields : DbraneBosonicClaim
+  staticGaugeExpansionToQuarticDerivativeOrder : DbraneBosonicClaim
+  masslessNgBosonsMatchedToOpenStringModes : DbraneBosonicClaim
+  tensionMatchedFromLowEnergyDiscAmplitude : DbraneBosonicClaim
 
 /-- Section 13.4 package:
 Nambu-Goto worldvolume dynamics and low-energy matching of D-brane tension to
@@ -159,11 +161,11 @@ def DbraneNambuGotoTensionPackage
   data.openCoupling ≠ 0 /\
   data.braneTension =
     1 / (2 * (Real.pi ^ (2 : Nat)) * data.alphaPrime * data.openCoupling ^ (2 : Nat)) /\
-  data.worldvolumeReparameterizationGaugeRedundancy = true /\
-  data.inducedMetricFromEmbeddingFields = true /\
-  data.staticGaugeExpansionToQuarticDerivativeOrder = true /\
-  data.masslessNgBosonsMatchedToOpenStringModes = true /\
-  data.tensionMatchedFromLowEnergyDiscAmplitude = true
+  data.worldvolumeReparameterizationGaugeRedundancy /\
+  data.inducedMetricFromEmbeddingFields /\
+  data.staticGaugeExpansionToQuarticDerivativeOrder /\
+  data.masslessNgBosonsMatchedToOpenStringModes /\
+  data.tensionMatchedFromLowEnergyDiscAmplitude
 
 /-- Assumed Section 13.4 Nambu-Goto/tension package. -/
 theorem dbrane_nambu_goto_tension_package
@@ -181,10 +183,10 @@ structure DbraneDilatonTDualityData where
   dualRadius : Real
   stringCoupling : Real
   dualStringCoupling : Real
-  dilatonExponentialPrefactorInAction : Bool
-  leftRightReflectionInDualCoordinate : Bool
-  tensionDimensionalReductionRelationUsed : Bool
-  energyDensityMatchUnderTDuality : Bool
+  dilatonExponentialPrefactorInAction : DbraneBosonicClaim
+  leftRightReflectionInDualCoordinate : DbraneBosonicClaim
+  tensionDimensionalReductionRelationUsed : DbraneBosonicClaim
+  energyDensityMatchUnderTDuality : DbraneBosonicClaim
 
 /-- Section 13.4.1 package:
 dilaton prefactor and T-duality relations for radius/coupling and tension
@@ -194,10 +196,10 @@ def DbraneDilatonTDualityPackage (data : DbraneDilatonTDualityData) : Prop :=
   data.compactRadius > 0 /\
   data.dualRadius = data.alphaPrime / data.compactRadius /\
   data.dualStringCoupling = Real.sqrt data.alphaPrime / data.compactRadius * data.stringCoupling /\
-  data.dilatonExponentialPrefactorInAction = true /\
-  data.leftRightReflectionInDualCoordinate = true /\
-  data.tensionDimensionalReductionRelationUsed = true /\
-  data.energyDensityMatchUnderTDuality = true
+  data.dilatonExponentialPrefactorInAction /\
+  data.leftRightReflectionInDualCoordinate /\
+  data.tensionDimensionalReductionRelationUsed /\
+  data.energyDensityMatchUnderTDuality
 
 /-- Assumed Section 13.4.1 dilaton/T-duality package. -/
 theorem dbrane_dilaton_t_duality_package
@@ -210,23 +212,23 @@ theorem dbrane_dilaton_t_duality_package
 
 /-- Gauge-field and Born-Infeld data for bosonic D-branes. -/
 structure DbraneBornInfeldGaugeData where
-  worldsheetBoundaryCouplingIncludesBandA : Bool
-  bFieldGaugeVariationCompensatedByWorldvolumeGaugeShift : Bool
-  gaugeInvariantCombinationBplusTwoPiAlphaPrimeF : Bool
-  tDualityDerivationOfFieldStrengthDependence : Bool
-  bornInfeldSqrtDetStructureForSlowlyVaryingFields : Bool
-  dbiActionIncludesDilatonAndPullbackBField : Bool
+  worldsheetBoundaryCouplingIncludesBandA : DbraneBosonicClaim
+  bFieldGaugeVariationCompensatedByWorldvolumeGaugeShift : DbraneBosonicClaim
+  gaugeInvariantCombinationBplusTwoPiAlphaPrimeF : DbraneBosonicClaim
+  tDualityDerivationOfFieldStrengthDependence : DbraneBosonicClaim
+  bornInfeldSqrtDetStructureForSlowlyVaryingFields : DbraneBosonicClaim
+  dbiActionIncludesDilatonAndPullbackBField : DbraneBosonicClaim
 
 /-- Section 13.4.2 package:
 gauge invariance and T-duality determine the DBI dependence on
 `G + B + 2 pi alpha' F` (up to derivative corrections). -/
 def DbraneBornInfeldGaugePackage (data : DbraneBornInfeldGaugeData) : Prop :=
-  data.worldsheetBoundaryCouplingIncludesBandA = true /\
-  data.bFieldGaugeVariationCompensatedByWorldvolumeGaugeShift = true /\
-  data.gaugeInvariantCombinationBplusTwoPiAlphaPrimeF = true /\
-  data.tDualityDerivationOfFieldStrengthDependence = true /\
-  data.bornInfeldSqrtDetStructureForSlowlyVaryingFields = true /\
-  data.dbiActionIncludesDilatonAndPullbackBField = true
+  data.worldsheetBoundaryCouplingIncludesBandA /\
+  data.bFieldGaugeVariationCompensatedByWorldvolumeGaugeShift /\
+  data.gaugeInvariantCombinationBplusTwoPiAlphaPrimeF /\
+  data.tDualityDerivationOfFieldStrengthDependence /\
+  data.bornInfeldSqrtDetStructureForSlowlyVaryingFields /\
+  data.dbiActionIncludesDilatonAndPullbackBField
 
 /-- Assumed Section 13.4.2 Born-Infeld/gauge package. -/
 theorem dbrane_born_infeld_gauge_package
@@ -242,12 +244,12 @@ structure DbraneGravitonDilatonExchangeData where
   alphaPrime : Real
   kappa : Real
   braneTension : Real
-  einsteinFrameRescalingUsed : Bool
-  linearizedBraneCouplingsExtracted : Bool
-  deDonderGaugeFixingUsed : Bool
-  gravitonAndDilatonPropagatorsUsed : Bool
-  masslessExchangeMatchesCylinderConstantTerm : Bool
-  kappaTensionNormalizationConsistencyChecked : Bool
+  einsteinFrameRescalingUsed : DbraneBosonicClaim
+  linearizedBraneCouplingsExtracted : DbraneBosonicClaim
+  deDonderGaugeFixingUsed : DbraneBosonicClaim
+  gravitonAndDilatonPropagatorsUsed : DbraneBosonicClaim
+  masslessExchangeMatchesCylinderConstantTerm : DbraneBosonicClaim
+  kappaTensionNormalizationConsistencyChecked : DbraneBosonicClaim
 
 /-- Section 13.5 package:
 effective-theory graviton/dilaton exchange between D-branes matches the
@@ -258,12 +260,12 @@ def DbraneGravitonDilatonExchangePackage
   data.alphaPrime > 0 /\
   data.kappa ≠ 0 /\
   data.braneTension > 0 /\
-  data.einsteinFrameRescalingUsed = true /\
-  data.linearizedBraneCouplingsExtracted = true /\
-  data.deDonderGaugeFixingUsed = true /\
-  data.gravitonAndDilatonPropagatorsUsed = true /\
-  data.masslessExchangeMatchesCylinderConstantTerm = true /\
-  data.kappaTensionNormalizationConsistencyChecked = true
+  data.einsteinFrameRescalingUsed /\
+  data.linearizedBraneCouplingsExtracted /\
+  data.deDonderGaugeFixingUsed /\
+  data.gravitonAndDilatonPropagatorsUsed /\
+  data.masslessExchangeMatchesCylinderConstantTerm /\
+  data.kappaTensionNormalizationConsistencyChecked
 
 /-- Assumed Section 13.5 graviton/dilaton exchange package. -/
 theorem dbrane_graviton_dilaton_exchange_package
@@ -279,11 +281,11 @@ structure COneZzRollingTachyonData where
   alphaPrime : Real
   stringCoupling : Real
   zzBraneMass : Real
-  zzBoundaryStateFromCylinderCrossing : Bool
-  zzOpenSpectrumContainsTachyon : Bool
-  zzMassMatchesMqmFermionThreshold : Bool
-  rollingTachyonBoundaryDeformationExactlyMarginal : Bool
-  rollingTachyonEnergyExpansionControlled : Bool
+  zzBoundaryStateFromCylinderCrossing : DbraneBosonicClaim
+  zzOpenSpectrumContainsTachyon : DbraneBosonicClaim
+  zzMassMatchesMqmFermionThreshold : DbraneBosonicClaim
+  rollingTachyonBoundaryDeformationExactlyMarginal : DbraneBosonicClaim
+  rollingTachyonEnergyExpansionControlled : DbraneBosonicClaim
 
 /-- Section 13.6.1 package:
 ZZ-brane boundary-state normalization, open-string tachyon instability, and
@@ -293,11 +295,11 @@ def COneZzRollingTachyonPackage (data : COneZzRollingTachyonData) : Prop :=
   data.stringCoupling > 0 /\
   data.zzBraneMass =
     1 / (4 * Real.pi * Real.sqrt data.alphaPrime * data.stringCoupling) /\
-  data.zzBoundaryStateFromCylinderCrossing = true /\
-  data.zzOpenSpectrumContainsTachyon = true /\
-  data.zzMassMatchesMqmFermionThreshold = true /\
-  data.rollingTachyonBoundaryDeformationExactlyMarginal = true /\
-  data.rollingTachyonEnergyExpansionControlled = true
+  data.zzBoundaryStateFromCylinderCrossing /\
+  data.zzOpenSpectrumContainsTachyon /\
+  data.zzMassMatchesMqmFermionThreshold /\
+  data.rollingTachyonBoundaryDeformationExactlyMarginal /\
+  data.rollingTachyonEnergyExpansionControlled
 
 /-- Assumed Section 13.6.1 ZZ/rolling-tachyon package. -/
 theorem cone_zz_rolling_tachyon_package
@@ -313,12 +315,12 @@ structure COneFzztLongStringData where
   alphaPrime : Real
   sParameter : Real
   zzFzztOpenStringEnergy : Real
-  fzztBoundaryWavefunctionFromCylinderCrossing : Bool
-  fzztUnitaryRangeConstraintUsed : Bool
-  fzztStableRangeWithoutRelevantBoundaryDeformation : Bool
-  longStringDoubleScalingLimitUsed : Bool
-  longStringRenormalizedEnergyFinite : Bool
-  adjointMqmDualityForLongStringScattering : Bool
+  fzztBoundaryWavefunctionFromCylinderCrossing : DbraneBosonicClaim
+  fzztUnitaryRangeConstraintUsed : DbraneBosonicClaim
+  fzztStableRangeWithoutRelevantBoundaryDeformation : DbraneBosonicClaim
+  longStringDoubleScalingLimitUsed : DbraneBosonicClaim
+  longStringRenormalizedEnergyFinite : DbraneBosonicClaim
+  adjointMqmDualityForLongStringScattering : DbraneBosonicClaim
 
 /-- Section 13.6.2 package:
 FZZT boundary data, stability range, ZZ-FZZT stretched-string energy relation,
@@ -327,12 +329,12 @@ def COneFzztLongStringPackage (data : COneFzztLongStringData) : Prop :=
   data.alphaPrime > 0 /\
   data.sParameter >= 0 /\
   data.zzFzztOpenStringEnergy = data.sParameter / Real.sqrt data.alphaPrime /\
-  data.fzztBoundaryWavefunctionFromCylinderCrossing = true /\
-  data.fzztUnitaryRangeConstraintUsed = true /\
-  data.fzztStableRangeWithoutRelevantBoundaryDeformation = true /\
-  data.longStringDoubleScalingLimitUsed = true /\
-  data.longStringRenormalizedEnergyFinite = true /\
-  data.adjointMqmDualityForLongStringScattering = true
+  data.fzztBoundaryWavefunctionFromCylinderCrossing /\
+  data.fzztUnitaryRangeConstraintUsed /\
+  data.fzztStableRangeWithoutRelevantBoundaryDeformation /\
+  data.longStringDoubleScalingLimitUsed /\
+  data.longStringRenormalizedEnergyFinite /\
+  data.adjointMqmDualityForLongStringScattering
 
 /-- Assumed Section 13.6.2 FZZT/long-string package. -/
 theorem cone_fzzt_long_string_package

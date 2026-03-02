@@ -1,6 +1,6 @@
 # Section 19: Geometric singularities and transitions
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 409
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/GeometricSingularities.lean`
@@ -69,6 +69,17 @@
 - `OrbifoldConformalManifoldDimensionFormula`
 - `ZamolodchikovMetricTwoPointNormalization`
 - `OrbifoldKTwoModuliFixedPointDistinction`
+
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/GeometricSingularities.lean`:
+  all listed Section-19 string units are present and assumption-wired.
+- Implemented in `PhysicsLogic/StringTheory/SingularityCFTBridge.lean`:
+  orbifold/DSLST/mirror/conifold cross-lane bridge packages are present.
+- Physics-interface hardening pass:
+  replaced boolean checklist fields in Section-19 string and bridge data
+  structures with claim-typed fields
+  (`GeometricSingularityClaim := Prop`, `SingularityBridgeClaim := Prop`) and
+  removed `= true` placeholders from package predicates and bridge assumptions.
 
 ## Assumption Candidates
 - Mapped `AssumptionId`: `stringSingularityNs5TaubNutTDuality`.

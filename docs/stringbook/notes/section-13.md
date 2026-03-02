@@ -1,6 +1,6 @@
 # Section 13: D-brane dynamics in bosonic string theory
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 261
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/DBraneDynamicsBosonic.lean`
@@ -63,6 +63,14 @@
 - `DbraneGravitonDilatonExchangePackage`
 - `COneZzRollingTachyonPackage`
 - `COneFzztLongStringPackage`
+
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/DBraneDynamicsBosonic.lean` with
+  all listed package units assumption-wired.
+- Physics-interface hardening pass:
+  replaced boolean checklist fields in `*Data` structures with claim-typed
+  fields (`DbraneBosonicClaim := Prop`) and removed `= true` placeholders from
+  package predicates.
 
 ## Assumption Candidates
 - Mapped `AssumptionId`: `stringDbraneDynamicsBosonicOpenClosedPerturbation`.
