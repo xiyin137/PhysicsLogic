@@ -53,9 +53,19 @@ def NambuGotoPolyakovEquivalent {D : ℕ}
   ∀ (metric : WorldsheetMetric) (embedding : Embedding D),
     ng.action embedding = poly.action metric embedding
 
+/-- Section-02 canonical interface name for Nambu-Goto worldsheet data. -/
+abbrev NambuGotoModel (D : ℕ) := NambuGotoData D
+
+/-- Section-02 canonical interface name for Polyakov worldsheet data. -/
+abbrev PolyakovModel (D : ℕ) := PolyakovData D
+
 /-- Regge trajectory relation for rotating closed strings. -/
 def ReggeTrajectory (tension energy spin : ℝ) : Prop :=
   energy ^ (2 : ℕ) = 4 * Real.pi * tension * spin
+
+/-- Section-02 canonical interface name for the rotating-string Regge law. -/
+def ReggeTrajectoryLaw (tension energy spin : ℝ) : Prop :=
+  ReggeTrajectory tension energy spin
 
 /-- Effective-string assumption: NG and Polyakov classical actions are equivalent. -/
 theorem nambu_goto_polyakov_equivalence {D : ℕ}
@@ -103,6 +113,11 @@ This is modeled as consistency data, not as a hard-coded numeric definition. -/
 def BosonicWeylAnomalyCancellation (D : ℕ) : Prop :=
   Nonempty (BosonicWeylCriticalityData D)
 
+/-- Section-02 canonical criticality interface: bosonic Weyl-anomaly cancellation
+as a consistency package (not a hard-coded dimension value). -/
+def CriticalBosonicCondition (D : ℕ) : Prop :=
+  BosonicWeylAnomalyCancellation D
+
 /-- Weyl-anomaly cancellation in the bosonic theory implies `D = 26`
 as a theorem, not as a definitional abbreviation. -/
 theorem bosonic_weyl_anomaly_cancellation_implies_dimension_eq_26
@@ -120,8 +135,17 @@ theorem bosonic_weyl_anomaly_cancellation
     (D : ℕ)
     (h_phys : PhysicsAssumption
       AssumptionId.stringBosonicCriticalDimension
-      (BosonicWeylAnomalyCancellation D)) :
+    (BosonicWeylAnomalyCancellation D)) :
     BosonicWeylAnomalyCancellation D := by
+  exact h_phys
+
+/-- Section-02 canonical criticality theorem wrapper. -/
+theorem critical_bosonic_condition
+    (D : ℕ)
+    (h_phys : PhysicsAssumption
+      AssumptionId.stringBosonicCriticalDimension
+      (CriticalBosonicCondition D)) :
+    CriticalBosonicCondition D := by
   exact h_phys
 
 end PhysicsLogic.StringTheory

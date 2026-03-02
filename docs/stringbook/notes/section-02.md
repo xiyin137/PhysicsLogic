@@ -18,6 +18,17 @@
 - `PolyakovModel`: worldsheet metric + embedding with Virasoro-constraint channel.
 - `CriticalBosonicCondition`: Weyl anomaly cancellation criterion.
 
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/EffectiveString.lean`:
+  `NambuGotoModel`,
+  `ReggeTrajectoryLaw`,
+  `PolyakovModel`,
+  `CriticalBosonicCondition`.
+- Existing assumption wiring already used:
+  `stringEffectiveNgPolyakovEquivalence`,
+  `stringEffectiveReggeTrajectory`,
+  `stringBosonicCriticalDimension`.
+
 ## Assumption Candidates
 - `string.effective.ng_polyakov_equivalence`
 - `string.effective.regge_trajectory`

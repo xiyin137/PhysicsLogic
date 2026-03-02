@@ -16,6 +16,15 @@
 - `LargeNYangMillsStringLimit`: records suppressed string interaction amplitudes at large \(N\).
 - `AsymptoticObservableFramework`: separates asymptotically flat S-matrix observables from AdS boundary-source observables.
 
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/Prologue.lean`:
+  `WeinbergWittenCompatibility`,
+  `LargeNYangMillsStringLimit`,
+  `AsymptoticObservableFramework`.
+- Existing assumption wiring already used:
+  `stringPrologueWeinbergWittenNoLocalStressTensor`,
+  `stringPrologueLargeNYmWeaklyCoupledFluxStrings`.
+
 ## Assumption Candidates
 - `string.prologue.weinberg_witten_no_local_stress_tensor`
 - `string.prologue.large_n_ym_weakly_coupled_flux_strings`

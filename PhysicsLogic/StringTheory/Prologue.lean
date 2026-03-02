@@ -12,6 +12,16 @@ structure AsymptoticScatteringData where
   OutState : Type
   amplitude : InState → OutState → ℂ
 
+/-- Section-01 canonical interface:
+separates asymptotically flat S-matrix observables from AdS/CFT-style boundary observables. -/
+structure AsymptoticObservableFramework where
+  FlatInState : Type
+  FlatOutState : Type
+  sMatrixAmplitude : FlatInState → FlatOutState → ℂ
+  BoundarySource : Type
+  BoundaryObservable : Type
+  boundaryGeneratingFunctional : BoundarySource → BoundaryObservable → ℂ
+
 /-- Abstract Weinberg-Witten compatibility statement used by this layer. -/
 def WeinbergWittenCompatibility
     (hasLocalStressTensor hasMasslessSpinTwo : Prop) : Prop :=
@@ -20,6 +30,13 @@ def WeinbergWittenCompatibility
 /-- Large-N weak-coupling proxy for flux-string splitting/joining amplitudes. -/
 def LargeNFluxStringSuppression (N : ℕ) (splittingAmplitude : ℝ) : Prop :=
   ∃ c : ℝ, 0 ≤ c ∧ |splittingAmplitude| ≤ c / (N + 1 : ℝ)
+
+/-- Section-01 canonical large-`N` flux-string interaction interface:
+both splitting and joining channels are `O(1/N)`-suppressed. -/
+def LargeNYangMillsStringLimit
+    (N : ℕ) (splittingAmplitude joiningAmplitude : ℝ) : Prop :=
+  LargeNFluxStringSuppression N splittingAmplitude ∧
+    LargeNFluxStringSuppression N joiningAmplitude
 
 /-- Prologue-level Weinberg-Witten incompatibility assumption. -/
 theorem weinberg_witten_no_local_stress_tensor
@@ -39,5 +56,19 @@ theorem largeN_ym_weakly_coupled_flux_strings
       (LargeNFluxStringSuppression N splittingAmplitude)) :
     LargeNFluxStringSuppression N splittingAmplitude := by
   exact h_phys
+
+/-- Section-01 canonical large-`N` flux-string package from separate
+splitting/joining suppression assumptions. -/
+theorem largeN_yang_mills_string_limit
+    (N : ℕ)
+    (splittingAmplitude joiningAmplitude : ℝ)
+    (h_split : PhysicsAssumption
+      AssumptionId.stringPrologueLargeNYmWeaklyCoupledFluxStrings
+      (LargeNFluxStringSuppression N splittingAmplitude))
+    (h_join : PhysicsAssumption
+      AssumptionId.stringPrologueLargeNYmWeaklyCoupledFluxStrings
+      (LargeNFluxStringSuppression N joiningAmplitude)) :
+    LargeNYangMillsStringLimit N splittingAmplitude joiningAmplitude := by
+  exact ⟨h_split, h_join⟩
 
 end PhysicsLogic.StringTheory

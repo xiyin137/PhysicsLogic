@@ -32,6 +32,10 @@ def PhysicalStatesAsBRSTCohomology (data : BosonicBRSTData) : Prop :=
 def SatisfiesSiegelConstraint (b0Left b0Right : ℝ) : Prop :=
   b0Left = 0 ∧ b0Right = 0
 
+/-- Section-03 canonical interface name for Siegel constraints. -/
+def SiegelConstraint (b0Left b0Right : ℝ) : Prop :=
+  SatisfiesSiegelConstraint b0Left b0Right
+
 def SatisfiesLevelMatching (leftLevel rightLevel : ℕ) : Prop :=
   leftLevel = rightLevel
 
@@ -42,6 +46,10 @@ def SiegelImpliesLevelMatching
 /-- Bosonic-string mass relation in the BRST/Siegel framework. -/
 def BosonicMassSpectrumFormula (alphaPrime massSq : ℝ) (N : ℕ) : Prop :=
   massSq = (4 / alphaPrime) * ((N : ℝ) - 1)
+
+/-- Section-03 canonical interface name for the closed-string mass-shell relation. -/
+def BosonicMassShell (alphaPrime massSq : ℝ) (N : ℕ) : Prop :=
+  BosonicMassSpectrumFormula alphaPrime massSq N
 
 /-- BRST cohomology identification for physical bosonic-string states. -/
 theorem brst_physical_states_cohomology
@@ -68,8 +76,18 @@ theorem bosonic_mass_spectrum_formula
     (N : ℕ)
     (h_phys : PhysicsAssumption
       AssumptionId.stringBosonicMassSpectrumFormula
-      (BosonicMassSpectrumFormula alphaPrime massSq N)) :
+    (BosonicMassSpectrumFormula alphaPrime massSq N)) :
     BosonicMassSpectrumFormula alphaPrime massSq N := by
+  exact h_phys
+
+/-- Section-03 canonical mass-shell theorem wrapper. -/
+theorem bosonic_mass_shell
+    (alphaPrime massSq : ℝ)
+    (N : ℕ)
+    (h_phys : PhysicsAssumption
+      AssumptionId.stringBosonicMassSpectrumFormula
+      (BosonicMassShell alphaPrime massSq N)) :
+    BosonicMassShell alphaPrime massSq N := by
   exact h_phys
 
 end PhysicsLogic.StringTheory

@@ -43,6 +43,19 @@ def WeylToSpacetimeEOM {Target : Type*}
 def COneTachyonMassless (k0 k1 : ℝ) : Prop :=
   k0 * k0 = k1 * k1
 
+/-- Section-03 canonical interface bundling sigma-model backgrounds, beta-system,
+and effective equations of motion data. -/
+structure BackgroundBetaSystem (Target : Type*) where
+  background : SigmaModelBackground Target
+  beta : SigmaModelBetaData Target
+  effectiveEom : SpacetimeEffectiveEOMData Target
+
+/-- Section-03 canonical consistency relation:
+vanishing worldsheet betas imply spacetime effective equations. -/
+def BackgroundBetaSystemConsistency {Target : Type*}
+    (system : BackgroundBetaSystem Target) : Prop :=
+  WeylToSpacetimeEOM system.beta system.effectiveEom
+
 /-- Assumed vanishing of beta functions at a Weyl-invariant background. -/
 theorem string_background_weyl_beta_vanishing {Target : Type*}
     (β : SigmaModelBetaData Target)
@@ -58,8 +71,17 @@ theorem string_background_beta_to_spacetime_eom {Target : Type*}
     (eom : SpacetimeEffectiveEOMData Target)
     (h_phys : PhysicsAssumption
       AssumptionId.stringBackgroundBetaToSpacetimeEom
-      (WeylToSpacetimeEOM β eom)) :
+    (WeylToSpacetimeEOM β eom)) :
     WeylToSpacetimeEOM β eom := by
+  exact h_phys
+
+/-- Section-03 canonical theorem wrapper for background beta-system consistency. -/
+theorem background_beta_system_consistency {Target : Type*}
+    (system : BackgroundBetaSystem Target)
+    (h_phys : PhysicsAssumption
+      AssumptionId.stringBackgroundBetaToSpacetimeEom
+      (BackgroundBetaSystemConsistency system)) :
+    BackgroundBetaSystemConsistency system := by
   exact h_phys
 
 /-- Assumed c=1 relation for the physical asymptotic scalar mode. -/

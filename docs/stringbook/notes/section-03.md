@@ -18,6 +18,23 @@
 - `BosonicMassShell` relation for level \(N\).
 - `BackgroundBetaSystem` interface linking worldsheet Weyl conditions to spacetime effective-field equations.
 
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/BosonicQuantization.lean`:
+  `BRSTComplex`,
+  `BRSTClosed`,
+  `BRSTExact`,
+  `SiegelConstraint`,
+  `BosonicMassShell`.
+- Implemented in `PhysicsLogic/StringTheory/Backgrounds.lean`:
+  `BackgroundBetaSystem`.
+- Existing assumption wiring already used:
+  `stringBosonicBrstPhysicalStatesCohomology`,
+  `stringBosonicSiegelImpliesLevelMatching`,
+  `stringBosonicMassSpectrumFormula`,
+  `stringBackgroundWeylBetaVanishing`,
+  `stringBackgroundBetaToSpacetimeEom`,
+  `stringBackgroundCOneTachyonMassless`.
+
 ## Assumption Candidates
 - `string.bosonic.brst_physical_states_cohomology`
 - `string.bosonic.siegel_implies_level_matching`
