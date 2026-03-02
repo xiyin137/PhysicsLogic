@@ -577,9 +577,9 @@ structure AdS3MixedFluxPulsatingIntegralQuantizationData where
   radiusSquared : StringSlope
   excitationNumber : ℤ
   maximalRadius : LengthScale
-  bohrSommerfeldPeriod : ℝ
+  bohrSommerfeldPeriod : Angle
   bohrSommerfeldPeriodRepresentsTwoPi : AdS3CftClaim
-  bohrSommerfeldIntegral : ℝ
+  bohrSommerfeldIntegral : Angle
 
 /-- Mixed-flux pulsating integral-quantization package:
 `2 ∮_0^{r0} dr (R^2/alpha') (dot r/(1+r^2)) = period * n`,
