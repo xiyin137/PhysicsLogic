@@ -1,8 +1,8 @@
 # Physics Assumptions Report
 
 - Registered assumptions: `260`
-- Assumptions referenced in non-Papers modules: `260`
-- Assumptions with zero references outside registry: `0`
+- Assumptions referenced in non-Papers modules: `253`
+- Assumptions with zero references outside registry: `7`
 
 | AssumptionId | Payload | Core refs | Papers refs | Total refs | Description |
 | --- | --- | ---: | ---: | ---: | --- |
@@ -73,11 +73,11 @@
 | `haagRuelleEqualsLsz` | `qft.smatrix.haag_ruelle_equals_lsz` | 1 | 0 | 1 | Haag-Ruelle and LSZ constructions give identical scattering amplitudes in the current abstraction layer. |
 | `holevoBound` | `qi.holevo_bound` | 1 | 0 | 1 | Classical capacity of the identity channel is bounded by log(dim) in this abstract channel model. |
 | `lorentzBoostPreservesMetric` | `spacetime.lorentz_boost_preserves_metric` | 1 | 0 | 1 | The explicit x-direction boost matrix preserves the Minkowski inner product. |
-| `lorentzComposePreservesMetric` | `sym.lorentz.compose_preserves_metric` | 6 | 0 | 6 | Composition of Lorentz transformations preserves the Minkowski inner product. |
+| `lorentzComposePreservesMetric` | `sym.lorentz.compose_preserves_metric` | 0 | 0 | 0 | Composition of Lorentz transformations preserves the Minkowski inner product. |
 | `lorentzGroupInvMulCancel` | `sym.lorentz.group.inv_mul_cancel` | 1 | 0 | 1 | Lorentz inverse is a left inverse in the chosen abstraction. |
-| `lorentzGroupMulAssoc` | `sym.lorentz.group.mul_assoc` | 1 | 0 | 1 | Lorentz multiplication is associative in the chosen abstraction. |
-| `lorentzGroupMulOne` | `sym.lorentz.group.mul_one` | 1 | 0 | 1 | Lorentz identity is a right unit in the chosen abstraction. |
-| `lorentzGroupOneMul` | `sym.lorentz.group.one_mul` | 1 | 0 | 1 | Lorentz identity is a left unit in the chosen abstraction. |
+| `lorentzGroupMulAssoc` | `sym.lorentz.group.mul_assoc` | 0 | 0 | 0 | Lorentz multiplication is associative in the chosen abstraction. |
+| `lorentzGroupMulOne` | `sym.lorentz.group.mul_one` | 0 | 0 | 0 | Lorentz identity is a right unit in the chosen abstraction. |
+| `lorentzGroupOneMul` | `sym.lorentz.group.one_mul` | 0 | 0 | 0 | Lorentz identity is a left unit in the chosen abstraction. |
 | `lorentzInversePreservesMetric` | `sym.lorentz.inverse_preserves_metric` | 6 | 0 | 6 | The explicit Lorentz inverse construction preserves the Minkowski inner product. |
 | `lszKleinGordonOperatorExists` | `qft.smatrix.lsz.klein_gordon_operator_exists` | 1 | 0 | 1 | A suitable Klein-Gordon operator action is available in the abstract LSZ functional setting. |
 | `lszReductionFormula` | `qft.smatrix.lsz.reduction_formula` | 1 | 0 | 1 | The LSZ reduction identity for amplitudes is assumed in the current abstraction layer. |
@@ -85,9 +85,9 @@
 | `osReconstruction` | `euclidean.os_reconstruction` | 1 | 0 | 1 | OS axioms provide analytic continuation to Wightman data in this abstract reconstruction interface. |
 | `perfectFluidEnergyConditions` | `gr.perfect_fluid_energy_conditions` | 1 | 0 | 1 | Perfect-fluid stress tensor satisfies WEC and NEC under the declared equation-of-state bounds. |
 | `poincareGroupInvMulCancel` | `sym.poincare.group.inv_mul_cancel` | 1 | 0 | 1 | Poincare inverse is a left inverse in the chosen abstraction. |
-| `poincareGroupMulAssoc` | `sym.poincare.group.mul_assoc` | 1 | 0 | 1 | Poincare multiplication is associative in the chosen abstraction. |
-| `poincareGroupMulOne` | `sym.poincare.group.mul_one` | 1 | 0 | 1 | Poincare identity is a right unit in the chosen abstraction. |
-| `poincareGroupOneMul` | `sym.poincare.group.one_mul` | 1 | 0 | 1 | Poincare identity is a left unit in the chosen abstraction. |
+| `poincareGroupMulAssoc` | `sym.poincare.group.mul_assoc` | 0 | 0 | 0 | Poincare multiplication is associative in the chosen abstraction. |
+| `poincareGroupMulOne` | `sym.poincare.group.mul_one` | 0 | 0 | 0 | Poincare identity is a right unit in the chosen abstraction. |
+| `poincareGroupOneMul` | `sym.poincare.group.one_mul` | 0 | 0 | 0 | Poincare identity is a left unit in the chosen abstraction. |
 | `qcdAsymptoticFreedom` | `rg.gellmannlow.qcd_asymptotic_freedom` | 1 | 0 | 1 | One-loop QCD coefficient has the asymptotic-freedom sign in the Nf < 17 regime under the chosen convention. |
 | `qftSusy3dN2SigmaDtermRelation` | `qft.susy.3d.n2.sigma_dterm_relation` | 1 | 0 | 1 | The 3D N=2 Chern-Simons-matter D-term elimination relation for sigma is assumed in this abstraction layer. |
 | `qftSusyN1HolomorphicOneLoopBeta` | `qft.susy.n1.holomorphic_one_loop_beta` | 1 | 0 | 1 | Holomorphic one-loop exact Wilsonian beta-function structure for 4D N=1 gauge coupling is assumed in this abstraction layer. |
