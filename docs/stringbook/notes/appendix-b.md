@@ -20,6 +20,14 @@
 - `BorelResummationData`: Borel transform/reconstruction interface with analyticity conditions.
 - `LefschetzThimbleDecomposition`: decomposition of integration cycles into thimbles with integer intersection numbers.
 
+## Formalization Progress
+- Implemented in `PhysicsLogic/QFT/PathIntegral/Nonperturbative.lean`:
+  `DiscretizedPhaseSpacePathIntegral`, `InstantonSaddleData`,
+  `WittenIndexTopologicalInvariance`, `BorelResummationData`,
+  `LefschetzThimbleDecomposition`.
+- Implemented in `PhysicsLogic/QFT/PathIntegral/Supergeometry.lean`:
+  `GrassmannPathIntegralData`.
+
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `pathIntegralDiscretizedContinuumLimit`.
 - Candidate new `AssumptionId`: `pathIntegralInstantonSemiclassicalWeight`.

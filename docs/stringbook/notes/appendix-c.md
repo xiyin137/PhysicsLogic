@@ -19,6 +19,12 @@
 - `BVGaugeFixingFromFermion`: derivation of gauge-fixed action from gauge-fixing fermion data.
 - `WilsonianBVMasterPreservation`: stability of BV master equation under integrating out high modes.
 
+## Formalization Progress
+- Implemented in `PhysicsLogic/QFT/BV/BatalinVilkovisky.lean`:
+  `GaugeOrbitQuotientPathIntegral`, `FaddeevPopovGaugeSliceData`,
+  `BVMasterEquationExpansion`, `BVGaugeFixingFromFermion`,
+  `WilsonianBVMasterPreservation`.
+
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `bvFaddeevPopovGaugeSliceRegular`.
 - Candidate new `AssumptionId`: `bvMasterEquationClosureHierarchy`.

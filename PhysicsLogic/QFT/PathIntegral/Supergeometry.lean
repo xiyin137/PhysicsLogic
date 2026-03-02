@@ -51,6 +51,22 @@ structure BerezinIntegral (G : GrassmannAlgebra) where
   /-- Integration of a fermionic generator gives 1 -/
   generator_integral : ∀ (θ : G.carrier), G.grading θ = 1 → integrate θ = 1
 
+/-- Appendix-B fermionic path-integral data:
+Grassmann/Berezin integration with thermal anti-periodic boundary conditions
+and second-class-constraint handling via Dirac brackets. -/
+structure GrassmannPathIntegralData where
+  grassmannAlgebra : GrassmannAlgebra
+  berezinIntegral : BerezinIntegral grassmannAlgebra
+  thermalPeriod : ℝ
+  antiPeriodicBoundaryConditions : Bool
+  secondClassConstraintsHandledByDiracBracket : Bool
+
+/-- Consistency package for Grassmann path-integral data. -/
+def GrassmannPathIntegralPackage (data : GrassmannPathIntegralData) : Prop :=
+  data.thermalPeriod > 0 ∧
+  data.antiPeriodicBoundaryConditions = true ∧
+  data.secondClassConstraintsHandledByDiracBracket = true
+
 /- ============= SUPER VECTOR SPACES AND SUPERMANIFOLDS ============= -/
 
 /-- Super vector space: ℤ/2-graded vector space V = V₀ ⊕ V₁.

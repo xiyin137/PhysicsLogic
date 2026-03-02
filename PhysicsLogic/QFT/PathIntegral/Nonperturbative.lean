@@ -13,6 +13,20 @@ open scoped BigOperators
 def DiscretizedPathIntegralConverges (approx : ℕ → ℂ) (continuum : ℂ) : Prop :=
   ∀ ε : ℝ, ε > 0 → ∃ N0 : ℕ, ∀ N : ℕ, N ≥ N0 → ‖approx N - continuum‖ < ε
 
+/-- Canonical discretized phase-space path-integral interface for Appendix B:
+finite-step approximants, continuum amplitude, and Gaussian momentum
+integration to the Lagrangian form. -/
+structure DiscretizedPhaseSpacePathIntegral where
+  approximant : ℕ → ℂ
+  continuumAmplitude : ℂ
+  gaussianMomentumIntegrationUsed : Bool
+
+/-- Package for discretized phase-space path integral with continuum limit. -/
+def DiscretizedPhaseSpacePathIntegralPackage
+    (data : DiscretizedPhaseSpacePathIntegral) : Prop :=
+  DiscretizedPathIntegralConverges data.approximant data.continuumAmplitude ∧
+  data.gaussianMomentumIntegrationUsed = true
+
 /-- Assumed continuum limit for a discretized path-integral family. -/
 theorem discretized_path_integral_continuum_limit
     (approx : ℕ → ℂ) (continuum : ℂ)
@@ -22,11 +36,40 @@ theorem discretized_path_integral_continuum_limit
     DiscretizedPathIntegralConverges approx continuum := by
   exact h_phys
 
+/-- Build the discretized phase-space package from the continuum-limit
+assumption plus Gaussian momentum-integration bookkeeping. -/
+theorem discretized_phase_space_path_integral_package
+    (data : DiscretizedPhaseSpacePathIntegral)
+    (h_phys : PhysicsAssumption
+      AssumptionId.pathIntegralDiscretizedContinuumLimit
+      (DiscretizedPathIntegralConverges data.approximant data.continuumAmplitude))
+    (h_gauss : data.gaussianMomentumIntegrationUsed = true) :
+    DiscretizedPhaseSpacePathIntegralPackage data := by
+  exact ⟨discretized_path_integral_continuum_limit data.approximant data.continuumAmplitude h_phys,
+    h_gauss⟩
+
 /-- Leading instanton-sector amplitude: one-loop prefactor times semiclassical exponential. -/
 def InstantonSemiclassicalWeight
     (euclideanAction hbar : ℝ) (oneLoopPrefactor amplitude : ℂ) : Prop :=
   hbar ≠ 0 ∧
   amplitude = oneLoopPrefactor * Complex.exp (-(euclideanAction / hbar : ℂ))
+
+/-- Euclidean instanton-saddle data with one-loop weight and zero-mode
+collective-coordinate bookkeeping. -/
+structure InstantonSaddleData where
+  euclideanAction : ℝ
+  hbar : ℝ
+  oneLoopPrefactor : ℂ
+  amplitude : ℂ
+  zeroModeCount : ℕ
+  collectiveCoordinateMeasureIncluded : Bool
+
+/-- Instanton-saddle consistency package. -/
+def InstantonSaddlePackage (data : InstantonSaddleData) : Prop :=
+  data.euclideanAction > 0 ∧
+  data.collectiveCoordinateMeasureIncluded = true ∧
+  InstantonSemiclassicalWeight
+    data.euclideanAction data.hbar data.oneLoopPrefactor data.amplitude
 
 /-- Assumed leading instanton semiclassical weighting relation. -/
 theorem instanton_semiclassical_weight
@@ -37,6 +80,21 @@ theorem instanton_semiclassical_weight
     InstantonSemiclassicalWeight euclideanAction hbar oneLoopPrefactor amplitude := by
   exact h_phys
 
+/-- Build the instanton-saddle package from semiclassical weighting plus
+explicit positivity/zero-mode-measure assumptions. -/
+theorem instanton_saddle_package
+    (data : InstantonSaddleData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.pathIntegralInstantonSemiclassicalWeight
+      (InstantonSemiclassicalWeight
+        data.euclideanAction data.hbar data.oneLoopPrefactor data.amplitude))
+    (h_action : data.euclideanAction > 0)
+    (h_zero_modes : data.collectiveCoordinateMeasureIncluded = true) :
+    InstantonSaddlePackage data := by
+  exact ⟨h_action, h_zero_modes,
+    instanton_semiclassical_weight
+      data.euclideanAction data.hbar data.oneLoopPrefactor data.amplitude h_phys⟩
+
 /-- Sign contribution associated with a Morse index. -/
 def MorseParityContribution (morseIndex : ℕ) : ℤ :=
   if morseIndex % 2 = 0 then 1 else -1
@@ -46,6 +104,14 @@ def WittenIndexMorseComplex (wittenIndex : ℤ) (morseIndices : List ℕ) : Prop
   wittenIndex =
     morseIndices.foldl (fun acc m => acc + MorseParityContribution m) 0
 
+/-- Q-exact deformation invariance interface for the Witten index, linked to
+Morse-complex data. -/
+def WittenIndexTopologicalInvariance
+    (wittenIndex : ℤ) (morseIndices : List ℕ)
+    (qExactDeformationPreservesIndex : Bool) : Prop :=
+  qExactDeformationPreservesIndex = true ∧
+  WittenIndexMorseComplex wittenIndex morseIndices
+
 /-- Assumed Witten-index/Morse-complex identification. -/
 theorem witten_index_morse_complex
     (wittenIndex : ℤ) (morseIndices : List ℕ)
@@ -54,6 +120,19 @@ theorem witten_index_morse_complex
       (WittenIndexMorseComplex wittenIndex morseIndices)) :
     WittenIndexMorseComplex wittenIndex morseIndices := by
   exact h_phys
+
+/-- Build the Witten-index topological-invariance interface from
+Witten-index/Morse-complex assumptions and Q-exact deformation tagging. -/
+theorem witten_index_topological_invariance
+    (wittenIndex : ℤ) (morseIndices : List ℕ)
+    (qExactDeformationPreservesIndex : Bool)
+    (h_phys : PhysicsAssumption
+      AssumptionId.pathIntegralWittenIndexMorseComplex
+      (WittenIndexMorseComplex wittenIndex morseIndices))
+    (h_q_exact : qExactDeformationPreservesIndex = true) :
+    WittenIndexTopologicalInvariance
+      wittenIndex morseIndices qExactDeformationPreservesIndex := by
+  exact ⟨h_q_exact, witten_index_morse_complex wittenIndex morseIndices h_phys⟩
 
 /-- Sokal-Watson-style factorial remainder bound for a perturbative expansion. -/
 def SokalWatsonRemainderBound
@@ -68,6 +147,24 @@ def BorelSokalWatsonCriterion
   SokalWatsonRemainderBound f coeff A σ ∧
   ∀ g : ℝ, 0 < g → f g = borelResummed g
 
+/-- Borel-resummation data with explicit saddle bookkeeping. -/
+structure BorelResummationData where
+  asymptoticSeries : ℝ → ℂ
+  borelResummed : ℝ → ℂ
+  coefficients : ℕ → ℂ
+  remainderBoundA : ℝ
+  remainderScaleSigma : ℝ
+  additionalSaddlesHandledByThimbleDecomposition : Bool
+
+/-- Package for Borel reconstruction plus remainder control. -/
+def BorelResummationPackage (data : BorelResummationData) : Prop :=
+  data.remainderBoundA > 0 ∧
+  data.remainderScaleSigma > 0 ∧
+  data.additionalSaddlesHandledByThimbleDecomposition = true ∧
+  BorelSokalWatsonCriterion
+    data.asymptoticSeries data.borelResummed
+    data.coefficients data.remainderBoundA data.remainderScaleSigma
+
 /-- Assumed Sokal-Watson/Borel criterion in the current abstraction layer. -/
 theorem borel_sokal_watson_criterion
     (f borelResummed : ℝ → ℂ) (coeff : ℕ → ℂ) (A σ : ℝ)
@@ -76,6 +173,24 @@ theorem borel_sokal_watson_criterion
       (BorelSokalWatsonCriterion f borelResummed coeff A σ)) :
     BorelSokalWatsonCriterion f borelResummed coeff A σ := by
   exact h_phys
+
+/-- Build the Borel-resummation package from the Sokal-Watson criterion and
+explicit positivity/saddle-bookkeeping constraints. -/
+theorem borel_resummation_package
+    (data : BorelResummationData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.pathIntegralBorelSokalWatsonCriterion
+      (BorelSokalWatsonCriterion
+        data.asymptoticSeries data.borelResummed
+        data.coefficients data.remainderBoundA data.remainderScaleSigma))
+    (h_A : data.remainderBoundA > 0)
+    (h_sigma : data.remainderScaleSigma > 0)
+    (h_thimble : data.additionalSaddlesHandledByThimbleDecomposition = true) :
+    BorelResummationPackage data := by
+  exact ⟨h_A, h_sigma, h_thimble,
+    borel_sokal_watson_criterion
+      data.asymptoticSeries data.borelResummed
+      data.coefficients data.remainderBoundA data.remainderScaleSigma h_phys⟩
 
 /-- One Lefschetz-thimble sector contribution label. -/
 structure LefschetzSector where
@@ -95,6 +210,12 @@ noncomputable def LefschetzThimbleSum (sectors : List LefschetzSector) : ℂ :=
 def LefschetzThimbleExpansion (amplitude : ℂ) (sectors : List LefschetzSector) : Prop :=
   amplitude = LefschetzThimbleSum sectors
 
+/-- Lefschetz-thimble decomposition interface with explicit integer
+intersection-number bookkeeping. -/
+def LefschetzThimbleDecomposition (amplitude : ℂ) (sectors : List LefschetzSector) : Prop :=
+  LefschetzThimbleExpansion amplitude sectors ∧
+  ∀ sector ∈ sectors, ∃ n : ℤ, sector.coefficient = n
+
 /-- Assumed Lefschetz-thimble decomposition relation. -/
 theorem lefschetz_thimble_expansion
     (amplitude : ℂ) (sectors : List LefschetzSector)
@@ -103,5 +224,17 @@ theorem lefschetz_thimble_expansion
       (LefschetzThimbleExpansion amplitude sectors)) :
     LefschetzThimbleExpansion amplitude sectors := by
   exact h_phys
+
+/-- Build the Lefschetz-thimble decomposition interface from the assumed
+thimble expansion relation. -/
+theorem lefschetz_thimble_decomposition
+    (amplitude : ℂ) (sectors : List LefschetzSector)
+    (h_phys : PhysicsAssumption
+      AssumptionId.pathIntegralLefschetzThimbleExpansion
+      (LefschetzThimbleExpansion amplitude sectors)) :
+    LefschetzThimbleDecomposition amplitude sectors := by
+  refine ⟨lefschetz_thimble_expansion amplitude sectors h_phys, ?_⟩
+  intro sector h_mem
+  exact ⟨sector.coefficient, rfl⟩
 
 end PhysicsLogic.QFT.PathIntegral

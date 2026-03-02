@@ -452,10 +452,43 @@ theorem faddeev_popov_gauge_slice_regular {F : Type*}
     FaddeevPopovGaugeSliceRegular data := by
   exact h_phys
 
+/-- Gauge-orbit quotient path-integral interface:
+gauge-slice data plus explicit `vol(G)` normalization and Haar-measure
+bookkeeping. -/
+structure GaugeOrbitQuotientPathIntegral (F : Type*) where
+  gaugeSliceData : FaddeevPopovGaugeSliceData F
+  gaugeGroupVolume : ℝ
+  haarMeasureNormalizationIncluded : Bool
+
+/-- Consistency package for gauge-orbit quotient path-integral data. -/
+def GaugeOrbitQuotientPathIntegralPackage {F : Type*}
+    (data : GaugeOrbitQuotientPathIntegral F) : Prop :=
+  data.gaugeGroupVolume > 0 ∧
+  data.haarMeasureNormalizationIncluded = true ∧
+  FaddeevPopovGaugeSliceRegular data.gaugeSliceData
+
+/-- Build gauge-orbit quotient path-integral consistency from regular
+Faddeev-Popov gauge-slice assumptions plus normalization tags. -/
+theorem gauge_orbit_quotient_path_integral_package {F : Type*}
+    (data : GaugeOrbitQuotientPathIntegral F)
+    (h_phys : PhysicsAssumption
+      AssumptionId.bvFaddeevPopovGaugeSliceRegular
+      (FaddeevPopovGaugeSliceRegular data.gaugeSliceData))
+    (h_vol : data.gaugeGroupVolume > 0)
+    (h_haar : data.haarMeasureNormalizationIncluded = true) :
+    GaugeOrbitQuotientPathIntegralPackage data := by
+  exact ⟨h_vol, h_haar,
+    faddeev_popov_gauge_slice_regular data.gaugeSliceData h_phys⟩
+
 /-- Closure hierarchy interface from BV master-equation expansion. -/
 def MasterEquationClosureHierarchy
     (gaugeInvariance closureOnShell generalizedJacobiOnShell : Prop) : Prop :=
   gaugeInvariance ∧ closureOnShell ∧ generalizedJacobiOnShell
+
+/-- Appendix-C name for the BV master-equation closure/Jacobi hierarchy. -/
+abbrev BVMasterEquationExpansion
+    (gaugeInvariance closureOnShell generalizedJacobiOnShell : Prop) : Prop :=
+  MasterEquationClosureHierarchy gaugeInvariance closureOnShell generalizedJacobiOnShell
 
 /-- Assumed closure hierarchy from BV-master-equation expansion. -/
 theorem bv_master_equation_closure_hierarchy
@@ -466,10 +499,26 @@ theorem bv_master_equation_closure_hierarchy
     MasterEquationClosureHierarchy gaugeInvariance closureOnShell generalizedJacobiOnShell := by
   exact h_phys
 
+/-- Assumed BV master-equation expansion hierarchy in Appendix-C naming. -/
+theorem bv_master_equation_expansion
+    (gaugeInvariance closureOnShell generalizedJacobiOnShell : Prop)
+    (h_phys : PhysicsAssumption
+      AssumptionId.bvMasterEquationClosureHierarchy
+      (BVMasterEquationExpansion gaugeInvariance closureOnShell generalizedJacobiOnShell)) :
+    BVMasterEquationExpansion gaugeInvariance closureOnShell generalizedJacobiOnShell := by
+  simpa [BVMasterEquationExpansion] using
+    bv_master_equation_closure_hierarchy
+      gaugeInvariance closureOnShell generalizedJacobiOnShell h_phys
+
 /-- BRST recovery interface from BV gauge-fixing-fermion data. -/
 def BVGaugeFixingRecoversBRST
     (fromBV fromBRST : ExtendedFieldSpace → ℝ) : Prop :=
   ∀ s : ExtendedFieldSpace, fromBRST s = fromBV s
+
+/-- Appendix-C name for BRST recovery from BV gauge-fixing fermion data. -/
+abbrev BVGaugeFixingFromFermion
+    (fromBV fromBRST : ExtendedFieldSpace → ℝ) : Prop :=
+  BVGaugeFixingRecoversBRST fromBV fromBRST
 
 /-- Assumed recovery of BRST gauge-fixed action from BV gauge-fixing data. -/
 theorem bv_gauge_fixing_fermion_recovers_brst
@@ -480,11 +529,27 @@ theorem bv_gauge_fixing_fermion_recovers_brst
     BVGaugeFixingRecoversBRST fromBV fromBRST := by
   exact h_phys
 
+/-- Assumed BV gauge-fixing-from-fermion package in Appendix-C naming. -/
+theorem bv_gauge_fixing_from_fermion
+    (fromBV fromBRST : ExtendedFieldSpace → ℝ)
+    (h_phys : PhysicsAssumption
+      AssumptionId.bvGaugeFixingFermionRecoversBrst
+      (BVGaugeFixingFromFermion fromBV fromBRST)) :
+    BVGaugeFixingFromFermion fromBV fromBRST := by
+  simpa [BVGaugeFixingFromFermion] using
+    bv_gauge_fixing_fermion_recovers_brst fromBV fromBRST h_phys
+
 /-- Wilsonian coarse-graining preserves the chosen BV master-consistency predicate. -/
 def WilsonianMasterEquationPreserved
     (masterConsistent : BVAction → Prop)
     (Suv Sir : BVAction) : Prop :=
   masterConsistent Suv → masterConsistent Sir
+
+/-- Appendix-C name for Wilsonian preservation of BV master consistency. -/
+abbrev WilsonianBVMasterPreservation
+    (masterConsistent : BVAction → Prop)
+    (Suv Sir : BVAction) : Prop :=
+  WilsonianMasterEquationPreserved masterConsistent Suv Sir
 
 /-- Assumed preservation of BV quantum-master equation under Wilsonian flow. -/
 theorem bv_wilsonian_master_equation_preserved
@@ -495,6 +560,17 @@ theorem bv_wilsonian_master_equation_preserved
       (WilsonianMasterEquationPreserved masterConsistent Suv Sir)) :
     WilsonianMasterEquationPreserved masterConsistent Suv Sir := by
   exact h_phys
+
+/-- Assumed Wilsonian BV-master preservation in Appendix-C naming. -/
+theorem bv_wilsonian_master_preservation
+    (masterConsistent : BVAction → Prop)
+    (Suv Sir : BVAction)
+    (h_phys : PhysicsAssumption
+      AssumptionId.bvWilsonianMasterEquationPreserved
+      (WilsonianBVMasterPreservation masterConsistent Suv Sir)) :
+    WilsonianBVMasterPreservation masterConsistent Suv Sir := by
+  simpa [WilsonianBVMasterPreservation] using
+    bv_wilsonian_master_equation_preserved masterConsistent Suv Sir h_phys
 
 /- ============= BV LAPLACIAN AND QUANTUM MASTER EQUATION ============= -/
 
