@@ -35,9 +35,23 @@ structure TargetCategory where
   dimension : Object → ℕ
   /-- Tensor product: V ⊗ W -/
   tensorProduct : Object → Object → Object
+  /-- Tensor product on morphisms: if `f : A → B` and `g : C → D`,
+      then `f ⊗ g : A ⊗ C → B ⊗ D`. -/
+  tensorMorphism : {A B C D : Object} →
+    Morphism A B → Morphism C D →
+    Morphism (tensorProduct A C) (tensorProduct B D)
   /-- Tensor product is associative (up to isomorphism) -/
   tensorProduct_assoc : ∀ (U V W : Object),
     tensorProduct (tensorProduct U V) W = tensorProduct U (tensorProduct V W)
+  /-- Tensor-on-morphisms respects composition. -/
+  tensorMorphism_compose : ∀ {A B C D E F : Object}
+    (f₁ : Morphism A B) (f₂ : Morphism B C)
+    (g₁ : Morphism D E) (g₂ : Morphism E F),
+    tensorMorphism (compose f₁ f₂) (compose g₁ g₂) =
+      compose (tensorMorphism f₁ g₁) (tensorMorphism f₂ g₂)
+  /-- Tensor-on-morphisms preserves identities. -/
+  tensorMorphism_id : ∀ (A B : Object),
+    tensorMorphism (id A) (id B) = id (tensorProduct A B)
   /-- Dimension of tensor product: dim(V ⊗ W) = dim(V) × dim(W) -/
   tensorProduct_dimension : ∀ (V W : Object),
     dimension (tensorProduct V W) = dimension V * dimension W
@@ -84,6 +98,11 @@ structure TQFTAxioms (n : ℕ)
   monoidal : ∀ (M N : mtb.boundaryTheory.Manifold),
     vectorSpace (mtb.boundaryTheory.disjointUnion M N) =
     target.tensorProduct (vectorSpace M) (vectorSpace N)
+  /-- Monoidality on bordisms: disjoint-union bordisms map to tensor-product maps
+      (heterogeneous equality is used to avoid explicit transport along `monoidal`). -/
+  functor_monoidal_on_bordisms : ∀ (W₁ W₂ : bt.Bordism),
+    HEq (functor (bt.disjointUnion W₁ W₂))
+      (target.tensorMorphism (functor W₁) (functor W₂))
   /-- TQFT Axiom T5: Duality (orientation reversal) -/
   duality : ∀ (M : sm.OrientedManifold),
     vectorSpace (sm.orientedToManifold (sm.reverseOrientation M)) =
