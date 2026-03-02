@@ -10,6 +10,8 @@ namespace PhysicsLogic.StringTheory
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
+abbrev WilsonConfinementClaim := Prop
+
 /-- Maldacena-Wilson loop saddle-point data at strong coupling. -/
 structure MaldacenaWilsonLoopSaddleData where
   adsRadius : ℝ
@@ -139,7 +141,7 @@ structure WittenCompactificationData where
   gaugeCoupling5d : ℝ
   gaugeCoupling4d : ℝ
   kkMass : ℝ
-  fermionBoundaryTag : String
+  fermionsAreAntiperiodicOnCircle : WilsonConfinementClaim
 
 /-- Witten compactification package:
 `L=(4π/3) R^(3/2) r0^(-1/2)`, `g4=g5/sqrt(L)`, `M_KK=2π/L`,
@@ -153,7 +155,7 @@ def WittenCompactificationPackage
     (4 * Real.pi / 3) * data.adsScale * Real.sqrt data.adsScale / Real.sqrt data.capRadius ∧
   data.gaugeCoupling4d = data.gaugeCoupling5d / Real.sqrt data.circleLength ∧
   data.kkMass = 2 * Real.pi / data.circleLength ∧
-  data.fermionBoundaryTag = "antiperiodic"
+  data.fermionsAreAntiperiodicOnCircle
 
 /-- Assumed Witten compactification package for the confinement model. -/
 theorem witten_compactification_package
@@ -208,7 +210,7 @@ structure D8HolonomyChiralData (G : Type*) where
   leftBoundaryElement : G
   rightBoundaryElement : G
   transformedHolonomy : G
-  unbrokenSubgroupTag : String
+  hasDiagonalUNfUnbrokenSubgroup : WilsonConfinementClaim
 
 /-- Sakai-Sugimoto chiral package:
 `U -> g_+ U g_-^{-1}` and diagonal `U(N_f)` unbroken subgroup tag. -/
@@ -216,7 +218,7 @@ def D8HolonomyChiralPackage {G : Type*} [Group G]
     (data : D8HolonomyChiralData G) : Prop :=
   data.transformedHolonomy =
     data.leftBoundaryElement * data.holonomy * data.rightBoundaryElement⁻¹ ∧
-  data.unbrokenSubgroupTag = "diagonal_U(Nf)"
+  data.hasDiagonalUNfUnbrokenSubgroup
 
 /-- Assumed Sakai-Sugimoto chiral-symmetry breaking package. -/
 theorem d8_holonomy_chiral_package
@@ -321,7 +323,7 @@ structure KlebanovWittenConifoldData where
   operatorScalingDimension : ℝ
   superpotentialRCharge : ℝ
   superpotentialScalingDimension : ℝ
-  exactlyMarginalTag : String
+  liesOnKlebanovWittenExactlyMarginalFamily : WilsonConfinementClaim
 
 /-- Klebanov-Witten fixed-point package:
 `gamma_AB = -1/2`, quartic chiral operator dimension `3`, and exact marginality. -/
@@ -331,7 +333,7 @@ def KlebanovWittenConifoldPackage
   data.operatorScalingDimension = 3 ∧
   data.superpotentialRCharge = 2 ∧
   data.superpotentialScalingDimension = 3 ∧
-  data.exactlyMarginalTag = "kw_family"
+  data.liesOnKlebanovWittenExactlyMarginalFamily
 
 /-- Assumed Klebanov-Witten conifold fixed-point package. -/
 theorem klebanov_witten_conifold_package
@@ -406,8 +408,8 @@ structure CascadeSeibergDualStepData where
   initialLargeRank : ℕ
   initialSmallRank : ℕ
   rankShift : ℕ
-  uvTag : String
-  irTag : String
+  uvTheoryHasRankPairNplusMAndN : WilsonConfinementClaim
+  irTheoryHasRankPairNAndNminusM : WilsonConfinementClaim
 
 /-- Cascade-step package:
 rank map `(N+M,N) -> (N,N-M)` with `N>M`, encoded at label/rank level. -/
@@ -416,8 +418,8 @@ def CascadeSeibergDualStepPackage
   data.rankShift > 0 ∧
   data.initialSmallRank > data.rankShift ∧
   data.initialLargeRank = data.initialSmallRank + data.rankShift ∧
-  data.uvTag = "S_{N+M,N}" ∧
-  data.irTag = "S_{N,N-M}"
+  data.uvTheoryHasRankPairNplusMAndN ∧
+  data.irTheoryHasRankPairNAndNminusM
 
 /-- Assumed Seiberg-dual step package for the RG cascade. -/
 theorem cascade_seiberg_dual_step_package

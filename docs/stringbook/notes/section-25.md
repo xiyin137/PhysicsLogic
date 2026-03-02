@@ -1,6 +1,6 @@
 # Section 25: Holographic Wilson lines and confinement
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 604
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/WilsonLinesConfinement.lean`
@@ -43,6 +43,16 @@
 - `KlebanovTseytlinRunningPackage`
 - `CascadeSeibergDualStepPackage`
 - `KlebanovStrasslerConfinementPackage`
+
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/WilsonLinesConfinement.lean` with
+  all listed package units assumption-wired.
+- Physics-interface hardening pass:
+  replaced residual string-tag placeholders (Witten circle fermion boundary
+  condition, Sakai-Sugimoto unbroken subgroup label, Klebanov-Witten marginal
+  family label, and cascade UV/IR rank-pair labels) with claim-typed fields
+  (`WilsonConfinementClaim := Prop`) and removed literal tag equalities from
+  package predicates.
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `stringWilsonMaldacenaLoopSaddle`.
