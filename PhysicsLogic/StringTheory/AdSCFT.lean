@@ -13,6 +13,8 @@ open scoped BigOperators
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
+abbrev AdSCFTClaim := Prop
+
 /-- Low-energy decoupling-limit control parameters for D3-brane holography. -/
 structure D3DecouplingLimitData where
   stringLength : ℝ
@@ -68,14 +70,14 @@ theorem ads_cft_parameter_map
 structure NFourSYMConformalData where
   betaFunctionValue : ℝ
   stressTensorTrace : ℝ
-  superconformalAlgebraTag : String
+  hasPsu224SuperconformalSymmetry : AdSCFTClaim
 
 /-- `N=4` SYM conformal package:
 vanishing beta/traced stress tensor and `psu(2,2|4)` algebra label. -/
 def NFourSYMConformalPackage (data : NFourSYMConformalData) : Prop :=
   data.betaFunctionValue = 0 ∧
   data.stressTensorTrace = 0 ∧
-  data.superconformalAlgebraTag = "psu(2,2|4)"
+  data.hasPsu224SuperconformalSymmetry
 
 /-- Assumed `N=4` SYM conformal/superconformal package. -/
 theorem n_four_sym_conformal_package
@@ -89,7 +91,7 @@ theorem n_four_sym_conformal_package
 /-- Coulomb-branch vacuum data for diagonalized scalar vevs. -/
 structure CoulombBranchVacuumData (N : ℕ) where
   scalarVEV : Fin N → Fin 6 → ℝ
-  moduliSpaceTag : String
+  moduliSpaceMatchesR6PowerNQuotient : AdSCFTClaim
   wBosonMass : Fin N → Fin N → ℝ
 
 /-- Squared Euclidean distance in the six scalar-vev directions. -/
@@ -101,7 +103,7 @@ def CoulombBranchSeparationSq {N : ℕ}
 moduli-space label `(R^6)^N/S_N` and `m_ab = |φ_a - φ_b|` at generic points. -/
 def CoulombBranchVacuumPackage {N : ℕ}
     (data : CoulombBranchVacuumData N) : Prop :=
-  data.moduliSpaceTag = "(R^6)^N/S_N" ∧
+  data.moduliSpaceMatchesR6PowerNQuotient ∧
   ∀ a b : Fin N, a ≠ b →
     data.wBosonMass a b = Real.sqrt (CoulombBranchSeparationSq data a b)
 
@@ -203,14 +205,14 @@ structure SupergravitonChiralPrimaryData where
   n : ℕ
   conformalWeight : ℝ
   rSymmetryDynkin : ℕ × ℕ × ℕ
-  protectedTag : String
+  halfBpsProtected : AdSCFTClaim
 
 /-- Chiral-primary package:
 `[0,n,0]` with `Δ = n` and protected (`1/2-BPS`) label. -/
 def SupergravitonChiralPrimaryPackage (data : SupergravitonChiralPrimaryData) : Prop :=
   data.rSymmetryDynkin = (0, data.n, 0) ∧
   data.conformalWeight = (data.n : ℝ) ∧
-  data.protectedTag = "1/2-BPS"
+  data.halfBpsProtected
 
 /-- Assumed supergraviton/chiral-primary correspondence package. -/
 theorem supergraviton_chiral_primary_package
@@ -274,15 +276,18 @@ structure GiantGravitonData where
   angularMomentum : ℝ
   energy : ℝ
   polarAngle : ℝ
-  dualOperatorTag : String
+  maximalGiantMatchesDeterminantOperator : AdSCFTClaim
+  submaximalGiantMatchesSubdeterminantOperator : AdSCFTClaim
 
 /-- Giant-graviton package:
 `Δ = J = N sin^2 θ` with determinant/sub-determinant operator dual label. -/
 def GiantGravitonDualityPackage (data : GiantGravitonData) : Prop :=
   data.energy = data.angularMomentum ∧
   data.angularMomentum = (data.rankN : ℝ) * (Real.sin data.polarAngle) ^ (2 : ℕ) ∧
-  ((data.angularMomentum = (data.rankN : ℝ) ∧ data.dualOperatorTag = "det(X)") ∨
-    (data.angularMomentum < (data.rankN : ℝ) ∧ data.dualOperatorTag = "subdeterminant"))
+  (data.angularMomentum = (data.rankN : ℝ) →
+    data.maximalGiantMatchesDeterminantOperator) ∧
+  (data.angularMomentum < (data.rankN : ℝ) →
+    data.submaximalGiantMatchesSubdeterminantOperator)
 
 /-- Assumed giant-graviton BPS/dual-operator package. -/
 theorem giant_graviton_duality_package

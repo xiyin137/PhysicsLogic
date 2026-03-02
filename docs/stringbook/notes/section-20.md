@@ -1,6 +1,6 @@
 # Section 20: The AdS/CFT correspondence
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 458
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/AdSCFT.lean`
@@ -30,6 +30,15 @@
 - `GiantGravitonDualityPackage`
 - `HawkingPageTransitionPackage`
 - `NFourThermalStrongCouplingLimit`
+
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/AdSCFT.lean` with all listed
+  package units assumption-wired.
+- Physics-interface hardening pass:
+  replaced string-tag placeholders in core packages with claim-typed fields
+  (`AdSCFTClaim := Prop`) for superconformal symmetry, Coulomb-branch moduli
+  identification, chiral-primary BPS protection, and giant-graviton/operator
+  matching.
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `stringAdSCftD3DecouplingLimit`.
