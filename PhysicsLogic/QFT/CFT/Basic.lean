@@ -83,6 +83,8 @@ structure Descendant (d : ℕ) (H : Type _) where
   quasi_primary : QuasiPrimary d H
   level : ℕ
   derivative_structure : List (Fin d)
+  /-- The derivative word carries exactly the stated descendant level. -/
+  derivative_structure_length : derivative_structure.length = level
 
 /-- Conformal multiplet: quasi-primary plus all its descendants -/
 structure ConformalMultiplet (d : ℕ) (H : Type _) where

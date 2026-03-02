@@ -67,20 +67,28 @@ structure UnitarityBoundsTheory where
 
 /- ============= SHORTENING CONDITIONS ============= -/
 
+/-- Expected level of the first null descendant at a unitarity bound:
+    level-2 for scalar saturation and level-1 for spin-`ℓ>0` saturation. -/
+def expectedNullLevel (ℓ : ℕ) : ℕ :=
+  if ℓ = 0 then 2 else 1
+
 /-- Structure for shortening conditions theory.
 
     When an operator's dimension saturates the unitarity bound,
     a descendant becomes null (zero norm). This shortens the conformal multiplet. -/
 structure ShorteningConditionsTheory where
+  /-- Norm-squared functional on descendants (in a chosen 2-point pairing). -/
+  descendantNormSq : ∀ {d : ℕ} {H : Type _}, Descendant d H → ℝ
   /-- Null descendant at unitarity bound.
-      When Δ = (d-2)/2 + ℓ, there exists a null state at level ≥ 1.
-      This removes states from the multiplet. -/
+      When `Δ = (d-2)/2 + ℓ`, a descendant at the expected first-null level
+      has vanishing norm, encoding multiplet shortening. -/
   null_state_at_unitarity_bound : ∀ (d : ℕ) {H : Type _}
     (O : QuasiPrimary d H) (ℓ : ℕ)
     (h_saturate : O.scaling_dim = ℓ + (d - 2 : ℝ) / 2),
-    ∃ (level : ℕ) (null_descendant : Descendant d H), level ≥ 1 ∧
+    ∃ (null_descendant : Descendant d H),
       null_descendant.quasi_primary = O ∧
-      null_descendant.level = level
+      null_descendant.level = expectedNullLevel ℓ ∧
+      descendantNormSq null_descendant = 0
 
 /-- Long multiplet: Δ > ℓ + (d-2)/2
     Generic case, full descendant tower -/
