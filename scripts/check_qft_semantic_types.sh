@@ -81,6 +81,19 @@ else
   echo "[ok] no scalar-valued Virasoro mode/commutator maps in QFT"
 fi
 
+echo "[qft-semantic-check] no raw scalar-valued mode maps in QFT data structures"
+raw_mode_hits="$(rg -n \
+  "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Mm]ode[A-Za-z0-9_']*[[:space:]]*:[[:space:]]*.*→[[:space:]]*(ℂ|Complex|ℝ|Real)([[:space:]]|$)" \
+  PhysicsLogic/QFT --glob '*.lean' \
+  | rg -v "(Eigenvalue|Value|Coefficient|Amplitude)" || true)"
+if [[ -n "$raw_mode_hits" ]]; then
+  echo "$raw_mode_hits"
+  echo "[fail] found scalar-valued raw mode maps in QFT"
+  status=1
+else
+  echo "[ok] no scalar-valued raw mode maps in QFT"
+fi
+
 echo "[qft-semantic-check] ActionFunctional domains must be configuration spaces (not ℝ/ℂ)"
 action_functional_domain_hits="$(rg -n \
   "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Aa]ction[Ff]unctional[[:space:]]*:[[:space:]]*(ℂ|Complex|ℝ|Real)[[:space:]]*→" \
