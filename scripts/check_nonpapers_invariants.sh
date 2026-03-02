@@ -60,6 +60,14 @@ else
   status=1
 fi
 
+echo "[check] stringbook note candidate coverage (units + assumptions)"
+if ./scripts/check_stringbook_note_coverage.sh; then
+  echo "[ok] stringbook note candidate coverage check"
+else
+  echo "[fail] stringbook note candidate coverage check"
+  status=1
+fi
+
 echo "[check] string-theory semantic typing guardrails"
 if ./scripts/check_string_semantic_types.sh; then
   echo "[ok] string semantic type checks"
