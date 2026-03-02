@@ -9,19 +9,20 @@ set_option autoImplicit false
 set_option linter.unusedVariables false
 
 /-- Classical bosonic OSFT BV package data from open-string off-shell geometry. -/
-structure ClassicalBosonicOsftBvData where
+structure ClassicalBosonicOsftBvData (OpenField : Type*) where
   openFieldSpaceSplitIntoFieldAndAntifieldSectors : Bool
   dualBasesAndOddSymplecticPairingSpecified : Bool
   cyclicOpenVerticesFromBoundaryModuliChains : Bool
   geometricMasterEquationForOpenVerticesUsed : Bool
   vertexNormalizationRecursionSatisfied : Bool
-  classicalActionFunctional : Complex
+  classicalActionFunctional : OpenField → Complex
   actionInterpretedAsFunctionalNotScalarObservable : Bool
 
 /-- Section 15.1.1 package:
 BV formulation of classical bosonic OSFT with cyclic vertices, odd symplectic
 pairing, and geometric-master-equation consistency. -/
-def ClassicalBosonicOsftBvPackage (data : ClassicalBosonicOsftBvData) : Prop :=
+def ClassicalBosonicOsftBvPackage
+    {OpenField : Type*} (data : ClassicalBosonicOsftBvData OpenField) : Prop :=
   data.openFieldSpaceSplitIntoFieldAndAntifieldSectors = true /\
   data.dualBasesAndOddSymplecticPairingSpecified = true /\
   data.cyclicOpenVerticesFromBoundaryModuliChains = true /\
@@ -31,7 +32,8 @@ def ClassicalBosonicOsftBvPackage (data : ClassicalBosonicOsftBvData) : Prop :=
 
 /-- Assumed Section 15.1.1 classical bosonic OSFT BV package. -/
 theorem classical_bosonic_osft_bv_package
-    (data : ClassicalBosonicOsftBvData)
+    {OpenField : Type*}
+    (data : ClassicalBosonicOsftBvData OpenField)
     (h_phys : PhysicsAssumption
       AssumptionId.stringOsftClassicalBvAInfinityStructure
       (ClassicalBosonicOsftBvPackage data)) :

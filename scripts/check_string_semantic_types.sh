@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
+
+status=0
+
+echo "[semantic-check] no scalar-typed state fields in StringTheory data structures"
+state_hits="$(rg -n \
+  "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Ss]tate[[:space:]]*:[[:space:]]*(ℂ|Complex|ℝ|Real)([[:space:]]|$)" \
+  PhysicsLogic/StringTheory --glob '*.lean' || true)"
+if [[ -n "$state_hits" ]]; then
+  echo "$state_hits"
+  echo "[fail] found scalar-typed state fields"
+  status=1
+else
+  echo "[ok] no scalar-typed state fields"
+fi
+
+echo "[semantic-check] no scalar-typed operator fields in StringTheory data structures"
+operator_hits="$(rg -n \
+  "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Oo]perator[[:space:]]*:[[:space:]]*(ℂ|Complex|ℝ|Real)([[:space:]]|$)" \
+  PhysicsLogic/StringTheory --glob '*.lean' || true)"
+if [[ -n "$operator_hits" ]]; then
+  echo "$operator_hits"
+  echo "[fail] found scalar-typed operator fields"
+  status=1
+else
+  echo "[ok] no scalar-typed operator fields"
+fi
+
+echo "[semantic-check] no scalar-typed functional fields ending in 'Functional'"
+functional_hits="$(rg -n \
+  "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Ff]unctional[[:space:]]*:[[:space:]]*(ℂ|Complex|ℝ|Real)([[:space:]]|$)" \
+  PhysicsLogic/StringTheory --glob '*.lean' || true)"
+if [[ -n "$functional_hits" ]]; then
+  echo "$functional_hits"
+  echo "[fail] found scalar-typed fields ending in Functional"
+  status=1
+else
+  echo "[ok] no scalar-typed fields ending in Functional"
+fi
+
+echo "[semantic-check] no scalar-typed raw vertex fields (unless explicitly *Value/*Amplitude/*Coefficient/*Kinematic*)"
+vertex_hits="$(rg -n \
+  "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Vv]ertex[[:space:]]*:[[:space:]]*(ℂ|Complex|ℝ|Real)([[:space:]]|$)" \
+  PhysicsLogic/StringTheory --glob '*.lean' \
+  | rg -v "(Value|Amplitude|Coefficient|Kinematic)" || true)"
+if [[ -n "$vertex_hits" ]]; then
+  echo "$vertex_hits"
+  echo "[fail] found scalar-typed raw vertex fields"
+  status=1
+else
+  echo "[ok] no scalar-typed raw vertex fields"
+fi
+
+exit "$status"

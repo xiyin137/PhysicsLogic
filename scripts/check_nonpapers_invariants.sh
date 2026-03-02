@@ -60,4 +60,12 @@ else
   status=1
 fi
 
+echo "[check] string-theory semantic typing guardrails"
+if ./scripts/check_string_semantic_types.sh; then
+  echo "[ok] string semantic type checks"
+else
+  echo "[fail] string semantic type checks"
+  status=1
+fi
+
 exit "$status"
