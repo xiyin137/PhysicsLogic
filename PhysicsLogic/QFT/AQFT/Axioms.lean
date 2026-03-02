@@ -177,10 +177,19 @@ structure SpectrumConditionD (d : ℕ) [NeZero d] where
 structure VacuumExistence (d : ℕ) [NeZero d] where
   /-- Spectrum condition -/
   spectrumCondition : SpectrumConditionD d
-  /-- Vacuum is the unique state at zero momentum -/
-  vacuum_unique : ∃! (vacuum_momentum : Fin d → ℝ),
-    vacuum_momentum = (fun _ => 0) ∧
-    vacuum_momentum ∈ spectrumCondition.spectrum
+  /-- Type of candidate vacuum states in this abstraction layer. -/
+  VacuumState : Type*
+  /-- Energy-momentum assigned to candidate vacuum states. -/
+  vacuumMomentum : VacuumState → Fin d → ℝ
+  /-- Existence: at least one state has zero momentum. -/
+  vacuum_exists : ∃ Ω : VacuumState, vacuumMomentum Ω = (fun _ => 0)
+  /-- Any vacuum state has spectrum-compatible momentum. -/
+  vacuum_in_spectrum : ∀ Ω : VacuumState, vacuumMomentum Ω ∈ spectrumCondition.spectrum
+  /-- Uniqueness: zero-momentum vacuum state is unique (up to the model's state equality). -/
+  vacuum_unique : ∀ Ω₁ Ω₂ : VacuumState,
+    vacuumMomentum Ω₁ = (fun _ => 0) →
+    vacuumMomentum Ω₂ = (fun _ => 0) →
+    Ω₁ = Ω₂
 
 /- ============= COMPLETE HAAG-KASTLER STRUCTURE ============= -/
 
