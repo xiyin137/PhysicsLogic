@@ -100,6 +100,14 @@ else
   status=1
 fi
 
+echo "[check] no ambiguous dimensionless field names in non-Papers core code"
+if ./scripts/check_no_ambiguous_dimensionless_names.sh; then
+  echo "[ok] no ambiguous dimensionless field names"
+else
+  echo "[fail] ambiguous dimensionless field-name check"
+  status=1
+fi
+
 echo "[check] global semantic typing guardrails (non-Papers)"
 if ./scripts/check_global_semantic_types.sh; then
   echo "[ok] global semantic typing checks"
