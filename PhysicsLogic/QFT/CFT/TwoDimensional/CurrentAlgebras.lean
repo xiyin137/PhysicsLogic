@@ -132,10 +132,10 @@ theorem ads3_sl2_spectral_flow_operator_automorphism
 /-- AdS3 representation-window data for discrete/continuous spectral-flow sectors. -/
 structure AdS3Sl2RepresentationSpectrumData where
   levelK : ScalingDimension
-  jDiscrete : ℝ
-  jReflected : ℝ
-  jContinuousRealPart : ℝ
-  continuousParameter : ℝ
+  jDiscrete : ScalingDimension
+  jReflected : ScalingDimension
+  jContinuousRealPart : ScalingDimension
+  continuousParameter : ScalingDimension
   alphaParameter : ℝ
 
 /-- AdS3 representation-window package:
@@ -167,12 +167,12 @@ theorem ads3_sl2_representation_spectrum_package
 structure AdS3Sl2MassShellData where
   levelK : ScalingDimension
   spinJ : ScalingDimension
-  mQuantum : ℝ
+  mQuantum : ScalingDimension
   flowW : ℤ
-  currentDescendantLevel : ℝ
-  virasoroDescendantLevel : ℝ
-  internalWeight : ℝ
-  j0Three : ℝ
+  currentDescendantLevel : ScalingDimension
+  virasoroDescendantLevel : ScalingDimension
+  internalWeight : ScalingDimension
+  j0Three : ScalingDimension
   spacetimeScalingDimension : ScalingDimension
   spacetimeSpin : ScalingDimension
 
@@ -424,14 +424,14 @@ theorem ads3_nsns_sl2_spectral_flow_operator_automorphism
 structure AdS3NsnsSuperstringMassShellData where
   levelK : ScalingDimension
   spinJ : ScalingDimension
-  mQuantum : ℝ
+  mQuantum : ScalingDimension
   flowW : ℤ
-  adsDescendantLevel : ℝ
-  suDescendantLevel : ℝ
-  internalWeight : ℝ
+  adsDescendantLevel : ScalingDimension
+  suDescendantLevel : ScalingDimension
+  internalWeight : ScalingDimension
   suSpin : ScalingDimension
-  j0Three : ℝ
-  flowedLZero : ℝ
+  j0Three : ScalingDimension
+  flowedLZero : ScalingDimension
 
 /-- `(NS,NS)` superstring mass-shell package:
 `L0^flow = -j(j-1)/k - w m - k w^2/4 + N`,

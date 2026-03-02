@@ -309,9 +309,9 @@ theorem ads3_bosonic_spectral_flow_operator_package
 /-- AdS3 bosonic-string representation-space data. -/
 structure AdS3BosonicPhysicalSpectrumData where
   levelK : ScalingDimension
-  jDiscrete : ℝ
-  jContinuousRealPart : ℝ
-  continuousParameter : ℝ
+  jDiscrete : ScalingDimension
+  jContinuousRealPart : ScalingDimension
+  continuousParameter : ScalingDimension
   includesDiscreteSpectralFlowedRepresentations : AdS3CftClaim
   includesContinuousSpectralFlowedRepresentations : AdS3CftClaim
 
@@ -341,12 +341,12 @@ theorem ads3_bosonic_physical_spectrum_package
 structure AdS3BosonicMassShellData where
   levelK : ScalingDimension
   spinJ : ScalingDimension
-  mQuantum : ℝ
+  mQuantum : ScalingDimension
   flowW : ℤ
-  currentDescendantLevel : ℝ
-  virasoroDescendantLevel : ℝ
-  internalWeight : ℝ
-  j0Three : ℝ
+  currentDescendantLevel : ScalingDimension
+  virasoroDescendantLevel : ScalingDimension
+  internalWeight : ScalingDimension
+  j0Three : ScalingDimension
 
 /-- Bosonic AdS3 mass-shell package:
 `-j(j-1)/(k-2) - w m - k w^2/4 + N + l + h - 1 = 0`,
@@ -403,13 +403,13 @@ theorem ads3_nsns_superstring_background_package
 structure AdS3NSNSSuperstringMassShellData where
   levelK : ScalingDimension
   spinJ : ScalingDimension
-  mQuantum : ℝ
+  mQuantum : ScalingDimension
   flowW : ℤ
-  adsDescendantLevel : ℝ
-  suDescendantLevel : ℝ
-  internalWeight : ℝ
+  adsDescendantLevel : ScalingDimension
+  suDescendantLevel : ScalingDimension
+  internalWeight : ScalingDimension
   suSpin : ScalingDimension
-  j0Three : ℝ
+  j0Three : ScalingDimension
 
 /-- NSNS mass-shell package in the AdS3 sector:
 `-j(j-1)/k - w m - k w^2/4 + N + N' + h_int = 1/2`,
