@@ -163,7 +163,7 @@ theorem ads3_sl2_representation_spectrum_package
     AdS3Sl2RepresentationSpectrumPackage data := by
   exact h_phys
 
-/-- AdS3 bosonic mass-shell and spacetime-energy data in the 2D CFT lane. -/
+/-- AdS3 bosonic mass-shell and spacetime scaling-data in the 2D CFT lane. -/
 structure AdS3Sl2MassShellData where
   levelK : ScalingDimension
   spinJ : ℝ
@@ -173,10 +173,10 @@ structure AdS3Sl2MassShellData where
   virasoroDescendantLevel : ℝ
   internalWeight : ℝ
   j0Three : ℝ
-  spacetimeEnergy : ScalingDimension
-  spacetimeAngularMomentum : ScalingDimension
+  spacetimeScalingDimension : ScalingDimension
+  spacetimeSpin : ScalingDimension
 
-/-- AdS3 mass-shell/energy package:
+/-- AdS3 mass-shell/scaling package:
 `-j(j-1)/(k-2) - w m - k w^2/4 + N + ell + h - 1 = 0`,
 `J_0^3 = m + k w/2`, and `(E+J)/2 = J_0^3`. -/
 def AdS3Sl2MassShellEnergyRelation
@@ -186,7 +186,7 @@ def AdS3Sl2MassShellEnergyRelation
   data.virasoroDescendantLevel >= 0 /\
   data.internalWeight >= 0 /\
   data.j0Three = data.mQuantum + (data.levelK / 2) * (data.flowW : ℝ) /\
-  (data.spacetimeEnergy + data.spacetimeAngularMomentum) / 2 = data.j0Three /\
+  (data.spacetimeScalingDimension + data.spacetimeSpin) / 2 = data.j0Three /\
   -(data.spinJ * (data.spinJ - 1)) / (data.levelK - 2)
     - (data.flowW : ℝ) * data.mQuantum
     - (data.levelK / 4) * (data.flowW : ℝ) ^ (2 : Nat)
