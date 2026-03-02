@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
@@ -119,14 +120,14 @@ theorem coulomb_branch_vacuum_package
 
 /-- Probe-D3 and Coulomb-branch EFT matching data. -/
 structure ProbeD3CoulombMatchingData (FieldConfig : Type*) where
-  probeAction : FieldConfig → ComplexActionValue
-  coulombAction : FieldConfig → ComplexActionValue
+  probeAction : QFT.PathIntegral.ComplexActionFunctional FieldConfig
+  coulombAction : QFT.PathIntegral.ComplexActionFunctional FieldConfig
 
 /-- Interface relation:
 probe D3 effective action matches Coulomb-branch `U(1)` effective action. -/
 def ProbeD3CoulombMatching {FieldConfig : Type*}
     (data : ProbeD3CoulombMatchingData FieldConfig) : Prop :=
-  ∀ cfg : FieldConfig, data.probeAction cfg = data.coulombAction cfg
+  ∀ cfg : FieldConfig, data.probeAction.eval cfg = data.coulombAction.eval cfg
 
 /-- Assumed probe-D3/Coulomb-branch matching relation. -/
 theorem probe_d3_coulomb_matching

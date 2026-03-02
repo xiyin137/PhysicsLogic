@@ -1,4 +1,5 @@
 import PhysicsLogic.QFT.BV.BRST
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import PhysicsLogic.Assumptions
 import PhysicsLogic.Units
 import Mathlib.Data.Complex.Basic
@@ -368,14 +369,14 @@ structure ProperSolution where
   action : BVAction
   ab : Antibracket
   master_eq : ClassicalMasterEquation ab action
-  classical_action : ExtendedFieldConfiguration → ActionScale
+  classical_action : PhysicsLogic.QFT.PathIntegral.ActionFunctional ExtendedFieldConfiguration
 
 /-- Proper solution with complex-valued classical action. -/
 structure ComplexProperSolution where
   action : BVAction
   ab : Antibracket
   master_eq : ClassicalMasterEquation ab action
-  classical_action : ExtendedFieldConfiguration → ComplexActionValue
+  classical_action : PhysicsLogic.QFT.PathIntegral.ComplexActionFunctional ExtendedFieldConfiguration
 
 /-- BV differential s = (S, ·) -/
 def bvDifferential (ab : Antibracket) (S : BVAction) (F : BVFunctional) : BVFunctional :=

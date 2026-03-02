@@ -130,12 +130,12 @@ noncomputable def connectedGenerating {F M : Type*}
     - Γ = S_classical at tree level, with loop corrections added perturbatively -/
 structure EffectiveActionData (F : Type*) where
   /-- The effective action functional -/
-  effective_action : F → ComplexActionValue
+  effective_action : ComplexActionFunctional F
   /-- The classical action it's derived from -/
   classical_action : ActionFunctional F
   /-- At tree level, Γ reduces to the classical action -/
   classical_limit : ∀ (φ : F),
-    effective_action φ = ((classical_action.eval φ).value : ℂ)
+    effective_action.eval φ = ((classical_action.eval φ).value : ℂ)
 
 /- ============= FIELD REDEFINITION INVARIANCE ============= -/
 

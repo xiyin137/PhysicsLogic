@@ -283,14 +283,15 @@ theorem massless_field_dictionary_package
 structure BackgroundIndependenceMapData where
   FieldConfiguration : Type
   pulledBackSymplecticDifference : FieldConfiguration → ℂ
-  pulledBackMeasureActionDifference : FieldConfiguration → ComplexActionValue
+  pulledBackMeasureActionDifference :
+    QFT.PathIntegral.ComplexActionFunctional FieldConfiguration
 
 /-- Background-independence package:
 the map preserves symplectic structure and measure-weighted action. -/
 def BackgroundIndependenceMapPackage
     (data : BackgroundIndependenceMapData) : Prop :=
   (∀ ψ : data.FieldConfiguration, data.pulledBackSymplecticDifference ψ = 0) ∧
-  (∀ ψ : data.FieldConfiguration, data.pulledBackMeasureActionDifference ψ = 0)
+  (∀ ψ : data.FieldConfiguration, data.pulledBackMeasureActionDifference.eval ψ = 0)
 
 /-- Assumed background-independence map package for closed SFT. -/
 theorem background_independence_map_package

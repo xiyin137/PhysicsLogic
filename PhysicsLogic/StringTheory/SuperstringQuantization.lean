@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import Mathlib.Algebra.Algebra.Basic
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.Basic
@@ -26,8 +27,8 @@ super-Weyl symmetry, and the free `(X, psi)` CFT reduction. -/
 structure SuperPolyakovGaugeData (WorldsheetConfig : Type*) where
   localSusyVariationCancels : SuperstringQuantizationClaim
   superWeylVariationCancels : SuperstringQuantizationClaim
-  conformalGaugeAction : WorldsheetConfig → ComplexActionValue
-  freeMatterAction : WorldsheetConfig → ComplexActionValue
+  conformalGaugeAction : QFT.PathIntegral.ComplexActionFunctional WorldsheetConfig
+  freeMatterAction : QFT.PathIntegral.ComplexActionFunctional WorldsheetConfig
   spacetimeDimension : ℕ
   matterCentralCharge : CentralCharge
 
@@ -38,7 +39,8 @@ def SuperPolyakovGaugePackage {WorldsheetConfig : Type*}
     (data : SuperPolyakovGaugeData WorldsheetConfig) : Prop :=
   data.localSusyVariationCancels ∧
   data.superWeylVariationCancels ∧
-  (∀ cfg : WorldsheetConfig, data.conformalGaugeAction cfg = data.freeMatterAction cfg) ∧
+  (∀ cfg : WorldsheetConfig,
+    data.conformalGaugeAction.eval cfg = data.freeMatterAction.eval cfg) ∧
   data.matterCentralCharge = (3 / 2 : CentralCharge) * (data.spacetimeDimension : ℝ)
 
 /-- Assumed super-Polyakov gauge package from Section 6.1. -/
@@ -53,8 +55,8 @@ theorem super_polyakov_gauge_package
 
 /-- Superconformal-ghost data for the `(bc)(beta gamma)` system. -/
 structure SuperconformalGhostData (GhostConfig : Type*) where
-  betaGammaAction : GhostConfig → ComplexActionValue
-  flatGaugeAction : GhostConfig → ComplexActionValue
+  betaGammaAction : QFT.PathIntegral.ComplexActionFunctional GhostConfig
+  flatGaugeAction : QFT.PathIntegral.ComplexActionFunctional GhostConfig
   betaGammaOpeSign : ℤ
   bcCentralCharge : ℤ
   betaGammaCentralCharge : ℤ
@@ -66,7 +68,7 @@ flat-gauge action reduction, `beta(z) gamma(0) ~ -1/z`, and total ghost
 central charge `c_gh = -15`. -/
 def SuperconformalGhostPackage {GhostConfig : Type*}
     (data : SuperconformalGhostData GhostConfig) : Prop :=
-  (∀ cfg : GhostConfig, data.betaGammaAction cfg = data.flatGaugeAction cfg) ∧
+  (∀ cfg : GhostConfig, data.betaGammaAction.eval cfg = data.flatGaugeAction.eval cfg) ∧
   data.betaGammaOpeSign = -1 ∧
   data.bcCentralCharge = -26 ∧
   data.betaGammaCentralCharge = 11 ∧

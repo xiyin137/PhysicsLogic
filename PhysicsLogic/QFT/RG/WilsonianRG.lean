@@ -1,4 +1,5 @@
 import PhysicsLogic.QFT.RG.Basic
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import PhysicsLogic.Assumptions
 import Mathlib.Data.Complex.Basic
 
@@ -34,7 +35,7 @@ structure WilsonianAction {d : ℕ} (rg : RGFramework d) where
   cutoff : Cutoff
   /-- The action functional on a field configuration type -/
   FieldConfig : Type*
-  action : FieldConfig → ActionScale
+  action : PhysicsLogic.QFT.PathIntegral.ActionFunctional FieldConfig
   /-- Wilson coefficients for each operator -/
   coefficients : rg.Operator → DimensionlessCoupling
 
@@ -47,7 +48,7 @@ structure ComplexWilsonianAction {d : ℕ} (rg : RGFramework d) where
   cutoff : Cutoff
   /-- The action functional on a field configuration type -/
   FieldConfig : Type*
-  action : FieldConfig → ComplexActionValue
+  action : PhysicsLogic.QFT.PathIntegral.ComplexActionFunctional FieldConfig
   /-- Wilson coefficients for each operator (possibly complex). -/
   coefficients : rg.Operator → ℂ
 
@@ -56,7 +57,7 @@ def WilsonianAction.toComplex {d : ℕ} {rg : RGFramework d}
     (S : WilsonianAction rg) : ComplexWilsonianAction rg where
   cutoff := S.cutoff
   FieldConfig := S.FieldConfig
-  action := fun φ => (S.action φ : ℂ)
+  action := S.action.toComplex
   coefficients := fun O => (S.coefficients O : ℂ)
 
 /-- The Wilson coefficient for operator O at scale Λ. -/
@@ -100,7 +101,7 @@ structure PolchinskiFlow {d : ℕ} (rg : RGFramework d) where
 structure WetterichFlow {d : ℕ} (rg : RGFramework d) where
   /-- Effective average action at each scale -/
   FieldConfig : Type*
-  effective_action : Scale → FieldConfig → ActionScale
+  effective_action : Scale → PhysicsLogic.QFT.PathIntegral.ActionFunctional FieldConfig
   /-- Regulator function R_k -/
   regulator : Scale → ℝ → ℝ
   /-- The regulator vanishes in the IR limit k → 0.
@@ -115,7 +116,7 @@ structure WetterichFlow {d : ℕ} (rg : RGFramework d) where
 structure ComplexWetterichFlow {d : ℕ} (rg : RGFramework d) where
   /-- Effective average action at each scale (complex-valued). -/
   FieldConfig : Type*
-  effective_action : Scale → FieldConfig → ComplexActionValue
+  effective_action : Scale → PhysicsLogic.QFT.PathIntegral.ComplexActionFunctional FieldConfig
   /-- Regulator function R_k on momentum magnitudes. -/
   regulator : Scale → ℝ → ℝ
   /-- IR limit of the regulator. -/
@@ -125,7 +126,7 @@ structure ComplexWetterichFlow {d : ℕ} (rg : RGFramework d) where
 def WetterichFlow.toComplex {d : ℕ} {rg : RGFramework d}
     (W : WetterichFlow rg) : ComplexWetterichFlow rg where
   FieldConfig := W.FieldConfig
-  effective_action := fun k φ => (W.effective_action k φ : ℂ)
+  effective_action := fun k => (W.effective_action k).toComplex
   regulator := W.regulator
   regulator_ir_vanish := W.regulator_ir_vanish
 

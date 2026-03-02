@@ -257,11 +257,11 @@ noncomputable def physicalMassSquared (v : OnePIVertices F)
     at the perturbative level: each Γₙ is computed from Feynman diagrams. -/
 structure LoopExpansion (F : FieldConfigurationSpace) where
   /-- Classical action S[φ] (zeroth order in ℏ) -/
-  classical_action : F.carrier → ActionScale
+  classical_action : ActionFunctional F.carrier
   /-- n-loop correction Γₙ[φ] for n ≥ 1 -/
   loop_correction : ℕ → (F.carrier → ActionScale)
   /-- ℏ = 0 limit is classical -/
-  loop_correction_zero : loop_correction 0 = classical_action
+  loop_correction_zero : ∀ φ : F.carrier, loop_correction 0 φ = classical_action.eval φ
 
 /-- One-loop effective action via functional determinant
 
@@ -272,7 +272,7 @@ structure LoopExpansion (F : FieldConfigurationSpace) where
     operator around configuration φ. -/
 structure OneLoopCorrection (F : FieldConfigurationSpace) where
   /-- Classical action -/
-  classical_action : F.carrier → ActionScale
+  classical_action : ActionFunctional F.carrier
   /-- Fluctuation operator at configuration φ -/
   fluctuation_operator : F.carrier → (F.carrier → F.carrier)
   /-- One-loop correction (log determinant, requires regularization) -/
@@ -284,17 +284,17 @@ noncomputable def evaluateLoopExpansion (L : LoopExpansion F) (hbar : ActionScal
   (List.range (nLoops + 1)).foldl (fun acc n => acc + hbar^n * L.loop_correction n φ) 0
 
 /-- Tree-level approximation: just the classical action -/
-def treeLevel (L : LoopExpansion F) : F.carrier → ActionScale := L.classical_action
+def treeLevel (L : LoopExpansion F) : F.carrier → ActionScale := L.classical_action.eval
 
 /-- One-loop approximation: S + ℏΓ₁ -/
 noncomputable def oneLoopApprox
     (L : LoopExpansion F) (hbar : ActionScale) (φ : F.carrier) : ActionScale :=
-  L.classical_action φ + hbar * L.loop_correction 1 φ
+  L.classical_action.eval φ + hbar * L.loop_correction 1 φ
 
 /-- Two-loop approximation -/
 noncomputable def twoLoopApprox
     (L : LoopExpansion F) (hbar : ActionScale) (φ : F.carrier) : ActionScale :=
-  L.classical_action φ + hbar * L.loop_correction 1 φ + hbar^2 * L.loop_correction 2 φ
+  L.classical_action.eval φ + hbar * L.loop_correction 1 φ + hbar^2 * L.loop_correction 2 φ
 
 /-- Complex-valued loop expansion of the 1PI effective action.
 
@@ -303,19 +303,20 @@ noncomputable def twoLoopApprox
     with all coefficients potentially complex-valued. -/
 structure ComplexLoopExpansion (F : FieldConfigurationSpace) where
   /-- Classical action term (possibly complex). -/
-  classical_action : F.carrier → ComplexActionValue
+  classical_action : ComplexActionFunctional F.carrier
   /-- n-loop correction Γₙ[φ] (possibly complex). -/
   loop_correction : ℕ → (F.carrier → ComplexActionValue)
   /-- ℏ = 0 limit is classical. -/
-  loop_correction_zero : loop_correction 0 = classical_action
+  loop_correction_zero : ∀ φ : F.carrier, loop_correction 0 φ = classical_action.eval φ
 
 /-- Embed a real (Euclidean) loop expansion into the complex-valued interface. -/
 def LoopExpansion.toComplex (L : LoopExpansion F) : ComplexLoopExpansion F where
-  classical_action := fun φ => ((L.classical_action φ).value : ℂ)
+  classical_action := L.classical_action.toComplex
   loop_correction := fun n φ => ((L.loop_correction n φ).value : ℂ)
   loop_correction_zero := by
-    funext φ
-    exact congrArg (fun f => (f φ : ℂ)) L.loop_correction_zero
+    intro φ
+    simpa [ActionFunctional.toComplex] using
+      congrArg (fun v : ActionScale => (v : ℂ)) (L.loop_correction_zero φ)
 
 /-- Evaluate the full complex 1PI action at `nLoops` loop order. -/
 noncomputable def evaluateComplexLoopExpansion
@@ -325,19 +326,19 @@ noncomputable def evaluateComplexLoopExpansion
 
 /-- Complex tree-level approximation. -/
 def complexTreeLevel (L : ComplexLoopExpansion F) : F.carrier → ComplexActionValue :=
-  L.classical_action
+  L.classical_action.eval
 
 /-- Complex one-loop approximation: S + ℏΓ₁. -/
 noncomputable def complexOneLoopApprox
     (L : ComplexLoopExpansion F) (hbar : ComplexActionValue) (φ : F.carrier) :
     ComplexActionValue :=
-  L.classical_action φ + hbar * L.loop_correction 1 φ
+  L.classical_action.eval φ + hbar * L.loop_correction 1 φ
 
 /-- Complex two-loop approximation. -/
 noncomputable def complexTwoLoopApprox
     (L : ComplexLoopExpansion F) (hbar : ComplexActionValue) (φ : F.carrier) :
     ComplexActionValue :=
-  L.classical_action φ + hbar * L.loop_correction 1 φ + hbar^2 * L.loop_correction 2 φ
+  L.classical_action.eval φ + hbar * L.loop_correction 1 φ + hbar^2 * L.loop_correction 2 φ
 
 /-- Complex one-loop effective action via functional determinant.
 
@@ -346,7 +347,7 @@ noncomputable def complexTwoLoopApprox
     which naturally lives in ℂ. -/
 structure ComplexOneLoopCorrection (F : FieldConfigurationSpace) where
   /-- Classical action. -/
-  classical_action : F.carrier → ComplexActionValue
+  classical_action : ComplexActionFunctional F.carrier
   /-- Fluctuation operator at configuration φ. -/
   fluctuation_operator : F.carrier → (F.carrier → F.carrier)
   /-- One-loop correction (complex in general). -/
@@ -399,9 +400,9 @@ structure WilsonianEffectiveAction (F : FieldConfigurationSpace) where
   /-- Bare UV cutoff -/
   bare_cutoff : Cutoff
   /-- Bare action at UV scale -/
-  bare_action : F.carrier → ActionScale
+  bare_action : ActionFunctional F.carrier
   /-- Wilsonian action at scale Λ ≤ Λ₀ -/
-  action_at_scale : Cutoff → (F.carrier → ActionScale)
+  action_at_scale : Cutoff → ActionFunctional F.carrier
   /-- At bare scale, Wilsonian action equals bare action -/
   initial_condition : action_at_scale bare_cutoff = bare_action
 
@@ -413,9 +414,9 @@ structure ComplexWilsonianEffectiveAction (F : FieldConfigurationSpace) where
   /-- Bare UV cutoff -/
   bare_cutoff : Cutoff
   /-- Bare action at UV scale (possibly complex). -/
-  bare_action : F.carrier → ComplexActionValue
+  bare_action : ComplexActionFunctional F.carrier
   /-- Wilsonian action at scale Λ ≤ Λ₀ (possibly complex). -/
-  action_at_scale : Cutoff → (F.carrier → ComplexActionValue)
+  action_at_scale : Cutoff → ComplexActionFunctional F.carrier
   /-- At bare scale, Wilsonian action equals bare action. -/
   initial_condition : action_at_scale bare_cutoff = bare_action
 
@@ -423,11 +424,10 @@ structure ComplexWilsonianEffectiveAction (F : FieldConfigurationSpace) where
 def WilsonianEffectiveAction.toComplex (W : WilsonianEffectiveAction F) :
     ComplexWilsonianEffectiveAction F where
   bare_cutoff := W.bare_cutoff
-  bare_action := fun φ => ((W.bare_action φ).value : ℂ)
-  action_at_scale := fun Λ φ => ((W.action_at_scale Λ φ).value : ℂ)
+  bare_action := W.bare_action.toComplex
+  action_at_scale := fun Λ => (W.action_at_scale Λ).toComplex
   initial_condition := by
-    funext φ
-    exact congrArg (fun f => (f φ : ℂ)) W.initial_condition
+    exact congrArg (fun f => f.toComplex) W.initial_condition
 
 /-- Partition function independence
 

@@ -122,6 +122,33 @@ else
   echo "[ok] no raw scalar-codomain action maps in non-Papers modules"
 fi
 
+echo "[global-semantic-check] no raw arrow-typed Action fields with ActionScale/ComplexActionValue codomain"
+raw_action_arrow_hits="$(
+  {
+    rg -n "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Aa]ction[A-Za-z0-9_']*[[:space:]]*:[[:space:]].*→[[:space:]]*(ActionScale|ComplexActionValue)([[:space:]]|$)" \
+      PhysicsLogic --glob '*.lean' \
+    | rg -v '^PhysicsLogic/Papers/' \
+    | while IFS= read -r line; do
+        name="$(printf "%s" "$line" | extract_name)"
+        lower="$(printf "%s" "$name" | tr '[:upper:]' '[:lower:]')"
+        if [[ "$lower" == *actiondifference* || "$lower" == *actionvariation* || \
+              "$lower" == *actionbound* || "$lower" == *actionvalue* || \
+              "$lower" == *actionscale* || "$lower" == *actioncoefficient* || \
+              "$lower" == *actionamplitude* || "$lower" == *actionratio* ]]; then
+          continue
+        fi
+        printf "%s\n" "$line"
+      done
+  } || true
+)"
+if [[ -n "$raw_action_arrow_hits" ]]; then
+  echo "$raw_action_arrow_hits"
+  echo "[fail] found raw arrow-typed Action fields with ActionScale/ComplexActionValue codomain"
+  status=1
+else
+  echo "[ok] no raw arrow-typed Action fields with ActionScale/ComplexActionValue codomain"
+fi
+
 echo "[global-semantic-check] no raw scalar base scale aliases in non-Papers modules"
 raw_scale_alias_hits="$(
   rg -n "^[[:space:]]*(abbrev|def)[[:space:]]+Scale[[:space:]]*:=[[:space:]]*(ℝ|Real)" \
