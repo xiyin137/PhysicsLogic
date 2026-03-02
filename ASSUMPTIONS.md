@@ -1,8 +1,8 @@
 # Physics Assumptions Report
 
 - Registered assumptions: `260`
-- Assumptions referenced in non-Papers modules: `253`
-- Assumptions with zero references outside registry: `7`
+- Assumptions referenced in non-Papers modules: `252`
+- Assumptions with zero references outside registry: `8`
 
 | AssumptionId | Payload | Core refs | Papers refs | Total refs | Description |
 | --- | --- | ---: | ---: | ---: | --- |
@@ -255,7 +255,7 @@
 | `symSuperspaceN1Algebra4d` | `sym.superspace.n1_algebra_4d` | 1 | 0 | 1 | The 4D N=1 superspace supercharge/superderivative anticommutator algebra is assumed in this abstraction layer. |
 | `symSuperspaceN1ChiralConstraint` | `sym.superspace.n1_chiral_constraint` | 1 | 0 | 1 | The 4D N=1 chiral/anti-chiral superfield constraints are assumed in this abstraction layer. |
 | `tqftIsingModularAxioms` | `qft.tqft.ising_modular_axioms` | 1 | 0 | 1 | Coherence and modularity proof obligations for the explicit Ising modular-category instance are assumed in this abstraction layer. |
-| `tqftModularRelation` | `qft.tqft.modular_relation` | 1 | 0 | 1 | The modular relation connecting S and T matrices is assumed in this abstraction layer. |
+| `tqftModularRelation` | `qft.tqft.modular_relation` | 0 | 0 | 0 | The modular relation connecting S and T matrices is assumed in this abstraction layer. |
 | `tqftSu24FusionAxioms` | `qft.tqft.su24_fusion_axioms` | 3 | 0 | 3 | Coherence proof obligations for the explicit SU(2)_4 fusion-category instance are assumed in this abstraction layer. |
 | `tqftSu24RibbonAxioms` | `qft.tqft.su24_ribbon_axioms` | 2 | 0 | 2 | Braiding/twist coherence proof obligations for the explicit SU(2)_4 ribbon-category instance are assumed in this abstraction layer. |
 | `tqftZ3ModularAxioms` | `qft.tqft.z3_modular_axioms` | 6 | 2 | 8 | Coherence and modularity proof obligations for the explicit Z3 modular-category instance are assumed in this abstraction layer. |
