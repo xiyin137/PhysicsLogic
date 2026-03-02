@@ -13,9 +13,9 @@ structure EquationsOfMotion (F : Type*) (actionTheory : ActionTheory F) where
       For any one-parameter family of fields φ(ε) with φ(0) = φ,
       the derivative d/dε S[φ(ε)]|_{ε=0} = 0. -/
   euler_lagrange_stationary : ∀ (phi : ClassicalField F)
-    (variation : ℝ → ClassicalField F),
+    (variation : ScalingDimension → ClassicalField F),
     variation 0 = phi →
-    (eulerLagrange phi ↔ deriv (fun ε => actionTheory.Action (variation ε)) 0 = 0)
+    (eulerLagrange phi ↔ deriv (fun ε => (actionTheory.Action (variation ε)).value) 0 = 0)
   /-- Equivalence of Lagrangian and Hamiltonian formulations -/
   lagrangian_hamiltonian_equivalence : ∀ (phi : ClassicalField F),
     eulerLagrange phi ↔ hamiltonEquations phi

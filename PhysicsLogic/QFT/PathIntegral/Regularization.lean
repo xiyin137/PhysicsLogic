@@ -8,6 +8,7 @@
 -- Renormalization tunes the bare parameters as Λ → ∞ to obtain
 -- finite physical predictions (when possible).
 import PhysicsLogic.QFT.PathIntegral.PathIntegrals
+import PhysicsLogic.Units
 import Mathlib.Data.Complex.Basic
 
 namespace PhysicsLogic.QFT.PathIntegral
@@ -19,7 +20,7 @@ set_option linter.unusedVariables false
 /-- UV cutoff: a scale Λ above which modes are suppressed. -/
 structure UVCutoff where
   /-- The cutoff scale -/
-  scale : ℝ
+  scale : PhysicsLogic.Units.MassScale
   /-- Cutoff is positive -/
   positive : scale > 0
 
@@ -40,7 +41,7 @@ structure RegularizationScheme (F : Type*) where
     Path integral becomes a finite-dimensional integral. -/
 structure LatticeRegularization where
   /-- Lattice spacing a > 0 -/
-  spacing : ℝ
+  spacing : LengthScale
   /-- Spacing is positive -/
   spacing_positive : spacing > 0
 
@@ -65,12 +66,13 @@ structure ContinuumLimitData (F : Type*) where
   /-- Lattice theories parameterized by lattice spacing -/
   lattice_theories : LatticeRegularization → LatticePathIntegralData F
   /-- Bare couplings as function of lattice spacing -/
-  bare_couplings : LatticeRegularization → List ℝ
+  bare_couplings : LatticeRegularization → List ScalingDimension
   /-- A fixed point of the couplings (limit as a → 0) -/
-  fixed_point_couplings : List ℝ
+  fixed_point_couplings : List ScalingDimension
   /-- The couplings converge to the fixed point as lattice spacing → 0:
       for each coupling component i, |g_i(a) - g_i*| → 0 as a → 0 -/
-  approaches_fixed_point : ∀ (i : ℕ) (hi : i < fixed_point_couplings.length) (ε : ℝ),
+  approaches_fixed_point : ∀ (i : ℕ) (hi : i < fixed_point_couplings.length)
+      (ε : ScalingDimension),
     ε > 0 → ∃ a₀ > 0,
     ∀ (a : LatticeRegularization), a.spacing < a₀ →
     i < (bare_couplings a).length ∧
@@ -81,9 +83,9 @@ structure ContinuumLimitData (F : Type*) where
     This preserves gauge symmetry and is the standard for perturbative calculations. -/
 structure DimensionalRegularizationData (F : Type*) where
   /-- The regularized amplitude as a function of ε = 4 - d -/
-  regulated_amplitude : ℝ → ℂ
+  regulated_amplitude : ScalingDimension → ComplexAmplitude
   /-- The renormalization scale μ -/
-  renormalization_scale : ℝ
+  renormalization_scale : PhysicsLogic.Units.MassScale
   /-- Scale is positive -/
   scale_positive : renormalization_scale > 0
 
@@ -91,7 +93,7 @@ structure DimensionalRegularizationData (F : Type*) where
     divergences at high momenta. -/
 structure PauliVillarsRegularization where
   /-- Regulator masses (heavy auxiliary fields) -/
-  regulator_masses : List ℝ
+  regulator_masses : List PhysicsLogic.Units.MassScale
   /-- Signs of the regulator fields (alternating to cancel divergences) -/
   signs : List ℤ
   /-- Signs are ±1 -/
