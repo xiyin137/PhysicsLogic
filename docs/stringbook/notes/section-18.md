@@ -1,6 +1,6 @@
 # Section 18: Non-perturbative dualities
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 372
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/Dualities.lean`
@@ -79,6 +79,14 @@
 - `HeteroticStrongCouplingIntervalPackage`
 - `HoravaWittenBoundaryPackage`
 - `MassiveIiaRomansD8Package`
+
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/Dualities.lean` with all listed
+  package units assumption-wired.
+- Physics-interface hardening pass:
+  replaced checklist booleans in `*Data` structures with claim-typed fields
+  (`DualityClaim := Prop`) and removed `= true` placeholders from package
+  predicates.
 
 ## Assumption Candidates
 - Mapped `AssumptionId`: `stringDualityHeteroticTypeIStrongWeak`.
