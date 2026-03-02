@@ -22,8 +22,8 @@ structure ConformalBlock2D where
 
 /-- Term in a four-point conformal-block expansion. -/
 structure FourPointBlockTerm where
-  leftOPECoefficient : ℂ
-  rightOPECoefficient : ℂ
+  leftOPECoefficient : ComplexAmplitude
+  rightOPECoefficient : ComplexAmplitude
   holomorphicBlock : ConformalBlock2D
   antiholomorphicBlock : ConformalBlock2D
 

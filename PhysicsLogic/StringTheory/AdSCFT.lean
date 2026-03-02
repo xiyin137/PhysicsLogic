@@ -70,7 +70,7 @@ theorem ads_cft_parameter_map
 /-- Minimal package for `N=4` SYM conformal/superconformal structure. -/
 structure NFourSYMConformalData where
   betaFunctionValue : BetaFunctionValue
-  stressTensorTrace : ℝ
+  stressTensorTrace : ScalingDimension
   hasPsu224SuperconformalSymmetry : AdSCFTClaim
 
 /-- `N=4` SYM conformal package:
@@ -185,8 +185,8 @@ theorem state_operator_map_relation
 
 /-- Global holographic-dictionary data at generating-functional/correlator level. -/
 structure AdSCFTDictionaryData where
-  qgPartitionValue : ℂ
-  cftCorrelatorValue : ℂ
+  qgPartitionValue : ComplexAmplitude
+  cftCorrelatorValue : ComplexAmplitude
 
 /-- AdS/CFT dictionary relation `Z_QG = <...>_CFT` at interface level. -/
 def AdSCFTDictionaryRelation (data : AdSCFTDictionaryData) : Prop :=

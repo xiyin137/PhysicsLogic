@@ -26,7 +26,7 @@ structure BFSSUpliftParameterData where
   alphaPrimeSqrt : StringLength
   mTheoryPlanckMass : MassScale
   mTheoryCircleRadius : LengthScale
-  harmonicCoefficient : ℝ
+  harmonicCoefficient : DimensionlessCoefficient
 
 /-- BFSS uplift package:
 `c0 = 60π^3 g_A (α')^(7/2) = 60π^3 M11^(-9) R10^(-2)`. -/
@@ -55,7 +55,7 @@ theorem bfss_uplift_parameter_package
 
 /-- Near-horizon harmonic-profile data for D0/M-wave geometry. -/
 structure BFSSNearHorizonData where
-  harmonicCoefficient : ℝ
+  harmonicCoefficient : DimensionlessCoefficient
   d0Charge : ℕ
   radialDistance : ℝ
   harmonicProfile : ℝ
@@ -83,7 +83,7 @@ theorem bfss_near_horizon_package
 
 /-- Thermal near-extremal D0 black-hole data in BFSS regime. -/
 structure BFSSBlackHoleThermalData where
-  harmonicCoefficient : ℝ
+  harmonicCoefficient : DimensionlessCoefficient
   d0Charge : ℕ
   horizonRadius : LengthScale
   beta : InverseTemperatureScale
@@ -116,8 +116,8 @@ structure BFSSMicrocanonicalEntropyData where
   rankN : ℕ
   betaBar : InverseTemperatureScale
   energyOverM : ScalingDimension
-  canonicalPrefactor : ℝ
-  microcanonicalPrefactor : ℝ
+  canonicalPrefactor : DimensionlessCoefficient
+  microcanonicalPrefactor : DimensionlessCoefficient
   canonicalEntropy : EntropyMeasure
   microcanonicalEntropy : EntropyMeasure
 
@@ -341,7 +341,7 @@ theorem matrix_string_tree_amplitude_package
 
 /-- Matrix-string conjecture data for connected amplitudes in the large-`N` limit. -/
 structure MatrixStringLargeNConjectureData where
-  boostFactor : ℝ
+  boostFactor : DimensionlessCoefficient
   targetAmplitude : ComplexAmplitude
   mstConnectedAmplitude : ℕ → ComplexAmplitude
 

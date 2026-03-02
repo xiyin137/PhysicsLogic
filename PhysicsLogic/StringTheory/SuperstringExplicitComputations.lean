@@ -130,9 +130,9 @@ structure FourPointLowEnergyExpansionData where
   mandelstamS : ℝ
   mandelstamT : ℝ
   mandelstamU : ℝ
-  zeta3Coefficient : ℝ
-  gammaKernelLeadingPole : ℝ
-  gammaKernelConstantTerm : ℝ
+  zeta3Coefficient : DimensionlessCoefficient
+  gammaKernelLeadingPole : DimensionlessCoefficient
+  gammaKernelConstantTerm : DimensionlessCoefficient
   oneLoopThresholdNonanalytic : SuperstringExplicitClaim
 
 /-- Low-energy expansion package:

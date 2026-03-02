@@ -237,6 +237,34 @@ else
   echo "[ok] AdS3 OPE/normalization coefficient fields use semantic aliases in core modules"
 fi
 
+echo "[global-semantic-check] core coefficient/normalization fields use semantic aliases"
+raw_core_coeff_hits="$(
+  rg -n "^[[:space:]]+(stressTensorTrace|measureNormalization|harmonicCoefficient|canonicalPrefactor|microcanonicalPrefactor|boostFactor|zeta3Coefficient|gammaKernelLeadingPole|gammaKernelConstantTerm|sphereNormalization|ghostMeasureWeight)[[:space:]]*:[[:space:]]*(ℝ|Real)([[:space:]]|$)" \
+    PhysicsLogic --glob '*.lean' \
+  | rg -v '^PhysicsLogic/Papers/' || true
+)"
+if [[ -n "$raw_core_coeff_hits" ]]; then
+  echo "$raw_core_coeff_hits"
+  echo "[fail] found raw ℝ/Real core coefficient/normalization fields in non-Papers modules"
+  status=1
+else
+  echo "[ok] core coefficient/normalization fields use semantic aliases in non-Papers modules"
+fi
+
+echo "[global-semantic-check] core complex coefficient/amplitude labels use semantic aliases"
+raw_core_complex_coeff_hits="$(
+  rg -n "^[[:space:]]+(qgPartitionValue|cftCorrelatorValue|leftOPECoefficient|rightOPECoefficient|tSecondPoleCoeff|tSimplePoleCoeff|tBarSecondPoleCoeff|tBarSimplePoleCoeff)[[:space:]]*:[[:space:]]*(ℂ|Complex)([[:space:]]|$)" \
+    PhysicsLogic --glob '*.lean' \
+  | rg -v '^PhysicsLogic/Papers/' || true
+)"
+if [[ -n "$raw_core_complex_coeff_hits" ]]; then
+  echo "$raw_core_complex_coeff_hits"
+  echo "[fail] found raw ℂ/Complex core coefficient/amplitude labels in non-Papers modules"
+  status=1
+else
+  echo "[ok] core complex coefficient/amplitude labels use semantic aliases in non-Papers modules"
+fi
+
 echo "[global-semantic-check] LSZ field-strength renormalization uses semantic alias"
 raw_field_strength_hits="$(
   rg -n "^[[:space:]]+field_strength_Z[[:space:]]*:[[:space:]]*(ℝ|Real)([[:space:]]|$)" \

@@ -48,7 +48,7 @@ structure TwoDConformalCoordinateData where
   z_imag : z.im = tau
   zBar_real : zBar.re = sigma
   zBar_imag : zBar.im = -tau
-  measureNormalization : ℝ
+  measureNormalization : ProbabilityWeight
   measureNormalization_formula : measureNormalization = 2
 
 /-- Stress-tensor OPE package with a Virasoro primary:
@@ -58,10 +58,10 @@ structure StressTensorPrimaryOPEData where
   antiholomorphicWeight : ScalingDimension
   tMaxPoleOrder : ℕ
   tBarMaxPoleOrder : ℕ
-  tSecondPoleCoeff : ℂ
-  tSimplePoleCoeff : ℂ
-  tBarSecondPoleCoeff : ℂ
-  tBarSimplePoleCoeff : ℂ
+  tSecondPoleCoeff : ComplexAmplitude
+  tSimplePoleCoeff : ComplexAmplitude
+  tBarSecondPoleCoeff : ComplexAmplitude
+  tBarSimplePoleCoeff : ComplexAmplitude
   tMaxPoleOrder_isTwo : tMaxPoleOrder = 2
   tBarMaxPoleOrder_isTwo : tBarMaxPoleOrder = 2
   tSecondPoleFormula : tSecondPoleCoeff = holomorphicWeight

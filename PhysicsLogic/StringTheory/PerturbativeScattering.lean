@@ -156,7 +156,7 @@ theorem tree_unitarity_factorization_package
 /-- Normalization-recursion data from channel factorization. -/
 structure PerturbativeNormalizationRecursionData where
   alphaPrime : StringSlope
-  sphereNormalization : ℝ
+  sphereNormalization : ProbabilityWeight
   leftChannelNormalization : ComplexAmplitude
   rightChannelNormalization : ComplexAmplitude
   parentChannelNormalization : ComplexAmplitude
@@ -219,7 +219,7 @@ structure OneLoopTorusMeasureData where
   tauRe : ℝ
   tauIm : ℝ
   etaAbsFourth : ℝ
-  ghostMeasureWeight : ℝ
+  ghostMeasureWeight : ProbabilityWeight
   matterIntegratedCorrelator : ComplexAmplitude
   oneLoopAmplitude : ComplexAmplitude
 
