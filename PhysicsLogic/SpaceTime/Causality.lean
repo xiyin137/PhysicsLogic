@@ -10,25 +10,44 @@ inductive CausalCharacter
   | Null
   | Spacelike
 
-/-- Determine causal character from metric -/
-noncomputable def causalCharacter (metric : SpacetimeMetric) (x y : SpaceTimePoint) : CausalCharacter :=
-  let v := fun μ => x μ - y μ
+/-- Causal character of a tangent vector at a point. -/
+noncomputable def tangentCausalCharacter (metric : SpacetimeMetric) (x : SpaceTimePoint)
+    (v : Fin 4 → ℝ) : CausalCharacter :=
   let norm := innerProduct metric x v v
   if norm < 0 then CausalCharacter.Timelike
   else if norm = 0 then CausalCharacter.Null
   else CausalCharacter.Spacelike
 
-/-- Timelike separation (works for any metric) -/
+/-- Determine causal character from coordinate separation `v = x - y`.
+    This affine-coordinate surrogate is exact in flat spacetime and local charts,
+    and should not be interpreted as a geodesic-separation invariant in curved
+    geometry at finite distance. -/
+noncomputable def causalCharacter (metric : SpacetimeMetric) (x y : SpaceTimePoint) : CausalCharacter :=
+  tangentCausalCharacter metric x (fun μ => x μ - y μ)
+
+/-- Timelike tangent vector at point `x`. -/
+def TangentTimelike (metric : SpacetimeMetric) (x : SpaceTimePoint) (v : Fin 4 → ℝ) : Prop :=
+  innerProduct metric x v v < 0
+
+/-- Spacelike tangent vector at point `x`. -/
+def TangentSpacelike (metric : SpacetimeMetric) (x : SpaceTimePoint) (v : Fin 4 → ℝ) : Prop :=
+  innerProduct metric x v v > 0
+
+/-- Null tangent vector at point `x`. -/
+def TangentLightlike (metric : SpacetimeMetric) (x : SpaceTimePoint) (v : Fin 4 → ℝ) : Prop :=
+  innerProduct metric x v v = 0
+
+/-- Timelike coordinate separation surrogate `v = x - y` in a chosen chart. -/
 def Timelike (metric : SpacetimeMetric) (x y : SpaceTimePoint) : Prop :=
-  innerProduct metric x (fun μ => x μ - y μ) (fun μ => x μ - y μ) < 0
+  TangentTimelike metric x (fun μ => x μ - y μ)
 
-/-- Spacelike separation (works for any metric) -/
+/-- Spacelike coordinate separation surrogate `v = x - y` in a chosen chart. -/
 def Spacelike (metric : SpacetimeMetric) (x y : SpaceTimePoint) : Prop :=
-  innerProduct metric x (fun μ => x μ - y μ) (fun μ => x μ - y μ) > 0
+  TangentSpacelike metric x (fun μ => x μ - y μ)
 
-/-- Lightlike (null) separation (works for any metric) -/
+/-- Null coordinate separation surrogate `v = x - y` in a chosen chart. -/
 def Lightlike (metric : SpacetimeMetric) (x y : SpaceTimePoint) : Prop :=
-  innerProduct metric x (fun μ => x μ - y μ) (fun μ => x μ - y μ) = 0
+  TangentLightlike metric x (fun μ => x μ - y μ)
 
 /-- Causal classification is exhaustive -/
 theorem causal_trichotomy (metric : SpacetimeMetric) (x y : SpaceTimePoint) :
@@ -83,17 +102,17 @@ theorem innerProduct_minkowski_eq (x : SpaceTimePoint) (v w : Fin 4 → ℝ) :
 /-- Timelike criterion in Minkowski space as interval negativity. -/
 theorem timelike_iff_minkowskiInterval_neg (x y : SpaceTimePoint) :
     Timelike minkowskiMetric x y ↔ minkowskiInterval x y < 0 := by
-  simp [Timelike, minkowskiInterval, innerProduct_minkowski_eq]
+  simp [Timelike, TangentTimelike, minkowskiInterval, innerProduct_minkowski_eq]
 
 /-- Spacelike criterion in Minkowski space as interval positivity. -/
 theorem spacelike_iff_minkowskiInterval_pos (x y : SpaceTimePoint) :
     Spacelike minkowskiMetric x y ↔ minkowskiInterval x y > 0 := by
-  simp [Spacelike, minkowskiInterval, innerProduct_minkowski_eq]
+  simp [Spacelike, TangentSpacelike, minkowskiInterval, innerProduct_minkowski_eq]
 
 /-- Lightlike criterion in Minkowski space as vanishing interval. -/
 theorem lightlike_iff_minkowskiInterval_zero (x y : SpaceTimePoint) :
     Lightlike minkowskiMetric x y ↔ minkowskiInterval x y = 0 := by
-  simp [Lightlike, minkowskiInterval, innerProduct_minkowski_eq]
+  simp [Lightlike, TangentLightlike, minkowskiInterval, innerProduct_minkowski_eq]
 
 /-- Lorentz transformation preserves causal structure (Minkowski only). -/
 theorem lorentz_preserves_timelike (Λ : LorentzTransform) (x y : SpaceTimePoint) :

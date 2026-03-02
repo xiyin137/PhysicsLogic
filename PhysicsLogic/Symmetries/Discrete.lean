@@ -1,4 +1,5 @@
 import PhysicsLogic.SpaceTime.Basic
+import Mathlib.Data.Complex.Basic
 
 namespace PhysicsLogic.Symmetries
 
@@ -12,19 +13,31 @@ structure ChargeConjugation (H : Type*) where
   /-- C is involutive: C² = 1 -/
   involutive : ∀ (ψ : H), op (op ψ) = ψ
 
-/-- Parity P (spatial inversion: x → -x) -/
-structure Parity where
-  op : SpaceTimePoint → SpaceTimePoint
-  involutive : ∀ (x : SpaceTimePoint), op (op x) = x
-  preserves_time : ∀ (x : SpaceTimePoint), (op x) 0 = x 0
-  inverts_space : ∀ (x : SpaceTimePoint) (i : Fin 3), (op x) i.succ = -(x i.succ)
+/-- Parity P: spatial inversion on spacetime together with its action on states. -/
+structure Parity (H : Type*) where
+  /-- Parity action on Hilbert-space states. -/
+  op_state : H → H
+  /-- Parity is involutive on states: P² = 1. -/
+  involutive_state : ∀ (ψ : H), op_state (op_state ψ) = ψ
+  /-- Parity action on spacetime points. -/
+  op_spacetime : SpaceTimePoint → SpaceTimePoint
+  /-- Spacetime parity is involutive. -/
+  involutive_spacetime : ∀ (x : SpaceTimePoint), op_spacetime (op_spacetime x) = x
+  /-- Parity preserves time coordinate. -/
+  preserves_time : ∀ (x : SpaceTimePoint), (op_spacetime x) 0 = x 0
+  /-- Parity flips spatial coordinates. -/
+  inverts_space : ∀ (x : SpaceTimePoint) (i : Fin 3), (op_spacetime x) i.succ = -(x i.succ)
 
 /-- Structure for time reversal T (t → -t, antiunitary) -/
-structure TimeReversal (H : Type*) where
+structure TimeReversal (H : Type*) [SMul ℂ H] where
   /-- Time reversal operator on Hilbert space -/
   op : H → H
-  /-- T is involutive: T² = 1 -/
-  involutive : ∀ (ψ : H), op (op ψ) = ψ
+  /-- Wigner phase in T² = η_T (typically ±1 on irreducible sectors). -/
+  t_square_phase : ℂ
+  /-- η_T is a two-torsion phase. -/
+  t_square_phase_square : t_square_phase * t_square_phase = 1
+  /-- Time reversal squares to a phase on states. -/
+  square_action : ∀ (ψ : H), op (op ψ) = t_square_phase • ψ
   /-- Time reversal on spacetime -/
   op_spacetime : SpaceTimePoint → SpaceTimePoint
   /-- T reverses time: t → -t -/
@@ -33,20 +46,24 @@ structure TimeReversal (H : Type*) where
   preserves_space : ∀ (x : SpaceTimePoint) (i : Fin 3), (op_spacetime x) i.succ = x i.succ
 
 /-- Combined CPT symmetry -/
-structure CPTSymmetry (H : Type*) where
+structure CPTSymmetry (H : Type*) [SMul ℂ H] where
   C : ChargeConjugation H
-  P : Parity
+  P : Parity H
   T : TimeReversal H
+
+/-- Combined CPT action on states: Θ = C ∘ P ∘ T. -/
+def CPTSymmetry.combined {H : Type*} [SMul ℂ H] (cpt : CPTSymmetry H) : H → H :=
+  fun ψ => cpt.C.op (cpt.P.op_state (cpt.T.op ψ))
 
 /-- CPT theorem data: a Lorentz-invariant local QFT admits a CPT symmetry
     such that the combined CPT operation Θ = CPT is antiunitary and involutive.
 
     The full PCT theorem for Wightman QFT (with proper Wightman function
     transformation law) is stated in QFT/Wightman/Theorems.lean. -/
-structure CPTTheorem (H : Type*) where
+structure CPTTheorem (H : Type*) [SMul ℂ H] where
   /-- CPT symmetry instance -/
   cpt : CPTSymmetry H
   /-- Combined CPT is involutive: (CPT)² = id -/
-  cpt_involutive : ∀ (ψ : H), cpt.C.op (cpt.T.op (cpt.C.op (cpt.T.op ψ))) = ψ
+  cpt_involutive : ∀ (ψ : H), cpt.combined (cpt.combined ψ) = ψ
 
 end PhysicsLogic.Symmetries

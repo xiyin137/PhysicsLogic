@@ -1,5 +1,6 @@
 import Mathlib.GroupTheory.GroupAction.Defs
 import Mathlib.Algebra.DirectSum.Basic
+import Mathlib.LinearAlgebra.TensorProduct.Basic
 import PhysicsLogic.Symmetries.Lorentz
 import PhysicsLogic.Symmetries.Poincare
 
@@ -37,7 +38,7 @@ structure RepresentationOps (G : Type _) [Group G] where
   /-- Tensor product of representations -/
   tensorRep : {V W : Type _} → [AddCommGroup V] → [Module ℝ V] →
     [AddCommGroup W] → [Module ℝ W] →
-    Representation G V → Representation G W → Representation G (V × W)
+    Representation G V → Representation G W → Representation G (TensorProduct ℝ V W)
   /-- Direct sum of representations -/
   directSumRep : {V W : Type _} → [AddCommGroup V] → [Module ℝ V] →
     [AddCommGroup W] → [Module ℝ W] →

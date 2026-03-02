@@ -43,21 +43,33 @@ structure ContinuumLimitData {d : ℕ} (lattice : LatticeRegularizationData d) (
 
 /- ============= TRANSFER MATRIX ============= -/
 
+/-- Abstract Hamiltonian operator acting on a Hilbert-state type. -/
+structure HamiltonianOperator (State : Type*) where
+  /-- Action of the Hamiltonian on states. -/
+  apply : State → State
+
 /-- Transfer matrix data: relates field configurations on adjacent time slices.
     In Euclidean formulation: T = exp(-a·H) where H is the Hamiltonian.
 
     The transfer matrix connects the lattice formulation to the Hamiltonian formulation:
     lattice partition function = Tr(T^N) for N time slices. -/
 structure TransferMatrixData (d : ℕ) where
+  /-- State-space type on which transfer and Hamiltonian operators act. -/
+  State : Type*
   /-- The transfer matrix type (abstract — could be an operator on Hilbert space) -/
   TransferMatrix : Type*
-  /-- Extract Hamiltonian from transfer matrix: H = -log(T)/a -/
-  hamiltonian : (spacing : ℝ) → TransferMatrix → ℝ
-  /-- Transfer matrix reconstruction: as a → 0, T_a → e^{-aH} defines a Hamiltonian H -/
+  /-- Extract Hamiltonian operator from transfer matrix: H = -log(T)/a -/
+  hamiltonian : (spacing : ℝ) → TransferMatrix → HamiltonianOperator State
+  /-- Energy expectation functional for Hamiltonians on states. -/
+  energy : HamiltonianOperator State → State → ℝ
+  /-- Transfer-matrix reconstruction: for each transfer matrix, small-a Hamiltonians
+      converge (in matrix elements/expectation values) to a limiting Hamiltonian. -/
   transfer_matrix_limit :
-    ∀ ε > 0, ∃ a₀ > 0, ∀ (a : ℝ) (T : TransferMatrix),
-      0 < a → a < a₀ →
-      ∃ (H : ℝ), |hamiltonian a T - H| < ε
+    ∀ (T : TransferMatrix), ∃ (Hlim : HamiltonianOperator State),
+      ∀ ε > 0, ∃ a₀ > 0, ∀ (a : ℝ),
+        0 < a → a < a₀ →
+        ∀ (ψ : State),
+          |energy (hamiltonian a T) ψ - energy Hlim ψ| < ε
 
 /- ============= EUCLIDEAN GENERATING FUNCTIONALS ============= -/
 
@@ -93,8 +105,10 @@ structure SchwingerDysonEquation {d : ℕ} (theory : QFT d) where
 structure WardTakahashiIdentity {d : ℕ} (theory : QFT d) where
   /-- Conserved current J^μ associated to the symmetry -/
   current : Fin d → EuclideanPoint d → ℝ
+  /-- Divergence operator acting on currents. -/
+  divergence : (Fin d → EuclideanPoint d → ℝ) → EuclideanPoint d → ℝ
   /-- Current conservation: ∂_μ J^μ = 0 (away from operator insertions) -/
-  conservation : ∀ x, ∑ μ, current μ x = 0
+  conservation : ∀ x, divergence current x = 0
   /-- Simplified Ward-type symmetry relation for two-point functions. -/
   identity : ∀ (x y : EuclideanPoint d),
     theory.schwinger 2 (fun i => if i = 0 then x else y) =

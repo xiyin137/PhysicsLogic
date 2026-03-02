@@ -55,12 +55,32 @@ structure InvariantSymmetry {F : Type*}
   /-- Measure is invariant (if this fails, we have an anomaly) -/
   measure_invariant : MeasureInvariant μ toSymmetryTransform
 
+/-- Under an action symmetry, the Feynman weight is pointwise invariant. -/
+theorem symmetry_preserves_weight {F : Type*}
+    (pid : PathIntegralData F)
+    (σ : InvariantSymmetry pid.action pid.measure)
+    (ℏ : ℝ) :
+    ∀ φ,
+      Complex.exp (Complex.I * ↑(pid.action.eval (σ.toSymmetryTransform.transform φ) / ℏ)) =
+      Complex.exp (Complex.I * ↑(pid.action.eval φ / ℏ)) := by
+  intro φ
+  simp [σ.action_invariant φ]
+
 /-- Path integral is invariant under a full symmetry -/
 theorem path_integral_symmetry {F : Type*}
     (pid : PathIntegralData F)
     (σ : InvariantSymmetry pid.action pid.measure)
     (ℏ : ℝ) :
-    pathIntegral pid ℏ = pathIntegral pid ℏ := rfl
+    pid.measure.integrate
+      (fun φ => Complex.exp (Complex.I * ↑(pid.action.eval (σ.toSymmetryTransform.transform φ) / ℏ))) =
+    pathIntegral pid ℏ := by
+  have h_measure :
+      pid.measure.integrate
+        ((fun φ => Complex.exp (Complex.I * ↑(pid.action.eval φ / ℏ))) ∘
+          σ.toSymmetryTransform.transform) =
+      pid.measure.integrate (fun φ => Complex.exp (Complex.I * ↑(pid.action.eval φ / ℏ))) :=
+    σ.measure_invariant (fun φ => Complex.exp (Complex.I * ↑(pid.action.eval φ / ℏ)))
+  simpa [Function.comp, pathIntegral] using h_measure
 
 /-- Observable transforms under symmetry by pullback:
     O'(φ) = O(σ(φ)) -/

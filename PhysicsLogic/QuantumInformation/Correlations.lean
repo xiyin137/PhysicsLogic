@@ -63,11 +63,18 @@ structure TripartiteCorrelations {HA HB HC : Type _}
     (T_A_BC : TensorProductSpace HA T_BC.carrier) where
   /-- Conditional mutual information I(A:B|C) -/
   conditionalMutualInformation : DensityOperator T_A_BC.carrier → ℝ
+  /-- Bipartite mutual information I(A:B) extracted from the tripartite state. -/
+  mutualInformationAB : DensityOperator T_A_BC.carrier → ℝ
+  /-- Bipartite mutual information I(A:C) extracted from the tripartite state. -/
+  mutualInformationAC : DensityOperator T_A_BC.carrier → ℝ
+  /-- Bipartite mutual information I(B:C) extracted from the tripartite state. -/
+  mutualInformationBC : DensityOperator T_A_BC.carrier → ℝ
   /-- Quantum CMI is non-negative (consequence of SSA) -/
   quantum_cmi_nonneg : ∀ (rho : DensityOperator T_A_BC.carrier),
     conditionalMutualInformation rho ≥ 0
-  /-- Monogamy inequality for mutual information -/
-  monogamy_inequality : ∀ (I_AB I_AC I_BC : ℝ), I_AB + I_AC ≥ I_BC
+  /-- Monogamy inequality evaluated on physical tripartite states. -/
+  monogamy_inequality : ∀ (rho : DensityOperator T_A_BC.carrier),
+    mutualInformationAB rho + mutualInformationAC rho ≥ mutualInformationBC rho
 
 /-- Uhlmann's theorem structure: fidelity achieved by purifications -/
 structure UhlmannTheorem (H : Type _) [QuantumStateSpace H]

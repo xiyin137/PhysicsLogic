@@ -70,8 +70,13 @@ structure Isometry (metric : SpacetimeMetric) where
   inverse : SpaceTimePoint → SpaceTimePoint
   left_inv : ∀ x, inverse (map x) = x
   right_inv : ∀ x', map (inverse x') = x'
+  /-- Jacobian of the map: ∂(map^ρ)/∂x^μ at point x. -/
+  jacobian : SpaceTimePoint → Fin 4 → Fin 4 → ℝ
+  /-- Pullback metric preservation: (φ* g)_{μν} = g_{μν}. -/
   preserves_metric : ∀ x μ ν,
-    metric.g (map x) μ ν = metric.g x μ ν
+    (∑ ρ, ∑ σ,
+      jacobian x ρ μ * jacobian x σ ν * metric.g (map x) ρ σ) =
+    metric.g x μ ν
 
 /-- Killing horizon: surface where Killing vector becomes null -/
 def KillingHorizon (ct : ConnectionTheory metric)
@@ -113,8 +118,14 @@ structure SchwarzschildSpacetime (M : ℝ) (h : M > 0) where
   timeKilling : SpaceTimePoint → Fin 4 → ℝ
   /-- Rotational Killing vectors (spherical symmetry) -/
   rotKilling : Fin 3 → SpaceTimePoint → Fin 4 → ℝ
-  /-- Time translation is timelike Killing -/
-  time_is_timelike_killing : TimelikeKilling connection timeKilling
+  /-- Time translation is a Killing vector. -/
+  time_is_killing : KillingVector connection timeKilling
+  /-- Norm of the Schwarzschild time Killing vector can be timelike, null, or spacelike
+      depending on region (outside horizon / on horizon / inside horizon). -/
+  time_killing_norm_classification : ∀ x,
+    (∑ μ, ∑ ν, metric.g x μ ν * timeKilling x μ * timeKilling x ν) < 0 ∨
+    (∑ μ, ∑ ν, metric.g x μ ν * timeKilling x μ * timeKilling x ν) = 0 ∨
+    (∑ μ, ∑ ν, metric.g x μ ν * timeKilling x μ * timeKilling x ν) > 0
   /-- Rotations are spacelike Killing -/
   rot_is_spacelike_killing : ∀ i, SpacelikeKilling connection (rotKilling i)
 

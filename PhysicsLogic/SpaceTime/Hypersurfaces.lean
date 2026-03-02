@@ -3,18 +3,28 @@ import PhysicsLogic.SpaceTime.Curves
 
 namespace PhysicsLogic.SpaceTime
 
+/-- Squared norm of a hypersurface normal vector field at a point. -/
+noncomputable def hypersurfaceNormalNormSq
+    (metric : SpacetimeMetric)
+    (normal : SpaceTimePoint → Fin 4 → ℝ)
+    (x : SpaceTimePoint) : ℝ :=
+  ∑ μ, ∑ ν, metric.g x μ ν * normal x μ * normal x ν
+
 /-- Spacelike hypersurface (Cauchy surface candidate) -/
 def SpacelikeHypersurface (metric : SpacetimeMetric) (S : Set SpaceTimePoint) : Prop :=
-  ∀ x ∈ S, ∀ y ∈ S, x ≠ y → Spacelike metric x y
+  ∃ normal : SpaceTimePoint → Fin 4 → ℝ,
+    ∀ x ∈ S, hypersurfaceNormalNormSq metric normal x < 0
 
 /-- Timelike hypersurface -/
 def TimelikeHypersurface (metric : SpacetimeMetric) (S : Set SpaceTimePoint) : Prop :=
-  ∀ x ∈ S, ∀ y ∈ S, x ≠ y → Timelike metric x y
+  ∃ normal : SpaceTimePoint → Fin 4 → ℝ,
+    ∀ x ∈ S, hypersurfaceNormalNormSq metric normal x > 0
 
-/-- Null hypersurface with respect to a given metric (event horizon is an example).
-    Every pair of distinct points on S is lightlike separated in the given metric. -/
+/-- Null hypersurface with respect to a given metric (event horizon is an example):
+    the normal is null on the surface. -/
 def NullHypersurface (metric : SpacetimeMetric) (S : Set SpaceTimePoint) : Prop :=
-  ∀ x ∈ S, ∀ y ∈ S, x ≠ y → Lightlike metric x y
+  ∃ normal : SpaceTimePoint → Fin 4 → ℝ,
+    ∀ x ∈ S, hypersurfaceNormalNormSq metric normal x = 0
 
 /-- Foliation of spacetime by spacelike hypersurfaces -/
 structure Foliation (metric : SpacetimeMetric) where

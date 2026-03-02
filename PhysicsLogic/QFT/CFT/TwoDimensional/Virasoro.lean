@@ -261,12 +261,18 @@ structure HighestWeightRep (c : VirasoroCentralCharge) (h : ℝ) (H : Type _) ex
   highest_weight : h = conformal_weight
   /-- The highest weight state -/
   hw_state : H
+  /-- Distinguished zero vector in the representation space. -/
+  zero_vector : H
+  /-- Scalar action used to express eigenvalue equations. -/
+  scalar_mul : ℂ → H → H
+  /-- Unit scalar acts trivially. -/
+  scalar_mul_one : ∀ ψ : H, scalar_mul 1 ψ = ψ
   /-- L_n |h⟩ = 0 for n > 0 (annihilation condition) -/
   annihilation : ∀ (n : ℕ) (L_n : VirasoroGenerator n), n > 0 →
-    action n L_n hw_state = vacuum
-  /-- L_0 |h⟩ = h |h⟩ (eigenvalue condition) - expressed via conformal_weight -/
+    action n L_n hw_state = zero_vector
+  /-- L_0 |h⟩ = h |h⟩ (eigenvalue condition). -/
   l0_eigenvalue : ∀ (L_0 : VirasoroGenerator 0),
-    action 0 L_0 hw_state = hw_state  -- Simplified; full version has scalar factor h
+    action 0 L_0 hw_state = scalar_mul (h : ℂ) hw_state
 
 /-- Verma module element: a state at definite level in the Verma module V_{c,h}.
     States are of the form L_{-n₁} L_{-n₂} ... L_{-nₖ} |h⟩ with n₁ ≥ n₂ ≥ ... ≥ nₖ > 0.
@@ -292,8 +298,10 @@ structure NullState (c : VirasoroCentralCharge) (h : ℝ) where
   level_positive : level > 0
   /-- The state is a descendant at the given level -/
   is_descendant : state.level = level
+  /-- Candidate norm-squared functional on Verma states. -/
+  norm_sq : VermaModule c h → ℂ
   /-- The state has zero norm (key property: null states decouple from physical spectrum) -/
-  zero_norm : state.coefficient = 0
+  zero_norm : norm_sq state = 0
 
 /-- Kac determinant theory: the Kac determinant det M_N(c,h) at level N
     determines when the Verma module V_{c,h} has null states.
@@ -354,7 +362,7 @@ structure PrimaryTransformationTheory where
 /- ============= DESCENDANTS ============= -/
 
 /-- Descendant created by L_{-n} acting on primary -/
-structure Descendant2D (H : Type _) extends Primary2D H where
+structure Descendant2D (H : Type _) where
   primary : Primary2D H
   level : ℕ
   /-- Created by L_{-n₁}...L_{-nₖ} |h⟩ -/

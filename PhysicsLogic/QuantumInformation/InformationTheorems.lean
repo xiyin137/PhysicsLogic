@@ -67,16 +67,24 @@ theorem no_cloning
     ∀ (psi : H), cloning (T.tensor psi ip.ancilla) = T.tensor psi psi := by
   exact h_phys
 
+/-- Linear deleting-channel candidates acting on two-copy inputs. -/
+structure DeletingMap (H : Type _) [QuantumStateSpace H]
+    (T : TensorProductSpace H H) where
+  /-- Candidate deleting map on two-copy states. -/
+  map : T.carrier → T.carrier
+  /-- Linearity constraint from quantum dynamics. -/
+  linear : ∀ (a : ℂ) (ψ φ : T.carrier), map (a • ψ + φ) = a • map ψ + map φ
+
 /-- No-deleting theorem (Pati-Braunstein 2000).
 
     This is a THEOREM (provable from unitarity), not an axiom itself. -/
 theorem no_deleting
   (T : TensorProductSpace H H)
   (h_phys : PhysicsAssumption AssumptionId.qiNoDeleting
-    (¬∃ (deleting : T.carrier → H),
-      ∀ (psi : H), deleting (T.tensor psi psi) = psi)) :
-  ¬∃ (deleting : T.carrier → H),
-    ∀ (psi : H), deleting (T.tensor psi psi) = psi := by
+    (¬∃ (deleting : DeletingMap H T) (blank : H),
+      ∀ (psi : H), deleting.map (T.tensor psi psi) = T.tensor psi blank)) :
+  ¬∃ (deleting : DeletingMap H T) (blank : H),
+    ∀ (psi : H), deleting.map (T.tensor psi psi) = T.tensor psi blank := by
   exact h_phys
 
 /-- No-broadcasting theorem (Barnum et al. 1996).

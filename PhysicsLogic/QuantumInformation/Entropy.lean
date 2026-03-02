@@ -11,6 +11,10 @@ open Quantum
 structure EntropyTheory (H : Type _) [QuantumStateSpace H] where
   /-- Von Neumann entropy S(ρ) = -Tr(ρ log ρ) -/
   vonNeumannEntropy : DensityOperator H → ℝ
+  /-- Effective Hilbert-space dimension for this entropy model. -/
+  stateDimension : ℕ
+  /-- The entropy dimension parameter is positive. -/
+  stateDimension_pos : 0 < stateDimension
   /-- Convex combination of density operators -/
   convexCombination : ℝ → DensityOperator H → DensityOperator H → DensityOperator H
   /-- Relative entropy D(ρ||σ) -/
@@ -24,9 +28,9 @@ structure EntropyTheory (H : Type _) [QuantumStateSpace H] where
     (h_psi : PhysicsAssumption AssumptionId.quantumPureToDensityAxioms
       (PureToDensityAssumptions psi)),
     vonNeumannEntropy (pureToDensity psi h_psi) = 0
-  /-- Maximally mixed state has maximum entropy -/
-  maxmixed_max_entropy : ∀ (dim : ℕ) (rho : DensityOperator H),
-    vonNeumannEntropy rho ≤ Real.log dim
+  /-- Entropy upper bound set by the model's Hilbert-space dimension. -/
+  maxmixed_max_entropy : ∀ (rho : DensityOperator H),
+    vonNeumannEntropy rho ≤ Real.log stateDimension
   /-- Concavity of von Neumann entropy -/
   entropy_concave : ∀ (rho sigma : DensityOperator H) (lambda : ℝ),
     0 ≤ lambda → lambda ≤ 1 →
@@ -36,8 +40,8 @@ structure EntropyTheory (H : Type _) [QuantumStateSpace H] where
   relative_entropy_nonneg : ∀ (rho sigma : DensityOperator H),
     relativeEntropy rho sigma ≥ 0
   /-- Purity bounds -/
-  purity_bounds : ∀ (dim : ℕ) (rho : DensityOperator H),
-    1 / dim ≤ purity rho ∧ purity rho ≤ 1
+  purity_bounds : ∀ (rho : DensityOperator H),
+    1 / (stateDimension : ℝ) ≤ purity rho ∧ purity rho ≤ 1
   /-- Pure states have purity 1 -/
   pure_has_purity_one : ∀ (psi : PureState H)
     (h_psi : PhysicsAssumption AssumptionId.quantumPureToDensityAxioms

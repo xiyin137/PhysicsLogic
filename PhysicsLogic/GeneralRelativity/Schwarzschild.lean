@@ -96,8 +96,20 @@ structure SchwarzschildTheory (consts : GRConstants) (M : ℝ) (hM : M > 0) wher
   timeKilling : SpaceTimePoint → Fin 4 → ℝ
   /-- Rotational Killing vectors (spherical symmetry) -/
   rotKilling : Fin 3 → SpaceTimePoint → Fin 4 → ℝ
-  /-- Time translation is timelike Killing -/
-  time_is_timelike_killing : TimelikeKilling connection timeKilling
+  /-- Time translation is a Killing vector. -/
+  time_is_killing : KillingVector connection timeKilling
+  /-- In the exterior region r > r_s, the Schwarzschild time Killing vector is timelike. -/
+  time_timelike_exterior : ∀ x,
+    Real.sqrt ((x 1)^2 + (x 2)^2 + (x 3)^2) > schwarzschildRadius consts M →
+    (∑ μ, ∑ ν,
+      (schwarzschildMetric consts M hM metric_well_formed).g x μ ν *
+        timeKilling x μ * timeKilling x ν) < 0
+  /-- In the interior region r < r_s, the Schwarzschild time Killing vector is spacelike. -/
+  time_spacelike_interior : ∀ x,
+    Real.sqrt ((x 1)^2 + (x 2)^2 + (x 3)^2) < schwarzschildRadius consts M →
+    (∑ μ, ∑ ν,
+      (schwarzschildMetric consts M hM metric_well_formed).g x μ ν *
+        timeKilling x μ * timeKilling x ν) > 0
   /-- Rotations are spacelike Killing -/
   rot_is_spacelike_killing : ∀ i, SpacelikeKilling connection (rotKilling i)
   /-- Event horizon located at r = r_s = 2GM/c² -/
