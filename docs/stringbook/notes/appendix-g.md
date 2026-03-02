@@ -36,6 +36,10 @@
   `FreeFermionNsRSectorConsistency`,
   `SzegoKernelSpinStructurePropagator`,
   `FreeFieldCentralCharges`.
+- Tightened data semantics:
+  higher-genus free-boson correlator consistency uses explicit total-momentum
+  conservation, and Szego-kernel zero-mode data is tracked by zero-mode
+  dimension instead of Bool flags.
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `cft2dFreeBosonVertexOperatorStateMap`.

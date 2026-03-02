@@ -2,11 +2,13 @@
 import PhysicsLogic.QFT.CFT.TwoDimensional.ModularInvariance
 import PhysicsLogic.QFT.CFT.TwoDimensional.Superconformal
 import PhysicsLogic.Assumptions
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Complex.Basic
 
 namespace PhysicsLogic.QFT.CFT.TwoDimensional
 
 open CFT
+open scoped BigOperators
 
 set_option linter.unusedVariables false
 
@@ -67,12 +69,11 @@ structure FreeBosonGenusHCorrelatorData (Point : Type*) where
   primeForm : Point → Point → ℂ
   periodMatrixEntry : Fin genus → Fin genus → ℂ
   correlator : (Fin insertionCount → Point) → ℂ
-  momentumConservationHolds : Bool
 
 /-- Appendix-G higher-genus free-boson correlator consistency marker. -/
 def FreeBosonHigherGenusCorrelatorFormula {Point : Type*}
     (data : FreeBosonGenusHCorrelatorData Point) : Prop :=
-  data.momentumConservationHolds = true
+  (∑ i : Fin data.insertionCount, data.momenta i) = 0
 
 /-- Assumed higher-genus free-boson correlator package. -/
 theorem free_boson_higher_genus_correlator_formula
@@ -174,16 +175,16 @@ structure SzegoKernelSpinStructureData (Point : Type*) where
   parity : SpinStructureParity
   szegoKernel : Point → Point → ℂ
   kernelAntisymmetry : ∀ x y : Point, szegoKernel x y = -szegoKernel y x
-  hasFermionZeroMode : Bool
-  zeroModeParityRule : (parity = SpinStructureParity.odd → hasFermionZeroMode = true) ∧
-    (parity = SpinStructureParity.even → hasFermionZeroMode = false)
+  fermionZeroModeDimension : ℕ
+  zeroModeParityRule : (parity = SpinStructureParity.odd → fermionZeroModeDimension > 0) ∧
+    (parity = SpinStructureParity.even → fermionZeroModeDimension = 0)
 
 /-- Appendix-G Szego-kernel spin-structure propagator consistency package. -/
 def SzegoKernelSpinStructurePropagator {Point : Type*}
     (data : SzegoKernelSpinStructureData Point) : Prop :=
   (∀ x y : Point, data.szegoKernel x y = -data.szegoKernel y x) ∧
-    ((data.parity = SpinStructureParity.odd → data.hasFermionZeroMode = true) ∧
-      (data.parity = SpinStructureParity.even → data.hasFermionZeroMode = false))
+    ((data.parity = SpinStructureParity.odd → data.fermionZeroModeDimension > 0) ∧
+      (data.parity = SpinStructureParity.even → data.fermionZeroModeDimension = 0))
 
 /-- Assumed Szego-kernel spin-structure propagator package. -/
 theorem szego_kernel_spin_structure_propagator
