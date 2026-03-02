@@ -69,6 +69,15 @@ def UChannel {d : ℕ} : String := "(13)(24)"
 
 /-- Structure for conformal block decomposition theory -/
 structure ConformalBlockDecompositionTheory where
+  /-- Reduced 4-point correlator `g(u,v)` for identical scalars. -/
+  reducedCorrelator : ∀ {d : ℕ} {H : Type _},
+    QuasiPrimary d H → CrossRatios → ℂ
+  /-- s-channel conformal-block sum value at `(u,v)`. -/
+  sChannelValue : ∀ {d : ℕ} {H : Type _},
+    QuasiPrimary d H → CrossRatios → ℂ
+  /-- t-channel conformal-block sum value at `(u,v)`. -/
+  tChannelValue : ∀ {d : ℕ} {H : Type _},
+    QuasiPrimary d H → CrossRatios → ℂ
   /-- Four-point function of identical scalars decomposes as:
       ⟨φ(x₁)φ(x₂)φ(x₃)φ(x₄)⟩ = 1/|x₁₂|^(2Δ) |x₃₄|^(2Δ) · g(u,v)
       where g(u,v) = ∑_{Δ,ℓ} p_{Δ,ℓ} g_{Δ,ℓ}(u,v)
@@ -78,8 +87,8 @@ structure ConformalBlockDecompositionTheory where
   fourpoint_decomposition : ∀ {d : ℕ} {H : Type _}
     (φ : QuasiPrimary d H)
     (h_scalar : φ.spin = 0)
-    (x₁ x₂ x₃ x₄ : Fin d → ℝ),
-    ∃ (g : CrossRatios → ℂ), ∃ (uv : CrossRatios), g uv ≠ 0
+    (uv : CrossRatios),
+    reducedCorrelator φ uv = sChannelValue φ uv
   /-- The same 4-point function expanded in different channels:
       s-channel: ∑_p C_{12p} C_{34p} g_p^s(u,v)
       t-channel: ∑_q C_{14q} C_{23q} g_q^t(v,u)
@@ -89,7 +98,8 @@ structure ConformalBlockDecompositionTheory where
     (h_scalar : φ.spin = 0)
     (u v : ℝ)
     (h_pos : u > 0 ∧ v > 0),
-    ∃ (s_sum t_sum : ℂ), s_sum = t_sum
+    let uv : CrossRatios := ⟨u, v, h_pos⟩
+    sChannelValue φ uv = tChannelValue φ uv
   /-- Crossing kernel F: relates s-channel to t-channel blocks
       g_p^s(u,v) = ∑_q F_{pq}(Δ, ℓ) g_q^t(v,u)
       This is a computable function of external and internal dimensions -/
@@ -101,6 +111,9 @@ structure ConformalBlockDecompositionTheory where
 
 /-- Structure for bootstrap equation theory -/
 structure BootstrapEquationTheory where
+  /-- Squared OPE coefficient map `p_{φO} = |C_{φφO}|²`. -/
+  opeSquared : ∀ {d : ℕ} {H : Type _},
+    QuasiPrimary d H → QuasiPrimary d H → ℝ
   /-- Bootstrap equation: crossing symmetry gives constraints on OPE data
       ∑_{Δ,ℓ} p_{Δ,ℓ} [g_{Δ,ℓ}(u,v) - ∑_{Δ',ℓ'} F_{(Δ,ℓ)→(Δ',ℓ')} g_{Δ',ℓ'}(v,u)] = 0
       This must hold for all values of (u,v)
@@ -114,7 +127,7 @@ structure BootstrapEquationTheory where
       This is crucial: allows semidefinite programming methods -/
   ope_squared_positive : ∀ {d : ℕ} {H : Type _}
     (φ O : QuasiPrimary d H),
-    ∃ (p : ℝ), p ≥ 0
+    0 ≤ opeSquared φ O
   /-- Unitarity bounds: dimensions satisfy Δ ≥ (d-2)/2 + ℓ
       Combined with crossing, gives powerful constraints -/
   unitarity_in_crossing : ∀ {d : ℕ} {H : Type _}
