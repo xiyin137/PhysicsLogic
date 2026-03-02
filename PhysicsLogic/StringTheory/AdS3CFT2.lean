@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import Mathlib.Algebra.Algebra.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.Basic
@@ -11,6 +12,9 @@ set_option linter.unusedVariables false
 
 /-- Named proposition type for structural physics claims in AdS3/CFT2 data packages. -/
 abbrev AdS3CftClaim := Prop
+
+/-- Endomorphism algebra used for operator-valued worldsheet mode interfaces. -/
+abbrev ModeEndomorphism (H : Type*) [AddCommGroup H] [Module ℂ H] := Module.End ℂ H
 
 /-- Internal compact space choice for the D1-D5 system. -/
 inductive D1D5InternalSpace where
@@ -45,7 +49,7 @@ theorem d1_d5_instanton_charge_map
 
 /-- Low-energy branch-structure data for the 2D `(4,4)` D1-D5 gauge theory. -/
 structure D1D5BranchStructureData where
-  fiDeformationScale : ℝ
+  fiDeformationScale : MassSquaredScale
   coulombBranchLifted : AdS3CftClaim
   higgsBranchFromDTermQuotient : AdS3CftClaim
   higgsBranchMatchesAdhmInstantonModuli : AdS3CftClaim
@@ -94,13 +98,13 @@ theorem d1_d5_instanton_moduli_dimension_package
 
 /-- Near-horizon geometric parameter data for the D1-D5 black-brane system. -/
 structure D1D5NearHorizonData where
-  stringCoupling : ℝ
-  alphaPrime : ℝ
-  m4Volume : ℝ
+  stringCoupling : DimensionlessCoupling
+  alphaPrime : StringSlope
+  m4Volume : VolumeScale
   q1 : ℕ
   q5 : ℕ
-  r1Sq : ℝ
-  r5Sq : ℝ
+  r1Sq : AreaScale
+  r5Sq : AreaScale
   geometryIsAdS3TimesS3TimesM4 : AdS3CftClaim
   fluxQuantizationMatchesQ5Q1Charges : AdS3CftClaim
 
@@ -133,7 +137,7 @@ theorem d1_d5_near_horizon_package
 structure D1D5CentralChargeData where
   q1 : ℕ
   q5 : ℕ
-  centralCharge : ℝ
+  centralCharge : CentralCharge
 
 /-- Central-charge package:
 `c = 6 Q1 Q5`. -/
@@ -187,7 +191,7 @@ theorem d1_d5_conformal_manifold_package
 structure D1D5SymmetricOrbifoldData where
   q1 : ℕ
   q5 : ℕ
-  fiDeformationScale : ℝ
+  fiDeformationScale : MassSquaredScale
   orbifoldIsSymmetricProductT4 : AdS3CftClaim
   orbifoldSymmetricLocusAtReTauHalf : AdS3CftClaim
   coulombBranchLifted : AdS3CftClaim
@@ -212,8 +216,8 @@ theorem d1_d5_symmetric_orbifold_package
 
 /-- Bosonic AdS3 WZW parameter data. -/
 structure AdS3BosonicWZWData where
-  radius : ℝ
-  alphaPrime : ℝ
+  radius : LengthScale
+  alphaPrime : StringSlope
   levelK : ℝ
 
 /-- Bosonic AdS3 WZW level/radius relation:
@@ -232,7 +236,7 @@ theorem ads3_bosonic_wzw_level_radius_relation
     AdS3BosonicWZWLevelRadiusRelation data := by
   exact h_phys
 
-/-- Bosonic `SL(2,R)` spectral-flow data. -/
+/-- Bosonic `SL(2,R)` spectral-flow mode-eigenvalue data. -/
 structure AdS3BosonicSpectralFlowData where
   levelK : ℝ
   flowW : ℤ
@@ -262,6 +266,44 @@ theorem ads3_bosonic_spectral_flow_package
       AssumptionId.stringAdS3BosonicSpectralFlow
       (AdS3BosonicSpectralFlowPackage data)) :
     AdS3BosonicSpectralFlowPackage data := by
+  exact h_phys
+
+/-- Bosonic `SL(2,R)` spectral-flow data in operator form on a CFT state space. -/
+structure AdS3BosonicSpectralFlowOperatorData
+    (H : Type*) [AddCommGroup H] [Module ℂ H] where
+  levelK : ℝ
+  flowW : ℤ
+  j3Mode : ℤ → ModeEndomorphism H
+  virasoroMode : ℤ → ModeEndomorphism H
+  flowedJ3Mode : ℤ → ModeEndomorphism H
+  flowedVirasoroMode : ℤ → ModeEndomorphism H
+
+/-- Operator-valued bosonic spectral-flow package:
+`J_n^3 -> J_n^3 - (k/2) w δ_{n,0} 1`,
+`L_n -> L_n + w J_n^3 - (k/4) w^2 δ_{n,0} 1`. -/
+def AdS3BosonicSpectralFlowOperatorPackage
+    {H : Type*} [AddCommGroup H] [Module ℂ H]
+    (data : AdS3BosonicSpectralFlowOperatorData H) : Prop :=
+  data.levelK > 2 ∧
+  (∀ n : ℤ,
+    data.flowedJ3Mode n =
+      data.j3Mode n -
+        ((((data.levelK / 2) * (data.flowW : ℝ) * (if n = 0 then 1 else 0) : ℝ) : ℂ) •
+          (1 : ModeEndomorphism H))) ∧
+  (∀ n : ℤ,
+    data.flowedVirasoroMode n =
+      data.virasoroMode n + ((data.flowW : ℂ) • data.j3Mode n) -
+        ((((data.levelK / 4) * (data.flowW : ℝ) ^ (2 : ℕ) * (if n = 0 then 1 else 0) : ℝ) : ℂ) •
+          (1 : ModeEndomorphism H)))
+
+/-- Assumed bosonic AdS3 spectral-flow automorphism package in operator form. -/
+theorem ads3_bosonic_spectral_flow_operator_package
+    {H : Type*} [AddCommGroup H] [Module ℂ H]
+    (data : AdS3BosonicSpectralFlowOperatorData H)
+    (h_phys : PhysicsAssumption
+      AssumptionId.stringAdS3BosonicSpectralFlow
+      (AdS3BosonicSpectralFlowOperatorPackage data)) :
+    AdS3BosonicSpectralFlowOperatorPackage data := by
   exact h_phys
 
 /-- AdS3 bosonic-string representation-space data. -/
@@ -331,9 +373,9 @@ theorem ads3_bosonic_mass_shell_package
 /-- Purely `(NS,NS)` AdS3xS3xM4 superstring background data. -/
 structure AdS3NSNSSuperstringBackgroundData where
   levelK : ℝ
-  radius : ℝ
-  alphaPrime : ℝ
-  matterCentralCharge : ℝ
+  radius : LengthScale
+  alphaPrime : StringSlope
+  matterCentralCharge : CentralCharge
   worldsheetMatterFactorizationClaim : AdS3CftClaim
 
 /-- NSNS superstring worldsheet package:
@@ -396,11 +438,11 @@ theorem ads3_nsns_superstring_mass_shell_package
 
 /-- Mixed `(NS,NS)`/`(R,R)` flux parameterization data in AdS3xS3xM4. -/
 structure AdS3MixedFluxData where
-  stringCoupling : ℝ
-  alphaPrime : ℝ
+  stringCoupling : DimensionlessCoupling
+  alphaPrime : StringSlope
   nsFluxK5 : ℕ
   rrFluxQ5 : ℕ
-  radius : ℝ
+  radius : LengthScale
   mu : ℝ
 
 /-- Mixed-flux package:
@@ -467,7 +509,7 @@ theorem ads3_mixed_flux_long_string_transition_package
 
 /-- Data for the mixed-flux parameter-definition block `mu = g_B Q5 / K5`, `k = K5`. -/
 structure AdS3MixedFluxMuKDefinitionData where
-  stringCoupling : ℝ
+  stringCoupling : DimensionlessCoupling
   rrFluxQ5 : ℕ
   nsFluxK5 : ℕ
   mu : ℝ
@@ -495,12 +537,12 @@ theorem ads3_mixed_flux_mu_k_definition_package
 
 /-- Data for the mixed-flux pulsating turning-point relation in AdS3. -/
 structure AdS3MixedFluxPulsatingTurningPointData where
-  alphaPrime : ℝ
-  radiusSquared : ℝ
-  k5Flux : ℝ
-  maximalRadius : ℝ
-  turningPointEnergy : ℝ
-  radialVelocityAtTurningPoint : ℝ
+  alphaPrime : StringSlope
+  radiusSquared : StringSlope
+  k5Flux : FluxQuantum
+  maximalRadius : LengthScale
+  turningPointEnergy : ScalingDimension
+  radialVelocityAtTurningPoint : VelocitySquared
   maximalRadiusIsTurningPoint : AdS3CftClaim
 
 /-- Mixed-flux pulsating turning-point package:
@@ -516,9 +558,9 @@ def AdS3MixedFluxPulsatingTurningPointPackage
   data.maximalRadiusIsTurningPoint ∧
   data.radialVelocityAtTurningPoint = 0 ∧
   data.turningPointEnergy =
-    (data.radiusSquared / data.alphaPrime) * data.maximalRadius *
-      Real.sqrt (1 + data.maximalRadius ^ (2 : ℕ)) -
-      data.k5Flux * data.maximalRadius ^ (2 : ℕ)
+    (data.radiusSquared / data.alphaPrime).value * data.maximalRadius.value *
+      Real.sqrt (1 + data.maximalRadius.value ^ (2 : ℕ)) -
+      data.k5Flux * data.maximalRadius.value ^ (2 : ℕ)
 
 /-- Assumed mixed-flux pulsating turning-point package in AdS3. -/
 theorem ads3_mixed_flux_pulsating_turning_point_package
@@ -531,10 +573,10 @@ theorem ads3_mixed_flux_pulsating_turning_point_package
 
 /-- Data for mixed-flux pulsating integral quantization in AdS3. -/
 structure AdS3MixedFluxPulsatingIntegralQuantizationData where
-  alphaPrime : ℝ
-  radiusSquared : ℝ
+  alphaPrime : StringSlope
+  radiusSquared : StringSlope
   excitationNumber : ℤ
-  maximalRadius : ℝ
+  maximalRadius : LengthScale
   bohrSommerfeldPeriod : ℝ
   bohrSommerfeldPeriodRepresentsTwoPi : AdS3CftClaim
   bohrSommerfeldIntegral : ℝ
@@ -652,9 +694,9 @@ theorem ads3_mixed_flux_pulsating_package_from_compositional
   rcases h_mu_k with ⟨h_g_pos, h_q5_pos, h_k5_pos, h_level_pos, _, h_mu_def⟩
   have h_mu_nonneg_muK : data.muK.mu ≥ 0 := by
     rw [h_mu_def]
-    have h_num_pos : data.muK.stringCoupling * (data.muK.rrFluxQ5 : ℝ) > 0 := by
+    have h_num_pos : 0 < data.muK.stringCoupling * (data.muK.rrFluxQ5 : ℝ) := by
       exact mul_pos h_g_pos (Nat.cast_pos.mpr h_q5_pos)
-    have h_den_pos : (data.muK.nsFluxK5 : ℝ) > 0 := Nat.cast_pos.mpr h_k5_pos
+    have h_den_pos : 0 < (data.muK.nsFluxK5 : ℝ) := Nat.cast_pos.mpr h_k5_pos
     exact le_of_lt (div_pos h_num_pos h_den_pos)
   have h_n_pos_pulsating : data.pulsating.n > 0 := by
     simpa [h_n] using h_n_pos
@@ -670,8 +712,8 @@ structure AdS3MixedFluxPulsatingThresholdData where
   levelK : ℝ
   poleExcitationNumber : ℝ
   muOrderTwoCorrectionDenominator : ℝ
-  shortStringEnergyAtPole : ℝ
-  nsnsLongStringThresholdDimension : ℝ
+  shortStringEnergyAtPole : ScalingDimension
+  nsnsLongStringThresholdDimension : ScalingDimension
 
 /-- Mixed-flux pulsating-threshold package:
 the order-`mu^2` pulsating correction denominator vanishes at `n = k/4`,
@@ -703,13 +745,13 @@ theorem ads3_mixed_flux_pulsating_threshold_package
 
 /-- RR-deformation SFT recursion data in mixed-flux AdS3xS3xM4 backgrounds. -/
 structure AdS3MixedFluxSftRrDeformationData where
-  mu : ℝ
-  levelK : ℝ
+  mu : ScalingDimension
+  levelK : ScalingDimension
   firstOrderRrVertexUsed : AdS3CftClaim
   projectedTwoStringBracketVanishesAtFiniteK : AdS3CftClaim
   secondOrderFieldSetToZero : AdS3CftClaim
   secondOrderCorrectionUsesSiegelResolvent : AdS3CftClaim
-  secondOrderEquationCoefficient : ℝ
+  secondOrderEquationCoefficient : ScalingDimension
   largeKNormalizationMatchingUsed : AdS3CftClaim
 
 /-- Mixed-flux RR-deformation SFT package:
@@ -737,12 +779,12 @@ theorem ads3_mixed_flux_sft_rr_deformation_package
 
 /-- RR-deformation mass-shift data from four-string amplitudes in mixed-flux AdS3. -/
 structure AdS3MixedFluxMassShiftFromFourPointData where
-  mu : ℝ
-  alphaPrime : ℝ
-  scalingDimensionMu : ℝ
-  scalingDimensionZero : ℝ
-  massSquaredShift : ℝ
-  fourPointAmplitude : ℝ
+  mu : ScalingDimension
+  alphaPrime : StringSlope
+  scalingDimensionMu : ScalingDimension
+  scalingDimensionZero : ScalingDimension
+  massSquaredShift : MassSquaredScale
+  fourPointAmplitude : ScalingDimension
   noZeroWeightInWOneBracket : AdS3CftClaim
   noZeroWeightInNestedBracket : AdS3CftClaim
 
@@ -757,9 +799,9 @@ def AdS3MixedFluxMassShiftFromFourPointPackage
   data.noZeroWeightInWOneBracket ∧
   data.noZeroWeightInNestedBracket ∧
   data.scalingDimensionMu =
-    data.scalingDimensionZero - (data.alphaPrime / 2) * data.massSquaredShift ∧
-  data.massSquaredShift =
-    data.mu ^ (2 : Nat) * data.fourPointAmplitude / data.alphaPrime
+    data.scalingDimensionZero - ((data.alphaPrime * data.massSquaredShift).value / 2) ∧
+  data.massSquaredShift.value =
+    data.mu ^ (2 : Nat) * data.fourPointAmplitude / data.alphaPrime.value
 
 /-- Assumed mixed-flux RR-deformation mass-shift package from four-point amplitudes. -/
 theorem ads3_mixed_flux_mass_shift_from_four_point_package
@@ -789,8 +831,8 @@ def AdS3MixedFluxPulsatingMassShiftConsistencyPackage
   data.pulsating.delta = data.massShift.scalingDimensionMu ∧
   data.massShift.scalingDimensionZero =
     -2 * data.pulsating.n + 2 * Real.sqrt (data.pulsating.n * data.pulsating.k) ∧
-  data.massShift.massSquaredShift =
-    -(2 / data.massShift.alphaPrime) *
+  data.massShift.massSquaredShift.value =
+    -(2 / data.massShift.alphaPrime.value) *
       (data.pulsating.delta - data.massShift.scalingDimensionZero)
 
 /-- Construct pulsating/mass-shift consistency from the two base packages plus
@@ -810,34 +852,45 @@ theorem ads3_mixed_flux_pulsating_mass_shift_consistency_from_packages
   have h_dim_delta :
       data.pulsating.delta =
         data.massShift.scalingDimensionZero -
-          (data.massShift.alphaPrime / 2) * data.massShift.massSquaredShift := by
+          ((data.massShift.alphaPrime * data.massShift.massSquaredShift).value / 2) := by
     simpa [h_delta] using h_dim_relation
   have h_mul :
-      (data.massShift.alphaPrime / 2) * data.massShift.massSquaredShift =
+      ((data.massShift.alphaPrime * data.massShift.massSquaredShift).value / 2) =
         data.massShift.scalingDimensionZero - data.pulsating.delta := by
     linarith [h_dim_delta]
   have h_mul2 :
-      data.massShift.alphaPrime * data.massShift.massSquaredShift =
+      data.massShift.alphaPrime.value * data.massShift.massSquaredShift.value =
         2 * (data.massShift.scalingDimensionZero - data.pulsating.delta) := by
-    nlinarith [h_mul]
-  have h_alpha_ne : data.massShift.alphaPrime ≠ 0 := ne_of_gt h_alpha_pos
+    have h_mul_val :
+        data.massShift.alphaPrime.value * data.massShift.massSquaredShift.value / 2 =
+          data.massShift.scalingDimensionZero - data.pulsating.delta := by
+      simpa using h_mul
+    nlinarith [h_mul_val]
+  have h_alpha_pos_real : 0 < data.massShift.alphaPrime.value := by
+    change (0 : StringSlope).value < data.massShift.alphaPrime.value at h_alpha_pos
+    simpa using h_alpha_pos
+  have h_alpha_ne : data.massShift.alphaPrime.value ≠ 0 := ne_of_gt h_alpha_pos_real
   have h_mass_formula_pos :
-      data.massShift.massSquaredShift =
-        (2 / data.massShift.alphaPrime) *
+      data.massShift.massSquaredShift.value =
+        (2 / data.massShift.alphaPrime.value) *
           (data.massShift.scalingDimensionZero - data.pulsating.delta) := by
     field_simp [h_alpha_ne]
     simpa [mul_comm] using h_mul2
   have h_mass_formula :
-      data.massShift.massSquaredShift =
-        -(2 / data.massShift.alphaPrime) *
+      data.massShift.massSquaredShift.value =
+        -(2 / data.massShift.alphaPrime.value) *
           (data.pulsating.delta - data.massShift.scalingDimensionZero) := by
     calc
-      data.massShift.massSquaredShift =
-          (2 / data.massShift.alphaPrime) *
+      data.massShift.massSquaredShift.value =
+          (2 / data.massShift.alphaPrime.value) *
             (data.massShift.scalingDimensionZero - data.pulsating.delta) := h_mass_formula_pos
-      _ = -(2 / data.massShift.alphaPrime) *
+      _ = -(2 / data.massShift.alphaPrime.value) *
             (data.pulsating.delta - data.massShift.scalingDimensionZero) := by ring
-  exact ⟨h_pulsating, h_mass_pkg, h_mu, h_delta, h_delta_zero, h_mass_formula⟩
+  have h_mass_formula_pack :
+      data.massShift.massSquaredShift.value =
+        -(2 / data.massShift.alphaPrime.value) *
+          (data.pulsating.delta - data.massShift.scalingDimensionZero) := h_mass_formula
+  exact ⟨h_pulsating, h_mass_pkg, h_mu, h_delta, h_delta_zero, h_mass_formula_pack⟩
 
 /-- Finite-`k` WZW four-point-reduction data for mixed-flux AdS3 RR-deformation shifts. -/
 structure AdS3MixedFluxFiniteKWzwFourPointReductionData where
@@ -1033,9 +1086,10 @@ def AdS3MixedFluxRrSpectrumCorrectionCompositionalPackage
     data.sft.projectedTwoStringBracketVanishesAtFiniteK ∧
   data.massShift.alphaPrime > 0 ∧
   data.massShift.scalingDimensionMu =
-    data.massShift.scalingDimensionZero - (data.massShift.alphaPrime / 2) * data.massShift.massSquaredShift ∧
-  data.massShift.massSquaredShift =
-    data.massShift.mu ^ (2 : Nat) * data.massShift.fourPointAmplitude / data.massShift.alphaPrime
+    data.massShift.scalingDimensionZero -
+      ((data.massShift.alphaPrime * data.massShift.massSquaredShift).value / 2) ∧
+  data.massShift.massSquaredShift.value =
+    data.massShift.mu ^ (2 : Nat) * data.massShift.fourPointAmplitude / data.massShift.alphaPrime.value
 
 /-- Reconstruct the mixed-flux RR-deformation four-point mass-shift package
 from the compositional SFT/bracket/reduction/OPE units. -/
@@ -1082,9 +1136,10 @@ def AdS3MixedFluxRrSpectrumFromSecondOrderPackage
     data.secondOrder.sft.projectedTwoStringBracketVanishesAtFiniteK ∧
   data.massShift.alphaPrime > 0 ∧
   data.massShift.scalingDimensionMu =
-    data.massShift.scalingDimensionZero - (data.massShift.alphaPrime / 2) * data.massShift.massSquaredShift ∧
-  data.massShift.massSquaredShift =
-    data.massShift.mu ^ (2 : Nat) * data.massShift.fourPointAmplitude / data.massShift.alphaPrime
+    data.massShift.scalingDimensionZero -
+      ((data.massShift.alphaPrime * data.massShift.massSquaredShift).value / 2) ∧
+  data.massShift.massSquaredShift.value =
+    data.massShift.mu ^ (2 : Nat) * data.massShift.fourPointAmplitude / data.massShift.alphaPrime.value
 
 /-- Reconstruct mixed-flux RR-deformation four-point mass-shift data from the
 second-order RR-SFT compositional block. -/

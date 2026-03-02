@@ -464,7 +464,7 @@ theorem ads3_nsns_superstring_mass_shell_bps_package
 
 /-- Mixed `(NS,NS)`/`(R,R)` AdS3 worldsheet deformation data in the 2D-CFT lane. -/
 structure AdS3MixedFluxWorldsheetData where
-  stringCoupling : CouplingScale
+  stringCoupling : DimensionlessCoupling
   alphaPrime : StringSlope
   nsFluxK5 : ℕ
   rrFluxQ5 : ℕ
@@ -514,7 +514,7 @@ theorem ads3_mixed_flux_worldsheet_deformation_package
 /-- Data for the mixed-flux parameter-definition block `mu = g_B Q5 / K5`, `k = K5`
 in the QFT lane. -/
 structure AdS3MixedFluxMuKDefinitionCftData where
-  stringCoupling : CouplingScale
+  stringCoupling : DimensionlessCoupling
   rrFluxQ5 : ℕ
   nsFluxK5 : ℕ
   mu : ℝ
@@ -706,11 +706,8 @@ theorem ads3_mixed_flux_pulsating_spectrum_package_from_compositional
   rcases h_mu_k with ⟨h_g_pos, h_q5_pos, h_k5_pos, h_level_pos, _, h_mu_def⟩
   have h_mu_nonneg_muK : data.muK.mu >= 0 := by
     rw [h_mu_def]
-    have h_g_pos_real : 0 < data.muK.stringCoupling.value := by
-      change (0 : CouplingScale).value < data.muK.stringCoupling.value at h_g_pos
-      simpa using h_g_pos
-    have h_num_pos : 0 < data.muK.stringCoupling.value * (data.muK.rrFluxQ5 : ℝ) := by
-      exact mul_pos h_g_pos_real (Nat.cast_pos.mpr h_q5_pos)
+    have h_num_pos : 0 < data.muK.stringCoupling * (data.muK.rrFluxQ5 : ℝ) := by
+      exact mul_pos h_g_pos (Nat.cast_pos.mpr h_q5_pos)
     have h_den_pos : 0 < (data.muK.nsFluxK5 : ℝ) := Nat.cast_pos.mpr h_k5_pos
     exact le_of_lt (div_pos h_num_pos h_den_pos)
   have h_n_pos_spectrum : data.spectrum.excitationNumber > 0 := by

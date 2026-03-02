@@ -184,7 +184,7 @@ structure AdS3SpectralMassShellBridgeData where
 /-- Operator-level cross-lane data for AdS3 spectral-flow and mass-shell matching. -/
 structure AdS3SpectralMassShellOperatorBridgeData
     (H : Type*) [AddCommGroup H] [Module ℂ H] where
-  stringSpectral : AdS3BosonicSpectralFlowData
+  stringSpectral : AdS3BosonicSpectralFlowOperatorData H
   stringMassShell : AdS3BosonicMassShellData
   qftSpectral : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2SpectralFlowOperatorData H
   qftMassShell : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2MassShellData
@@ -209,7 +209,7 @@ operator-valued current-algebra constraints. -/
 def AdS3SpectralMassShellOperatorBridgePackage
     {H : Type*} [AddCommGroup H] [Module ℂ H]
     (data : AdS3SpectralMassShellOperatorBridgeData H) : Prop :=
-  AdS3BosonicSpectralFlowPackage data.stringSpectral /\
+  AdS3BosonicSpectralFlowOperatorPackage data.stringSpectral /\
   AdS3BosonicMassShellPackage data.stringMassShell /\
   PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2SpectralFlowOperatorAutomorphism data.qftSpectral /\
   PhysicsLogic.QFT.CFT.TwoDimensional.AdS3Sl2MassShellEnergyRelation data.qftMassShell /\
@@ -259,7 +259,7 @@ theorem ads3_spectral_mass_shell_operator_bridge_package
     (data : AdS3SpectralMassShellOperatorBridgeData H)
     (h_string_spectral : PhysicsAssumption
       AssumptionId.stringAdS3BosonicSpectralFlow
-      (AdS3BosonicSpectralFlowPackage data.stringSpectral))
+      (AdS3BosonicSpectralFlowOperatorPackage data.stringSpectral))
     (h_string_mass : PhysicsAssumption
       AssumptionId.stringAdS3BosonicMassShell
       (AdS3BosonicMassShellPackage data.stringMassShell))
@@ -275,8 +275,8 @@ theorem ads3_spectral_mass_shell_operator_bridge_package
     (h_w_mass : data.stringMassShell.flowW = data.qftMassShell.flowW)
     (h_j0 : data.stringMassShell.j0Three = data.qftMassShell.j0Three) :
     AdS3SpectralMassShellOperatorBridgePackage data := by
-  have h_string_spectral_pkg : AdS3BosonicSpectralFlowPackage data.stringSpectral :=
-    ads3_bosonic_spectral_flow_package data.stringSpectral h_string_spectral
+  have h_string_spectral_pkg : AdS3BosonicSpectralFlowOperatorPackage data.stringSpectral :=
+    ads3_bosonic_spectral_flow_operator_package data.stringSpectral h_string_spectral
   have h_string_mass_pkg : AdS3BosonicMassShellPackage data.stringMassShell :=
     ads3_bosonic_mass_shell_package data.stringMassShell h_string_mass
   have h_qft_spectral_pkg :
