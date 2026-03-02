@@ -70,7 +70,7 @@ structure AnalyticWightmanFunction (d : ℕ) [NeZero d] (n : ℕ) where
 structure WickRotationData (d : ℕ) [NeZero d] where
   /-- Wick rotation map: given an analytic Wightman function, produce Schwinger functions -/
   wickRotation : ∀ (n : ℕ) (_W_analytic : AnalyticWightmanFunction d n),
-    (Fin n → EuclideanPoint d) → ℝ
+    (Fin n → EuclideanPoint d) → ℂ
 
 /-- Ordering-compatible Euclidean insertion data:
 the Euclidean time coordinates are weakly increasing with insertion label. -/
@@ -85,7 +85,7 @@ def WightmanToEuclideanContinuation {d : ℕ} [NeZero d]
     (n : ℕ)
     (W : AnalyticWightmanFunction d n)
     (wick : WickRotationData d)
-    (euclideanCorrelator : (Fin n → EuclideanPoint d) → ℝ) : Prop :=
+    (euclideanCorrelator : (Fin n → EuclideanPoint d) → ℂ) : Prop :=
   ∀ points : Fin n → EuclideanPoint d,
     EuclideanTimeOrdered n points →
     euclideanCorrelator points = wick.wickRotation n W points
@@ -109,11 +109,11 @@ theorem os_reconstruction_theorem {d : ℕ} [NeZero d]
       PhysicsLogic.AssumptionId.osReconstruction
       (∀ (n : ℕ), ∃ (W : AnalyticWightmanFunction d n),
         ∀ euclidean_points : Fin n → EuclideanPoint d,
-          theory.schwinger n euclidean_points = wick.wickRotation n W euclidean_points)) :
+          (theory.schwinger n euclidean_points : ℂ) = wick.wickRotation n W euclidean_points)) :
   -- Conclusion: All n-point Schwinger functions are analytic continuations
   ∀ (n : ℕ), ∃ (W : AnalyticWightmanFunction d n),
     ∀ euclidean_points : Fin n → EuclideanPoint d,
-      theory.schwinger n euclidean_points = wick.wickRotation n W euclidean_points := by
+      (theory.schwinger n euclidean_points : ℂ) = wick.wickRotation n W euclidean_points := by
   exact h_phys
 
 end PhysicsLogic.QFT.Euclidean
