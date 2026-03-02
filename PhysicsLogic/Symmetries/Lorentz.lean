@@ -104,6 +104,35 @@ noncomputable def lorentzMul :
     LorentzTransform → LorentzTransform → LorentzTransform :=
   fun Λ₁ Λ₂ => lorentzCompose Λ₁ Λ₂
 
+theorem lorentz_mul_assoc (a b c : LorentzTransform) :
+    lorentzMul (lorentzMul a b) c = lorentzMul a (lorentzMul b c) := by
+  ext μ ν
+  change
+    ∑ j, (∑ i, a.matrix μ i * b.matrix i j) * c.matrix j ν =
+      ∑ i, a.matrix μ i * (∑ j, b.matrix i j * c.matrix j ν)
+  calc
+    ∑ j, (∑ i, a.matrix μ i * b.matrix i j) * c.matrix j ν
+        = ∑ j, ∑ i, (a.matrix μ i * b.matrix i j) * c.matrix j ν := by
+            simp [Finset.sum_mul]
+    _ = ∑ j, ∑ i, a.matrix μ i * b.matrix i j * c.matrix j ν := by
+          simp [mul_assoc]
+    _ = ∑ i, ∑ j, a.matrix μ i * b.matrix i j * c.matrix j ν := by
+          rw [Finset.sum_comm]
+    _ = ∑ i, ∑ j, a.matrix μ i * (b.matrix i j * c.matrix j ν) := by
+          simp [mul_assoc]
+    _ = ∑ i, a.matrix μ i * (∑ j, b.matrix i j * c.matrix j ν) := by
+          simp [Finset.mul_sum]
+
+theorem lorentz_one_mul (a : LorentzTransform) :
+    lorentzMul LorentzTransform.id a = a := by
+  ext μ ν
+  simp [lorentzMul, lorentzCompose, LorentzTransform.id]
+
+theorem lorentz_mul_one (a : LorentzTransform) :
+    lorentzMul a LorentzTransform.id = a := by
+  ext μ ν
+  simp [lorentzMul, lorentzCompose, LorentzTransform.id]
+
 noncomputable def lorentzInv
     (h_inv : ∀ Λ,
       PhysicsLogic.PhysicsAssumption
@@ -118,20 +147,6 @@ noncomputable def lorentzGroup
       PhysicsLogic.PhysicsAssumption
         PhysicsLogic.AssumptionId.lorentzInversePreservesMetric
         (LorentzInversePreservesMetric Λ))
-    (h_mul_assoc :
-      PhysicsLogic.PhysicsAssumption
-        PhysicsLogic.AssumptionId.lorentzGroupMulAssoc
-        (∀ a b c : LorentzTransform,
-          lorentzMul (lorentzMul a b) c =
-            lorentzMul a (lorentzMul b c)))
-    (h_one_mul :
-      PhysicsLogic.PhysicsAssumption
-        PhysicsLogic.AssumptionId.lorentzGroupOneMul
-        (∀ a : LorentzTransform, lorentzMul LorentzTransform.id a = a))
-    (h_mul_one :
-      PhysicsLogic.PhysicsAssumption
-        PhysicsLogic.AssumptionId.lorentzGroupMulOne
-        (∀ a : LorentzTransform, lorentzMul a LorentzTransform.id = a))
     (h_inv_mul_cancel :
       PhysicsLogic.PhysicsAssumption
         PhysicsLogic.AssumptionId.lorentzGroupInvMulCancel
@@ -140,9 +155,9 @@ noncomputable def lorentzGroup
   mul := lorentzMul
   one := LorentzTransform.id
   inv := lorentzInv h_inv
-  mul_assoc := h_mul_assoc
-  one_mul := h_one_mul
-  mul_one := h_mul_one
+  mul_assoc := lorentz_mul_assoc
+  one_mul := lorentz_one_mul
+  mul_one := lorentz_mul_one
   inv_mul_cancel := h_inv_mul_cancel
 
 /-- Lorentz transformation preserves causal structure -/
