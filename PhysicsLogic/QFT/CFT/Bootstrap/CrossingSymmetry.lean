@@ -96,9 +96,7 @@ structure ConformalBlockDecompositionTheory where
   crossing_symmetry_identity : ∀ {d : ℕ} {H : Type _}
     (φ : QuasiPrimary d H)
     (h_scalar : φ.spin = 0)
-    (u v : ℝ)
-    (h_pos : u > 0 ∧ v > 0),
-    let uv : CrossRatios := ⟨u, v, h_pos⟩
+    (uv : CrossRatios),
     sChannelValue φ uv = tChannelValue φ uv
   /-- Crossing kernel F: relates s-channel to t-channel blocks
       g_p^s(u,v) = ∑_q F_{pq}(Δ, ℓ) g_q^t(v,u)
@@ -115,6 +113,9 @@ structure BootstrapEquationTheory where
   /-- Squared OPE coefficient map `p_{φO} = |C_{φφO}|²`. -/
   opeSquared : ∀ {d : ℕ} {H : Type _},
     QuasiPrimary d H → QuasiPrimary d H → ℝ
+  /-- Explicit crossing residual functional for bootstrap constraints. -/
+  crossingResidual : ∀ {d : ℕ} {H : Type _},
+    QuasiPrimary d H → CrossRatios → ℂ
   /-- Bootstrap equation: crossing symmetry gives constraints on OPE data
       ∑_{Δ,ℓ} p_{Δ,ℓ} [g_{Δ,ℓ}(u,v) - ∑_{Δ',ℓ'} F_{(Δ,ℓ)→(Δ',ℓ')} g_{Δ',ℓ'}(v,u)] = 0
       This must hold for all values of (u,v)
@@ -122,7 +123,8 @@ structure BootstrapEquationTheory where
   bootstrap_constraint : ∀ {d : ℕ} {H : Type _}
     (φ : QuasiPrimary d H)
     (h_scalar : φ.spin = 0)
-    (uv : CrossRatios), Prop
+    (uv : CrossRatios),
+    crossingResidual φ uv = 0
   /-- Positivity: OPE coefficients squared are non-negative
       p_{Δ,ℓ} = |C_{φφO}|² ≥ 0
       This is crucial: allows semidefinite programming methods -/
@@ -146,13 +148,20 @@ structure ConformalBlocksBootstrapTheory where
     (Δ_int : ScalingDimension)  -- internal dimension
     (ℓ : SpinLabel)      -- spin
     (uv : CrossRatios), ℂ
+  /-- Casimir operator acting on conformal blocks in cross-ratio space. -/
+  casimirOperator : ∀ (d : ℕ)
+    (Δ_ext Δ_int : ScalingDimension)
+    (ℓ : SpinLabel),
+    (CrossRatios → ℂ) → CrossRatios → ℂ
   /-- Conformal blocks satisfy a second-order differential equation
       from the Casimir operator of the conformal algebra.
       This ODE/PDE determines the block function uniquely. -/
   conformal_block_differential_equation : ∀ (d : ℕ)
     (Δ_ext Δ_int : ScalingDimension)
     (ℓ : SpinLabel)
-    (block : CrossRatios → ℂ), Prop
+    (block : CrossRatios → ℂ)
+    (uv : CrossRatios),
+    casimirOperator d Δ_ext Δ_int ℓ block uv = 0
   /-- Identity block: exchanging the identity operator gives trivial block
       g_{0,0}(u,v) = 1 for all cross-ratios -/
   identity_block_value : ∀ (d : ℕ) (Δ_ext : ScalingDimension) (uv : CrossRatios),
