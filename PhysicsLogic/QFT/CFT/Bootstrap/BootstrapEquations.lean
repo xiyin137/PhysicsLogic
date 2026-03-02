@@ -9,6 +9,14 @@ open CFT
 
 set_option linter.unusedVariables false
 
+/- ============= BOOTSTRAP DATA PACKAGE ============= -/
+
+/-- Candidate CFT data tested by bootstrap consistency constraints. -/
+structure BootstrapData where
+  scalingDimensions : List ℝ
+  spinLabels : List SpinLabel
+  opeCoefficients : List ℂ
+
 /- ============= OPERATOR PRODUCT EXPANSION IN d DIMENSIONS ============= -/
 
 /-- Structure for OPE theory in d dimensions.
@@ -42,12 +50,50 @@ structure OPETheoryDDim where
       (leadingOperator φ_i φ_j x y h_close).scaling_dim - φ_i.scaling_dim - φ_j.scaling_dim
   /-- OPE convergence: sum converges in operator sense.
       Acting on states, the sum converges for |x-y| small enough. -/
+  opeMatrixElementResidual : ∀ {d : ℕ} {H : Type _}
+    (φ_i φ_j : QuasiPrimary d H)
+    (x y : Fin d → ℝ)
+    (bra ket : H)
+    (ε : ℝ)
+    (h_small : euclideanDistance x y < ε)
+    (cutoff : ℕ), ℂ
+  /-- Explicit nonnegative error bound controlling OPE truncation residuals in matrix elements. -/
+  opeMatrixElementErrorBound : ∀ {d : ℕ} {H : Type _}
+    (φ_i φ_j : QuasiPrimary d H)
+    (x y : Fin d → ℝ)
+    (bra ket : H)
+    (ε : ℝ)
+    (h_small : euclideanDistance x y < ε)
+    (cutoff : ℕ), ℝ
+  ope_error_bound_nonneg : ∀ {d : ℕ} {H : Type _}
+    (φ_i φ_j : QuasiPrimary d H)
+    (x y : Fin d → ℝ)
+    (bra ket : H)
+    (ε : ℝ)
+    (h_small : euclideanDistance x y < ε)
+    (cutoff : ℕ),
+    0 ≤ opeMatrixElementErrorBound φ_i φ_j x y bra ket ε h_small cutoff
+  /-- Truncation residual magnitude is controlled by the selected error bound. -/
+  ope_residual_bound : ∀ {d : ℕ} {H : Type _}
+    (φ_i φ_j : QuasiPrimary d H)
+    (x y : Fin d → ℝ)
+    (bra ket : H)
+    (ε : ℝ)
+    (h_small : euclideanDistance x y < ε)
+    (cutoff : ℕ),
+    ‖opeMatrixElementResidual φ_i φ_j x y bra ket ε h_small cutoff‖ ≤
+      opeMatrixElementErrorBound φ_i φ_j x y bra ket ε h_small cutoff
+  /-- OPE convergence in matrix elements: for every tolerance, sufficiently large cutoff controls the residual. -/
   ope_operator_convergence : ∀ {d : ℕ} {H : Type _}
     (φ_i φ_j : QuasiPrimary d H)
     (x y : Fin d → ℝ)
-    (state : H)
+    (bra ket : H)
     (ε : ℝ)
-    (h_small : euclideanDistance x y < ε), Prop
+    (h_small : euclideanDistance x y < ε)
+    (δ : ℝ),
+    δ > 0 →
+      ∃ N : ℕ, ∀ n : ℕ, n ≥ N →
+        opeMatrixElementErrorBound φ_i φ_j x y bra ket ε h_small n < δ
 
 /- ============= OPE COEFFICIENTS ============= -/
 
@@ -83,8 +129,14 @@ structure OPECoefficientTheory where
     structure_constant φ_i φ_j φ_k = structure_constant φ_j φ_i φ_k
   /-- Reality condition in unitary CFT:
       OPE coefficients satisfy C*_{ijk} = C_{ī j̄ k̄} -/
+  conjugateOperator : ∀ {d : ℕ} {H : Type _}, QuasiPrimary d H → QuasiPrimary d H
   ope_coefficient_reality : ∀ {d : ℕ} {H : Type _}
-    (φ_i φ_j φ_k : QuasiPrimary d H), Prop
+    (φ_i φ_j φ_k : QuasiPrimary d H),
+    starRingEnd ℂ (structure_constant φ_i φ_j φ_k) =
+      structure_constant
+        (conjugateOperator φ_i)
+        (conjugateOperator φ_j)
+        (conjugateOperator φ_k)
   /-- Positivity: |C_{φφO}|² ≥ 0 for identical external operators -/
   ope_coefficient_positive : ∀ {d : ℕ} {H : Type _}
     (φ O : QuasiPrimary d H),
@@ -151,13 +203,13 @@ structure OPEAssociativityTheory where
       rightNestedOPE φ_i φ_j φ_k x_i x_j x_k
   /-- Explicit list of bootstrap constraints extracted from associativity. -/
   associativityConstraintSet : ∀ {d : ℕ} {H : Type _},
-    QuasiPrimary d H → QuasiPrimary d H → QuasiPrimary d H → QuasiPrimary d H → List Prop
+    QuasiPrimary d H → QuasiPrimary d H → QuasiPrimary d H → QuasiPrimary d H → List ℂ
   /-- Associativity implies constraints on OPE coefficients:
       "Bootstrap equations" at the level of OPE data.
       These are polynomial equations in the C_{ijk}. -/
   associativity_constraints : ∀ {d : ℕ} {H : Type _}
     (φ_i φ_j φ_k φ_l : QuasiPrimary d H),
-    ∀ c ∈ associativityConstraintSet φ_i φ_j φ_k φ_l, c
+    ∀ c ∈ associativityConstraintSet φ_i φ_j φ_k φ_l, c = 0
 
 /- ============= RELATION TO 4-POINT FUNCTIONS ============= -/
 
@@ -208,17 +260,22 @@ structure FourPointFunctionTheory where
     Input: conformal symmetry + unitarity + associativity (crossing)
     Output: constraints on {Δ_i, ℓ_i, C_ijk} -/
 structure BootstrapPhilosophyTheory where
+  /-- Selected residual constraints extracted from crossing, unitarity, and positivity for a candidate CFT data package. -/
+  bootstrapResiduals : BootstrapData → List ℂ
   /-- Predicate: a proposed OPE-data package satisfies bootstrap consistency
       (crossing, unitarity, positivity, and selected spectrum assumptions). -/
-  isBootstrapConsistent : List Prop → Prop
+  isBootstrapConsistent : BootstrapData → Prop
+  /-- Consistency is equivalent to vanishing of all selected bootstrap residuals. -/
+  bootstrap_consistency_iff_residuals_zero : ∀ (data : BootstrapData),
+    isBootstrapConsistent data ↔ ∀ r ∈ bootstrapResiduals data, r = 0
   /-- Bootstrap constrains OPE data: the consistency conditions
       (crossing + unitarity + positivity) determine a restricted set
       of allowed OPE data. In favorable cases, this uniquely determines the CFT. -/
-  bootstrap_constrains_ope : ∀ {d : ℕ}
-    (assumptions : List Prop),
-    isBootstrapConsistent assumptions
+  bootstrap_constrains_ope : ∀ (data : BootstrapData),
+    isBootstrapConsistent data →
+      ∀ r ∈ bootstrapResiduals data, r = 0
   /-- Explicit witness that bootstrap consistency is nontrivial. -/
-  inconsistentCandidate : List Prop
+  inconsistentCandidate : BootstrapData
   /-- The witness candidate fails bootstrap consistency. -/
   inconsistent_candidate_excluded : ¬ isBootstrapConsistent inconsistentCandidate
   /-- OPE coefficient for identical-external operators and exchanged family. -/
