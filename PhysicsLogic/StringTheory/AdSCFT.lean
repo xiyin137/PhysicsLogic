@@ -302,6 +302,7 @@ theorem giant_graviton_duality_package
 structure HawkingPageTransitionData where
   beta : InverseTemperatureScale
   horizonRadius : LengthScale
+  criticalHorizonRadius : LengthScale
   kappaFive : ℝ
   logPartitionShift : Dimful
   criticalBeta : InverseTemperatureScale
@@ -310,10 +311,13 @@ structure HawkingPageTransitionData where
 temperature-radius relation, critical inverse temperature, and BH/AdS free-energy shift. -/
 def HawkingPageTransitionPackage (data : HawkingPageTransitionData) : Prop :=
   data.horizonRadius > 0 ∧
+  data.criticalHorizonRadius > 0 ∧
   data.kappaFive > 0 ∧
   data.beta = (((2 * Real.pi * data.horizonRadius) /
       (1 + 2 * data.horizonRadius ^ (2 : ℕ))) : InverseTemperatureScale) ∧
-  data.criticalBeta = ((2 * Real.pi / 3 : ℝ) : InverseTemperatureScale) ∧
+  data.criticalHorizonRadius ^ (2 : ℕ) = 1 ∧
+  data.criticalBeta = (((2 * Real.pi * data.criticalHorizonRadius) /
+      (1 + 2 * data.criticalHorizonRadius ^ (2 : ℕ))) : InverseTemperatureScale) ∧
   data.logPartitionShift =
     (((Real.pi ^ (2 : ℕ) : ℝ) : Dimful) * data.beta / data.kappaFive ^ (2 : ℕ)) *
       data.horizonRadius ^ (2 : ℕ) * (data.horizonRadius ^ (2 : ℕ) - 1)
