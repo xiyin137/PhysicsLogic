@@ -207,7 +207,8 @@ theorem crossing_associativity
     These are formal generators of an infinite-dimensional Lie algebra.
     The index n ∈ ℤ labels the mode number. -/
 structure VirasoroGeneratorElement (n : ℤ) where
-  data : Unit
+  /-- Complex coefficient for the formal basis generator `L_n`. -/
+  coefficient : ℂ := 1
 
 /-- Virasoro generator L_n -/
 abbrev VirasoroGenerator (n : ℤ) := VirasoroGeneratorElement n
@@ -242,7 +243,8 @@ structure VirasoroAlgebra (c : VirasoroCentralCharge) where
 /-- Antiholomorphic Virasoro generators L̄_n.
     These are formal generators of the second copy of Virasoro. -/
 structure AntiVirasoroGeneratorElement (n : ℤ) where
-  data : Unit
+  /-- Complex coefficient for the formal basis generator `L̄_n`. -/
+  coefficient : ℂ := 1
 
 /-- Antiholomorphic Virasoro generators L̄_n -/
 abbrev AntiVirasoroGenerator (n : ℤ) := AntiVirasoroGeneratorElement n
@@ -465,9 +467,9 @@ structure IsUnitary2D (c : VirasoroCentralCharge) where
   c_nonneg : centralChargeValue c ≥ 0
   /-- All conformal weights in the theory are non-negative -/
   h_nonneg : ∀ (H : Type _) (φ : Primary2D H), φ.h ≥ 0 ∧ φ.h_bar ≥ 0
-  /-- Inner product is positive definite: ⟨ψ|ψ⟩ > 0 for ψ ≠ 0 -/
-  positive_definite : ∀ {H : Type _} (inner : H → H → ℂ) (ψ : H),
-    (inner ψ ψ).re ≥ 0
+  /-- Inner product is positive definite: `⟨ψ|ψ⟩ > 0` for `ψ ≠ 0`. -/
+  positive_definite : ∀ {H : Type _} [Zero H] (inner : H → H → ℂ) (ψ : H),
+    ψ ≠ 0 → (inner ψ ψ).re > 0
 
 /-- For c < 1: discrete series of unitary representations (minimal models).
     c = 1 - 6/m(m+1) for m = 2,3,4,...
