@@ -31,6 +31,24 @@ structure TestFunctionSupportOps (d : ℕ) where
   /-- Test function support is contained in a region -/
   testFunctionSupport : SchwartzFunction d → Set (Fin d → ℝ)
 
+/-- Dimension-generic Poincaré transformation data `(Λ, a)` acting as
+`x ↦ Λx + a`. -/
+structure PoincareTransformGen (d : ℕ) [NeZero d] where
+  lorentz : LorentzTransformGen d
+  translation : Fin d → ℝ
+
+/-- Apply a dimension-generic Poincaré transformation to a spacetime point. -/
+def PoincareTransformGen.apply {d : ℕ} [NeZero d]
+    (g : PoincareTransformGen d) (x : Fin d → ℝ) : Fin d → ℝ :=
+  fun μ => g.translation μ + ∑ ν, g.lorentz.matrix μ ν * x ν
+
+/-- Proper-orthochronous Lorentz transformation marker.
+`proper` and `orthochronous` are explicit interface predicates at this layer. -/
+structure RestrictedLorentzTransformGen (d : ℕ) [NeZero d] where
+  toLorentz : LorentzTransformGen d
+  proper : Prop
+  orthochronous : Prop
+
 /-- Wightman Axiom W1: Relativistic covariance (Poincaré invariance).
     The Wightman functions are Poincaré invariant:
     W_n(Λx₁+a,...,Λxₙ+a) = W_n(x₁,...,xₙ)
@@ -46,6 +64,54 @@ structure RelativisticCovariance (H : Type _) [QuantumStateSpace H] (d : ℕ) [N
     ∀ (n : ℕ) (points : Fin n → (Fin d → ℝ)),
       wft.wightmanFunction phi n (fun i μ => ∑ ν, Lambda.matrix μ ν * points i ν + a μ) =
       wft.wightmanFunction phi n points
+
+/-- Covariance phrased on bundled Poincaré elements `(Λ,a)`. -/
+theorem RelativisticCovariance.poincare_covariance
+    {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
+    {wft : WightmanFunctionTheory H d}
+    (h_cov : RelativisticCovariance H d wft)
+    (phi : FieldDistribution H d)
+    (g : PoincareTransformGen d)
+    (n : ℕ)
+    (points : Fin n → (Fin d → ℝ)) :
+    wft.wightmanFunction phi n (fun i => g.apply (points i)) =
+    wft.wightmanFunction phi n points := by
+  have h_cov_raw :
+      wft.wightmanFunction phi n
+        (fun i μ => ∑ ν, g.lorentz.matrix μ ν * points i ν + g.translation μ) =
+      wft.wightmanFunction phi n points :=
+    h_cov.relativistic_covariance phi g.lorentz g.translation n points
+  have h_rewrite :
+      wft.wightmanFunction phi n (fun i => g.apply (points i)) =
+      wft.wightmanFunction phi n
+        (fun i μ => ∑ ν, g.lorentz.matrix μ ν * points i ν + g.translation μ) := by
+    congr
+    funext i μ
+    simp [PoincareTransformGen.apply, add_comm]
+  exact h_rewrite.trans h_cov_raw
+
+/-- W1 covariance restricted to proper-orthochronous Lorentz transformations.
+This matches the standard physical statement before adding discrete symmetries. -/
+structure RestrictedRelativisticCovariance
+    (H : Type _) [QuantumStateSpace H] (d : ℕ) [NeZero d]
+    (wft : WightmanFunctionTheory H d) where
+  relativistic_covariance : ∀ (phi : FieldDistribution H d)
+    (Lambda : RestrictedLorentzTransformGen d) (a : Fin d → ℝ),
+    ∀ (n : ℕ) (points : Fin n → (Fin d → ℝ)),
+      wft.wightmanFunction phi n
+        (fun i μ => ∑ ν, Lambda.toLorentz.matrix μ ν * points i ν + a μ) =
+      wft.wightmanFunction phi n points
+
+/-- Full Lorentz covariance implies the restricted proper-orthochronous version. -/
+def restricted_relativistic_covariance_of_relativistic_covariance
+    {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
+    {wft : WightmanFunctionTheory H d}
+    (h_cov : RelativisticCovariance H d wft) :
+    RestrictedRelativisticCovariance H d wft := by
+  refine
+    { relativistic_covariance := ?_ }
+  intro phi Lambda a n points
+  exact h_cov.relativistic_covariance phi Lambda.toLorentz a n points
 
 /-- Appendix-D local-field Poincaré-covariance interface.
 This records an explicit point action together with covariance of Wightman
@@ -63,6 +129,20 @@ structure LocalFieldPoincareCovariance
     ∀ (n : ℕ) (points : Fin n → (Fin d → ℝ)),
       wft.wightmanFunction phi n (fun i => poincarePointAction Lambda a (points i)) =
       wft.wightmanFunction phi n points
+
+/-- Repackage local-field covariance on bundled Poincaré elements `(Λ,a)`. -/
+theorem LocalFieldPoincareCovariance.poincare_covariance
+    {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
+    {wft : WightmanFunctionTheory H d}
+    (h_cov : LocalFieldPoincareCovariance H d wft)
+    (phi : FieldDistribution H d)
+    (g : PoincareTransformGen d)
+    (n : ℕ)
+    (points : Fin n → (Fin d → ℝ)) :
+    wft.wightmanFunction phi n
+      (fun i => h_cov.poincarePointAction g.lorentz g.translation (points i)) =
+    wft.wightmanFunction phi n points := by
+  exact h_cov.covariance phi g.lorentz g.translation n points
 
 /-- Build the Appendix-D local-field Poincaré-covariance interface from the
 core relativistic-covariance axiom. -/
