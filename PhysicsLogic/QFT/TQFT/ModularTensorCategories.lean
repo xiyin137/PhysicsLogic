@@ -142,20 +142,23 @@ structure MTCData (md : StandaloneManifoldData) (cs : ChernSimonsData md) where
 
   /- === Modular relation === -/
 
-  /-- Modular relation: (ST)³ = p₊ · S² where p₊ is a scalar.
+  /-- Selected scalar for the modular relation `(ST)^3 = c · 1`. -/
+  modularRelationScalar : ModularTensorCategory → ℂ
+  modularRelationScalar_nonzero : ∀ (MTC : ModularTensorCategory),
+    modularRelationScalar MTC ≠ 0
+
+  /-- Modular relation: (ST)³ = c · 1 where `c` is `modularRelationScalar MTC`.
 
       More precisely, define P± = ∑_i θ_i^{±1} d_i².
       Then (ST)³ = (p₊/D²) · S² and S² = C (the charge conjugation matrix).
       Together with T diagonal, this generates a projective representation
       of SL(2,ℤ) on the space spanned by simple objects. -/
   modular_relation : ∀ (MTC : ModularTensorCategory),
-    PhysicsAssumption AssumptionId.tqftModularRelation
-      (∃ (c : ℂ) (_ : c ≠ 0),
-        ∀ i j : Fin (mtcRank MTC),
-          (∑ k : Fin (mtcRank MTC), ∑ l : Fin (mtcRank MTC), ∑ m : Fin (mtcRank MTC),
-            sMatrix MTC i k * tMatrix MTC k l * sMatrix MTC l m *
-            tMatrix MTC m j) =
-          c * (if i = j then 1 else 0))
+    ∀ i j : Fin (mtcRank MTC),
+      (∑ k : Fin (mtcRank MTC), ∑ l : Fin (mtcRank MTC), ∑ m : Fin (mtcRank MTC),
+        sMatrix MTC i k * tMatrix MTC k l * sMatrix MTC l m *
+        tMatrix MTC m j) =
+      modularRelationScalar MTC * (if i = j then 1 else 0)
 
   /- === Verlinde formula === -/
 
@@ -167,15 +170,23 @@ structure MTCData (md : StandaloneManifoldData) (cs : ChernSimonsData md) where
     ∑ i : Fin (mtcRank MTC),
       (sMatrix MTC ⟨0, mtcRank_pos MTC⟩ i / sMatrix MTC ⟨0, mtcRank_pos MTC⟩ ⟨0, mtcRank_pos MTC⟩) *
       (sMatrix MTC ⟨0, mtcRank_pos MTC⟩ i / sMatrix MTC ⟨0, mtcRank_pos MTC⟩ ⟨0, mtcRank_pos MTC⟩)
+  /-- Selected Verlinde dimension value for genus-`g` conformal blocks. -/
+  verlindeDimension : ModularTensorCategory → ℕ → ℂ
   /-- Verlinde formula: dimension of TQFT vector space on genus g surface
 
       dim Z(Σ_g) = ∑_i (d_i / D)^{2-2g} -/
-  verlindeFormula : ∀ (MTC : ModularTensorCategory) (g : ℕ),
-    ∃ (dim_formula : ℂ),
-      dim_formula = ∑ i : Fin (mtcRank MTC),
+  verlinde_formula : ∀ (MTC : ModularTensorCategory) (g : ℕ),
+    verlindeDimension MTC g =
+      ∑ i : Fin (mtcRank MTC),
         ((sMatrix MTC ⟨0, mtcRank_pos MTC⟩ i /
           sMatrix MTC ⟨0, mtcRank_pos MTC⟩ ⟨0, mtcRank_pos MTC⟩) /
          totalDimension MTC) ^ (2 - 2 * (g : ℤ))
+  /-- Verlinde dimensions are real-valued in unitary MTC examples. -/
+  verlindeDimension_real : ∀ (MTC : ModularTensorCategory) (g : ℕ),
+    (verlindeDimension MTC g).im = 0
+  /-- Verlinde dimensions are non-negative. -/
+  verlindeDimension_nonneg : ∀ (MTC : ModularTensorCategory) (g : ℕ),
+    0 ≤ (verlindeDimension MTC g).re
 
   /- === Reshetikhin-Turaev construction === -/
 
