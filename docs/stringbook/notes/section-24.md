@@ -1,6 +1,6 @@
 # Section 24: Strings from ${\cal N}=4$ SYM II: mirror TBA and the quantum spectral curve
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 573
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/AdS5MirrorTBAQSC.lean`
@@ -36,6 +36,14 @@
 - `PMuAsymptoticPackage`
 - `WeakCouplingBaxterPackage`
 - `SmallSpinExpansionPackage`
+
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/AdS5MirrorTBAQSC.lean` with all
+  listed package units assumption-wired.
+- Physics-interface hardening pass:
+  replaced mirror Bethe-string family string labels with claim-typed fields
+  (`AdS5MirrorClaim := Prop`) and removed literal tag equalities from
+  `MirrorBetheStringPackage`.
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `stringAdS5MirrorDoubleWickMap`.

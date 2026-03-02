@@ -13,6 +13,8 @@ open scoped BigOperators
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
+abbrev AdS5MirrorClaim := Prop
+
 /-- Double-Wick map data relating physical and mirror magnon kinematics. -/
 structure MirrorDoubleWickData where
   physicalEnergy : ℝ
@@ -143,18 +145,18 @@ theorem mirror_bethe_yang_factorization_package
 structure MirrorBetheStringData where
   interpolatingCoupling : ℝ
   zhukovsky : ℂ → ℂ
-  levelITag : String
-  levelIITag : String
-  levelIIIStringTag : String
+  hasLevelIQParticleFamily : AdS5MirrorClaim
+  hasLevelIIYParticleAndYwStringFamilies : AdS5MirrorClaim
+  hasLevelIIIWStringFamily : AdS5MirrorClaim
 
 /-- Mirror Bethe-string package:
 branch-cut Zhukovsky relation and level-I/II/III string-family tags. -/
 def MirrorBetheStringPackage (data : MirrorBetheStringData) : Prop :=
   data.interpolatingCoupling > 0 ∧
   (∀ u : ℂ, data.zhukovsky u + 1 / data.zhukovsky u = u / (data.interpolatingCoupling : ℂ)) ∧
-  data.levelITag = "bullet_n mirror Q-particles" ∧
-  data.levelIITag = "oplus/ominus y-particles and n|yw strings" ∧
-  data.levelIIIStringTag = "n|w strings"
+  data.hasLevelIQParticleFamily ∧
+  data.hasLevelIIYParticleAndYwStringFamilies ∧
+  data.hasLevelIIIWStringFamily
 
 /-- Assumed mirror Bethe-string classification package. -/
 theorem mirror_bethe_string_package
