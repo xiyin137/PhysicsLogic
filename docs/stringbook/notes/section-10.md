@@ -1,6 +1,6 @@
 # Section 10: Closed superstring field theory
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 198
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/SuperstringFieldTheory.lean`
@@ -44,6 +44,14 @@
 - `SuperSftFieldEquationPackage`
 - `SuperSftFlatBracketPackage`
 - `SuperSftPpWaveSolutionPackage`
+
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/SuperstringFieldTheory.lean` with
+  all listed package units wired to `AssumptionId`.
+- Physics-interface hardening pass:
+  replaced boolean checklist fields in `SuperSft*Data` structures with
+  claim-typed fields (`SuperSftClaim := Prop`) and removed `= true`
+  placeholders from package predicates.
 
 ## Assumption Candidates
 - Mapped `AssumptionId`: `stringSuperSftFieldSpaceNsrAuxiliary`.

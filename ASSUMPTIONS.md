@@ -1,7 +1,7 @@
 # Physics Assumptions Report
 
-- Registered assumptions: `263`
-- Assumptions referenced in non-Papers modules: `263`
+- Registered assumptions: `260`
+- Assumptions referenced in non-Papers modules: `260`
 - Assumptions with zero references outside registry: `0`
 
 | AssumptionId | Payload | Core refs | Papers refs | Total refs | Description |
@@ -79,9 +79,6 @@
 | `lorentzGroupMulOne` | `sym.lorentz.group.mul_one` | 1 | 0 | 1 | Lorentz identity is a right unit in the chosen abstraction. |
 | `lorentzGroupOneMul` | `sym.lorentz.group.one_mul` | 1 | 0 | 1 | Lorentz identity is a left unit in the chosen abstraction. |
 | `lorentzInversePreservesMetric` | `sym.lorentz.inverse_preserves_metric` | 6 | 0 | 6 | The explicit Lorentz inverse construction preserves the Minkowski inner product. |
-| `lorentzPreservesLightlike` | `spacetime.lorentz_preserves_lightlike` | 2 | 0 | 2 | Lorentz transformations preserve lightlike separation in the Minkowski model. |
-| `lorentzPreservesSpacelike` | `spacetime.lorentz_preserves_spacelike` | 2 | 0 | 2 | Lorentz transformations preserve spacelike separation in the Minkowski model. |
-| `lorentzPreservesTimelike` | `spacetime.lorentz_preserves_timelike` | 2 | 0 | 2 | Lorentz transformations preserve timelike separation in the Minkowski model. |
 | `lszKleinGordonOperatorExists` | `qft.smatrix.lsz.klein_gordon_operator_exists` | 1 | 0 | 1 | A suitable Klein-Gordon operator action is available in the abstract LSZ functional setting. |
 | `lszReductionFormula` | `qft.smatrix.lsz.reduction_formula` | 1 | 0 | 1 | The LSZ reduction identity for amplitudes is assumed in the current abstraction layer. |
 | `metricPerturbationWellFormed` | `gr.metric_perturbation_well_formed` | 1 | 0 | 1 | First-order perturbed metric data is treated as a valid Lorentzian metric package in this linearized model. |

@@ -1,6 +1,6 @@
 # Appendix B: The path integral
 
-- Status: initial extraction complete
+- Status: extraction complete; supergeometry typing hardening in progress
 - Source page start: 654
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/QFT/PathIntegral/*`, `PhysicsLogic/QFT/BV/*`
@@ -27,6 +27,9 @@
   `LefschetzThimbleDecomposition`.
 - Implemented in `PhysicsLogic/QFT/PathIntegral/Supergeometry.lean`:
   `GrassmannPathIntegralData`.
+- Hardened in `PhysicsLogic/QFT/PathIntegral/Supergeometry.lean`:
+  fermionic boundary-condition/constraint checks now use named proposition
+  claims instead of Bool flags.
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `pathIntegralDiscretizedContinuumLimit`.

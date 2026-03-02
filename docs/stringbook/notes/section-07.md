@@ -1,6 +1,6 @@
 # Section 07: Superstring perturbation theory: the general formalism
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 137
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/SuperstringPerturbation.lean`
@@ -36,6 +36,20 @@
 - `PictureChangingFormalismPackage`
 - `SpuriousSingularityControlPackage`
 - `VerticalIntegrationCompatibilityPackage`
+- `WorldsheetSpinParity`
+
+## Hardening Notes
+- Tightened SRS transition data in
+  `PhysicsLogic/StringTheory/SuperstringPerturbation.lean` with explicit
+  `(0|1)` distribution-rank conditions and non-integrability claim, while
+  keeping the interface physics-level.
+- Replaced Bool marker fields with named proposition claims in the Section-07
+  packages (SRS transition, PCO formalism, spurious-singularity control,
+  vertical integration) to avoid truth-value smuggling.
+- Consulted `StringGeometry-Supermanifolds` and
+  `StringGeometry-RiemannSurfaces` for terminology alignment
+  (spin parity, superconformal distribution), without importing heavy
+  foundational machinery into PhysicsLogic.
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `stringSuperPerturbativeGaugeFixingSupermoduli`.

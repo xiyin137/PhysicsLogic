@@ -7,22 +7,24 @@ namespace PhysicsLogic.StringTheory
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
+abbrev SuperSftClaim := Prop
+
 /-- NS/R closed-superstring-field-space data, including auxiliary Ramond picture assignments. -/
 structure SuperSftFieldSpaceData where
-  brstNilpotent : Bool
-  totalCentralChargeZero : Bool
-  b0MinusAndL0MinusConstraints : Bool
-  chiralGsoProjected : Bool
-  auxiliaryRamondPictureMinusThreeHalfIncluded : Bool
+  brstNilpotent : SuperSftClaim
+  totalCentralChargeZero : SuperSftClaim
+  b0MinusAndL0MinusConstraints : SuperSftClaim
+  chiralGsoProjected : SuperSftClaim
+  auxiliaryRamondPictureMinusThreeHalfIncluded : SuperSftClaim
 
 /-- Super-SFT field-space package:
 `H_0` constraints with GSO projection and auxiliary `-3/2` Ramond picture sector. -/
 def SuperSftFieldSpacePackage (data : SuperSftFieldSpaceData) : Prop :=
-  data.brstNilpotent = true ∧
-  data.totalCentralChargeZero = true ∧
-  data.b0MinusAndL0MinusConstraints = true ∧
-  data.chiralGsoProjected = true ∧
-  data.auxiliaryRamondPictureMinusThreeHalfIncluded = true
+  data.brstNilpotent ∧
+  data.totalCentralChargeZero ∧
+  data.b0MinusAndL0MinusConstraints ∧
+  data.chiralGsoProjected ∧
+  data.auxiliaryRamondPictureMinusThreeHalfIncluded
 
 /-- Assumed NS/R super-SFT field-space package from Section 10.1. -/
 theorem super_sft_field_space_package
@@ -47,8 +49,8 @@ structure SuperSftOffShellAmplitudeData where
   normalization : ℂ
   contourIntegral : ℂ
   offShellAmplitude : ℂ
-  verticalBoundaryOnly : Bool
-  coversAllSpinStructures : Bool
+  verticalBoundaryOnly : SuperSftClaim
+  coversAllSpinStructures : SuperSftClaim
 
 /-- Off-shell super-SFT amplitude package:
 `dim S = 6h-6+2n`, NS/R-dependent PCO counting, and vertical-slit chain boundary data. -/
@@ -62,8 +64,8 @@ def SuperSftOffShellAmplitudePackage
     2 * (data.genus : ℤ) - 2 +
       (data.nsPuncturesAntiholomorphic : ℤ) + (data.ramondPairsAntiholomorphic : ℤ) ∧
   data.offShellAmplitude = data.normalization * data.contourIntegral ∧
-  data.verticalBoundaryOnly = true ∧
-  data.coversAllSpinStructures = true
+  data.verticalBoundaryOnly ∧
+  data.coversAllSpinStructures
 
 /-- Assumed off-shell super-SFT chain package from Section 10.1. -/
 theorem super_sft_off_shell_amplitude_package
@@ -76,19 +78,19 @@ theorem super_sft_off_shell_amplitude_package
 
 /-- Degeneration/plumbing compatibility data for super-SFT chains with NS/R punctures. -/
 structure SuperSftPlumbingCompatibilityData where
-  nsPlumbingPreservesPcoCount : Bool
-  ramondPlumbingAddsAveragePco : Bool
-  degenerationCompatibilityHolds : Bool
-  spuriousSingularityAbsentInDegenerationLimit : Bool
+  nsPlumbingPreservesPcoCount : SuperSftClaim
+  ramondPlumbingAddsAveragePco : SuperSftClaim
+  degenerationCompatibilityHolds : SuperSftClaim
+  spuriousSingularityAbsentInDegenerationLimit : SuperSftClaim
 
 /-- Super-SFT plumbing compatibility package:
 Ramond plumbing adds averaged PCO insertions while preserving degeneration compatibility. -/
 def SuperSftPlumbingCompatibilityPackage
     (data : SuperSftPlumbingCompatibilityData) : Prop :=
-  data.nsPlumbingPreservesPcoCount = true ∧
-  data.ramondPlumbingAddsAveragePco = true ∧
-  data.degenerationCompatibilityHolds = true ∧
-  data.spuriousSingularityAbsentInDegenerationLimit = true
+  data.nsPlumbingPreservesPcoCount ∧
+  data.ramondPlumbingAddsAveragePco ∧
+  data.degenerationCompatibilityHolds ∧
+  data.spuriousSingularityAbsentInDegenerationLimit
 
 /-- Assumed Ramond plumbing/PCO compatibility package from Section 10.1. -/
 theorem super_sft_plumbing_compatibility_package
@@ -101,18 +103,18 @@ theorem super_sft_plumbing_compatibility_package
 
 /-- 1PI effective-action data with picture-adjusted propagator. -/
 structure SuperSftOnePiData where
-  pictureAdjustingOperatorActsBySector : Bool
-  siegelPropagatorHasPictureAdjustment : Bool
-  onePiActionMatchesFeynmanExpansion : Bool
-  legendreTransformRelationHolds : Bool
+  pictureAdjustingOperatorActsBySector : SuperSftClaim
+  siegelPropagatorHasPictureAdjustment : SuperSftClaim
+  onePiActionMatchesFeynmanExpansion : SuperSftClaim
+  legendreTransformRelationHolds : SuperSftClaim
 
 /-- Super-SFT 1PI package:
 `(b_0^+ b_0^- / L_0^+) G` propagator and equivalent 1PI/Legendre formulations. -/
 def SuperSftOnePiPackage (data : SuperSftOnePiData) : Prop :=
-  data.pictureAdjustingOperatorActsBySector = true ∧
-  data.siegelPropagatorHasPictureAdjustment = true ∧
-  data.onePiActionMatchesFeynmanExpansion = true ∧
-  data.legendreTransformRelationHolds = true
+  data.pictureAdjustingOperatorActsBySector ∧
+  data.siegelPropagatorHasPictureAdjustment ∧
+  data.onePiActionMatchesFeynmanExpansion ∧
+  data.legendreTransformRelationHolds
 
 /-- Assumed 1PI picture-adjusted propagator package from Section 10.2. -/
 theorem super_sft_one_pi_package
@@ -125,17 +127,17 @@ theorem super_sft_one_pi_package
 
 /-- Ramond picture-degeneracy control data in the super-SFT propagator sector. -/
 structure SuperSftRamondDegeneracyControlData where
-  infiniteBZeroTowerPresent : Bool
-  pictureRaisingKillsAllButFiniteTower : Bool
-  propagatorContributionRemainsFinite : Bool
+  infiniteBZeroTowerPresent : SuperSftClaim
+  pictureRaisingKillsAllButFiniteTower : SuperSftClaim
+  propagatorContributionRemainsFinite : SuperSftClaim
 
 /-- Ramond degeneracy-control package:
 `X_0` maps only finitely many states in each degenerate `B_0^n` family to nonzero modes. -/
 def SuperSftRamondDegeneracyControlPackage
     (data : SuperSftRamondDegeneracyControlData) : Prop :=
-  data.infiniteBZeroTowerPresent = true ∧
-  data.pictureRaisingKillsAllButFiniteTower = true ∧
-  data.propagatorContributionRemainsFinite = true
+  data.infiniteBZeroTowerPresent ∧
+  data.pictureRaisingKillsAllButFiniteTower ∧
+  data.propagatorContributionRemainsFinite
 
 /-- Assumed Ramond-tower regularization package from Section 10.2. -/
 theorem super_sft_ramond_degeneracy_control_package
@@ -148,19 +150,19 @@ theorem super_sft_ramond_degeneracy_control_package
 
 /-- BV quantum super-SFT data. -/
 structure SuperSftBvQuantumData where
-  bvSymplecticPairingCanonical : Bool
-  geometricMasterEquationHolds : Bool
-  quantumMasterEquationHolds : Bool
-  ramondPlumbingIncludesPictureAdjustment : Bool
+  bvSymplecticPairingCanonical : SuperSftClaim
+  geometricMasterEquationHolds : SuperSftClaim
+  quantumMasterEquationHolds : SuperSftClaim
+  ramondPlumbingIncludesPictureAdjustment : SuperSftClaim
 
 /-- BV quantum super-SFT package:
 canonical BV pairing, geometric master equation, and quantum master equation with
 Ramond-sector picture-adjustment insertions. -/
 def SuperSftBvQuantumPackage (data : SuperSftBvQuantumData) : Prop :=
-  data.bvSymplecticPairingCanonical = true ∧
-  data.geometricMasterEquationHolds = true ∧
-  data.quantumMasterEquationHolds = true ∧
-  data.ramondPlumbingIncludesPictureAdjustment = true
+  data.bvSymplecticPairingCanonical ∧
+  data.geometricMasterEquationHolds ∧
+  data.quantumMasterEquationHolds ∧
+  data.ramondPlumbingIncludesPictureAdjustment
 
 /-- Assumed BV quantum-master package for closed super-SFT from Section 10.3. -/
 theorem super_sft_bv_quantum_package
@@ -174,20 +176,20 @@ theorem super_sft_bv_quantum_package
 /-- RR kinetic-sector data in closed super-SFT. -/
 structure SuperSftRrKineticData where
   stringCoupling : ℝ
-  rrFieldStrengthUnconstrainedOffShell : Bool
-  auxiliaryFieldsIncludedInKineticSector : Bool
-  rrTwoPointFunctionMatchesSupergravityKinetics : Bool
-  typeIibFiveFormSelfDualProjectionHandled : Bool
+  rrFieldStrengthUnconstrainedOffShell : SuperSftClaim
+  auxiliaryFieldsIncludedInKineticSector : SuperSftClaim
+  rrTwoPointFunctionMatchesSupergravityKinetics : SuperSftClaim
+  typeIibFiveFormSelfDualProjectionHandled : SuperSftClaim
 
 /-- RR kinetic package:
 auxiliary-field kinetic structure yields the RR two-point function consistent with
 supergravity kinetic terms (with type-IIB self-duality handling). -/
 def SuperSftRrKineticPackage (data : SuperSftRrKineticData) : Prop :=
   data.stringCoupling > 0 ∧
-  data.rrFieldStrengthUnconstrainedOffShell = true ∧
-  data.auxiliaryFieldsIncludedInKineticSector = true ∧
-  data.rrTwoPointFunctionMatchesSupergravityKinetics = true ∧
-  data.typeIibFiveFormSelfDualProjectionHandled = true
+  data.rrFieldStrengthUnconstrainedOffShell ∧
+  data.auxiliaryFieldsIncludedInKineticSector ∧
+  data.rrTwoPointFunctionMatchesSupergravityKinetics ∧
+  data.typeIibFiveFormSelfDualProjectionHandled
 
 /-- Assumed RR kinetic-term matching package from Section 10.4. -/
 theorem super_sft_rr_kinetic_package
@@ -203,16 +205,16 @@ structure SuperSftFieldEquationData where
   brstTerm : ℂ
   higherBracketTerm : ℂ
   equationResidual : ℂ
-  bracketDefinedByAuxiliaryPairing : Bool
-  infinitesimalGaugeRedundancyPresent : Bool
+  bracketDefinedByAuxiliaryPairing : SuperSftClaim
+  infinitesimalGaugeRedundancyPresent : SuperSftClaim
 
 /-- Super-SFT field-equation package:
 `Q_B Ψ + Σ (1/n!)[Ψ^n] = 0` with bracket defined by 1PI auxiliary pairing data. -/
 def SuperSftFieldEquationPackage (data : SuperSftFieldEquationData) : Prop :=
   data.equationResidual = data.brstTerm + data.higherBracketTerm ∧
   data.equationResidual = 0 ∧
-  data.bracketDefinedByAuxiliaryPairing = true ∧
-  data.infinitesimalGaugeRedundancyPresent = true
+  data.bracketDefinedByAuxiliaryPairing ∧
+  data.infinitesimalGaugeRedundancyPresent
 
 /-- Assumed super-SFT field-equation/bracket package from Section 10.5. -/
 theorem super_sft_field_equation_package
@@ -225,17 +227,17 @@ theorem super_sft_field_equation_package
 
 /-- Flat-frame superstring-bracket construction data with vertical-correction terms. -/
 structure SuperSftFlatBracketData where
-  twoStringBracketUsesPictureAdjuster : Bool
-  threeStringBracketUsesVerticalCorrection : Bool
-  lInfinityCompatibilityMaintained : Bool
+  twoStringBracketUsesPictureAdjuster : SuperSftClaim
+  threeStringBracketUsesVerticalCorrection : SuperSftClaim
+  lInfinityCompatibilityMaintained : SuperSftClaim
 
 /-- Flat superstring-bracket package:
 `G`-adjusted 2-string bracket and vertically corrected 3-string bracket preserve
 the expected homotopy-algebra compatibility. -/
 def SuperSftFlatBracketPackage (data : SuperSftFlatBracketData) : Prop :=
-  data.twoStringBracketUsesPictureAdjuster = true ∧
-  data.threeStringBracketUsesVerticalCorrection = true ∧
-  data.lInfinityCompatibilityMaintained = true
+  data.twoStringBracketUsesPictureAdjuster ∧
+  data.threeStringBracketUsesVerticalCorrection ∧
+  data.lInfinityCompatibilityMaintained
 
 /-- Assumed flat-bracket vertical-correction package from Section 10.5. -/
 theorem super_sft_flat_bracket_package
@@ -249,20 +251,20 @@ theorem super_sft_flat_bracket_package
 /-- pp-wave massless super-SFT solution data. -/
 structure SuperSftPpWaveSolutionData where
   deformationParameter : ℝ
-  rrFiveFormFluxTurnedOn : Bool
-  nsnsMetricBackreactionIncluded : Bool
-  boostSymmetryTruncatesHigherMasslessBrackets : Bool
-  solvesMasslessEquationAllOrders : Bool
+  rrFiveFormFluxTurnedOn : SuperSftClaim
+  nsnsMetricBackreactionIncluded : SuperSftClaim
+  boostSymmetryTruncatesHigherMasslessBrackets : SuperSftClaim
+  solvesMasslessEquationAllOrders : SuperSftClaim
 
 /-- pp-wave super-SFT solution package:
 RR-flux plus NSNS metric deformation solves the massless SFT equation to all orders
 due to boost-charge selection on higher brackets. -/
 def SuperSftPpWaveSolutionPackage (data : SuperSftPpWaveSolutionData) : Prop :=
   data.deformationParameter ≠ 0 ∧
-  data.rrFiveFormFluxTurnedOn = true ∧
-  data.nsnsMetricBackreactionIncluded = true ∧
-  data.boostSymmetryTruncatesHigherMasslessBrackets = true ∧
-  data.solvesMasslessEquationAllOrders = true
+  data.rrFiveFormFluxTurnedOn ∧
+  data.nsnsMetricBackreactionIncluded ∧
+  data.boostSymmetryTruncatesHigherMasslessBrackets ∧
+  data.solvesMasslessEquationAllOrders
 
 /-- Assumed pp-wave super-SFT solution package from Section 10.5. -/
 theorem super_sft_pp_wave_solution_package

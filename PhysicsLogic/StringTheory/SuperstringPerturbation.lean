@@ -8,6 +8,15 @@ namespace PhysicsLogic.StringTheory
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
+/-- Named proposition type for superstring perturbative claims. -/
+abbrev SuperPerturbativeClaim := Prop
+
+/-- Spin-structure parity on the reduced worldsheet. -/
+inductive WorldsheetSpinParity
+  | even
+  | odd
+  deriving DecidableEq, Repr
+
 /-- Superstring supermoduli gauge-fixing data.
 `action` is a configuration-space functional (not a single number). -/
 structure SupermoduliGaugeFixingData where
@@ -42,19 +51,26 @@ theorem supermoduli_gauge_fixing_package
 
 /-- Coordinate-change data for the super Riemann-surface formulation. -/
 structure SuperRiemannSurfaceTransitionData where
-  preservesSuperconformalDistribution : Bool
-  worldsheetDiffeomorphismInvariant : Bool
-  worldsheetReparameterizationInvariant : Bool
-  splitModelTransitionCompatible : Bool
+  distributionEvenRank : ℕ
+  distributionOddRank : ℕ
+  spinParity : WorldsheetSpinParity
+  nonIntegrabilityBracketGeneratesEvenTangent : SuperPerturbativeClaim
+  preservesSuperconformalDistribution : SuperPerturbativeClaim
+  worldsheetDiffeomorphismInvariant : SuperPerturbativeClaim
+  worldsheetReparameterizationInvariant : SuperPerturbativeClaim
+  splitModelTransitionCompatible : SuperPerturbativeClaim
 
 /-- SRS transition package:
 superconformal distribution and worldsheet gauge symmetries are preserved. -/
 def SuperRiemannSurfaceTransitionPackage
     (data : SuperRiemannSurfaceTransitionData) : Prop :=
-  data.preservesSuperconformalDistribution = true ∧
-  data.worldsheetDiffeomorphismInvariant = true ∧
-  data.worldsheetReparameterizationInvariant = true ∧
-  data.splitModelTransitionCompatible = true
+  data.distributionEvenRank = 0 ∧
+  data.distributionOddRank = 1 ∧
+  data.nonIntegrabilityBracketGeneratesEvenTangent ∧
+  data.preservesSuperconformalDistribution ∧
+  data.worldsheetDiffeomorphismInvariant ∧
+  data.worldsheetReparameterizationInvariant ∧
+  data.splitModelTransitionCompatible
 
 /-- Assumed SRS/reparameterization package from Section 7.2. -/
 theorem super_riemann_surface_transition_package
@@ -158,9 +174,9 @@ theorem superstring_plumbing_factorization_package
 structure PictureChangingFormalismData where
   oddComplexDimension : ℤ
   insertedPcos : ℤ
-  derivedFromXiBracket : Bool
-  brstClosedIntegrand : Bool
-  pcoPositionShiftBrstExact : Bool
+  derivedFromXiBracket : SuperPerturbativeClaim
+  brstClosedIntegrand : SuperPerturbativeClaim
+  pcoPositionShiftBrstExact : SuperPerturbativeClaim
 
 /-- PCO formalism package:
 PCO count matches odd-moduli dimension, with BRST-closed integrand and
@@ -168,9 +184,9 @@ BRST-exact response to PCO-position shifts. -/
 def PictureChangingFormalismPackage
     (data : PictureChangingFormalismData) : Prop :=
   data.insertedPcos = data.oddComplexDimension ∧
-  data.derivedFromXiBracket = true ∧
-  data.brstClosedIntegrand = true ∧
-  data.pcoPositionShiftBrstExact = true
+  data.derivedFromXiBracket ∧
+  data.brstClosedIntegrand ∧
+  data.pcoPositionShiftBrstExact
 
 /-- Assumed PCO formalism package from Section 7.6. -/
 theorem picture_changing_formalism_package
@@ -187,7 +203,7 @@ structure SpuriousSingularityControlData where
   thetaDenominatorSection : ℂ
   numeratorCorrection : ℂ
   regularizedIntegrand : ℂ
-  spuriousPolesCanceled : Bool
+  spuriousPolesCanceled : SuperPerturbativeClaim
 
 /-- Spurious-singularity package:
 determinant/`theta`-section corrected integrand and cancellation of unphysical poles. -/
@@ -196,7 +212,7 @@ def SpuriousSingularityControlPackage
   data.thetaDenominatorSection ≠ 0 ∧
   data.regularizedIntegrand =
     data.betaGammaDeterminant * data.numeratorCorrection / data.thetaDenominatorSection ∧
-  data.spuriousPolesCanceled = true
+  data.spuriousPolesCanceled
 
 /-- Assumed spurious-singularity control package from Section 7.7. -/
 theorem spurious_singularity_control_package
@@ -214,7 +230,7 @@ structure VerticalIntegrationCompatibilityData where
   boundaryJump : ℂ
   brstExactBridge : ℂ
   totalAmplitude : ℂ
-  compatibleWithPlumbing : Bool
+  compatibleWithPlumbing : SuperPerturbativeClaim
 
 /-- Vertical-integration package:
 horizontal and vertical contour pieces combine to a global amplitude, with
@@ -226,7 +242,7 @@ def VerticalIntegrationCompatibilityPackage
     data.verticalContourContribution +
     data.boundaryJump ∧
   data.boundaryJump = data.brstExactBridge ∧
-  data.compatibleWithPlumbing = true
+  data.compatibleWithPlumbing
 
 /-- Assumed vertical-integration compatibility package from Section 7.8. -/
 theorem vertical_integration_compatibility_package

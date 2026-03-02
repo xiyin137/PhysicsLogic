@@ -1,6 +1,6 @@
 # Section 11: Heterotic string theory
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 209
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/HeteroticStringTheory.lean`
@@ -58,6 +58,14 @@
 - `HeteroticOneLoopFiMassTermPackage`
 - `HeteroticTwoLoopVacuumEnergyPackage`
 - `HeteroticShiftedVacuumPackage`
+
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/HeteroticStringTheory.lean` with
+  all listed package units wired to `AssumptionId`.
+- Physics-interface hardening pass:
+  replaced boolean checklist fields in `Heterotic*Data` structures with
+  claim-typed fields (`HeteroticClaim := Prop`) and removed `= true`
+  placeholders from package predicates.
 
 ## Assumption Candidates
 - Mapped `AssumptionId`: `stringHeteroticWorldsheetChiralSupersymmetry`.

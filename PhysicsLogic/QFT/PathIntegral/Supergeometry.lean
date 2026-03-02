@@ -13,6 +13,9 @@ namespace PhysicsLogic.QFT.PathIntegral
 
 set_option linter.unusedVariables false
 
+/-- Named proposition type for path-integral supergeometry claims. -/
+abbrev SupergeometryClaim := Prop
+
 /- ============= GRASSMANN ALGEBRA ============= -/
 
 /-- Grassmann algebra: anticommuting variables θᵢθⱼ = -θⱼθᵢ, hence θᵢ² = 0.
@@ -58,14 +61,14 @@ structure GrassmannPathIntegralData where
   grassmannAlgebra : GrassmannAlgebra
   berezinIntegral : BerezinIntegral grassmannAlgebra
   thermalPeriod : ℝ
-  antiPeriodicBoundaryConditions : Bool
-  secondClassConstraintsHandledByDiracBracket : Bool
+  antiPeriodicBoundaryConditions : SupergeometryClaim
+  secondClassConstraintsHandledByDiracBracket : SupergeometryClaim
 
 /-- Consistency package for Grassmann path-integral data. -/
 def GrassmannPathIntegralPackage (data : GrassmannPathIntegralData) : Prop :=
   data.thermalPeriod > 0 ∧
-  data.antiPeriodicBoundaryConditions = true ∧
-  data.secondClassConstraintsHandledByDiracBracket = true
+  data.antiPeriodicBoundaryConditions ∧
+  data.secondClassConstraintsHandledByDiracBracket
 
 /- ============= SUPER VECTOR SPACES AND SUPERMANIFOLDS ============= -/
 

@@ -9,14 +9,16 @@ namespace PhysicsLogic.StringTheory
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
+abbrev HeteroticClaim := Prop
+
 /-- Worldsheet field-content and gauge-fixing data for heterotic strings. -/
 structure HeteroticWorldsheetData where
   leftMovingFermionCount : ℕ
   rightMovingTargetFermionCount : ℕ
-  localChiralSupersymmetry : Bool
-  superconformalGaugeFixing01 : Bool
-  totalCentralChargeCancels : Bool
-  gravitationalAndWeylAnomalyCanceled : Bool
+  localChiralSupersymmetry : HeteroticClaim
+  superconformalGaugeFixing01 : HeteroticClaim
+  totalCentralChargeCancels : HeteroticClaim
+  gravitationalAndWeylAnomalyCanceled : HeteroticClaim
 
 /-- Heterotic worldsheet package:
 chiral local supersymmetry with 32 left-moving fermions and a critical
@@ -24,10 +26,10 @@ chiral local supersymmetry with 32 left-moving fermions and a critical
 def HeteroticWorldsheetPackage (data : HeteroticWorldsheetData) : Prop :=
   data.leftMovingFermionCount = 32 ∧
   data.rightMovingTargetFermionCount = 10 ∧
-  data.localChiralSupersymmetry = true ∧
-  data.superconformalGaugeFixing01 = true ∧
-  data.totalCentralChargeCancels = true ∧
-  data.gravitationalAndWeylAnomalyCanceled = true
+  data.localChiralSupersymmetry ∧
+  data.superconformalGaugeFixing01 ∧
+  data.totalCentralChargeCancels ∧
+  data.gravitationalAndWeylAnomalyCanceled
 
 /-- Assumed heterotic worldsheet/chiral-supersymmetry package from Section 11.1. -/
 theorem heterotic_worldsheet_package
@@ -40,25 +42,25 @@ theorem heterotic_worldsheet_package
 
 /-- GSO/chiral-CFT data for the left-moving fermion system in heterotic strings. -/
 structure HeteroticLambdaGsoData where
-  rightMovingChiralGsoApplied : Bool
-  leftMovingChiralGsoApplied : Bool
-  so32CurrentAlgebraRealized : Bool
-  e8TimesE8CurrentAlgebraRealized : Bool
-  narainGamma16Realization : Bool
-  narainGamma8PlusGamma8Realization : Bool
-  modularInvariantProjection : Bool
+  rightMovingChiralGsoApplied : HeteroticClaim
+  leftMovingChiralGsoApplied : HeteroticClaim
+  so32CurrentAlgebraRealized : HeteroticClaim
+  e8TimesE8CurrentAlgebraRealized : HeteroticClaim
+  narainGamma16Realization : HeteroticClaim
+  narainGamma8PlusGamma8Realization : HeteroticClaim
+  modularInvariantProjection : HeteroticClaim
 
 /-- Heterotic `λ`-sector package:
 chiral GSO projections produce either `Spin(32)/Z_2` or `E_8×E_8`
 current algebra sectors with Narain-lattice realizations. -/
 def HeteroticLambdaGsoPackage (data : HeteroticLambdaGsoData) : Prop :=
-  data.rightMovingChiralGsoApplied = true ∧
-  data.leftMovingChiralGsoApplied = true ∧
-  data.so32CurrentAlgebraRealized = true ∧
-  data.e8TimesE8CurrentAlgebraRealized = true ∧
-  data.narainGamma16Realization = true ∧
-  data.narainGamma8PlusGamma8Realization = true ∧
-  data.modularInvariantProjection = true
+  data.rightMovingChiralGsoApplied ∧
+  data.leftMovingChiralGsoApplied ∧
+  data.so32CurrentAlgebraRealized ∧
+  data.e8TimesE8CurrentAlgebraRealized ∧
+  data.narainGamma16Realization ∧
+  data.narainGamma8PlusGamma8Realization ∧
+  data.modularInvariantProjection
 
 /-- Assumed heterotic `λ`-sector GSO/current-algebra package from Section 11.1. -/
 theorem heterotic_lambda_gso_package
@@ -75,11 +77,11 @@ structure HeteroticSpectrumData where
   momentumSq : ℝ
   leftOscillatorLevel : ℤ
   rightOscillatorLevel : ℤ
-  brstCohomologyWithSiegelConstraint : Bool
-  rightChiralGsoProjection : Bool
-  tachyonFreeSpectrum : Bool
-  masslessNOneSupergravityMultipletPresent : Bool
-  masslessGaugeMultipletPresent : Bool
+  brstCohomologyWithSiegelConstraint : HeteroticClaim
+  rightChiralGsoProjection : HeteroticClaim
+  tachyonFreeSpectrum : HeteroticClaim
+  masslessNOneSupergravityMultipletPresent : HeteroticClaim
+  masslessGaugeMultipletPresent : HeteroticClaim
 
 /-- Heterotic physical-spectrum package:
 BRST/Siegel cohomology with level matching and right-moving GSO, yielding
@@ -90,11 +92,11 @@ def HeteroticSpectrumPackage (data : HeteroticSpectrumData) : Prop :=
   (-data.alphaPrime / 4) * data.momentumSq = (data.rightOscillatorLevel : ℝ) ∧
   data.leftOscillatorLevel ≥ -1 ∧
   data.rightOscillatorLevel ≥ 0 ∧
-  data.brstCohomologyWithSiegelConstraint = true ∧
-  data.rightChiralGsoProjection = true ∧
-  data.tachyonFreeSpectrum = true ∧
-  data.masslessNOneSupergravityMultipletPresent = true ∧
-  data.masslessGaugeMultipletPresent = true
+  data.brstCohomologyWithSiegelConstraint ∧
+  data.rightChiralGsoProjection ∧
+  data.tachyonFreeSpectrum ∧
+  data.masslessNOneSupergravityMultipletPresent ∧
+  data.masslessGaugeMultipletPresent
 
 /-- Assumed heterotic physical-spectrum package from Section 11.1. -/
 theorem heterotic_spectrum_package
@@ -114,9 +116,9 @@ structure HeteroticAmplitudePrescriptionData where
   normalizationPrefactor : ℂ
   contourIntegral : ℂ
   amplitude : ℂ
-  antiholomorphicSupermoduliOnly : Bool
-  pcoReplacementEquivalent : Bool
-  spuriousSingularitiesControlled : Bool
+  antiholomorphicSupermoduliOnly : HeteroticClaim
+  pcoReplacementEquivalent : HeteroticClaim
+  spuriousSingularitiesControlled : HeteroticClaim
 
 /-- Heterotic perturbative-amplitude package:
 only anti-holomorphic supermoduli are integrated, with PCO-equivalent
@@ -126,9 +128,9 @@ def HeteroticAmplitudePrescriptionPackage
   data.oddSupermoduliComplexDimension =
     2 * (data.genus : ℤ) - 2 + (data.punctures : ℤ) ∧
   data.phasePower = 3 * (data.genus : ℤ) - 3 + (data.punctures : ℤ) ∧
-  data.antiholomorphicSupermoduliOnly = true ∧
-  data.pcoReplacementEquivalent = true ∧
-  data.spuriousSingularitiesControlled = true ∧
+  data.antiholomorphicSupermoduliOnly ∧
+  data.pcoReplacementEquivalent ∧
+  data.spuriousSingularitiesControlled ∧
   data.amplitude = data.normalizationPrefactor * data.contourIntegral
 
 /-- Assumed perturbative heterotic amplitude prescription from Section 11.2. -/
@@ -146,10 +148,10 @@ structure HeteroticTreeEffectiveCouplingData where
   alphaPrime : ℝ
   gravitationalCoupling : ℝ
   yangMillsCoupling : ℝ
-  gravitonThreePointContainsRiemannSqCorrection : Bool
-  gravitonThreePointHasNoRiemannCubeCorrection : Bool
-  gaugeThreePointMatchesYangMillsWithoutFcube : Bool
-  lowEnergyCompletionIsTenDimensionalNOneSupergravity : Bool
+  gravitonThreePointContainsRiemannSqCorrection : HeteroticClaim
+  gravitonThreePointHasNoRiemannCubeCorrection : HeteroticClaim
+  gaugeThreePointMatchesYangMillsWithoutFcube : HeteroticClaim
+  lowEnergyCompletionIsTenDimensionalNOneSupergravity : HeteroticClaim
 
 /-- Heterotic tree-level effective-coupling package:
 `κ = π g_s`, `g_YM = 2π g_s / sqrt(α') = 2κ / sqrt(α')`,
@@ -163,10 +165,10 @@ def HeteroticTreeEffectiveCouplingPackage
     2 * Real.pi * data.stringCoupling / Real.sqrt data.alphaPrime ∧
   data.yangMillsCoupling =
     2 * data.gravitationalCoupling / Real.sqrt data.alphaPrime ∧
-  data.gravitonThreePointContainsRiemannSqCorrection = true ∧
-  data.gravitonThreePointHasNoRiemannCubeCorrection = true ∧
-  data.gaugeThreePointMatchesYangMillsWithoutFcube = true ∧
-  data.lowEnergyCompletionIsTenDimensionalNOneSupergravity = true
+  data.gravitonThreePointContainsRiemannSqCorrection ∧
+  data.gravitonThreePointHasNoRiemannCubeCorrection ∧
+  data.gaugeThreePointMatchesYangMillsWithoutFcube ∧
+  data.lowEnergyCompletionIsTenDimensionalNOneSupergravity
 
 /-- Assumed heterotic tree-level effective-coupling package from Section 11.2. -/
 theorem heterotic_tree_effective_coupling_package
@@ -179,21 +181,21 @@ theorem heterotic_tree_effective_coupling_package
 
 /-- Green-Schwarz anomaly-cancellation data in heterotic perturbation theory. -/
 structure HeteroticGreenSchwarzData where
-  parityOddBTwoWedgeX8CouplingPresent : Bool
-  x8PolynomialMatchesGaugeGravitationalAnomaly : Bool
-  oddSpinStructureOneLoopFivePointContributionPresent : Bool
-  oneLoopBfFourExtractionConsistent : Bool
-  anomalyCancellationByBFieldVariation : Bool
+  parityOddBTwoWedgeX8CouplingPresent : HeteroticClaim
+  x8PolynomialMatchesGaugeGravitationalAnomaly : HeteroticClaim
+  oddSpinStructureOneLoopFivePointContributionPresent : HeteroticClaim
+  oneLoopBfFourExtractionConsistent : HeteroticClaim
+  anomalyCancellationByBFieldVariation : HeteroticClaim
 
 /-- Heterotic Green-Schwarz package:
 `B_2 ∧ X_8` is generated with odd-spin-structure contribution and cancels
 the 10D gauge/gravitational anomaly. -/
 def HeteroticGreenSchwarzPackage (data : HeteroticGreenSchwarzData) : Prop :=
-  data.parityOddBTwoWedgeX8CouplingPresent = true ∧
-  data.x8PolynomialMatchesGaugeGravitationalAnomaly = true ∧
-  data.oddSpinStructureOneLoopFivePointContributionPresent = true ∧
-  data.oneLoopBfFourExtractionConsistent = true ∧
-  data.anomalyCancellationByBFieldVariation = true
+  data.parityOddBTwoWedgeX8CouplingPresent ∧
+  data.x8PolynomialMatchesGaugeGravitationalAnomaly ∧
+  data.oddSpinStructureOneLoopFivePointContributionPresent ∧
+  data.oneLoopBfFourExtractionConsistent ∧
+  data.anomalyCancellationByBFieldVariation
 
 /-- Assumed heterotic Green-Schwarz anomaly-coupling package from Section 11.2. -/
 theorem heterotic_green_schwarz_package
@@ -211,10 +213,10 @@ structure HeteroticNonBpsSpinorMassRenormalizationData where
   classicalMassSq : ℝ
   oneLoopMassShiftSq : ℝ
   correctedMassSq : ℝ
-  has128BosonsAnd128Fermions : Bool
-  stableAgainstDecayToMasslessStates : Bool
-  offShellOnePiFrameworkRequired : Bool
-  torusTwoPointAmplitudeControlsShift : Bool
+  has128BosonsAnd128Fermions : HeteroticClaim
+  stableAgainstDecayToMasslessStates : HeteroticClaim
+  offShellOnePiFrameworkRequired : HeteroticClaim
+  torusTwoPointAmplitudeControlsShift : HeteroticClaim
 
 /-- Non-BPS spinor mass-renormalization package:
 classical `m^2 = 4/α'`, positive one-loop shift from the torus 2-point function,
@@ -226,10 +228,10 @@ def HeteroticNonBpsSpinorMassRenormalizationPackage
   data.classicalMassSq = 4 / data.alphaPrime ∧
   data.correctedMassSq = data.classicalMassSq + data.oneLoopMassShiftSq ∧
   data.oneLoopMassShiftSq > 0 ∧
-  data.has128BosonsAnd128Fermions = true ∧
-  data.stableAgainstDecayToMasslessStates = true ∧
-  data.offShellOnePiFrameworkRequired = true ∧
-  data.torusTwoPointAmplitudeControlsShift = true
+  data.has128BosonsAnd128Fermions ∧
+  data.stableAgainstDecayToMasslessStates ∧
+  data.offShellOnePiFrameworkRequired ∧
+  data.torusTwoPointAmplitudeControlsShift
 
 /-- Assumed heterotic non-BPS spinor mass-renormalization package from Section 11.3. -/
 theorem heterotic_non_bps_spinor_mass_renormalization_package
@@ -245,32 +247,32 @@ structure HeteroticBackgroundNlsmData where
   Configuration : Type
   actionFunctional : Configuration → ℂ
   alphaPrime : ℝ
-  hasMetricBackground : Bool
-  hasBFieldBackground : Bool
-  hasGaugeBundleBackground : Bool
-  worldsheet01Supersymmetry : Bool
-  gaugeTransformationActsOnLambdaFermions : Bool
-  bFieldTransformsUnderGaugeAndLorentzAnomalies : Bool
-  modifiedHThreeGaugeInvariant : Bool
-  modifiedBianchiIdentityIncludesF2AndR2 : Bool
-  oneLoopGaugeBetaIsCovariantDivergence : Bool
-  twoLoopMetricBetaIncludesRiemannSqAndFSq : Bool
+  hasMetricBackground : HeteroticClaim
+  hasBFieldBackground : HeteroticClaim
+  hasGaugeBundleBackground : HeteroticClaim
+  worldsheet01Supersymmetry : HeteroticClaim
+  gaugeTransformationActsOnLambdaFermions : HeteroticClaim
+  bFieldTransformsUnderGaugeAndLorentzAnomalies : HeteroticClaim
+  modifiedHThreeGaugeInvariant : HeteroticClaim
+  modifiedBianchiIdentityIncludesF2AndR2 : HeteroticClaim
+  oneLoopGaugeBetaIsCovariantDivergence : HeteroticClaim
+  twoLoopMetricBetaIncludesRiemannSqAndFSq : HeteroticClaim
 
 /-- Heterotic background sigma-model package:
 `(0,1)` NLSM with gauge bundle, anomalous `B` transformation, gauge-invariant
 `H-hat`, modified Bianchi identity, and beta-function/EOM matching. -/
 def HeteroticBackgroundNlsmPackage (data : HeteroticBackgroundNlsmData) : Prop :=
   data.alphaPrime > 0 ∧
-  data.hasMetricBackground = true ∧
-  data.hasBFieldBackground = true ∧
-  data.hasGaugeBundleBackground = true ∧
-  data.worldsheet01Supersymmetry = true ∧
-  data.gaugeTransformationActsOnLambdaFermions = true ∧
-  data.bFieldTransformsUnderGaugeAndLorentzAnomalies = true ∧
-  data.modifiedHThreeGaugeInvariant = true ∧
-  data.modifiedBianchiIdentityIncludesF2AndR2 = true ∧
-  data.oneLoopGaugeBetaIsCovariantDivergence = true ∧
-  data.twoLoopMetricBetaIncludesRiemannSqAndFSq = true
+  data.hasMetricBackground ∧
+  data.hasBFieldBackground ∧
+  data.hasGaugeBundleBackground ∧
+  data.worldsheet01Supersymmetry ∧
+  data.gaugeTransformationActsOnLambdaFermions ∧
+  data.bFieldTransformsUnderGaugeAndLorentzAnomalies ∧
+  data.modifiedHThreeGaugeInvariant ∧
+  data.modifiedBianchiIdentityIncludesF2AndR2 ∧
+  data.oneLoopGaugeBetaIsCovariantDivergence ∧
+  data.twoLoopMetricBetaIncludesRiemannSqAndFSq
 
 /-- Assumed heterotic background `(0,1)` sigma-model package from Section 11.4. -/
 theorem heterotic_background_nlsm_package
@@ -284,13 +286,13 @@ theorem heterotic_background_nlsm_package
 /-- Calabi-Yau compactification with gauge-bundle data in heterotic strings. -/
 structure HeteroticCalabiYauGaugeBundleData where
   complexDimension : ℕ
-  targetKahler : Bool
-  gaugeFieldStrengthHermitian : Bool
-  worldsheetU1RSymmetryEnhancedTo02 : Bool
-  standardEmbeddingApplied : Bool
-  hHatThreeVanishesForFlatBInStandardEmbedding : Bool
-  preservesFourDimensionalNOneSupersymmetry : Bool
-  unbrokenGaugeGroupSO26TimesU1OrE6TimesE8 : Bool
+  targetKahler : HeteroticClaim
+  gaugeFieldStrengthHermitian : HeteroticClaim
+  worldsheetU1RSymmetryEnhancedTo02 : HeteroticClaim
+  standardEmbeddingApplied : HeteroticClaim
+  hHatThreeVanishesForFlatBInStandardEmbedding : HeteroticClaim
+  preservesFourDimensionalNOneSupersymmetry : HeteroticClaim
+  unbrokenGaugeGroupSO26TimesU1OrE6TimesE8 : HeteroticClaim
 
 /-- Heterotic Calabi-Yau/gauge-bundle package:
 Hermitian gauge bundle and standard embedding reduce to `(2,2)` structure with
@@ -298,13 +300,13 @@ Hermitian gauge bundle and standard embedding reduce to `(2,2)` structure with
 def HeteroticCalabiYauGaugeBundlePackage
     (data : HeteroticCalabiYauGaugeBundleData) : Prop :=
   data.complexDimension > 0 ∧
-  data.targetKahler = true ∧
-  data.gaugeFieldStrengthHermitian = true ∧
-  data.worldsheetU1RSymmetryEnhancedTo02 = true ∧
-  data.standardEmbeddingApplied = true ∧
-  data.hHatThreeVanishesForFlatBInStandardEmbedding = true ∧
-  data.preservesFourDimensionalNOneSupersymmetry = true ∧
-  data.unbrokenGaugeGroupSO26TimesU1OrE6TimesE8 = true
+  data.targetKahler ∧
+  data.gaugeFieldStrengthHermitian ∧
+  data.worldsheetU1RSymmetryEnhancedTo02 ∧
+  data.standardEmbeddingApplied ∧
+  data.hHatThreeVanishesForFlatBInStandardEmbedding ∧
+  data.preservesFourDimensionalNOneSupersymmetry ∧
+  data.unbrokenGaugeGroupSO26TimesU1OrE6TimesE8
 
 /-- Assumed heterotic Calabi-Yau standard-embedding package from Section 11.5. -/
 theorem heterotic_calabi_yau_gauge_bundle_package
@@ -317,30 +319,30 @@ theorem heterotic_calabi_yau_gauge_bundle_package
 
 /-- Strominger-system data for heterotic supersymmetric backgrounds. -/
 structure HeteroticStromingerSystemData where
-  complexStructureIntegrable : Bool
-  metricHermitianWithRespectToComplexStructure : Bool
-  gaugeBundleHolomorphic : Bool
-  hThreeEqualsIPartialMinusBarPartialOmega : Bool
-  hHatThreeReceivesAlphaPrimeChernSimonsCorrection : Bool
-  hermitianYangMillsCondition : Bool
-  secondChernCharacterConstraintSatisfied : Bool
-  torsionalConnectionHasSU3Holonomy : Bool
-  expMinusTwoPhiOmegaClosedAndHolomorphic : Bool
+  complexStructureIntegrable : HeteroticClaim
+  metricHermitianWithRespectToComplexStructure : HeteroticClaim
+  gaugeBundleHolomorphic : HeteroticClaim
+  hThreeEqualsIPartialMinusBarPartialOmega : HeteroticClaim
+  hHatThreeReceivesAlphaPrimeChernSimonsCorrection : HeteroticClaim
+  hermitianYangMillsCondition : HeteroticClaim
+  secondChernCharacterConstraintSatisfied : HeteroticClaim
+  torsionalConnectionHasSU3Holonomy : HeteroticClaim
+  expMinusTwoPhiOmegaClosedAndHolomorphic : HeteroticClaim
 
 /-- Heterotic Strominger-system package:
 integrable complex/Hermitian geometry with torsion, corrected `H-hat`
 constraint, Hermitian Yang-Mills bundle, and supersymmetry conditions. -/
 def HeteroticStromingerSystemPackage
     (data : HeteroticStromingerSystemData) : Prop :=
-  data.complexStructureIntegrable = true ∧
-  data.metricHermitianWithRespectToComplexStructure = true ∧
-  data.gaugeBundleHolomorphic = true ∧
-  data.hThreeEqualsIPartialMinusBarPartialOmega = true ∧
-  data.hHatThreeReceivesAlphaPrimeChernSimonsCorrection = true ∧
-  data.hermitianYangMillsCondition = true ∧
-  data.secondChernCharacterConstraintSatisfied = true ∧
-  data.torsionalConnectionHasSU3Holonomy = true ∧
-  data.expMinusTwoPhiOmegaClosedAndHolomorphic = true
+  data.complexStructureIntegrable ∧
+  data.metricHermitianWithRespectToComplexStructure ∧
+  data.gaugeBundleHolomorphic ∧
+  data.hThreeEqualsIPartialMinusBarPartialOmega ∧
+  data.hHatThreeReceivesAlphaPrimeChernSimonsCorrection ∧
+  data.hermitianYangMillsCondition ∧
+  data.secondChernCharacterConstraintSatisfied ∧
+  data.torsionalConnectionHasSU3Holonomy ∧
+  data.expMinusTwoPhiOmegaClosedAndHolomorphic
 
 /-- Assumed heterotic Strominger-system package from Section 11.5. -/
 theorem heterotic_strominger_system_package
@@ -360,8 +362,8 @@ structure HeteroticFourDEffectiveTheoryData where
   chargedScalarQuadraticContribution : ℝ
   uOneMomentMap : ℝ
   dTermPotentialContribution : ℝ
-  axionShiftCancelsUOneAnomaly : Bool
-  dilatonInChiralMultiplet : Bool
+  axionShiftCancelsUOneAnomaly : HeteroticClaim
+  dilatonInChiralMultiplet : HeteroticClaim
 
 /-- Heterotic 4D effective/FI package:
 anomalous `U(1)` axion shift, moment-map FI piece from the dilaton multiplet,
@@ -377,8 +379,8 @@ def HeteroticFourDEffectiveTheoryPackage
         (Real.pi ^ (2 : ℕ) * data.alphaPrime) * data.inverseDilatonRealPart) ∧
   data.dTermPotentialContribution =
     (data.kappa4 ^ (2 : ℕ) / (3 * data.alphaPrime)) * data.uOneMomentMap ^ (2 : ℕ) ∧
-  data.axionShiftCancelsUOneAnomaly = true ∧
-  data.dilatonInChiralMultiplet = true
+  data.axionShiftCancelsUOneAnomaly ∧
+  data.dilatonInChiralMultiplet
 
 /-- Assumed heterotic 4D effective/FI package from Section 11.6.1. -/
 theorem heterotic_four_d_effective_theory_package
@@ -397,9 +399,9 @@ structure HeteroticOneLoopFiMassTermData where
   h21 : ℕ
   h11 : ℕ
   deltaMassSq : ℝ
-  offShellRegularizationUsed : Bool
-  oddSpinStructureContributionVanishes : Bool
-  ramondIndexTraceDeterminesIntegral : Bool
+  offShellRegularizationUsed : HeteroticClaim
+  oddSpinStructureContributionVanishes : HeteroticClaim
+  ramondIndexTraceDeterminesIntegral : HeteroticClaim
 
 /-- One-loop FI mass package:
 `δm^2 = q κ^2 (h^{2,1}-h^{1,1}) /(3 π^2 α'^2)` from the regulated torus 2-point
@@ -412,9 +414,9 @@ def HeteroticOneLoopFiMassTermPackage
     ((data.charge : ℝ) * data.kappa4 ^ (2 : ℕ) /
       (3 * Real.pi ^ (2 : ℕ) * data.alphaPrime ^ (2 : ℕ)) *
       ((data.h21 : ℝ) - (data.h11 : ℝ))) ∧
-  data.offShellRegularizationUsed = true ∧
-  data.oddSpinStructureContributionVanishes = true ∧
-  data.ramondIndexTraceDeterminesIntegral = true
+  data.offShellRegularizationUsed ∧
+  data.oddSpinStructureContributionVanishes ∧
+  data.ramondIndexTraceDeterminesIntegral
 
 /-- Assumed heterotic one-loop FI mass package from Section 11.6.2. -/
 theorem heterotic_one_loop_fi_mass_term_package
@@ -429,18 +431,18 @@ theorem heterotic_one_loop_fi_mass_term_package
 structure HeteroticTwoLoopVacuumEnergyData where
   anomalyCoefficient : ℤ
   twoLoopVacuumAmplitude : ℂ
-  boundaryOfGenusTwoModuliControlsAmplitude : Bool
-  spuriousSingularityResiduesRequired : Bool
-  factorizesIntoTorusCurrentIntegrals : Bool
+  boundaryOfGenusTwoModuliControlsAmplitude : HeteroticClaim
+  spuriousSingularityResiduesRequired : HeteroticClaim
+  factorizesIntoTorusCurrentIntegrals : HeteroticClaim
 
 /-- Heterotic two-loop vacuum package:
 genus-two boundary/degeneration contributions with spurious-residue control
 yield a nonzero vacuum amplitude when the anomaly coefficient is nonzero. -/
 def HeteroticTwoLoopVacuumEnergyPackage
     (data : HeteroticTwoLoopVacuumEnergyData) : Prop :=
-  data.boundaryOfGenusTwoModuliControlsAmplitude = true ∧
-  data.spuriousSingularityResiduesRequired = true ∧
-  data.factorizesIntoTorusCurrentIntegrals = true ∧
+  data.boundaryOfGenusTwoModuliControlsAmplitude ∧
+  data.spuriousSingularityResiduesRequired ∧
+  data.factorizesIntoTorusCurrentIntegrals ∧
   (data.anomalyCoefficient ≠ 0 → data.twoLoopVacuumAmplitude ≠ 0)
 
 /-- Assumed heterotic two-loop vacuum-energy package from Section 11.6.3. -/
@@ -456,9 +458,9 @@ theorem heterotic_two_loop_vacuum_energy_package
 structure HeteroticShiftedVacuumData where
   h11 : ℕ
   h21 : ℕ
-  hasBothPositiveAndNegativeUOneCharges : Bool
-  nonzeroChargedScalarVevCancelsDTerm : Bool
-  supersymmetryRestoredInShiftedVacuum : Bool
+  hasBothPositiveAndNegativeUOneCharges : HeteroticClaim
+  nonzeroChargedScalarVevCancelsDTerm : HeteroticClaim
+  supersymmetryRestoredInShiftedVacuum : HeteroticClaim
 
 /-- Shifted heterotic vacuum package:
 if both K\"ahler and complex-structure charged multiplets are present, a charged
@@ -466,9 +468,9 @@ VEV can cancel the FI `D`-term and restore spacetime supersymmetry. -/
 def HeteroticShiftedVacuumPackage (data : HeteroticShiftedVacuumData) : Prop :=
   data.h11 > 0 ∧
   data.h21 > 0 ∧
-  data.hasBothPositiveAndNegativeUOneCharges = true ∧
-  data.nonzeroChargedScalarVevCancelsDTerm = true ∧
-  data.supersymmetryRestoredInShiftedVacuum = true
+  data.hasBothPositiveAndNegativeUOneCharges ∧
+  data.nonzeroChargedScalarVevCancelsDTerm ∧
+  data.supersymmetryRestoredInShiftedVacuum
 
 /-- Assumed shifted-vacuum supersymmetry-restoration package from Section 11.6.4. -/
 theorem heterotic_shifted_vacuum_package

@@ -100,9 +100,6 @@ def qftEuclideanMqmLongStringIntegralEquation : String :=
   "qft.euclidean.mqm.long_string_integral_equation"
 def wilsonianIrrelevantSuppression : String := "rg.wilsonian.irrelevant_suppression"
 def qcdAsymptoticFreedom : String := "rg.gellmannlow.qcd_asymptotic_freedom"
-def lorentzPreservesTimelike : String := "spacetime.lorentz_preserves_timelike"
-def lorentzPreservesSpacelike : String := "spacetime.lorentz_preserves_spacelike"
-def lorentzPreservesLightlike : String := "spacetime.lorentz_preserves_lightlike"
 def lorentzBoostPreservesMetric : String := "spacetime.lorentz_boost_preserves_metric"
 def spatialRotationPreservesMetric : String := "spacetime.spatial_rotation_preserves_metric"
 def metricPerturbationWellFormed : String := "gr.metric_perturbation_well_formed"
@@ -935,12 +932,6 @@ def assumptionRegistry : List AssumptionEntry :=
       "Irrelevant operators are power-law suppressed along Wilsonian RG flow in this abstraction layer."⟩
   , ⟨AssumptionId.qcdAsymptoticFreedom,
       "One-loop QCD coefficient has the asymptotic-freedom sign in the Nf < 17 regime under the chosen convention."⟩
-  , ⟨AssumptionId.lorentzPreservesTimelike,
-      "Lorentz transformations preserve timelike separation in the Minkowski model."⟩
-  , ⟨AssumptionId.lorentzPreservesSpacelike,
-      "Lorentz transformations preserve spacelike separation in the Minkowski model."⟩
-  , ⟨AssumptionId.lorentzPreservesLightlike,
-      "Lorentz transformations preserve lightlike separation in the Minkowski model."⟩
   , ⟨AssumptionId.lorentzBoostPreservesMetric,
       "The explicit x-direction boost matrix preserves the Minkowski inner product."⟩
   , ⟨AssumptionId.spatialRotationPreservesMetric,

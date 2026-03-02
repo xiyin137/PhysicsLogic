@@ -111,31 +111,16 @@ noncomputable def lorentzGroup
   inv_mul_cancel := h_inv_mul_cancel
 
 /-- Lorentz transformation preserves causal structure -/
-theorem lorentz_preserves_timelike (Λ : LorentzTransform) (x y : SpaceTimePoint)
-    (h_phys :
-      PhysicsLogic.PhysicsAssumption
-        PhysicsLogic.AssumptionId.lorentzPreservesTimelike
-        (Timelike minkowskiMetric x y →
-          Timelike minkowskiMetric (Λ.apply x) (Λ.apply y))) :
-  Timelike minkowskiMetric x y → Timelike minkowskiMetric (Λ.apply x) (Λ.apply y) := by
-  exact h_phys
+theorem lorentz_preserves_timelike (Λ : LorentzTransform) (x y : SpaceTimePoint) :
+    Timelike minkowskiMetric x y → Timelike minkowskiMetric (Λ.apply x) (Λ.apply y) := by
+  exact SpaceTime.lorentz_preserves_timelike Λ x y
 
-theorem lorentz_preserves_spacelike (Λ : LorentzTransform) (x y : SpaceTimePoint)
-    (h_phys :
-      PhysicsLogic.PhysicsAssumption
-        PhysicsLogic.AssumptionId.lorentzPreservesSpacelike
-        (Spacelike minkowskiMetric x y →
-          Spacelike minkowskiMetric (Λ.apply x) (Λ.apply y))) :
-  Spacelike minkowskiMetric x y → Spacelike minkowskiMetric (Λ.apply x) (Λ.apply y) := by
-  exact h_phys
+theorem lorentz_preserves_spacelike (Λ : LorentzTransform) (x y : SpaceTimePoint) :
+    Spacelike minkowskiMetric x y → Spacelike minkowskiMetric (Λ.apply x) (Λ.apply y) := by
+  exact SpaceTime.lorentz_preserves_spacelike Λ x y
 
-theorem lorentz_preserves_lightlike (Λ : LorentzTransform) (x y : SpaceTimePoint)
-    (h_phys :
-      PhysicsLogic.PhysicsAssumption
-        PhysicsLogic.AssumptionId.lorentzPreservesLightlike
-        (Lightlike minkowskiMetric x y →
-          Lightlike minkowskiMetric (Λ.apply x) (Λ.apply y))) :
-  Lightlike minkowskiMetric x y → Lightlike minkowskiMetric (Λ.apply x) (Λ.apply y) := by
-  exact h_phys
+theorem lorentz_preserves_lightlike (Λ : LorentzTransform) (x y : SpaceTimePoint) :
+    Lightlike minkowskiMetric x y → Lightlike minkowskiMetric (Λ.apply x) (Λ.apply y) := by
+  exact SpaceTime.lorentz_preserves_lightlike Λ x y
 
 end PhysicsLogic.Symmetries

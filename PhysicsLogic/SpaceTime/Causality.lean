@@ -75,32 +75,61 @@ def ChronologicalPast (metric : SpacetimeMetric) (p : SpaceTimePoint) : Set Spac
 def CausalDiamond (metric : SpacetimeMetric) (p q : SpaceTimePoint) : Set SpaceTimePoint :=
   CausalFuture metric p ∩ CausalPast metric q
 
+/-- For the flat Minkowski metric, `innerProduct` matches `minkowskiInnerProduct`. -/
+theorem innerProduct_minkowski_eq (x : SpaceTimePoint) (v w : Fin 4 → ℝ) :
+    innerProduct minkowskiMetric x v w = minkowskiInnerProduct v w := by
+  simp [innerProduct, minkowskiMetric, minkowskiInnerProduct, Fin.sum_univ_four]
+
+/-- Timelike criterion in Minkowski space as interval negativity. -/
+theorem timelike_iff_minkowskiInterval_neg (x y : SpaceTimePoint) :
+    Timelike minkowskiMetric x y ↔ minkowskiInterval x y < 0 := by
+  simp [Timelike, minkowskiInterval, innerProduct_minkowski_eq]
+
+/-- Spacelike criterion in Minkowski space as interval positivity. -/
+theorem spacelike_iff_minkowskiInterval_pos (x y : SpaceTimePoint) :
+    Spacelike minkowskiMetric x y ↔ minkowskiInterval x y > 0 := by
+  simp [Spacelike, minkowskiInterval, innerProduct_minkowski_eq]
+
+/-- Lightlike criterion in Minkowski space as vanishing interval. -/
+theorem lightlike_iff_minkowskiInterval_zero (x y : SpaceTimePoint) :
+    Lightlike minkowskiMetric x y ↔ minkowskiInterval x y = 0 := by
+  simp [Lightlike, minkowskiInterval, innerProduct_minkowski_eq]
+
 /-- Lorentz transformation preserves causal structure (Minkowski only). -/
-theorem lorentz_preserves_timelike (Λ : LorentzTransform) (x y : SpaceTimePoint)
-    (h_phys :
-      PhysicsLogic.PhysicsAssumption
-        PhysicsLogic.AssumptionId.lorentzPreservesTimelike
-        (Timelike minkowskiMetric x y →
-          Timelike minkowskiMetric (Λ.apply x) (Λ.apply y))) :
-  Timelike minkowskiMetric x y → Timelike minkowskiMetric (Λ.apply x) (Λ.apply y) := by
-  exact h_phys
+theorem lorentz_preserves_timelike (Λ : LorentzTransform) (x y : SpaceTimePoint) :
+    Timelike minkowskiMetric x y → Timelike minkowskiMetric (Λ.apply x) (Λ.apply y) := by
+  intro h_timelike
+  have h_interval_neg : minkowskiInterval x y < 0 :=
+    (timelike_iff_minkowskiInterval_neg x y).1 h_timelike
+  have h_interval_inv :
+      minkowskiInterval (Λ.apply x) (Λ.apply y) = minkowskiInterval x y :=
+    lorentz_preserves_interval Λ x y
+  have h_image_interval_neg : minkowskiInterval (Λ.apply x) (Λ.apply y) < 0 := by
+    simpa [h_interval_inv] using h_interval_neg
+  exact (timelike_iff_minkowskiInterval_neg (Λ.apply x) (Λ.apply y)).2 h_image_interval_neg
 
-theorem lorentz_preserves_spacelike (Λ : LorentzTransform) (x y : SpaceTimePoint)
-    (h_phys :
-      PhysicsLogic.PhysicsAssumption
-        PhysicsLogic.AssumptionId.lorentzPreservesSpacelike
-        (Spacelike minkowskiMetric x y →
-          Spacelike minkowskiMetric (Λ.apply x) (Λ.apply y))) :
-  Spacelike minkowskiMetric x y → Spacelike minkowskiMetric (Λ.apply x) (Λ.apply y) := by
-  exact h_phys
+theorem lorentz_preserves_spacelike (Λ : LorentzTransform) (x y : SpaceTimePoint) :
+    Spacelike minkowskiMetric x y → Spacelike minkowskiMetric (Λ.apply x) (Λ.apply y) := by
+  intro h_spacelike
+  have h_interval_pos : minkowskiInterval x y > 0 :=
+    (spacelike_iff_minkowskiInterval_pos x y).1 h_spacelike
+  have h_interval_inv :
+      minkowskiInterval (Λ.apply x) (Λ.apply y) = minkowskiInterval x y :=
+    lorentz_preserves_interval Λ x y
+  have h_image_interval_pos : minkowskiInterval (Λ.apply x) (Λ.apply y) > 0 := by
+    simpa [h_interval_inv] using h_interval_pos
+  exact (spacelike_iff_minkowskiInterval_pos (Λ.apply x) (Λ.apply y)).2 h_image_interval_pos
 
-theorem lorentz_preserves_lightlike (Λ : LorentzTransform) (x y : SpaceTimePoint)
-    (h_phys :
-      PhysicsLogic.PhysicsAssumption
-        PhysicsLogic.AssumptionId.lorentzPreservesLightlike
-        (Lightlike minkowskiMetric x y →
-          Lightlike minkowskiMetric (Λ.apply x) (Λ.apply y))) :
-  Lightlike minkowskiMetric x y → Lightlike minkowskiMetric (Λ.apply x) (Λ.apply y) := by
-  exact h_phys
+theorem lorentz_preserves_lightlike (Λ : LorentzTransform) (x y : SpaceTimePoint) :
+    Lightlike minkowskiMetric x y → Lightlike minkowskiMetric (Λ.apply x) (Λ.apply y) := by
+  intro h_lightlike
+  have h_interval_zero : minkowskiInterval x y = 0 :=
+    (lightlike_iff_minkowskiInterval_zero x y).1 h_lightlike
+  have h_interval_inv :
+      minkowskiInterval (Λ.apply x) (Λ.apply y) = minkowskiInterval x y :=
+    lorentz_preserves_interval Λ x y
+  have h_image_interval_zero : minkowskiInterval (Λ.apply x) (Λ.apply y) = 0 := by
+    simpa [h_interval_inv] using h_interval_zero
+  exact (lightlike_iff_minkowskiInterval_zero (Λ.apply x) (Λ.apply y)).2 h_image_interval_zero
 
 end PhysicsLogic.SpaceTime
