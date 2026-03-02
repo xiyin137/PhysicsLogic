@@ -1482,6 +1482,59 @@ def AdS3MixedFluxSemiclassicalQuantumMatchFromSecondOrderBridgePackage
   data.stringMatchFromSecondOrder.consistency.massShift.fourPointAmplitude =
     data.qftMatchFromSecondOrder.consistency.massShift.fourPointAmplitude
 
+/-- Convert end-to-end cross-lane mixed-flux semiclassical/quantum match data
+sourced from second-order RR-SFT blocks into the generic compositional
+bridge package. -/
+theorem ads3_mixed_flux_semiclassical_quantum_match_bridge_compositional_from_second_order
+    (data : AdS3MixedFluxSemiclassicalQuantumMatchFromSecondOrderBridgeData)
+    (h_match : AdS3MixedFluxSemiclassicalQuantumMatchFromSecondOrderBridgePackage data) :
+    AdS3MixedFluxSemiclassicalQuantumMatchBridgePackage
+      { stringMatch :=
+          { pulsatingCompositional := data.stringMatchFromSecondOrder.pulsatingCompositional
+            rrCompositional :=
+              { sft := data.stringMatchFromSecondOrder.rrFromSecondOrder.secondOrder.sft
+                bracket := data.stringMatchFromSecondOrder.rrFromSecondOrder.secondOrder.bracket
+                reduction := data.stringMatchFromSecondOrder.rrFromSecondOrder.reduction
+                ope := data.stringMatchFromSecondOrder.rrFromSecondOrder.ope
+                massShift := data.stringMatchFromSecondOrder.rrFromSecondOrder.massShift }
+            consistency := data.stringMatchFromSecondOrder.consistency }
+        qftMatch :=
+          { spectrumCompositional := data.qftMatchFromSecondOrder.spectrumCompositional
+            rrCompositional :=
+              { sft := data.qftMatchFromSecondOrder.rrFromSecondOrder.secondOrder.sft
+                bracket := data.qftMatchFromSecondOrder.rrFromSecondOrder.secondOrder.bracket
+                reduction := data.qftMatchFromSecondOrder.rrFromSecondOrder.reduction
+                ope := data.qftMatchFromSecondOrder.rrFromSecondOrder.ope
+                massShift := data.qftMatchFromSecondOrder.rrFromSecondOrder.massShift }
+            consistency := data.qftMatchFromSecondOrder.consistency } } := by
+  rcases h_match with
+    ⟨h_string_match, h_qft_match, h_n, h_k, h_mu, h_delta, h_delta_zero, h_dm2, h_a04⟩
+  have h_string_comp :
+      AdS3MixedFluxSemiclassicalQuantumMatchPackage
+        { pulsatingCompositional := data.stringMatchFromSecondOrder.pulsatingCompositional
+          rrCompositional :=
+            { sft := data.stringMatchFromSecondOrder.rrFromSecondOrder.secondOrder.sft
+              bracket := data.stringMatchFromSecondOrder.rrFromSecondOrder.secondOrder.bracket
+              reduction := data.stringMatchFromSecondOrder.rrFromSecondOrder.reduction
+              ope := data.stringMatchFromSecondOrder.rrFromSecondOrder.ope
+              massShift := data.stringMatchFromSecondOrder.rrFromSecondOrder.massShift }
+          consistency := data.stringMatchFromSecondOrder.consistency } :=
+    ads3_mixed_flux_semiclassical_quantum_match_compositional_from_second_order
+      data.stringMatchFromSecondOrder h_string_match
+  have h_qft_comp :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxSemiclassicalQuantumMatchCftPackage
+        { spectrumCompositional := data.qftMatchFromSecondOrder.spectrumCompositional
+          rrCompositional :=
+            { sft := data.qftMatchFromSecondOrder.rrFromSecondOrder.secondOrder.sft
+              bracket := data.qftMatchFromSecondOrder.rrFromSecondOrder.secondOrder.bracket
+              reduction := data.qftMatchFromSecondOrder.rrFromSecondOrder.reduction
+              ope := data.qftMatchFromSecondOrder.rrFromSecondOrder.ope
+              massShift := data.qftMatchFromSecondOrder.rrFromSecondOrder.massShift }
+          consistency := data.qftMatchFromSecondOrder.consistency } :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_semiclassical_quantum_match_compositional_from_second_order_cft
+      data.qftMatchFromSecondOrder h_qft_match
+  exact ⟨h_string_comp, h_qft_comp, h_n, h_k, h_mu, h_delta, h_delta_zero, h_dm2, h_a04⟩
+
 /-- Derive cross-lane pulsating/mass-shift consistency from end-to-end
 semiclassical/quantum match packages sourced from second-order RR-SFT data. -/
 theorem ads3_mixed_flux_semiclassical_quantum_match_from_second_order_bridge_consistency_package

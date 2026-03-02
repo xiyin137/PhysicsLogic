@@ -1160,6 +1160,34 @@ def AdS3MixedFluxSemiclassicalQuantumMatchFromSecondOrderCftPackage
     -2 * data.consistency.spectrum.excitationNumber +
       2 * Real.sqrt (data.consistency.spectrum.excitationNumber * data.consistency.spectrum.levelK)
 
+/-- Convert end-to-end mixed-flux semiclassical/quantum match data in the QFT
+lane sourced from second-order RR-SFT blocks into the generic compositional
+match package. -/
+theorem ads3_mixed_flux_semiclassical_quantum_match_compositional_from_second_order_cft
+    (data : AdS3MixedFluxSemiclassicalQuantumMatchFromSecondOrderCftData)
+    (h_match : AdS3MixedFluxSemiclassicalQuantumMatchFromSecondOrderCftPackage data) :
+    AdS3MixedFluxSemiclassicalQuantumMatchCftPackage
+      { spectrumCompositional := data.spectrumCompositional
+        rrCompositional :=
+          { sft := data.rrFromSecondOrder.secondOrder.sft
+            bracket := data.rrFromSecondOrder.secondOrder.bracket
+            reduction := data.rrFromSecondOrder.reduction
+            ope := data.rrFromSecondOrder.ope
+            massShift := data.rrFromSecondOrder.massShift }
+        consistency := data.consistency } := by
+  rcases h_match with
+    ⟨h_spec_comp, h_rr_second, h_spec_eq, h_mass_eq, h_mu, h_delta, h_delta_zero⟩
+  have h_rr_comp :
+      AdS3MixedFluxRrSpectrumCorrectionCompositionalCftPackage
+        { sft := data.rrFromSecondOrder.secondOrder.sft
+          bracket := data.rrFromSecondOrder.secondOrder.bracket
+          reduction := data.rrFromSecondOrder.reduction
+          ope := data.rrFromSecondOrder.ope
+          massShift := data.rrFromSecondOrder.massShift } :=
+    ads3_mixed_flux_rr_spectrum_compositional_from_second_order_cft
+      data.rrFromSecondOrder h_rr_second
+  exact ⟨h_spec_comp, h_rr_comp, h_spec_eq, h_mass_eq, h_mu, h_delta, h_delta_zero⟩
+
 /-- Build QFT-lane pulsating/mass-shift consistency from end-to-end
 semiclassical+quantum match data sourced from second-order RR-SFT units. -/
 theorem ads3_mixed_flux_semiclassical_quantum_match_consistency_from_second_order_cft

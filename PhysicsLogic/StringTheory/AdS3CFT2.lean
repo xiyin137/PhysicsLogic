@@ -1210,6 +1210,33 @@ def AdS3MixedFluxSemiclassicalQuantumMatchFromSecondOrderPackage
     -2 * data.consistency.pulsating.n +
       2 * Real.sqrt (data.consistency.pulsating.n * data.consistency.pulsating.k)
 
+/-- Convert end-to-end mixed-flux semiclassical/quantum match data sourced
+from second-order RR-SFT blocks into the generic compositional match package. -/
+theorem ads3_mixed_flux_semiclassical_quantum_match_compositional_from_second_order
+    (data : AdS3MixedFluxSemiclassicalQuantumMatchFromSecondOrderData)
+    (h_match : AdS3MixedFluxSemiclassicalQuantumMatchFromSecondOrderPackage data) :
+    AdS3MixedFluxSemiclassicalQuantumMatchPackage
+      { pulsatingCompositional := data.pulsatingCompositional
+        rrCompositional :=
+          { sft := data.rrFromSecondOrder.secondOrder.sft
+            bracket := data.rrFromSecondOrder.secondOrder.bracket
+            reduction := data.rrFromSecondOrder.reduction
+            ope := data.rrFromSecondOrder.ope
+            massShift := data.rrFromSecondOrder.massShift }
+        consistency := data.consistency } := by
+  rcases h_match with
+    ⟨h_puls_comp, h_rr_second, h_puls_eq, h_mass_eq, h_mu, h_delta, h_delta_zero⟩
+  have h_rr_comp :
+      AdS3MixedFluxRrSpectrumCorrectionCompositionalPackage
+        { sft := data.rrFromSecondOrder.secondOrder.sft
+          bracket := data.rrFromSecondOrder.secondOrder.bracket
+          reduction := data.rrFromSecondOrder.reduction
+          ope := data.rrFromSecondOrder.ope
+          massShift := data.rrFromSecondOrder.massShift } :=
+    ads3_mixed_flux_rr_spectrum_compositional_from_second_order
+      data.rrFromSecondOrder h_rr_second
+  exact ⟨h_puls_comp, h_rr_comp, h_puls_eq, h_mass_eq, h_mu, h_delta, h_delta_zero⟩
+
 /-- Build the pulsating/mass-shift consistency package from end-to-end
 semiclassical+quantum match data sourced from second-order RR-SFT units. -/
 theorem ads3_mixed_flux_semiclassical_quantum_match_consistency_from_second_order
