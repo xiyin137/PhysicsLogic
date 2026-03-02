@@ -92,6 +92,14 @@ else
   status=1
 fi
 
+echo "[check] no hard-coded critical-dimension definitions in non-Papers core code"
+if ./scripts/check_no_hardcoded_critical_dimension_defs.sh; then
+  echo "[ok] no hard-coded critical-dimension definitions"
+else
+  echo "[fail] hard-coded critical-dimension definition check"
+  status=1
+fi
+
 echo "[check] global semantic typing guardrails (non-Papers)"
 if ./scripts/check_global_semantic_types.sh; then
   echo "[ok] global semantic typing checks"
