@@ -119,11 +119,11 @@ structure RegulatedAdSGravityActionData where
   bulkEinsteinHilbert : ℂ
   gibbonsHawkingTerm : ℂ
   localCounterterm : ℂ
-  totalAction : ℂ
+  totalActionValue : ℂ
 
 /-- Composition rule for the regularized gravitational action. -/
 def RegulatedAdSGravityAction (data : RegulatedAdSGravityActionData) : Prop :=
-  data.totalAction =
+  data.totalActionValue =
     data.bulkEinsteinHilbert + data.gibbonsHawkingTerm + data.localCounterterm
 
 /-- Assumed regularized AdS gravity action package from holographic renormalization. -/

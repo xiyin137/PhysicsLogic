@@ -16,7 +16,7 @@ structure MaldacenaWilsonLoopSaddleData where
   alphaPrime : ℝ
   cutoff : ℝ
   contourLength : ℝ
-  worldsheetAction : ℂ
+  worldsheetActionValue : ℂ
   expectationValue : ℂ
 
 /-- Regulated holographic Wilson-loop saddle package:
@@ -29,7 +29,7 @@ def MaldacenaWilsonLoopSaddlePackage
   data.contourLength ≥ 0 ∧
   data.expectationValue =
     Complex.exp
-      (-(data.worldsheetAction -
+      (-(data.worldsheetActionValue -
         (((data.adsRadius / (2 * Real.pi * data.alphaPrime * data.cutoff)) *
             data.contourLength : ℝ) : ℂ)))
 

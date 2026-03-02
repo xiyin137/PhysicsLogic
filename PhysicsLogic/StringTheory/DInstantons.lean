@@ -50,7 +50,7 @@ structure COneZzInstantonData where
   stringCoupling : Real
   alphaPrime : Real
   matrixModelMu : Real
-  zzInstantonAction : Real
+  zzInstantonActionValue : Real
   zzActionFromBraneMassRelationUsed : Bool
   matrixModelBounceDictionaryUsed : Bool
   leadingOneToNAmplitudeFromDiscOnePointFunctions : Bool
@@ -63,7 +63,7 @@ def COneZzInstantonPackage (data : COneZzInstantonData) : Prop :=
   data.stringCoupling > 0 /\
   data.alphaPrime > 0 /\
   data.matrixModelMu > 0 /\
-  data.zzInstantonAction = 1 / (2 * data.stringCoupling) /\
+  data.zzInstantonActionValue = 1 / (2 * data.stringCoupling) /\
   data.zzActionFromBraneMassRelationUsed = true /\
   data.matrixModelBounceDictionaryUsed = true /\
   data.leadingOneToNAmplitudeFromDiscOnePointFunctions = true /\
@@ -84,8 +84,8 @@ structure TypeIIBDMinusOneInstantonData where
   tau1 : Real
   tau2 : Real
   axioDilaton : Complex
-  dMinusOneAction : Complex
-  antiDMinusOneAction : Complex
+  dMinusOneActionValue : Complex
+  antiDMinusOneActionValue : Complex
   antiInstantonActionUsesConjugateAxioDilaton : Bool
   nmInstantonActionUsed : Bool
   axionShiftBrokenToIntegerSubgroup : Bool
@@ -99,7 +99,7 @@ def TypeIIBDMinusOneInstantonPackage
     (data : TypeIIBDMinusOneInstantonData) : Prop :=
   data.tau2 > 0 /\
   data.axioDilaton = data.tau1 + data.tau2 * Complex.I /\
-  data.dMinusOneAction = -2 * Real.pi * Complex.I * data.axioDilaton /\
+  data.dMinusOneActionValue = -2 * Real.pi * Complex.I * data.axioDilaton /\
   data.antiInstantonActionUsesConjugateAxioDilaton = true /\
   data.nmInstantonActionUsed = true /\
   data.axionShiftBrokenToIntegerSubgroup = true /\

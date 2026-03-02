@@ -55,4 +55,27 @@ else
   echo "[ok] no scalar-typed raw vertex fields"
 fi
 
+echo "[semantic-check] scalar action fields must be explicitly marked as Value/Scale/Difference/Variation/Bound/Contraction"
+action_hits="$(
+  rg -n "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[[:space:]]*:[[:space:]]*(ℂ|Complex|ℝ|Real)([[:space:]]|$)" \
+    PhysicsLogic/StringTheory --glob '*.lean' \
+  | while IFS= read -r line; do
+      name="$(printf "%s" "$line" | sed -E "s/^[^:]+:[0-9]+:[[:space:]]*([A-Za-z_][A-Za-z0-9_']*)[[:space:]]*:.*$/\\1/")"
+      if [[ "$name" == *Action* || "$name" == action* ]]; then
+        if [[ "$name" != *ActionValue* && "$name" != *ActionScale* \
+              && "$name" != *ActionDifference* && "$name" != *ActionVariation* \
+              && "$name" != *ActionBound* && "$name" != *ActionContraction* ]]; then
+          printf "%s\n" "$line"
+        fi
+      fi
+    done
+)"
+if [[ -n "$action_hits" ]]; then
+  echo "$action_hits"
+  echo "[fail] found ambiguous scalar action field names"
+  status=1
+else
+  echo "[ok] scalar action field names are explicit"
+fi
+
 exit "$status"
