@@ -168,12 +168,12 @@ theorem classical_string_field_equation_package
 /-- Data for the string-bracket duality pairing with the `(n+1)`-string vertex. -/
 structure StringBracketDualityData where
   dualPairingValue : ℂ
-  vertexValue : ℂ
+  vertexFunctionalValue : ℂ
 
 /-- String-bracket duality package:
 `⟨Φ|c_0^-|[Ψ^n]⟩ = {Φ,Ψ^n}_{0,n+1}`. -/
 def StringBracketDualityPackage (data : StringBracketDualityData) : Prop :=
-  data.dualPairingValue = data.vertexValue
+  data.dualPairingValue = data.vertexFunctionalValue
 
 /-- Assumed string-bracket duality package. -/
 theorem string_bracket_duality_package

@@ -42,23 +42,29 @@ theorem tree_level_superstring_pco_package
   exact h_phys
 
 /-- Picture-raising and integrated-vertex conversion data for NS punctures. -/
-structure NsnsPictureRaisingData where
-  pcoCollisionLimit : ℂ
-  localPictureRaisedVertex : ℂ
-  integratedVertexAfterBGhosts : ℂ
-  matterSuperdescendant : ℂ
+structure NsnsPictureRaisingData (CftState : Type*) [SMul ℂ CftState] where
+  /-- Local state obtained from the PCO-collision limit in the NS sector. -/
+  pcoCollisionLimitState : CftState
+  /-- Local picture-raised NS state. -/
+  localPictureRaisedState : CftState
+  /-- State produced after applying `b_{-1}\tilde b_{-1}` to the `(0,0)` insertion. -/
+  integratedStateAfterBGhosts : CftState
+  /-- Matter superdescendant state `G_{-1/2}\tilde G_{-1/2} V^m`. -/
+  matterSuperdescendantState : CftState
   pcoCollisionRegular : Bool
 
 /-- NS picture-raising package:
 collision limit exists and `b_{-1}\tilde b_{-1} V^{(0,0)} = (1/4) G_{-1/2}\tilde G_{-1/2} V^m`. -/
-def NsnsPictureRaisingPackage (data : NsnsPictureRaisingData) : Prop :=
+def NsnsPictureRaisingPackage {CftState : Type*} [SMul ℂ CftState]
+    (data : NsnsPictureRaisingData CftState) : Prop :=
   data.pcoCollisionRegular = true ∧
-  data.localPictureRaisedVertex = data.pcoCollisionLimit ∧
-  data.integratedVertexAfterBGhosts = (1 / 4 : ℂ) * data.matterSuperdescendant
+  data.localPictureRaisedState = data.pcoCollisionLimitState ∧
+  data.integratedStateAfterBGhosts = (1 / 4 : ℂ) • data.matterSuperdescendantState
 
 /-- Assumed NS picture-raising package from Section 8.1. -/
 theorem nsns_picture_raising_package
-    (data : NsnsPictureRaisingData)
+    {CftState : Type*} [SMul ℂ CftState]
+    (data : NsnsPictureRaisingData CftState)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSuperExplicitNsnsPictureRaising
       (NsnsPictureRaisingPackage data)) :
@@ -70,7 +76,7 @@ structure NsnsThreePointSupergravityData where
   stringCoupling : ℝ
   gravitationalCoupling : ℝ
   worldsheetThreePointAmplitude : ℂ
-  einsteinHilbertVertex : ℂ
+  einsteinHilbertKinematicValue : ℂ
   excludesR2R3AtTree : Bool
 
 /-- Three-point NSNS package:
@@ -80,7 +86,7 @@ def NsnsThreePointSupergravityPackage
     (data : NsnsThreePointSupergravityData) : Prop :=
   data.stringCoupling > 0 ∧
   data.gravitationalCoupling = (Real.pi / 2) * data.stringCoupling ∧
-  data.worldsheetThreePointAmplitude = data.einsteinHilbertVertex ∧
+  data.worldsheetThreePointAmplitude = data.einsteinHilbertKinematicValue ∧
   data.excludesR2R3AtTree = true
 
 /-- Assumed NSNS three-point supergravity-matching package from Section 8.1. -/
