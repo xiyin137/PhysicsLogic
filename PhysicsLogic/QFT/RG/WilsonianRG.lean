@@ -34,9 +34,9 @@ structure WilsonianAction {d : ℕ} (rg : RGFramework d) where
   cutoff : Cutoff
   /-- The action functional on a field configuration type -/
   FieldConfig : Type*
-  action : FieldConfig → ℝ
+  action : FieldConfig → ActionScale
   /-- Wilson coefficients for each operator -/
-  coefficients : rg.Operator → ℝ
+  coefficients : rg.Operator → DimensionlessCoupling
 
 /-- Complex-valued Wilsonian action at cutoff Λ.
 
@@ -47,7 +47,7 @@ structure ComplexWilsonianAction {d : ℕ} (rg : RGFramework d) where
   cutoff : Cutoff
   /-- The action functional on a field configuration type -/
   FieldConfig : Type*
-  action : FieldConfig → ℂ
+  action : FieldConfig → ComplexActionValue
   /-- Wilson coefficients for each operator (possibly complex). -/
   coefficients : rg.Operator → ℂ
 
@@ -59,13 +59,14 @@ def WilsonianAction.toComplex {d : ℕ} {rg : RGFramework d}
   action := fun φ => (S.action φ : ℂ)
   coefficients := fun O => (S.coefficients O : ℂ)
 
-/-- The Wilson coefficient for operator O at scale Λ -/
-def wilsonCoeff {d : ℕ} {rg : RGFramework d} (S : WilsonianAction rg) (O : rg.Operator) : ℝ :=
+/-- The Wilson coefficient for operator O at scale Λ. -/
+def wilsonCoeff {d : ℕ} {rg : RGFramework d}
+    (S : WilsonianAction rg) (O : rg.Operator) : DimensionlessCoupling :=
   S.coefficients O
 
 /-- Dimensionless Wilson coefficient -/
 noncomputable def dimlessWilsonCoeff {d : ℕ} {rg : RGFramework d}
-    (S : WilsonianAction rg) (O : rg.Operator) : ℝ :=
+    (S : WilsonianAction rg) (O : rg.Operator) : DimensionlessCoupling :=
   S.coefficients O * S.cutoff.Λ ^ (rg.massDimension O - d)
 
 /- ============= EXACT RG FLOW ============= -/
@@ -99,7 +100,7 @@ structure PolchinskiFlow {d : ℕ} (rg : RGFramework d) where
 structure WetterichFlow {d : ℕ} (rg : RGFramework d) where
   /-- Effective average action at each scale -/
   FieldConfig : Type*
-  effective_action : Scale → FieldConfig → ℝ
+  effective_action : Scale → FieldConfig → ActionScale
   /-- Regulator function R_k -/
   regulator : Scale → ℝ → ℝ
   /-- The regulator vanishes in the IR limit k → 0.
@@ -114,7 +115,7 @@ structure WetterichFlow {d : ℕ} (rg : RGFramework d) where
 structure ComplexWetterichFlow {d : ℕ} (rg : RGFramework d) where
   /-- Effective average action at each scale (complex-valued). -/
   FieldConfig : Type*
-  effective_action : Scale → FieldConfig → ℂ
+  effective_action : Scale → FieldConfig → ComplexActionValue
   /-- Regulator function R_k on momentum magnitudes. -/
   regulator : Scale → ℝ → ℝ
   /-- IR limit of the regulator. -/
@@ -135,21 +136,21 @@ def WetterichFlow.toComplex {d : ℕ} {rg : RGFramework d}
     S_Λ[φ] = ∫ d^d x [V(φ) + (1/2)Z(φ)(∂φ)² + O(∂⁴)] -/
 structure DerivativeExpansion (d : ℕ) where
   /-- Effective potential V(φ) -/
-  potential : ℝ → ℝ
+  potential : ScalingDimension → PotentialScale
   /-- Wave function renormalization Z(φ) -/
-  wavefunction_renorm : ℝ → ℝ
+  wavefunction_renorm : ScalingDimension → Dimless
   /-- Higher derivative terms (truncated) -/
-  higher_order : ℕ → (ℝ → ℝ)
+  higher_order : ℕ → (ScalingDimension → PotentialScale)
 
 /-- Local potential approximation (LPA): keep only V(φ), set Z = 1 -/
 structure LPA (d : ℕ) where
   /-- The potential at each scale -/
-  potential : Scale → (ℝ → ℝ)
+  potential : Scale → (ScalingDimension → PotentialScale)
 
 /-- LPA' approximation: LPA plus running Z(k) -/
 structure LPAprime (d : ℕ) where
-  potential : Scale → (ℝ → ℝ)
-  Z : Scale → ℝ
+  potential : Scale → (ScalingDimension → PotentialScale)
+  Z : Scale → Dimless
 
 /- ============= INTEGRATING OUT ============= -/
 
@@ -198,14 +199,14 @@ structure UniversalityClass {d : ℕ} (rg : RGFramework d) where
 /-- Critical exponents from scaling dimensions:
     ν_O = 1/(d - Δ_O) for relevant operators -/
 noncomputable def criticalExponent {d : ℕ} (rg : RGFramework d)
-    (O : rg.Operator) (fp : CouplingConfig rg) : ℝ :=
+    (O : rg.Operator) (fp : CouplingConfig rg) : ScalingDimension :=
   1 / (d - scalingDimension rg O fp)
 
 /-- Universality: different microscopic theories in the same class give the same
     critical exponents, because critical exponents are determined solely by
     the IR fixed point. -/
 noncomputable def universalCriticalExponent {d : ℕ} {rg : RGFramework d}
-    (uc : UniversalityClass rg) (O : rg.Operator) : ℝ :=
+    (uc : UniversalityClass rg) (O : rg.Operator) : ScalingDimension :=
   criticalExponent rg O uc.ir_fixed_point
 
 end PhysicsLogic.QFT.RG.Wilsonian

@@ -470,18 +470,20 @@ structure LocalOperatorExpansion (F : FieldConfigurationSpace) {d : ℕ}
   /-- Wilsonian action -/
   W : WilsonianEffectiveAction F
   /-- Running coupling for each local operator at scale Λ -/
-  coupling : rg.Operator → Cutoff → ℝ
+  coupling : rg.Operator → Cutoff → DimensionlessCoupling
   /-- Beta function for each operator -/
-  beta : rg.Operator → Cutoff → ℝ
+  beta : rg.Operator → Cutoff → BetaFunctionValue
 
 /-- Dimensionless coupling at scale Λ -/
 noncomputable def dimensionlessCouplingAt {d : ℕ} {rg : RGFramework d}
-    (L : LocalOperatorExpansion F rg) (O : rg.Operator) (Λ : Cutoff) : ℝ :=
+    (L : LocalOperatorExpansion F rg) (O : rg.Operator) (Λ : Cutoff) :
+    DimensionlessCoupling :=
   L.coupling O Λ * Λ.Λ ^ (rg.massDimension O - d)
 
 /-- RG flow of a coupling: g(Λ₂) from g(Λ₁) at one-loop -/
 noncomputable def runCoupling {d : ℕ} {rg : RGFramework d}
-    (L : LocalOperatorExpansion F rg) (O : rg.Operator) (Λ₁ Λ₂ : Cutoff) : ℝ :=
+    (L : LocalOperatorExpansion F rg) (O : rg.Operator) (Λ₁ Λ₂ : Cutoff) :
+    DimensionlessCoupling :=
   L.coupling O Λ₁ + L.beta O Λ₁ * Real.log (Λ₂.Λ / Λ₁.Λ)
 
 /-- Check if operator is relevant (Δ < d) -/
