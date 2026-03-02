@@ -172,15 +172,32 @@ structure CrossingSymmetry2DTheory where
     (block_s : ConformalBlock2D)
     (z : ℂ),
     List ConformalBlock2D
+  /-- Selected t-channel blocks are compatible with the same `(c, h_ext)` data. -/
+  t_channel_block_kinematics : ∀
+    (c : VirasoroCentralCharge)
+    (h_ext : Fin 4 → ℝ)
+    (block_s : ConformalBlock2D)
+    (z : ℂ)
+    (block_t : ConformalBlock2D),
+    block_t ∈ t_channel_blocks c h_ext block_s z →
+    block_t.central_charge = c ∧ block_t.external_weights = h_ext
   /-- Crossing kernel F_{pq} relates s-channel to t-channel blocks:
       Fₚˢ(z) = ∑_q F_{pq}(c, {h_i}) F_qᵗ(1-z)
       The kernel entry is a function of (c, h_ext, p, q). -/
-  crossing_kernel : VirasoroCentralCharge → (Fin 4 → ℝ) → ℕ → ℕ → ℂ
+  crossing_kernel :
+    VirasoroCentralCharge → (Fin 4 → ℝ) → ConformalBlock2D → ConformalBlock2D → ℂ
   /-- Coefficient weight used to sum a selected t-channel block. -/
   t_channel_weight : ∀
     (c : VirasoroCentralCharge)
     (h_ext : Fin 4 → ℝ)
     (block_s block_t : ConformalBlock2D), ℂ
+  /-- Channel weight is identified with the crossing-kernel entry. -/
+  t_channel_weight_from_kernel : ∀
+    (c : VirasoroCentralCharge)
+    (h_ext : Fin 4 → ℝ)
+    (block_s block_t : ConformalBlock2D),
+    t_channel_weight c h_ext block_s block_t =
+      crossing_kernel c h_ext block_s block_t
   /-- Reconstructed t-channel value for the chosen s-channel input block. -/
   t_channel_reconstruction : ∀
     (c : VirasoroCentralCharge)
