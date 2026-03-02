@@ -108,4 +108,18 @@ else
   echo "[ok] no raw scalar-codomain action maps in non-Papers modules"
 fi
 
+echo "[global-semantic-check] no raw scalar base scale aliases in non-Papers modules"
+raw_scale_alias_hits="$(
+  rg -n "^[[:space:]]*(abbrev|def)[[:space:]]+Scale[[:space:]]*:=[[:space:]]*(ℝ|Real)" \
+    PhysicsLogic --glob '*.lean' \
+  | rg -v '^PhysicsLogic/Papers/' || true
+)"
+if [[ -n "$raw_scale_alias_hits" ]]; then
+  echo "$raw_scale_alias_hits"
+  echo "[fail] found raw scalar base scale aliases in non-Papers modules"
+  status=1
+else
+  echo "[ok] no raw scalar base scale aliases in non-Papers modules"
+fi
+
 exit "$status"

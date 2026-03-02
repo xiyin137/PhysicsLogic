@@ -117,8 +117,10 @@ SpaceTime/, QFT/AQFT/, QFT/CFT/, QFT/TQFT/, QFT/Smatrix/, GeneralRelativity/, Cl
 ### Issue 1: Remaining `True` placeholders
 Some `True` placeholders remain where the full statement requires infrastructure not yet available (e.g., nested Virasoro bracket computations in `VirasoroAlgebra.jacobi`). These are documented with comments.
 
-### Issue 2: Intentional `Unit` data fields
-`VirasoroGeneratorElement` and `AntiVirasoroGeneratorElement` intentionally keep `data : Unit` since they are formal generators of an abstract Lie algebra — the index `n : ℤ` is the meaningful data.
+### Issue 2: Historical `Unit` placeholders (mostly removed)
+Earlier `Unit` placeholders in core physics interfaces were used as temporary stubs.
+The Virasoro generator placeholders have now been replaced by explicit formal-generator
+coefficients; remaining placeholders, if any, should be treated as technical debt and removed.
 
 ### Issue 3: Review sorry count
 The `t_dual` definition in `CFT/TwoDimensional/Examples.lean` has a sorry for the weight proof (T-duality swaps momentum/winding). This is acceptable for PhysicsLogic but could be proved with some algebraic manipulation.
