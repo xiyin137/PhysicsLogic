@@ -34,20 +34,15 @@ def combinePoints {d : ℕ} {n m : ℕ}
     relativistic Wightman QFT via the OS reconstruction theorem.
 
     The axioms are:
-    - E1: Euclidean covariance (rotations + translations)
     - E2: Reflection positivity (crucial for unitarity!)
     - E3: Permutation symmetry (already in QFT structure)
     - E4: Cluster property (factorization at large separation)
-    - E5: Growth bound (added in 1975 follow-up) -/
+    - E5: Growth bound (added in 1975 follow-up)
+
+    Note: E1 (Euclidean covariance) is part of `QFT` itself via
+    `translation_invariant` and `rotation_invariant`, with combined form
+    provided by `QFT.euclidean_covariance`. -/
 structure OSAxioms {d : ℕ} [NeZero d] (theory : QFT d) where
-  /-- OS Axiom E1: Euclidean covariance (rotation + translation invariance) -/
-  euclidean_covariance : ∀ (n : ℕ)
-    (rotation : Fin d → Fin d → ℝ)
-    (_h_orthogonal : IsOrthogonal rotation)
-    (translation : EuclideanPoint d)
-    (points : Fin n → EuclideanPoint d),
-    theory.schwinger n points =
-    theory.schwinger n (fun i μ => translation μ + ∑ ν, rotation μ ν * points i ν)
   /-- OS Axiom E2: Reflection positivity (crucial for unitarity!)
 
       For any finite collection of point configurations {(nᵢ, pointsᵢ)} with all
@@ -92,5 +87,17 @@ structure OSAxioms {d : ℕ} [NeZero d] (theory : QFT d) where
     ∃ (C α β : ℝ), C > 0 ∧ ∀ (n : ℕ) (points : Fin n → EuclideanPoint d),
       |theory.schwinger n points| ≤
         rpow C (n : ℝ) * rpow (Nat.factorial n : ℝ) α * rpow (1 + ∑ i, ‖points i‖) β
+
+/-- OS E1 (Euclidean covariance) as a derived theorem from the `QFT` structure. -/
+theorem OSAxioms.euclidean_covariance {d : ℕ} [NeZero d] (theory : QFT d)
+    (_os : OSAxioms theory)
+    (n : ℕ)
+    (rotation : Fin d → Fin d → ℝ)
+    (h_orthogonal : IsOrthogonal rotation)
+    (translation : EuclideanPoint d)
+    (points : Fin n → EuclideanPoint d) :
+    theory.schwinger n points =
+    theory.schwinger n (fun i μ => translation μ + ∑ ν, rotation μ ν * points i ν) :=
+  theory.euclidean_covariance n rotation h_orthogonal translation points
 
 end PhysicsLogic.QFT.Euclidean

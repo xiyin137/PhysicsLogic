@@ -8,6 +8,7 @@
 -- Together they define correlation functions ⟨O⟩ = (1/Z) ∫ Dφ O(φ) e^{iS[φ]/ℏ}
 import PhysicsLogic.QFT.PathIntegral.FieldConfigurations
 import PhysicsLogic.QFT.PathIntegral.Supergeometry
+import Mathlib.Data.Complex.Basic
 
 namespace PhysicsLogic.QFT.PathIntegral
 
@@ -15,9 +16,9 @@ set_option linter.unusedVariables false
 
 /- ============= ACTION FUNCTIONAL ============= -/
 
-/-- Action functional S[φ] on field configurations.
-    The action is the fundamental quantity that specifies a classical field theory.
-    The classical equations of motion follow from δS/δφ = 0 (stationarity). -/
+/-- Real-valued action functional S[φ] on field configurations.
+    This models classical/Euclidean actions where stationarity gives equations of
+    motion via δS/δφ = 0. -/
 structure ActionFunctional (F : Type*) where
   /-- Evaluation: S[φ] -/
   eval : F → ℝ
@@ -51,18 +52,23 @@ structure EuclideanAction (F : Type*) extends ActionFunctional F where
   /-- Euclidean action is bounded below: S_E[φ] ≥ c for some constant c -/
   bounded_below : ∃ (c : ℝ), ∀ φ : F, eval φ ≥ c
 
+/-- View a Euclidean action as a complex-valued action by scalar embedding. -/
+def EuclideanAction.toComplex {F : Type*} (S : EuclideanAction F) :
+    ComplexActionFunctional F :=
+  ActionFunctional.toComplex S.toActionFunctional
+
 /-- Wick rotation data: relates Minkowski and Euclidean actions.
     The Wick rotation t → -iτ transforms:
     - S_M[φ] → iS_E[φ] (Minkowski to Euclidean)
     - e^{iS_M/ℏ} → e^{-S_E/ℏ} (oscillatory → damped) -/
 structure WickRotationData (F : Type*) where
-  /-- Minkowski (Lorentzian) action -/
-  minkowski_action : ActionFunctional F
+  /-- Minkowski (Lorentzian) action, generally complex-valued in path-integral form. -/
+  minkowski_action : ComplexActionFunctional F
   /-- Euclidean action -/
   euclidean_action : EuclideanAction F
-  /-- Wick rotation relation: S_M = iS_E on the appropriate analytic continuation -/
+  /-- Wick rotation relation: S_M = i·S_E on the appropriate analytic continuation. -/
   wick_relation : ∀ (φ : F),
-    minkowski_action.eval φ = euclidean_action.eval φ -- simplified; actual relation involves i
+    minkowski_action.eval φ = Complex.I * (euclidean_action.eval φ : ℂ)
 
 /- ============= MEASURE ON FIELD SPACE ============= -/
 

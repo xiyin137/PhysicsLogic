@@ -73,8 +73,8 @@ def WightmanToEuclideanContinuation {d : ℕ} [NeZero d]
     euclideanCorrelator points = wick.wickRotation n W points
 
 /-- Osterwalder-Schrader reconstruction theorem (corrected version):
-    A Euclidean QFT satisfying the OS axioms E1-E5 can be analytically continued
-    to a relativistic Wightman QFT.
+    A Euclidean QFT with E1 covariance (already in `QFT`) and OS axioms E2-E5
+    can be analytically continued to a relativistic Wightman QFT.
 
     CRITICAL: This version includes the growth bound axiom E5 that was missing in
     the original 1973 paper and added in the 1975 follow-up. Without E5, the

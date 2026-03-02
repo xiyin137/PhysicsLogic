@@ -29,9 +29,9 @@ noncomputable def radialDistance {d : ℕ} (x : EuclideanPoint d) : ℝ :=
     correlation functions that define the theory. All physical observables can be
     extracted from these functions.
 
-    The remaining Osterwalder-Schrader axioms (Euclidean covariance, reflection positivity,
-    cluster property, growth bound) are formulated in OsterwalderSchrader.lean as the
-    OSAxioms structure, which provides the proper content for these properties. -/
+    Euclidean covariance is encoded directly via translation and rotation invariance below.
+    The remaining Osterwalder-Schrader axioms (reflection positivity, cluster property,
+    growth bound) are formulated in `OsterwalderSchrader.lean` as `OSAxioms`. -/
 structure QFT (d : ℕ) where
   /-- The n-point Schwinger functions ⟨φ(x₁)...φ(xₙ)⟩_E -/
   schwinger : (n : ℕ) → (Fin n → EuclideanPoint d) → ℝ
