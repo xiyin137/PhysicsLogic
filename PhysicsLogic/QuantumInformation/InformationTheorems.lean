@@ -74,14 +74,21 @@ theorem strong_subadditivity {HA HB HC : Type _}
 
     This is a THEOREM (provable from linearity of quantum mechanics), not an axiom itself.
     Takes a tensor product structure as parameter. -/
+structure CloningMap (H : Type _) [QuantumStateSpace H]
+    (T : TensorProductSpace H H) where
+  /-- Candidate universal cloning map on two-copy states. -/
+  map : T.carrier → T.carrier
+  /-- Linearity constraint from quantum dynamics. -/
+  linear : ∀ (a : ℂ) (ψ φ : T.carrier), map (a • ψ + φ) = a • map ψ + map φ
+
 theorem no_cloning
   (T : TensorProductSpace H H)
   (ip : InformationProtocols H T)
   (h_phys : PhysicsAssumption AssumptionId.qiNoCloning
-    (¬∃ (cloning : T.carrier → T.carrier),
-      ∀ (psi : H), cloning (T.tensor psi ip.ancilla) = T.tensor psi psi)) :
-  ¬∃ (cloning : T.carrier → T.carrier),
-    ∀ (psi : H), cloning (T.tensor psi ip.ancilla) = T.tensor psi psi := by
+    (¬∃ (cloning : CloningMap H T),
+      ∀ (psi : H), cloning.map (T.tensor psi ip.ancilla) = T.tensor psi psi)) :
+  ¬∃ (cloning : CloningMap H T),
+    ∀ (psi : H), cloning.map (T.tensor psi ip.ancilla) = T.tensor psi psi := by
   exact h_phys
 
 /-- Linear deleting-channel candidates acting on two-copy inputs. -/
@@ -107,15 +114,24 @@ theorem no_deleting
 /-- No-broadcasting theorem (Barnum et al. 1996).
 
     This is a THEOREM (provable from quantum mechanics), not an axiom itself. -/
+structure BroadcastingMap (H : Type _) [QuantumStateSpace H]
+    (T : TensorProductSpace H H) where
+  /-- Candidate broadcasting map on density operators. -/
+  map : DensityOperator H → DensityOperator T.carrier
+
 theorem no_broadcasting
   (T : TensorProductSpace H H)
+  (pt1 : PartialTrace1 T)
+  (pt2 : PartialTrace2 T)
   (h_phys : PhysicsAssumption AssumptionId.qiNoBroadcasting
-    (¬∃ (broadcast : H → T.carrier),
-      ∀ (psi phi : H), orthogonal psi phi →
-        broadcast psi = T.tensor psi psi)) :
-  ¬∃ (broadcast : H → T.carrier),
-    ∀ (psi phi : H), orthogonal psi phi →
-      broadcast psi = T.tensor psi psi := by
+    (¬∃ (broadcast : BroadcastingMap H T),
+      ∀ (rho : DensityOperator H),
+        pt1.trace (broadcast.map rho) = rho ∧
+        pt2.trace (broadcast.map rho) = rho)) :
+  ¬∃ (broadcast : BroadcastingMap H T),
+    ∀ (rho : DensityOperator H),
+      pt1.trace (broadcast.map rho) = rho ∧
+      pt2.trace (broadcast.map rho) = rho := by
   exact h_phys
 
 end PhysicsLogic.QuantumInformation
