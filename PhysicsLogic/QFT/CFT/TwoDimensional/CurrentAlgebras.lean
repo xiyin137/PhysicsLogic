@@ -46,14 +46,14 @@ theorem ads3_sl2_bosonic_wzw_level_radius_relation
 structure AdS3Sl2SpectralFlowData where
   levelK : ScalingDimension
   flowW : ℤ
-  jPlusMode : ℤ → ℂ
-  jMinusMode : ℤ → ℂ
-  jThreeMode : ℤ → ℝ
-  virasoroMode : ℤ → ℝ
-  flowedJPlusMode : ℤ → ℂ
-  flowedJMinusMode : ℤ → ℂ
-  flowedJThreeMode : ℤ → ℝ
-  flowedVirasoroMode : ℤ → ℝ
+  jPlusModeEigenvalue : ℤ → ℂ
+  jMinusModeEigenvalue : ℤ → ℂ
+  jThreeModeEigenvalue : ℤ → ℝ
+  virasoroModeEigenvalue : ℤ → ℝ
+  flowedJPlusModeEigenvalue : ℤ → ℂ
+  flowedJMinusModeEigenvalue : ℤ → ℂ
+  flowedJThreeModeEigenvalue : ℤ → ℝ
+  flowedVirasoroModeEigenvalue : ℤ → ℝ
 
 /-- Spectral-flow package:
 `J'^±_n = J^±_(n ± w)`,
@@ -62,16 +62,16 @@ structure AdS3Sl2SpectralFlowData where
 def AdS3Sl2SpectralFlowAutomorphism
     (data : AdS3Sl2SpectralFlowData) : Prop :=
   data.levelK > 2 /\
-  (forall n : ℤ, data.flowedJPlusMode n = data.jPlusMode (n + data.flowW)) /\
-  (forall n : ℤ, data.flowedJMinusMode n = data.jMinusMode (n - data.flowW)) /\
+  (forall n : ℤ, data.flowedJPlusModeEigenvalue n = data.jPlusModeEigenvalue (n + data.flowW)) /\
+  (forall n : ℤ, data.flowedJMinusModeEigenvalue n = data.jMinusModeEigenvalue (n - data.flowW)) /\
   (forall n : ℤ,
-    data.flowedJThreeMode n =
-      data.jThreeMode n
+    data.flowedJThreeModeEigenvalue n =
+      data.jThreeModeEigenvalue n
         - (data.levelK / 2) * (data.flowW : ℝ) * kroneckerDeltaInt n 0) /\
   (forall n : ℤ,
-    data.flowedVirasoroMode n =
-      data.virasoroMode n
-        + (data.flowW : ℝ) * data.jThreeMode n
+    data.flowedVirasoroModeEigenvalue n =
+      data.virasoroModeEigenvalue n
+        + (data.flowW : ℝ) * data.jThreeModeEigenvalue n
         - (data.levelK / 4) * (data.flowW : ℝ) ^ (2 : Nat) * kroneckerDeltaInt n 0)
 
 /-- Assumed AdS3 spectral-flow automorphism package in the 2D CFT lane. -/
@@ -305,22 +305,22 @@ theorem ads3_nsns_spin_field_gso_constraint_package
 structure AdS3NsnsSl2SpectralFlowData where
   levelK : ScalingDimension
   flowW : ℤ
-  psiPlusMode : ℚ → ℂ
-  psiMinusMode : ℚ → ℂ
-  psiThreeMode : ℚ → ℂ
-  currentPlusMode : ℤ → ℂ
-  currentMinusMode : ℤ → ℂ
-  currentThreeMode : ℤ → ℝ
-  virasoroMode : ℤ → ℝ
-  supercurrentMode : ℚ → ℂ
-  flowedPsiPlusMode : ℚ → ℂ
-  flowedPsiMinusMode : ℚ → ℂ
-  flowedPsiThreeMode : ℚ → ℂ
-  flowedCurrentPlusMode : ℤ → ℂ
-  flowedCurrentMinusMode : ℤ → ℂ
-  flowedCurrentThreeMode : ℤ → ℝ
-  flowedVirasoroMode : ℤ → ℝ
-  flowedSupercurrentMode : ℚ → ℂ
+  psiPlusModeEigenvalue : ℚ → ℂ
+  psiMinusModeEigenvalue : ℚ → ℂ
+  psiThreeModeEigenvalue : ℚ → ℂ
+  currentPlusModeEigenvalue : ℤ → ℂ
+  currentMinusModeEigenvalue : ℤ → ℂ
+  currentThreeModeEigenvalue : ℤ → ℝ
+  virasoroModeEigenvalue : ℤ → ℝ
+  supercurrentModeEigenvalue : ℚ → ℂ
+  flowedPsiPlusModeEigenvalue : ℚ → ℂ
+  flowedPsiMinusModeEigenvalue : ℚ → ℂ
+  flowedPsiThreeModeEigenvalue : ℚ → ℂ
+  flowedCurrentPlusModeEigenvalue : ℤ → ℂ
+  flowedCurrentMinusModeEigenvalue : ℤ → ℂ
+  flowedCurrentThreeModeEigenvalue : ℤ → ℝ
+  flowedVirasoroModeEigenvalue : ℤ → ℝ
+  flowedSupercurrentModeEigenvalue : ℚ → ℂ
 
 /-- `(NS,NS)` supersymmetric `hatSL(2)_k` spectral-flow package:
 `psi'^±_r = psi^±_(r ± w)`, `psi'^3_r = psi^3_r`,
@@ -331,25 +331,25 @@ def AdS3NsnsSl2SpectralFlowAutomorphism
     (data : AdS3NsnsSl2SpectralFlowData) : Prop :=
   data.levelK > 0 /\
   (forall r : ℚ,
-    data.flowedPsiPlusMode r = data.psiPlusMode (r + (data.flowW : ℚ))) /\
+    data.flowedPsiPlusModeEigenvalue r = data.psiPlusModeEigenvalue (r + (data.flowW : ℚ))) /\
   (forall r : ℚ,
-    data.flowedPsiMinusMode r = data.psiMinusMode (r - (data.flowW : ℚ))) /\
-  (forall r : ℚ, data.flowedPsiThreeMode r = data.psiThreeMode r) /\
+    data.flowedPsiMinusModeEigenvalue r = data.psiMinusModeEigenvalue (r - (data.flowW : ℚ))) /\
+  (forall r : ℚ, data.flowedPsiThreeModeEigenvalue r = data.psiThreeModeEigenvalue r) /\
   (forall n : ℤ,
-    data.flowedCurrentPlusMode n = data.currentPlusMode (n + data.flowW)) /\
+    data.flowedCurrentPlusModeEigenvalue n = data.currentPlusModeEigenvalue (n + data.flowW)) /\
   (forall n : ℤ,
-    data.flowedCurrentMinusMode n = data.currentMinusMode (n - data.flowW)) /\
+    data.flowedCurrentMinusModeEigenvalue n = data.currentMinusModeEigenvalue (n - data.flowW)) /\
   (forall n : ℤ,
-    data.flowedCurrentThreeMode n =
-      data.currentThreeMode n -
+    data.flowedCurrentThreeModeEigenvalue n =
+      data.currentThreeModeEigenvalue n -
         (data.levelK / 2) * (data.flowW : ℝ) * kroneckerDeltaInt n 0) /\
   (forall n : ℤ,
-    data.flowedVirasoroMode n =
-      data.virasoroMode n + (data.flowW : ℝ) * data.currentThreeMode n -
+    data.flowedVirasoroModeEigenvalue n =
+      data.virasoroModeEigenvalue n + (data.flowW : ℝ) * data.currentThreeModeEigenvalue n -
         (data.levelK / 4) * (data.flowW : ℝ) ^ (2 : Nat) * kroneckerDeltaInt n 0) /\
   (forall r : ℚ,
-    data.flowedSupercurrentMode r =
-      data.supercurrentMode r + ((data.flowW : ℂ) * data.psiThreeMode r))
+    data.flowedSupercurrentModeEigenvalue r =
+      data.supercurrentModeEigenvalue r + ((data.flowW : ℂ) * data.psiThreeModeEigenvalue r))
 
 /-- Assumed `(NS,NS)` supersymmetric `hatSL(2)_k` spectral-flow package in the 2D CFT lane. -/
 theorem ads3_nsns_sl2_spectral_flow_automorphism

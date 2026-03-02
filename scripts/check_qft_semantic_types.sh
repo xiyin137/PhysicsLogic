@@ -59,6 +59,28 @@ else
   echo "[ok] no scalar-typed Functional fields in QFT"
 fi
 
+echo "[qft-semantic-check] no scalar-valued Virasoro mode/commutator declaration maps"
+virasoro_mode_hits="$(
+  {
+    rg -n \
+      "\([[:space:]]*L[[:space:]]*:[[:space:]]*ℤ[[:space:]]*→[[:space:]]*(ℂ|Complex|ℝ|Real)\)" \
+      PhysicsLogic/QFT --glob '*.lean' || true
+    rg -n \
+      "\([[:space:]]*commutator[[:space:]]*:[[:space:]]*ℤ[[:space:]]*→[[:space:]]*ℤ[[:space:]]*→[[:space:]]*(ℂ|Complex|ℝ|Real)\)" \
+      PhysicsLogic/QFT --glob '*.lean' || true
+    rg -n \
+      "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Mm]ode[[:space:]]*:[[:space:]]*ℤ[[:space:]]*→[[:space:]]*(ℂ|Complex|ℝ|Real)([[:space:]]|$)" \
+      PhysicsLogic/QFT --glob '*.lean' || true
+  } | sort -u
+)"
+if [[ -n "$virasoro_mode_hits" ]]; then
+  echo "$virasoro_mode_hits"
+  echo "[fail] found scalar-valued Virasoro mode/commutator maps in QFT"
+  status=1
+else
+  echo "[ok] no scalar-valued Virasoro mode/commutator maps in QFT"
+fi
+
 echo "[qft-semantic-check] ActionFunctional domains must be configuration spaces (not ℝ/ℂ)"
 action_functional_domain_hits="$(rg -n \
   "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Aa]ction[Ff]unctional[[:space:]]*:[[:space:]]*(ℂ|Complex|ℝ|Real)[[:space:]]*→" \
