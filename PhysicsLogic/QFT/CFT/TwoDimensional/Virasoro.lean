@@ -475,7 +475,7 @@ structure StressTensorOPE (c : VirasoroCentralCharge) where
   /-- The singular part has poles up to order 4 -/
   max_pole_order : ℕ := 4
   /-- Coefficient of (z-w)⁻⁴ term is c/2 -/
-  central_charge_term : ℂ := centralChargeValue c / 2
+  central_charge_term : ComplexAmplitude := centralChargeValue c / 2
   /-- The OPE is consistent with Virasoro algebra:
       the commutation relations [L_m, L_n] derived from the T(z)T(w) OPE
       reproduce the Virasoro algebra. -/
