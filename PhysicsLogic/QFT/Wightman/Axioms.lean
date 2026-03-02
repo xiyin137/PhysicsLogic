@@ -228,19 +228,26 @@ structure VacuumFieldOps (H : Type _) [QuantumStateSpace H] (d : ℕ) where
     created by applying field operators to the vacuum. -/
 structure VacuumPropertiesAxiom (H : Type _) [QuantumStateSpace H] (d : ℕ) [NeZero d]
     (vfo : VacuumFieldOps H d) where
-  /-- The Poincaré representation: a specific family of unitaries implementing
-      the Poincaré symmetry, parameterized by (Lorentz transform, translation). -/
-  poincareUnitary : LorentzTransformGen d → (Fin d → ℝ) → Quantum.UnitaryOp H
+  /-- Poincaré representation: unitaries assigned to bundled group elements `(Λ,a)`. -/
+  poincareUnitary : PoincareTransformGen d → Quantum.UnitaryOp H
+  /-- Identity element acts trivially. -/
+  poincare_identity : ∀ ψ : H,
+    (poincareUnitary (PoincareTransformGen.id d)).op ψ = ψ
+  /-- Representation law: `U(g₁)U(g₂)=U(g₁∘g₂)`. -/
+  poincare_compose : ∀ (g₁ g₂ : PoincareTransformGen d) (ψ : H),
+    (poincareUnitary g₁).op ((poincareUnitary g₂).op ψ) =
+      (poincareUnitary (PoincareTransformGen.compose g₁ g₂)).op ψ
   /-- Vacuum is normalized -/
   vacuum_normalized : ‖vfo.vacuum‖ = 1
   /-- Vacuum is invariant under the Poincaré representation -/
-  vacuum_poincare_invariant : ∀ (Λ : LorentzTransformGen d) (a : Fin d → ℝ),
-    (poincareUnitary Λ a).op vfo.vacuum = vfo.vacuum
+  vacuum_poincare_invariant : ∀ (g : PoincareTransformGen d),
+    (poincareUnitary g).op vfo.vacuum = vfo.vacuum
   /-- Uniqueness: any time-translation-invariant state is proportional to the vacuum.
       This ensures the vacuum is unique up to a phase. -/
   vacuum_unique : ∀ (ψ : H),
-    (∀ (t : ℝ), (poincareUnitary (LorentzTransformGen.id d)
-      (fun μ => if μ = 0 then t else 0)).op ψ = ψ) →
+    (∀ (t : ℝ), (poincareUnitary
+      { lorentz := LorentzTransformGen.id d
+        translation := fun μ => if μ = 0 then t else 0 }).op ψ = ψ) →
     ∃ (c : ℂ), ψ = c • vfo.vacuum
   /-- Cyclicity: there exists a field whose polynomial algebra on vacuum is dense in H.
       The span of {φ(f₁)...φ(fₙ)|0⟩ : n ∈ ℕ, fᵢ ∈ S(ℝᵈ)} is dense in H. -/

@@ -29,6 +29,10 @@
 - Added supporting modular-covariance/plumbing interfaces:
   `TorusOnePointModularCovariance`,
   `HigherGenusPlumbingCoordinates`.
+- Tightened SU(2)₄ categorical fallback data in
+  `PhysicsLogic/QFT/TQFT/FusionInstances.lean`:
+  `su24_F` is now channel-sensitive through `su24_F_phase` instead of a flat
+  `1` value on all compatible channels.
 - Added assumption IDs and registry wiring:
   `riemannSurfaceModuliPlumbingCoordinates`,
   `cftTorusOnePointModularCovariance`,

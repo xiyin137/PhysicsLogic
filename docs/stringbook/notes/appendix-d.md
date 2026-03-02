@@ -35,6 +35,10 @@
   `SchwartzFunction` now carries an evaluation map,
   `SmearedFieldOperator` carries operator/test-function data, and
   `FieldDistribution` now exposes a distribution-to-smeared map.
+- Hardened `PhysicsLogic/QFT/Wightman/Axioms.lean` vacuum package:
+  `VacuumPropertiesAxiom.poincareUnitary` is now a bundled
+  `PoincareTransformGen d -> UnitaryOp H` representation interface with explicit
+  identity and composition laws (`poincare_identity`, `poincare_compose`).
 
 ## Assumption Candidates
 - Reuse existing: `wightmanTemperedness`, `wightmanSpinStatistics`, `wightmanPctTheorem`.

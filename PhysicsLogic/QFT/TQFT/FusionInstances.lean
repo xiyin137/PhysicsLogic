@@ -213,10 +213,19 @@ This is the parent theory for the charge-4e TSC phase transition:
 condensing the spin-2 boson in SU(2)₄ yields Z₃ topological order.
 -/
 
+/-- Channel-sensitive fallback profile for SU(2)₄ F-symbols.
+    This keeps explicit dependence on intermediate channels `(e,f)` and
+    external labels rather than using a flat `1` value on every allowed
+    channel. -/
+noncomputable def su24_F_phase (a b c d e f : Fin 5) : ℂ :=
+  if e.val = f.val then 1
+  else if a.val + c.val = b.val + d.val then -1
+  else Complex.exp (↑Real.pi * I / 3)
+
 /-- Explicit fallback F-symbol profile for SU(2)₄ channels used at this abstraction layer. -/
 noncomputable def su24_F (a b c d e f : Fin 5) : ℂ :=
   if su24_N a b e = 0 ∨ su24_N e c d = 0 ∨ su24_N b c f = 0 ∨ su24_N a f d = 0
-  then 0 else 1
+  then 0 else su24_F_phase a b c d e f
 
 /-- Assumptions packaging the nontrivial SU(2)₄ fusion-coherence proofs. -/
 structure SU24FusionAssumptions : Prop where
