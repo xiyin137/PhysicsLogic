@@ -47,11 +47,38 @@ structure RelativisticCovariance (H : Type _) [QuantumStateSpace H] (d : ℕ) [N
       wft.wightmanFunction phi n (fun i μ => ∑ ν, Lambda.matrix μ ν * points i ν + a μ) =
       wft.wightmanFunction phi n points
 
-/-- Appendix-D naming for local-field Poincaré covariance. -/
-abbrev LocalFieldPoincareCovariance
+/-- Appendix-D local-field Poincaré-covariance interface.
+This records an explicit point action together with covariance of Wightman
+functions under that action. -/
+structure LocalFieldPoincareCovariance
     (H : Type _) [QuantumStateSpace H] (d : ℕ) [NeZero d]
-    (wft : WightmanFunctionTheory H d) :=
-  RelativisticCovariance H d wft
+    (wft : WightmanFunctionTheory H d) where
+  poincarePointAction :
+    LorentzTransformGen d → (Fin d → ℝ) → (Fin d → ℝ) → (Fin d → ℝ)
+  action_formula : ∀ (Lambda : LorentzTransformGen d)
+    (a x : Fin d → ℝ) (μ : Fin d),
+    poincarePointAction Lambda a x μ = ∑ ν, Lambda.matrix μ ν * x ν + a μ
+  covariance : ∀ (phi : FieldDistribution H d)
+    (Lambda : LorentzTransformGen d) (a : Fin d → ℝ),
+    ∀ (n : ℕ) (points : Fin n → (Fin d → ℝ)),
+      wft.wightmanFunction phi n (fun i => poincarePointAction Lambda a (points i)) =
+      wft.wightmanFunction phi n points
+
+/-- Build the Appendix-D local-field Poincaré-covariance interface from the
+core relativistic-covariance axiom. -/
+def local_field_poincare_covariance_of_relativistic_covariance
+    {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
+    {wft : WightmanFunctionTheory H d}
+    (h_cov : RelativisticCovariance H d wft) :
+    LocalFieldPoincareCovariance H d wft := by
+  refine
+    { poincarePointAction := fun Lambda a x μ => ∑ ν, Lambda.matrix μ ν * x ν + a μ
+      action_formula := ?_
+      covariance := ?_ }
+  · intro Lambda a x μ
+    rfl
+  · intro phi Lambda a n points
+    exact h_cov.relativistic_covariance phi Lambda a n points
 
 /-- Wightman Axiom W2: Spectrum condition (positivity of energy-momentum).
     The joint spectrum of the energy-momentum operators (P⁰, P¹,...) lies in the
@@ -90,11 +117,32 @@ structure Locality (H : Type _) [QuantumStateSpace H] (d : ℕ) [NeZero d]
     ops.smear phi f (ops.smear psi g state) =
     ops.smear psi g (ops.smear phi f state)
 
-/-- Appendix-D naming for microcausality commutator interface. -/
-abbrev MicrocausalityCommutator
+/-- Appendix-D microcausality commutator interface:
+spacelike-separated smeared fields commute on a specified dense domain. -/
+structure MicrocausalityCommutator
     (H : Type _) [QuantumStateSpace H] (d : ℕ) [NeZero d]
-    (ops : FieldOperatorOps H d) (supportOps : TestFunctionSupportOps d) :=
-  Locality H d ops supportOps
+    (ops : FieldOperatorOps H d) (supportOps : TestFunctionSupportOps d) where
+  domain : Set H
+  domain_nonempty : domain.Nonempty
+  commutator_vanishes : ∀ (phi psi : SmearedFieldOperator H d)
+    (f g : SchwartzFunction d)
+    (_h_spacelike : spacelikeSeparated (supportOps.testFunctionSupport f)
+                                      (supportOps.testFunctionSupport g))
+    (state : H) (_h_domain : state ∈ domain),
+    ops.smear phi f (ops.smear psi g state) =
+    ops.smear psi g (ops.smear phi f state)
+
+/-- Build the Appendix-D microcausality commutator interface from the core
+locality axiom. -/
+def microcausality_commutator_of_locality
+    {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
+    {ops : FieldOperatorOps H d} {supportOps : TestFunctionSupportOps d}
+    (h_loc : Locality H d ops supportOps) :
+    MicrocausalityCommutator H d ops supportOps := by
+  exact
+    { domain := h_loc.domain
+      domain_nonempty := h_loc.domain_nonempty
+      commutator_vanishes := h_loc.locality }
 
 /-- Structure for applying fields to vacuum -/
 structure VacuumFieldOps (H : Type _) [QuantumStateSpace H] (d : ℕ) where

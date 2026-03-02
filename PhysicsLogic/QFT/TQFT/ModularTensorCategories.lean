@@ -2,6 +2,7 @@
 -- Modular Tensor Categories and their relation to 3D TQFT
 import PhysicsLogic.QFT.TQFT.Axioms
 import PhysicsLogic.QFT.TQFT.ChernSimons
+import PhysicsLogic.QFT.TQFT.FusionCategories
 import PhysicsLogic.Assumptions
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Matrix.Basic
@@ -28,6 +29,9 @@ structure ModularTensorCategoryElement where
   rank : ℕ
   /-- Rank is at least 1 (contains the tensor unit) -/
   rank_pos : rank ≥ 1
+  /-- Rigorous algebraic MTC core data (fusion, braiding, ribbon, modular
+      non-degeneracy, Verlinde) from `FusionCategories.lean`. -/
+  coreData : ModularCategoryData rank rank_pos
 
 /-- Modular tensor category type -/
 abbrev ModularTensorCategory := ModularTensorCategoryElement
@@ -37,6 +41,34 @@ def mtcRank (MTC : ModularTensorCategory) : ℕ := MTC.rank
 
 /-- Rank is at least 1 (contains the tensor unit) -/
 theorem mtcRank_pos (MTC : ModularTensorCategory) : mtcRank MTC ≥ 1 := MTC.rank_pos
+
+/-- Algebraic-core fusion multiplicities for a modular tensor category. -/
+def ModularTensorCategory.coreFusionRules (MTC : ModularTensorCategory) :
+    Fin (mtcRank MTC) → Fin (mtcRank MTC) → Fin (mtcRank MTC) → ℕ :=
+  MTC.coreData.N
+
+/-- Algebraic-core S-matrix for a modular tensor category. -/
+def ModularTensorCategory.coreSMatrix (MTC : ModularTensorCategory) :
+    Fin (mtcRank MTC) → Fin (mtcRank MTC) → ℂ :=
+  MTC.coreData.S
+
+/-- Algebraic-core twists (topological spins) of simple objects. -/
+def ModularTensorCategory.coreTwist (MTC : ModularTensorCategory) :
+    Fin (mtcRank MTC) → ℂ :=
+  MTC.coreData.theta
+
+/-- Algebraic-core modular non-degeneracy:
+the only transparent simple object is the tensor unit. -/
+theorem ModularTensorCategory.coreSMatrix_nondegenerate
+    (MTC : ModularTensorCategory) :
+    ∀ (i : Fin (mtcRank MTC)),
+      (∀ (j : Fin (mtcRank MTC)),
+        MTC.coreSMatrix i j *
+          MTC.coreSMatrix ⟨0, mtcRank_pos MTC⟩ ⟨0, mtcRank_pos MTC⟩ =
+        MTC.coreSMatrix ⟨0, mtcRank_pos MTC⟩ j *
+          MTC.coreSMatrix i ⟨0, mtcRank_pos MTC⟩) →
+      i = ⟨0, mtcRank_pos MTC⟩ :=
+  MTC.coreData.S_nondegenerate
 
 /-- Complete modular tensor category theory.
 
@@ -63,6 +95,10 @@ structure MTCData (md : StandaloneManifoldData) (cs : ChernSimonsData md) where
   fusion_assoc : ∀ (MTC : ModularTensorCategory) (i j k l : Fin (mtcRank MTC)),
     ∑ m, fusionRules MTC i j m * fusionRules MTC m k l =
     ∑ n, fusionRules MTC j k n * fusionRules MTC i n l
+  /-- Coherence with algebraic core fusion multiplicities. -/
+  fusionRules_core :
+    ∀ (MTC : ModularTensorCategory) (i j k : Fin (mtcRank MTC)),
+      fusionRules MTC i j k = MTC.coreFusionRules i j k
 
   /- === S-matrix === -/
 
@@ -82,6 +118,10 @@ structure MTCData (md : StandaloneManifoldData) (cs : ChernSimonsData md) where
     ∃ (S_inv : Matrix (Fin (mtcRank MTC)) (Fin (mtcRank MTC)) ℂ),
       ∀ i k : Fin (mtcRank MTC),
         ∑ j, sMatrix MTC i j * S_inv j k = if i = k then 1 else 0
+  /-- Coherence with algebraic core S-matrix. -/
+  sMatrix_core :
+    ∀ (MTC : ModularTensorCategory) (i j : Fin (mtcRank MTC)),
+      sMatrix MTC i j = MTC.coreSMatrix i j
 
   /- === T-matrix === -/
 
@@ -95,6 +135,10 @@ structure MTCData (md : StandaloneManifoldData) (cs : ChernSimonsData md) where
   /-- T-matrix entries are roots of unity (phases): |T_{ii}| = 1 -/
   tMatrix_phase : ∀ (MTC : ModularTensorCategory) (i : Fin (mtcRank MTC)),
     Complex.normSq (tMatrix MTC i i) = 1
+  /-- Coherence with algebraic core twists:
+      T is the diagonal matrix with entries θ_i. -/
+  tMatrix_core : ∀ (MTC : ModularTensorCategory) (i j : Fin (mtcRank MTC)),
+    tMatrix MTC i j = if i = j then MTC.coreTwist i else 0
 
   /- === Modular relation === -/
 
@@ -188,11 +232,9 @@ noncomputable def MTCData.totalDimensionSquared (mtc : MTCData md cs)
 
 /- === Bridge to standalone FusionCategories.lean === -/
 
--- Bridge note: FusionCategories.lean defines standalone `ModularCategoryData`
--- (importing only Mathlib, no manifold/CS dependency). It encodes the same
--- algebraic data as MTCData but is usable from paper formalizations.
--- FusionCategories.lean is NOT imported here to avoid circular deps.
--- Use ModularCategoryData directly for algebraic work and MTCData for
--- TQFT constructions involving manifolds and surgery.
+-- Bridge note: this file now imports `FusionCategories.lean`, and each
+-- `ModularTensorCategory` stores a `ModularCategoryData` core (`coreData`).
+-- `MTCData` adds manifold/surgery/TQFT structure while requiring coherence
+-- fields (`fusionRules_core`, `sMatrix_core`, `tMatrix_core`) with that core.
 
 end PhysicsLogic.QFT.TQFT

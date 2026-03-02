@@ -47,6 +47,35 @@ structure QFT (d : ℕ) where
   permutation_symmetric : ∀ n (points : Fin n → EuclideanPoint d) (σ : Equiv.Perm (Fin n)),
     schwinger n points = schwinger n (points ∘ σ)
 
+/-- Combined Euclidean covariance from translation and rotational invariance. -/
+theorem QFT.euclidean_covariance {d : ℕ} (theory : QFT d)
+    (n : ℕ)
+    (rotation : Fin d → Fin d → ℝ)
+    (h_orthogonal : IsOrthogonal rotation)
+    (translation : EuclideanPoint d)
+    (points : Fin n → EuclideanPoint d) :
+    theory.schwinger n points =
+    theory.schwinger n (fun i μ => translation μ + ∑ ν, rotation μ ν * points i ν) := by
+  have h_rot :
+      theory.schwinger n points =
+      theory.schwinger n (fun i μ => ∑ ν, rotation μ ν * points i ν) :=
+    theory.rotation_invariant n points rotation h_orthogonal
+  have h_trans :
+      theory.schwinger n (fun i μ => ∑ ν, rotation μ ν * points i ν) =
+      theory.schwinger n (fun i μ => (∑ ν, rotation μ ν * points i ν) + translation μ) :=
+    theory.translation_invariant n (fun i μ => ∑ ν, rotation μ ν * points i ν) translation
+  calc
+    theory.schwinger n points =
+        theory.schwinger n (fun i μ => ∑ ν, rotation μ ν * points i ν) := h_rot
+    _ =
+        theory.schwinger n (fun i μ => (∑ ν, rotation μ ν * points i ν) + translation μ) :=
+          h_trans
+    _ =
+        theory.schwinger n (fun i μ => translation μ + ∑ ν, rotation μ ν * points i ν) := by
+          congr
+          funext i μ
+          simp [add_comm]
+
 /-- Vacuum expectation value ⟨φ⟩: the 1-point function at the origin -/
 def vev {d : ℕ} (theory : QFT d) : ℝ :=
   theory.schwinger 1 (fun _ => euclideanOrigin d)

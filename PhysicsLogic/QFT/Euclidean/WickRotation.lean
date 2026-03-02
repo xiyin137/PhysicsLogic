@@ -54,6 +54,12 @@ structure WickRotationData (d : ℕ) [NeZero d] where
   wickRotation : ∀ (n : ℕ) (_W_analytic : AnalyticWightmanFunction d n),
     (Fin n → EuclideanPoint d) → ℝ
 
+/-- Ordering-compatible Euclidean insertion data:
+the Euclidean time coordinates are weakly increasing with insertion label. -/
+def EuclideanTimeOrdered {d : ℕ} [NeZero d]
+    (n : ℕ) (points : Fin n → EuclideanPoint d) : Prop :=
+  ∀ i j : Fin n, i.val ≤ j.val → points i 0 ≤ points j 0
+
 /-- Appendix-D interface for analytic continuation from Lorentzian Wightman
 data to Euclidean correlators, with ordering/analytic-domain dependence
 implicit in the chosen `AnalyticWightmanFunction`. -/
@@ -63,6 +69,7 @@ def WightmanToEuclideanContinuation {d : ℕ} [NeZero d]
     (wick : WickRotationData d)
     (euclideanCorrelator : (Fin n → EuclideanPoint d) → ℝ) : Prop :=
   ∀ points : Fin n → EuclideanPoint d,
+    EuclideanTimeOrdered n points →
     euclideanCorrelator points = wick.wickRotation n W points
 
 /-- Osterwalder-Schrader reconstruction theorem (corrected version):
