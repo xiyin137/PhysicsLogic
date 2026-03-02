@@ -92,6 +92,55 @@ theorem orbifold_construction_modular_invariant {G : Type*}
     OrbifoldConstructionModularInvariant groupData Z := by
   exact h_phys
 
+/-- Crossing-phase package for symmetry lines:
+`θ(g₁,g₂,g₃)` in the defect-junction reassociation relation. -/
+abbrev OrbifoldCrossingPhase (G : Type*) := G → G → G → ℂ
+
+/-- `U(1)`-valued 3-cocycle condition for orbifold crossing phases.
+This models the Appendix-H `H^3(G,U(1))` anomaly class. -/
+def OrbifoldThreeCocycle {G : Type*}
+    (groupData : OrbifoldGroupData G) (theta : OrbifoldCrossingPhase G) : Prop :=
+  (∀ g₁ g₂ g₃ : G, Complex.normSq (theta g₁ g₂ g₃) = 1) ∧
+  (∀ g₁ g₂ g₃ g₄ : G,
+    theta g₂ g₃ g₄ * theta g₁ (groupData.mul g₂ g₃) g₄ * theta g₁ g₂ g₃ =
+      theta (groupData.mul g₁ g₂) g₃ g₄ * theta g₁ g₂ (groupData.mul g₃ g₄))
+
+/-- 3-coboundary built from junction rephasing data `α(g,h)`. -/
+noncomputable def OrbifoldThreeCoboundary {G : Type*}
+    (groupData : OrbifoldGroupData G) (alpha : G → G → ℂ) : OrbifoldCrossingPhase G :=
+  fun g₁ g₂ g₃ =>
+    alpha g₂ g₃ * alpha g₁ (groupData.mul g₂ g₃) /
+      (alpha (groupData.mul g₁ g₂) g₃ * alpha g₁ g₂)
+
+/-- `'t Hooft`-anomaly-free condition:
+the crossing phase is cohomologically trivial (`θ = δα`). -/
+def OrbifoldAnomalyFree {G : Type*}
+    (groupData : OrbifoldGroupData G) (theta : OrbifoldCrossingPhase G) : Prop :=
+  OrbifoldThreeCocycle groupData theta ∧
+    ∃ alpha : G → G → ℂ,
+      (∀ g₁ g₂ : G, Complex.normSq (alpha g₁ g₂) = 1) ∧
+      ∀ g₁ g₂ g₃ : G,
+        theta g₁ g₂ g₃ = OrbifoldThreeCoboundary groupData alpha g₁ g₂ g₃
+
+/-- Discrete-torsion phase data `α(g,h)` as a `U(1)`-valued 2-cocycle.
+This models the Appendix-H `H^2(G,U(1))` orbifold ambiguity. -/
+def OrbifoldDiscreteTorsion {G : Type*}
+    (groupData : OrbifoldGroupData G) (alpha : G → G → ℂ) : Prop :=
+  (∀ g₁ g₂ : G, Complex.normSq (alpha g₁ g₂) = 1) ∧
+  (∀ g₁ g₂ g₃ : G,
+    alpha g₁ g₂ * alpha (groupData.mul g₁ g₂) g₃ =
+      alpha g₁ (groupData.mul g₂ g₃) * alpha g₂ g₃)
+
+/-- Gauge equivalence of discrete-torsion cocycles (`α ~ α·δβ`). -/
+def OrbifoldDiscreteTorsionEquivalent {G : Type*}
+    (groupData : OrbifoldGroupData G)
+    (alpha alpha' : G → G → ℂ) : Prop :=
+  ∃ beta : G → ℂ,
+    (∀ g : G, Complex.normSq (beta g) = 1) ∧
+    ∀ g₁ g₂ : G,
+      alpha' g₁ g₂ =
+        alpha g₁ g₂ * beta (groupData.mul g₁ g₂) / (beta g₁ * beta g₂)
+
 /-- Narain-lattice data (left/right dimensions and lattice operation). -/
 structure NarainLatticeData where
   Point : Type

@@ -35,6 +35,10 @@
   `DefectFusionPentagonConsistency`,
   `OrbifoldSectorData`,
   `OrbifoldConstructionModularInvariant`,
+  `OrbifoldThreeCocycle`,
+  `OrbifoldAnomalyFree`,
+  `OrbifoldDiscreteTorsion`,
+  `OrbifoldDiscreteTorsionEquivalent`,
   `NarainLatticeData`,
   `NarainEvenSelfDualModularInvariant`,
   `NarainCocycleAssociative`.
