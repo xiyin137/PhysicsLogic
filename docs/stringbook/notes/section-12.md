@@ -1,6 +1,6 @@
 # Section 12: D-branes
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 241
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/DBranes.lean`
@@ -52,6 +52,14 @@
 - `NonBpsDbraneConstructionPackage`
 - `IntersectingDbraneNdPackage`
 - `DbranesAtAnglesPackage`
+
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/DBranes.lean` with all listed
+  package units assumption-wired.
+- Physics-interface hardening pass:
+  replaced checklist booleans in `*Data` structures with claim-typed fields
+  (`DbraneClaim := Prop`) and removed `= true` placeholders from package
+  predicates.
 
 ## Assumption Candidates
 - Mapped `AssumptionId`: `stringDbraneBosonicBoundaryConditions`.

@@ -1,6 +1,6 @@
 # Section 14: D-brane dynamics in type II superstring theory
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 280
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/DBraneDynamicsTypeII.lean`
@@ -73,6 +73,14 @@
 - `WorldvolumeFluxBionPackage`
 - `StackedDbraneNonAbelianPackage`
 - `D0ScatteringBfssPackage`
+
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/DBraneDynamicsTypeII.lean` with
+  all listed package units assumption-wired.
+- Physics-interface hardening pass:
+  replaced checklist booleans in `*Data` structures with claim-typed fields
+  (`TypeIIDbraneClaim := Prop`) and removed `= true` placeholders from package
+  predicates.
 
 ## Assumption Candidates
 - Mapped `AssumptionId`: `stringDbraneDynamicsTypeIIOpenClosedPerturbation`.
