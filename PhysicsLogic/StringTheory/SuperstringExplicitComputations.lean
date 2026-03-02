@@ -9,6 +9,8 @@ namespace PhysicsLogic.StringTheory
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
+abbrev SuperstringExplicitClaim := Prop
+
 /-- Tree-level superstring data in the PCO contour formulation. -/
 structure TreeLevelSuperstringPcoData where
   externalCount : ℕ
@@ -69,7 +71,7 @@ structure NsnsThreePointSupergravityData where
   gravitationalCoupling : ℝ
   worldsheetThreePointAmplitude : ℂ
   einsteinHilbertKinematicValue : ℂ
-  excludesR2R3AtTree : Bool
+  excludesR2R3AtTree : SuperstringExplicitClaim
 
 /-- Three-point NSNS package:
 `κ = (π/2) g_s`, worldsheet three-point amplitude matches Einstein-Hilbert kinematics,
@@ -79,7 +81,7 @@ def NsnsThreePointSupergravityPackage
   data.stringCoupling > 0 ∧
   data.gravitationalCoupling = (Real.pi / 2) * data.stringCoupling ∧
   data.worldsheetThreePointAmplitude = data.einsteinHilbertKinematicValue ∧
-  data.excludesR2R3AtTree = true
+  data.excludesR2R3AtTree
 
 /-- Assumed NSNS three-point supergravity-matching package from Section 8.1. -/
 theorem nsns_three_point_supergravity_package
@@ -131,7 +133,7 @@ structure FourPointLowEnergyExpansionData where
   zeta3Coefficient : ℝ
   gammaKernelLeadingPole : ℝ
   gammaKernelConstantTerm : ℝ
-  oneLoopThresholdNonanalytic : Bool
+  oneLoopThresholdNonanalytic : SuperstringExplicitClaim
 
 /-- Low-energy expansion package:
 leading supergravity pole term and the tree-level `ζ(3) α'^3 R^4` constant piece. -/
@@ -144,7 +146,7 @@ def FourPointLowEnergyExpansionPackage
       (data.alphaPrime ^ (3 : ℕ) *
         data.mandelstamS * data.mandelstamT * data.mandelstamU) ∧
   data.gammaKernelConstantTerm = -2 * data.zeta3Coefficient ∧
-  data.oneLoopThresholdNonanalytic = true
+  data.oneLoopThresholdNonanalytic
 
 /-- Assumed low-energy gamma-kernel expansion package from Section 8.1/8.5. -/
 theorem four_point_low_energy_expansion_package
@@ -165,7 +167,7 @@ structure RrFourPointTreeData where
   rrKinematicTensor : ℂ
   gammaKernel : ℂ
   reducedAmplitude : ℂ
-  sphereFourRamondNeedsNoPco : Bool
+  sphereFourRamondNeedsNoPco : SuperstringExplicitClaim
 
 /-- Four-point RR tree package:
 for four Ramond punctures on the sphere no PCO insertion is needed, and
@@ -174,7 +176,7 @@ def RrFourPointTreePackage (data : RrFourPointTreeData) : Prop :=
   data.alphaPrime > 0 ∧
   data.stringCoupling > 0 ∧
   data.mandelstamS + data.mandelstamT + data.mandelstamU = 0 ∧
-  data.sphereFourRamondNeedsNoPco = true ∧
+  data.sphereFourRamondNeedsNoPco ∧
   data.reducedAmplitude =
     (((-(Real.pi ^ (2 : ℕ)) * data.alphaPrime * data.stringCoupling ^ (2 : ℕ) : ℝ) : ℂ) *
       data.rrKinematicTensor * data.gammaKernel)
@@ -195,8 +197,8 @@ structure OneLoopNsnsSpinStructureData where
   spinStructurePrefactor : ℂ
   contourIntegral : ℂ
   oneLoopAmplitude : ℂ
-  handlesZTwoRedundancy : Bool
-  oddOddUsesSeparatedPco : Bool
+  handlesZTwoRedundancy : SuperstringExplicitClaim
+  oddOddUsesSeparatedPco : SuperstringExplicitClaim
 
 /-- Genus-one NSNS contour package:
 `dim S_{1,n,ε} = 2n`, amplitude prefactor `(i^n)/4`, plus the torus `Z_2` puncture
@@ -206,8 +208,8 @@ def OneLoopNsnsSpinStructurePackage
   data.contourDimension = 2 * (data.externalCount : ℤ) ∧
   data.spinStructurePrefactor = (Complex.I ^ data.externalCount) / 4 ∧
   data.oneLoopAmplitude = data.spinStructurePrefactor * data.contourIntegral ∧
-  data.handlesZTwoRedundancy = true ∧
-  data.oddOddUsesSeparatedPco = true
+  data.handlesZTwoRedundancy ∧
+  data.oddOddUsesSeparatedPco
 
 /-- Assumed one-loop NSNS spin-structure contour package from Section 8.2. -/
 theorem one_loop_nsns_spin_structure_package
@@ -221,8 +223,8 @@ theorem one_loop_nsns_spin_structure_package
 /-- Vanishing data for low-multiplicity genus-one NSNS amplitudes. -/
 structure OneLoopNsnsLowMultiplicityVanishingData where
   externalCount : ℕ
-  jacobiIdentitiesUsed : Bool
-  transversalityUsed : Bool
+  jacobiIdentitiesUsed : SuperstringExplicitClaim
+  transversalityUsed : SuperstringExplicitClaim
   oneLoopAmplitude : ℂ
 
 /-- Low-multiplicity one-loop NSNS package:
@@ -230,8 +232,8 @@ for `n ≤ 3`, Jacobi-theta identities and transversality imply vanishing amplit
 def OneLoopNsnsLowMultiplicityVanishingPackage
     (data : OneLoopNsnsLowMultiplicityVanishingData) : Prop :=
   data.externalCount ≤ 3 →
-    data.jacobiIdentitiesUsed = true ∧
-    data.transversalityUsed = true ∧
+    data.jacobiIdentitiesUsed ∧
+    data.transversalityUsed ∧
     data.oneLoopAmplitude = 0
 
 /-- Assumed low-multiplicity one-loop NSNS vanishing package from Section 8.2. -/
@@ -279,7 +281,7 @@ structure OneLoopRrFourPointData where
   rrKinematicTensor : ℂ
   bosonicIntegral : ℂ
   reducedAmplitude : ℂ
-  ramondThetaIdentityUsed : Bool
+  ramondThetaIdentityUsed : SuperstringExplicitClaim
 
 /-- One-loop RR four-point package:
 spin-structure sums simplify by Ramond theta identities and produce
@@ -287,7 +289,7 @@ the expected RR tensor structure times the bosonic torus integral. -/
 def OneLoopRrFourPointPackage (data : OneLoopRrFourPointData) : Prop :=
   data.stringCoupling > 0 ∧
   data.alphaPrime > 0 ∧
-  data.ramondThetaIdentityUsed = true ∧
+  data.ramondThetaIdentityUsed ∧
   data.reducedAmplitude =
     (((data.stringCoupling ^ (4 : ℕ) * data.alphaPrime ^ (2 : ℕ) /
         (2 : ℝ) ^ (8 : ℕ) : ℝ) : ℂ) *
@@ -343,9 +345,9 @@ structure HigherLoopVacuumVanishingData where
   correctedIntegrandBoundaryContribution : ℂ
   boundaryIntegral : ℂ
   vacuumAmplitude : ℂ
-  boundaryIsVerticalSlitsOnly : Bool
-  xiPeriodIntegralZero : Bool
-  supersymmetryWardIdentityUsed : Bool
+  boundaryIsVerticalSlitsOnly : SuperstringExplicitClaim
+  xiPeriodIntegralZero : SuperstringExplicitClaim
+  supersymmetryWardIdentityUsed : SuperstringExplicitClaim
 
 /-- Higher-loop vacuum package:
 for genus `h≥2`, `2h-2` PCOs per chirality, contour reduction to vertical slits,
@@ -357,9 +359,9 @@ def HigherLoopVacuumVanishingPackage
   data.antiholomorphicPcos = 2 * (data.genus : ℤ) - 2 ∧
   data.boundaryIntegral = data.correctedIntegrandBoundaryContribution ∧
   data.vacuumAmplitude = data.boundaryIntegral ∧
-  data.boundaryIsVerticalSlitsOnly = true ∧
-  data.xiPeriodIntegralZero = true ∧
-  data.supersymmetryWardIdentityUsed = true ∧
+  data.boundaryIsVerticalSlitsOnly ∧
+  data.xiPeriodIntegralZero ∧
+  data.supersymmetryWardIdentityUsed ∧
   data.vacuumAmplitude = 0
 
 /-- Assumed higher-loop vacuum-vanishing package from Section 8.5. -/
@@ -382,7 +384,7 @@ structure FourGravitonCouplingFunctionData where
   couplingFunction : ℝ
   fullAmplitude : ℂ
   oneLoopAZeroShift : ℝ
-  higherLoopAZeroCorrectionAbsent : Bool
+  higherLoopAZeroCorrectionAbsent : SuperstringExplicitClaim
 
 /-- Full four-supergraviton package:
 `A_4 = const * K_NS * f(s,t;g_s)`, with the perturbative `α'^0` one-loop shift and
@@ -399,7 +401,7 @@ def FourGravitonCouplingFunctionPackage
   data.oneLoopAZeroShift =
     data.stringCoupling ^ (2 : ℕ) /
       (3 * (2 : ℝ) ^ (7 : ℕ) * Real.pi ^ (3 : ℕ) * data.alphaPrime ^ (4 : ℕ)) ∧
-  data.higherLoopAZeroCorrectionAbsent = true
+  data.higherLoopAZeroCorrectionAbsent
 
 /-- Assumed full four-supergraviton coupling-function package from Section 8.5. -/
 theorem four_graviton_coupling_function_package

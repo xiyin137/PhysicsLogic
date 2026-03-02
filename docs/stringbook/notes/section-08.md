@@ -1,6 +1,6 @@
 # Section 08: Superstring perturbation theory: explicit computations
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 164
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/SuperstringExplicitComputations.lean`
@@ -71,6 +71,10 @@
   the picture-raised fixed-vertex and integrated-vertex conversion equations).
 - `PhysicsLogic/StringTheory/SuperstringExplicitComputations.lean`:
   `NsnsPictureRaisingPackage` now delegates to the CFT state/operator package.
+- `PhysicsLogic/StringTheory/SuperstringExplicitComputations.lean`:
+  checklist booleans in explicit-amplitude data packages were hardened to
+  claim-typed fields (`SuperstringExplicitClaim := Prop`), removing `= true`
+  placeholders from package predicates.
 
 ## Subsections
 - [x] 8.1 Tree-level superstring amplitudes (p.164)
