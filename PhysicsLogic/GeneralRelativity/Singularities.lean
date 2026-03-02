@@ -68,13 +68,13 @@ structure SingularityAnalysis (consts : GRConstants) where
   /-- Schwarzschild singularity at r=0 is spacelike:
       near the singularity, the Killing vector ∂/∂t becomes spacelike
       (its norm squared changes sign from negative to positive) -/
-  schwarzschild_spacelike_singularity : ∀ (M : ℝ) (hM : M > 0)
+  schwarzschild_spacelike_singularity : ∀ (M : MassScale) (hM : M > 0)
     (st : SchwarzschildTheory consts M hM) (x : SpaceTimePoint),
     CurvatureSingularity st.curvature x →
     ∑ μ, ∑ ν, (schwarzschildMetric consts M hM st.metric_well_formed).g x μ ν *
       st.timeKilling x μ * st.timeKilling x ν > 0
   /-- Kerr ring singularity -/
-  kerr_ring_singularity : ∀ (M a : ℝ) (kt : KerrTheory consts M a),
+  kerr_ring_singularity : ∀ (M : MassScale) (a : LengthScale) (kt : KerrTheory consts M a),
     ∃ (ring : Set SpaceTimePoint),
       (∀ x ∈ ring, CurvatureSingularity kt.curvature x)
 

@@ -7,7 +7,7 @@ namespace PhysicsLogic.GeneralRelativity
 open SpaceTime
 
 /-- Schwarzschild radius: r_s = 2GM/c² -/
-noncomputable def schwarzschildRadius (consts : GRConstants) (M : ℝ) : ℝ :=
+noncomputable def schwarzschildRadius (consts : GRConstants) (M : MassScale) : LengthScale :=
   2 * consts.G * M / consts.c^2
 
 /-- Schwarzschild metric in Schwarzschild coordinates (t,r,θ,φ):
@@ -16,10 +16,10 @@ noncomputable def schwarzschildRadius (consts : GRConstants) (M : ℝ) : ℝ :=
 
     Describes static, spherically symmetric vacuum solution
 -/
-noncomputable def schwarzschildMetricTensor (consts : GRConstants) (M : ℝ) (_hM : M > 0)
+noncomputable def schwarzschildMetricTensor (consts : GRConstants) (M : MassScale) (_hM : M > 0)
     (x : SpaceTimePoint) (μ ν : Fin 4) : ℝ :=
   let r := Real.sqrt ((x 1)^2 + (x 2)^2 + (x 3)^2)
-  let rs := schwarzschildRadius consts M
+  let rs := (schwarzschildRadius consts M).value
   if r > rs then
     match μ, ν with
     | 0, 0 => -(1 - rs / r) * consts.c^2
@@ -29,10 +29,10 @@ noncomputable def schwarzschildMetricTensor (consts : GRConstants) (M : ℝ) (_h
     | _, _ => 0
   else 0
 
-noncomputable def schwarzschildInverseMetricTensor (consts : GRConstants) (M : ℝ) (_hM : M > 0)
+noncomputable def schwarzschildInverseMetricTensor (consts : GRConstants) (M : MassScale) (_hM : M > 0)
     (x : SpaceTimePoint) (μ ν : Fin 4) : ℝ :=
   let r := Real.sqrt ((x 1)^2 + (x 2)^2 + (x 3)^2)
-  let rs := schwarzschildRadius consts M
+  let rs := (schwarzschildRadius consts M).value
   if r > rs then
     match μ, ν with
     | 0, 0 => -(1 - rs / r)⁻¹ / consts.c^2
@@ -42,14 +42,14 @@ noncomputable def schwarzschildInverseMetricTensor (consts : GRConstants) (M : �
     | _, _ => 0
   else 0
 
-noncomputable def schwarzschildMetricDeterminant (consts : GRConstants) (M : ℝ) (_hM : M > 0)
+noncomputable def schwarzschildMetricDeterminant (consts : GRConstants) (M : MassScale) (_hM : M > 0)
     (x : SpaceTimePoint) : ℝ :=
   let r := Real.sqrt ((x 1)^2 + (x 2)^2 + (x 3)^2)
-  let rs := schwarzschildRadius consts M
+  let rs := (schwarzschildRadius consts M).value
   if r > rs then -consts.c^2 * r^4 * (Real.sin (x 2))^2 else 0
 
 /-- Well-formedness package for abstract Schwarzschild metric data. -/
-def SchwarzschildMetricWellFormed (consts : GRConstants) (M : ℝ) (hM : M > 0) : Prop :=
+def SchwarzschildMetricWellFormed (consts : GRConstants) (M : MassScale) (hM : M > 0) : Prop :=
   (∀ x μ ν,
       schwarzschildMetricTensor consts M hM x μ ν = schwarzschildMetricTensor consts M hM x ν μ) ∧
   (∀ x, schwarzschildMetricDeterminant consts M hM x ≠ 0) ∧
@@ -58,7 +58,7 @@ def SchwarzschildMetricWellFormed (consts : GRConstants) (M : ℝ) (hM : M > 0) 
         schwarzschildInverseMetricTensor consts M hM x μ ρ *
           schwarzschildMetricTensor consts M hM x ρ ν = if μ = ν then 1 else 0)
 
-noncomputable def schwarzschildMetric (consts : GRConstants) (M : ℝ) (hM : M > 0)
+noncomputable def schwarzschildMetric (consts : GRConstants) (M : MassScale) (hM : M > 0)
     (h_phys :
       PhysicsLogic.PhysicsAssumption
         PhysicsLogic.AssumptionId.schwarzschildMetricWellFormed
@@ -78,7 +78,7 @@ noncomputable def schwarzschildMetric (consts : GRConstants) (M : ℝ) (hM : M >
   · exact h_inv
 
 /-- Structure for Schwarzschild spacetime theory -/
-structure SchwarzschildTheory (consts : GRConstants) (M : ℝ) (hM : M > 0) where
+structure SchwarzschildTheory (consts : GRConstants) (M : MassScale) (hM : M > 0) where
   /-- Assumed well-formedness of Schwarzschild metric data. -/
   metric_well_formed :
     PhysicsLogic.PhysicsAssumption
@@ -141,7 +141,7 @@ structure SchwarzschildTheory (consts : GRConstants) (M : ℝ) (hM : M > 0) wher
     VacuumEFE consts curv →
     (∃ (ξs : Fin 3 → SpaceTimePoint → Fin 4 → ℝ),
       ∀ i, KillingVector conn (ξs i)) →
-    ∃ (M : ℝ) (hM : M > 0)
+    ∃ (M : MassScale) (hM : M > 0)
       (h_phys :
         PhysicsLogic.PhysicsAssumption
           PhysicsLogic.AssumptionId.schwarzschildMetricWellFormed
@@ -149,16 +149,16 @@ structure SchwarzschildTheory (consts : GRConstants) (M : ℝ) (hM : M > 0) wher
       metric = schwarzschildMetric consts M hM h_phys
 
 /-- Structure for Schwarzschild geodesic motion -/
-structure SchwarzschildGeodesics (consts : GRConstants) (M : ℝ) (hM : M > 0)
+structure SchwarzschildGeodesics (consts : GRConstants) (M : MassScale) (hM : M > 0)
     (st : SchwarzschildTheory consts M hM) where
   /-- Circular orbit radii for massive particles -/
-  circularOrbitRadius : ℝ → ℝ
+  circularOrbitRadius : ScalingDimension → LengthScale
   /-- ISCO (Innermost Stable Circular Orbit) radius -/
-  iscoRadius : ℝ
+  iscoRadius : LengthScale
   /-- ISCO = 6GM/c² for Schwarzschild -/
   isco_value : iscoRadius = 6 * consts.G * M / consts.c^2
   /-- Photon sphere radius -/
-  photonSphereRadius : ℝ
+  photonSphereRadius : LengthScale
   /-- Photon sphere = 3GM/c² for Schwarzschild -/
   photon_sphere_value : photonSphereRadius = 3 * consts.G * M / consts.c^2
 

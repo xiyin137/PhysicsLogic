@@ -6,25 +6,31 @@ open SpaceTime
 
 /-- Rotating black hole parameters -/
 structure KerrBlackHoleParams (consts : GRConstants) where
-  mass : ℝ
+  mass : InvariantMass
   mass_pos : mass > 0
-  angularMomentum : ℝ  -- Specific angular momentum a = J/M
-  bound : |angularMomentum| ≤ consts.G * mass / consts.c^2  -- Extremality bound
+  angularMomentum : LengthScale  -- Specific angular momentum a = J/M
+  bound : |angularMomentum.value| ≤ (consts.G * mass / consts.c^2).value  -- Extremality bound
 
 /-- Outer (event) horizon radius -/
-noncomputable def kerrOuterHorizon (consts : GRConstants) (M a : ℝ) : ℝ :=
-  consts.G * M / consts.c^2 + Real.sqrt ((consts.G * M / consts.c^2)^2 - a^2)
+noncomputable def kerrOuterHorizon (consts : GRConstants) (M : MassScale) (a : LengthScale) :
+    LengthScale :=
+  let rG := (consts.G * M / consts.c^2).value
+  (rG + Real.sqrt (rG^2 - a.value^2) : ℝ)
 
 /-- Inner (Cauchy) horizon radius -/
-noncomputable def kerrInnerHorizon (consts : GRConstants) (M a : ℝ) : ℝ :=
-  consts.G * M / consts.c^2 - Real.sqrt ((consts.G * M / consts.c^2)^2 - a^2)
+noncomputable def kerrInnerHorizon (consts : GRConstants) (M : MassScale) (a : LengthScale) :
+    LengthScale :=
+  let rG := (consts.G * M / consts.c^2).value
+  (rG - Real.sqrt (rG^2 - a.value^2) : ℝ)
 
 /-- Ergosphere outer boundary -/
-noncomputable def ergoregionBoundary (consts : GRConstants) (M a : ℝ) (θ : ℝ) : ℝ :=
-  consts.G * M / consts.c^2 + Real.sqrt ((consts.G * M / consts.c^2)^2 - a^2 * (Real.cos θ)^2)
+noncomputable def ergoregionBoundary (consts : GRConstants) (M : MassScale) (a : LengthScale)
+    (θ : ℝ) : LengthScale :=
+  let rG := (consts.G * M / consts.c^2).value
+  (rG + Real.sqrt (rG^2 - a.value^2 * (Real.cos θ)^2) : ℝ)
 
 /-- Structure for Kerr spacetime theory -/
-structure KerrTheory (consts : GRConstants) (M a : ℝ) where
+structure KerrTheory (consts : GRConstants) (M : MassScale) (a : LengthScale) where
   /-- The Kerr metric -/
   metric : SpacetimeMetric
   /-- Connection theory for Kerr metric -/
@@ -50,7 +56,7 @@ structure KerrTheory (consts : GRConstants) (M a : ℝ) where
           (SchwarzschildMetricWellFormed consts M hM)),
       metric = schwarzschildMetric consts M hM h_phys
   /-- Frame dragging frequency (Lense-Thirring effect) -/
-  frameDraggingFrequency : ℝ → ℝ  -- as function of radius
+  frameDraggingFrequency : LengthScale → FrequencyScale  -- as function of radius
 
 /-- Ergosphere: region where all observers must co-rotate with black hole -/
 def Ergosphere (consts : GRConstants) (kt : KerrTheory consts M a) : Set SpaceTimePoint :=
@@ -59,19 +65,20 @@ def Ergosphere (consts : GRConstants) (kt : KerrTheory consts M a) : Set SpaceTi
 
 /-- Extremal Kerr: a = GM/c² (maximal rotation) -/
 def IsExtremalKerr (consts : GRConstants) (params : KerrBlackHoleParams consts) : Prop :=
-  |params.angularMomentum| = consts.G * params.mass / consts.c^2
+  |params.angularMomentum.value| = (consts.G * params.mass / consts.c^2).value
 
 /-- Structure for Kerr black hole energy extraction -/
 structure KerrEnergyExtraction (consts : GRConstants) (kt : KerrTheory consts M a) where
   /-- Penrose process: extract energy from rotating black hole
-      Maximum efficiency ~29% for extremal Kerr -/
+      Maximum efficiency bounded by `1 - 1/sqrt(2)` for extremal Kerr -/
   penroseProcessEfficiency : ℝ
   /-- Efficiency bound -/
-  efficiency_bound : penroseProcessEfficiency ≤ 0.29
+  efficiency_bound : penroseProcessEfficiency ≤ 1 - (1 / Real.sqrt 2)
   /-- Efficiency formula -/
-  efficiency_formula : penroseProcessEfficiency = 1 - Real.sqrt (1 - (a * consts.c^2 / (consts.G * M))^2)
+  efficiency_formula : penroseProcessEfficiency =
+    1 - Real.sqrt (1 - (a.value * consts.c.value^2 / (consts.G.value * M.value))^2)
   /-- Superradiance amplification factor -/
-  superradianceAmplification : ℝ → ℝ  -- as function of frequency
+  superradianceAmplification : FrequencyScale → ScalingDimension  -- as function of frequency
 
 /-- Structure for Kerr singularity -/
 structure KerrSingularity (consts : GRConstants) (kt : KerrTheory consts M a) where
