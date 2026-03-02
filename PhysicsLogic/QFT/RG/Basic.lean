@@ -122,12 +122,13 @@ def Renormalizable {d : ℕ} (rg : RGFramework d) (O : rg.Operator) : Prop :=
 /-- Coupling constant g_i for operator O_i. Has mass dimension [g_i] = d - [O_i]. -/
 structure Coupling {d : ℕ} (rg : RGFramework d) where
   operator : rg.Operator
-  value : DimensionlessCoupling
+  /-- Bare coupling with engineering units before RG normalization. -/
+  value : CouplingScale
 
 /-- Dimensionless coupling: g̃ = g · Λ^([O] - d) -/
 noncomputable def dimensionlessCoupling {d : ℕ} (rg : RGFramework d)
     (c : Coupling rg) (Λ : Cutoff) : DimensionlessCoupling :=
-  c.value * Λ.Λ ^ (rg.massDimension c.operator - d)
+  c.value.value * Λ.Λ.value ^ (rg.massDimension c.operator - d)
 
 /- ============= FIXED POINTS ============= -/
 
