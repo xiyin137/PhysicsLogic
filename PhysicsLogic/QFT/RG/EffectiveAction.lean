@@ -439,9 +439,28 @@ def WilsonianEffectiveAction.toComplex (W : WilsonianEffectiveAction F) :
 structure PartitionFunctionIndependence (F : FieldConfigurationSpace)
     (W : WilsonianEffectiveAction F) where
   /-- Abstract partition function at each scale -/
-  Z : Cutoff → ℝ
+  Z : Cutoff → ProbabilityWeight
   /-- Z is Λ-independent -/
   scale_independence : ∀ Λ₁ Λ₂ : Cutoff, Z Λ₁ = Z Λ₂
+
+/-- Complex-valued partition-function independence for complex Wilsonian flows. -/
+structure ComplexPartitionFunctionIndependence (F : FieldConfigurationSpace)
+    (W : ComplexWilsonianEffectiveAction F) where
+  /-- Abstract complex partition function at each scale. -/
+  Z : Cutoff → ComplexAmplitude
+  /-- Z is Λ-independent. -/
+  scale_independence : ∀ Λ₁ Λ₂ : Cutoff, Z Λ₁ = Z Λ₂
+
+/-- Embed real partition-function independence into the complex-valued interface. -/
+def PartitionFunctionIndependence.toComplex
+    {F : FieldConfigurationSpace}
+    {W : WilsonianEffectiveAction F}
+    (hZ : PartitionFunctionIndependence F W) :
+    ComplexPartitionFunctionIndependence F W.toComplex where
+  Z := fun Λ => (hZ.Z Λ : ComplexAmplitude)
+  scale_independence := by
+    intro Λ₁ Λ₂
+    exact congrArg (fun r : ProbabilityWeight => (r : ComplexAmplitude)) (hZ.scale_independence Λ₁ Λ₂)
 
 /-- Exact RG equation (Polchinski equation)
 
@@ -527,8 +546,8 @@ structure WilsonianFromPathIntegral (F : Type _) where
   measure : FieldMeasure F
   /-- UV cutoff -/
   uv_cutoff : UVCutoff
-  /-- The effective action at scale Λ ≤ uv_cutoff (implicitly defined) -/
-  effective_at_scale : UVCutoff → (F → ActionScale)
+  /-- The effective action at scale Λ ≤ uv_cutoff (implicitly defined). -/
+  effective_at_scale : UVCutoff → ActionFunctional F
 
 /-- Path-integral interface to complex Wilsonian effective actions.
 
@@ -542,7 +561,7 @@ structure ComplexWilsonianFromPathIntegral (F : Type _) where
   /-- UV cutoff. -/
   uv_cutoff : UVCutoff
   /-- Complex effective action at scale Λ ≤ uv_cutoff (implicitly defined). -/
-  effective_at_scale : UVCutoff → (F → ComplexActionValue)
+  effective_at_scale : UVCutoff → ComplexActionFunctional F
 
 /- The 1PI effective action Γ[φ_cl] is defined as the Legendre transform of W[J] = -iℏ log Z[J].
 

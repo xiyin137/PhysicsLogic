@@ -249,4 +249,31 @@ else
   echo "[ok] LSZ field-strength renormalization uses semantic alias in non-Papers modules"
 fi
 
+echo "[global-semantic-check] RG partition-function maps avoid raw ℝ/Real codomain"
+raw_partition_function_hits="$(
+  rg -n "^[[:space:]]+Z[[:space:]]*:[[:space:]]Cutoff[[:space:]]*→[[:space:]]*(ℝ|Real)([[:space:]]|$)" \
+    PhysicsLogic --glob '*.lean' \
+  | rg -v '^PhysicsLogic/Papers/' || true
+)"
+if [[ -n "$raw_partition_function_hits" ]]; then
+  echo "$raw_partition_function_hits"
+  echo "[fail] found raw ℝ/Real partition-function maps in non-Papers modules"
+  status=1
+else
+  echo "[ok] RG partition-function maps use semantic aliases in non-Papers modules"
+fi
+
+echo "[global-semantic-check] Wilsonian path-integral effective actions use functional records"
+raw_effective_map_hits="$(
+  rg -n "^[[:space:]]+effective_at_scale[[:space:]]*:[[:space:]]UVCutoff[[:space:]]*→[[:space:]]*\\(F[[:space:]]*→[[:space:]]*(ActionScale|ComplexActionValue)\\)" \
+    PhysicsLogic/QFT/RG/EffectiveAction.lean || true
+)"
+if [[ -n "$raw_effective_map_hits" ]]; then
+  echo "$raw_effective_map_hits"
+  echo "[fail] found raw map-typed Wilsonian effective actions in path-integral interfaces"
+  status=1
+else
+  echo "[ok] Wilsonian path-integral effective actions use explicit functional records"
+fi
+
 exit "$status"
