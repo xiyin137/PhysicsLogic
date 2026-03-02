@@ -1,6 +1,6 @@
 # Section 09: Superstrings in general backgrounds
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 184
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/SuperstringGeneralBackgrounds.lean`
@@ -44,6 +44,17 @@
 - `GreenSchwarzFlatActionPackage`
 - `GreenSchwarzLightConeGaugePackage`
 - `GreenSchwarzSuperspaceConstraintPackage`
+
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/SuperstringGeneralBackgrounds.lean`
+  with all listed package units assumption-wired.
+- Physics-interface hardening pass:
+  replaced checklist booleans in `*Data` structures with claim-typed fields
+  (`SuperBackgroundClaim := Prop`) and removed `= true` placeholders from
+  package predicates.
+- For Calabi-Yau flat-`B` instanton-phase semantics, replaced boolean-negative
+  encoding with explicit claim field:
+  `doesNotAffectPerturbativeAlphaPrimeExpansion`.
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `stringSuperBackgroundNsrHilbertGsoDecomposition`.

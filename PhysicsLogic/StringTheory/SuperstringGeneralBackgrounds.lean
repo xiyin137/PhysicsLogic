@@ -7,14 +7,16 @@ namespace PhysicsLogic.StringTheory
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
+abbrev SuperBackgroundClaim := Prop
+
 /-- NSR-sector state-space and GSO decomposition data in general superstring backgrounds. -/
 structure NsrSectorGsoData where
   totalMatterCentralChargeLeft : ℚ
   totalMatterCentralChargeRight : ℚ
   pictureNumberNS : ℚ
   pictureNumberR : ℚ
-  hilbertSpaceDecompositionBySectors : Bool
-  chiralGsoProjectionModularInvariant : Bool
+  hilbertSpaceDecompositionBySectors : SuperBackgroundClaim
+  chiralGsoProjectionModularInvariant : SuperBackgroundClaim
 
 /-- NSR/GSO package:
 `c_m = c~_m = 15`, NS and R canonical pictures `-1` and `-1/2`,
@@ -24,8 +26,8 @@ def NsrSectorGsoPackage (data : NsrSectorGsoData) : Prop :=
   data.totalMatterCentralChargeRight = 15 ∧
   data.pictureNumberNS = -1 ∧
   data.pictureNumberR = (-1 / 2 : ℚ) ∧
-  data.hilbertSpaceDecompositionBySectors = true ∧
-  data.chiralGsoProjectionModularInvariant = true
+  data.hilbertSpaceDecompositionBySectors ∧
+  data.chiralGsoProjectionModularInvariant
 
 /-- Assumed NSR/GSO sector package from Section 9.1. -/
 theorem nsr_sector_gso_package
@@ -43,8 +45,8 @@ structure NsnsScftDeformationData where
   deformedActionFunctional : Configuration → ℂ
   matterWeightLeft : ℚ
   matterWeightRight : ℚ
-  preservesSuperconformalAtFirstOrder : Bool
-  higherOrderCountertermsNeeded : Bool
+  preservesSuperconformalAtFirstOrder : SuperBackgroundClaim
+  higherOrderCountertermsNeeded : SuperBackgroundClaim
 
 /-- NSNS SCFT-deformation package:
 deformation by integrated superfield descendant with matter weight `(1/2,1/2)`,
@@ -52,8 +54,8 @@ first-order superconformal preservation, and higher-order counterterm requiremen
 def NsnsScftDeformationPackage (data : NsnsScftDeformationData) : Prop :=
   data.matterWeightLeft = (1 / 2 : ℚ) ∧
   data.matterWeightRight = (1 / 2 : ℚ) ∧
-  data.preservesSuperconformalAtFirstOrder = true ∧
-  data.higherOrderCountertermsNeeded = true
+  data.preservesSuperconformalAtFirstOrder ∧
+  data.higherOrderCountertermsNeeded
 
 /-- Assumed NSNS SCFT deformation package from Section 9.1. -/
 theorem nsns_scft_deformation_package
@@ -69,24 +71,24 @@ structure SupersymmetricNsnsNlsmData where
   Configuration : Type
   actionFunctional : Configuration → ℂ
   alphaPrime : ℝ
-  hasMetricBackground : Bool
-  hasBFieldBackground : Bool
-  hasDilatonBackground : Bool
-  hFieldIsExteriorDerivativeOfB : Bool
-  worldsheet11Supersymmetry : Bool
-  classicalWeylInvariance : Bool
+  hasMetricBackground : SuperBackgroundClaim
+  hasBFieldBackground : SuperBackgroundClaim
+  hasDilatonBackground : SuperBackgroundClaim
+  hFieldIsExteriorDerivativeOfB : SuperBackgroundClaim
+  worldsheet11Supersymmetry : SuperBackgroundClaim
+  classicalWeylInvariance : SuperBackgroundClaim
 
 /-- Supersymmetric NSNS sigma-model package:
 worldsheet `(1,1)` supersymmetry, NSNS background fields `(G,B,Φ)`,
 `H=dB`, and classical Weyl invariance. -/
 def SupersymmetricNsnsNlsmPackage (data : SupersymmetricNsnsNlsmData) : Prop :=
   data.alphaPrime > 0 ∧
-  data.hasMetricBackground = true ∧
-  data.hasBFieldBackground = true ∧
-  data.hasDilatonBackground = true ∧
-  data.hFieldIsExteriorDerivativeOfB = true ∧
-  data.worldsheet11Supersymmetry = true ∧
-  data.classicalWeylInvariance = true
+  data.hasMetricBackground ∧
+  data.hasBFieldBackground ∧
+  data.hasDilatonBackground ∧
+  data.hFieldIsExteriorDerivativeOfB ∧
+  data.worldsheet11Supersymmetry ∧
+  data.classicalWeylInvariance
 
 /-- Assumed supersymmetric NSNS NLSM package from Section 9.1. -/
 theorem supersymmetric_nsns_nlsm_package
@@ -104,8 +106,8 @@ structure NsnsTreeEffectiveActionData where
   hSquaredCoefficient : ℚ
   dilatonKineticCoefficient : ℚ
   dilatonExponentialWeight : ℤ
-  noAlphaPrimeOrAlphaPrimeSqCorrections : Bool
-  hasAlphaPrimeCubeCorrection : Bool
+  noAlphaPrimeOrAlphaPrimeSqCorrections : SuperBackgroundClaim
+  hasAlphaPrimeCubeCorrection : SuperBackgroundClaim
 
 /-- Tree-level NSNS effective-action package:
 `e^{-2Φ}(R - H^2/12 + 4(∂Φ)^2)` structure with expected correction pattern. -/
@@ -115,8 +117,8 @@ def NsnsTreeEffectiveActionPackage (data : NsnsTreeEffectiveActionData) : Prop :
   data.hSquaredCoefficient = (-1 : ℚ) / 12 ∧
   data.dilatonKineticCoefficient = 4 ∧
   data.dilatonExponentialWeight = -2 ∧
-  data.noAlphaPrimeOrAlphaPrimeSqCorrections = true ∧
-  data.hasAlphaPrimeCubeCorrection = true
+  data.noAlphaPrimeOrAlphaPrimeSqCorrections ∧
+  data.hasAlphaPrimeCubeCorrection
 
 /-- Assumed NSNS tree-level effective-action package from Section 9.1. -/
 theorem nsns_tree_effective_action_package
@@ -130,21 +132,21 @@ theorem nsns_tree_effective_action_package
 /-- Calabi-Yau `(2,2)` superconformal NLSM data. -/
 structure CalabiYauNlsmData where
   complexDimension : ℕ
-  targetIsKahler : Bool
-  kahlerMetricFromPotential : Bool
-  has22SuperconformalSymmetry : Bool
-  hasU1TimesU1RSymmetry : Bool
-  rCurrentSplittingHolomorphicAntiholomorphic : Bool
+  targetIsKahler : SuperBackgroundClaim
+  kahlerMetricFromPotential : SuperBackgroundClaim
+  has22SuperconformalSymmetry : SuperBackgroundClaim
+  hasU1TimesU1RSymmetry : SuperBackgroundClaim
+  rCurrentSplittingHolomorphicAntiholomorphic : SuperBackgroundClaim
 
 /-- Calabi-Yau `(2,2)` package:
 Kahler-target NLSM admits `(2,2)` superconformal structure and `U(1)×U(1)` R symmetry. -/
 def CalabiYauNlsmPackage (data : CalabiYauNlsmData) : Prop :=
   data.complexDimension > 0 ∧
-  data.targetIsKahler = true ∧
-  data.kahlerMetricFromPotential = true ∧
-  data.has22SuperconformalSymmetry = true ∧
-  data.hasU1TimesU1RSymmetry = true ∧
-  data.rCurrentSplittingHolomorphicAntiholomorphic = true
+  data.targetIsKahler ∧
+  data.kahlerMetricFromPotential ∧
+  data.has22SuperconformalSymmetry ∧
+  data.hasU1TimesU1RSymmetry ∧
+  data.rCurrentSplittingHolomorphicAntiholomorphic
 
 /-- Assumed Calabi-Yau `(2,2)` NLSM package from Section 9.2. -/
 theorem calabi_yau_nlsm_package
@@ -157,22 +159,22 @@ theorem calabi_yau_nlsm_package
 
 /-- Calabi-Yau Ricci-flat/top-form data. -/
 structure CalabiYauRicciFlatData where
-  ricciFlatCondition : Bool
-  logDetMetricLocalForm : Bool
-  nowhereVanishingHolomorphicTopForm : Bool
-  firstChernClassVanishing : Bool
-  yauExistenceUniquenessInKahlerClass : Bool
-  suHolonomyCovariantlyConstantSpinors : Bool
+  ricciFlatCondition : SuperBackgroundClaim
+  logDetMetricLocalForm : SuperBackgroundClaim
+  nowhereVanishingHolomorphicTopForm : SuperBackgroundClaim
+  firstChernClassVanishing : SuperBackgroundClaim
+  yauExistenceUniquenessInKahlerClass : SuperBackgroundClaim
+  suHolonomyCovariantlyConstantSpinors : SuperBackgroundClaim
 
 /-- Calabi-Yau Ricci-flat package:
 Ricci-flat Kahler condition, holomorphic top form, `c1=0`, and Yau/holonomy consequences. -/
 def CalabiYauRicciFlatPackage (data : CalabiYauRicciFlatData) : Prop :=
-  data.ricciFlatCondition = true ∧
-  data.logDetMetricLocalForm = true ∧
-  data.nowhereVanishingHolomorphicTopForm = true ∧
-  data.firstChernClassVanishing = true ∧
-  data.yauExistenceUniquenessInKahlerClass = true ∧
-  data.suHolonomyCovariantlyConstantSpinors = true
+  data.ricciFlatCondition ∧
+  data.logDetMetricLocalForm ∧
+  data.nowhereVanishingHolomorphicTopForm ∧
+  data.firstChernClassVanishing ∧
+  data.yauExistenceUniquenessInKahlerClass ∧
+  data.suHolonomyCovariantlyConstantSpinors
 
 /-- Assumed Calabi-Yau Ricci-flat/top-form package from Section 9.2. -/
 theorem calabi_yau_ricci_flat_package
@@ -185,20 +187,20 @@ theorem calabi_yau_ricci_flat_package
 
 /-- Flat-`B` worldsheet-instanton phase data in Calabi-Yau sigma models. -/
 structure CalabiYauInstantonBFieldData where
-  hFieldStrengthVanishes : Bool
-  bFieldCouplingTopological : Bool
-  affectsPerturbativeAlphaPrimeExpansion : Bool
-  modifiesWorldsheetInstantonPhases : Bool
+  hFieldStrengthVanishes : SuperBackgroundClaim
+  bFieldCouplingTopological : SuperBackgroundClaim
+  doesNotAffectPerturbativeAlphaPrimeExpansion : SuperBackgroundClaim
+  modifiesWorldsheetInstantonPhases : SuperBackgroundClaim
 
 /-- Calabi-Yau flat-`B` package:
 `H=0` makes the `B` coupling topological; perturbative `α'` dynamics unchanged
 while non-perturbative worldsheet-instanton phases shift. -/
 def CalabiYauInstantonBFieldPackage
     (data : CalabiYauInstantonBFieldData) : Prop :=
-  data.hFieldStrengthVanishes = true ∧
-  data.bFieldCouplingTopological = true ∧
-  data.affectsPerturbativeAlphaPrimeExpansion = false ∧
-  data.modifiesWorldsheetInstantonPhases = true
+  data.hFieldStrengthVanishes ∧
+  data.bFieldCouplingTopological ∧
+  data.doesNotAffectPerturbativeAlphaPrimeExpansion ∧
+  data.modifiesWorldsheetInstantonPhases
 
 /-- Assumed Calabi-Yau flat-`B`/instanton-phase package from Section 9.2. -/
 theorem calabi_yau_instanton_b_field_package
@@ -213,18 +215,18 @@ theorem calabi_yau_instanton_b_field_package
 structure GreenSchwarzFlatActionData where
   Configuration : Type
   actionFunctional : Configuration → ℂ
-  decomposesAsSOnePlusSTwo : Bool
-  spacetimeSupersymmetryInvariant : Bool
-  kappaSymmetryInvariant : Bool
-  kappaProjectsHalfFermions : Bool
+  decomposesAsSOnePlusSTwo : SuperBackgroundClaim
+  spacetimeSupersymmetryInvariant : SuperBackgroundClaim
+  kappaSymmetryInvariant : SuperBackgroundClaim
+  kappaProjectsHalfFermions : SuperBackgroundClaim
 
 /-- Green-Schwarz flat-background package:
 `S = S1 + S2`, spacetime supersymmetry, and kappa symmetry removing half fermions. -/
 def GreenSchwarzFlatActionPackage (data : GreenSchwarzFlatActionData) : Prop :=
-  data.decomposesAsSOnePlusSTwo = true ∧
-  data.spacetimeSupersymmetryInvariant = true ∧
-  data.kappaSymmetryInvariant = true ∧
-  data.kappaProjectsHalfFermions = true
+  data.decomposesAsSOnePlusSTwo ∧
+  data.spacetimeSupersymmetryInvariant ∧
+  data.kappaSymmetryInvariant ∧
+  data.kappaProjectsHalfFermions
 
 /-- Assumed Green-Schwarz flat-action/kappa package from Section 9.3. -/
 theorem green_schwarz_flat_action_package
@@ -237,8 +239,8 @@ theorem green_schwarz_flat_action_package
 
 /-- Light-cone gauge-fixed Green-Schwarz spectrum data. -/
 structure GreenSchwarzLightConeGaugeData where
-  kappaGaugeGammaPlusThetaZero : Bool
-  lightConeGaugeFixed : Bool
+  kappaGaugeGammaPlusThetaZero : SuperBackgroundClaim
+  lightConeGaugeFixed : SuperBackgroundClaim
   freeTransverseBosonCount : ℕ
   freeLeftMovingFermionCount : ℕ
   freeRightMovingFermionCount : ℕ
@@ -247,8 +249,8 @@ structure GreenSchwarzLightConeGaugeData where
 in kappa/light-cone gauge the action reduces to free transverse fields with 8+8 fermions. -/
 def GreenSchwarzLightConeGaugePackage
     (data : GreenSchwarzLightConeGaugeData) : Prop :=
-  data.kappaGaugeGammaPlusThetaZero = true ∧
-  data.lightConeGaugeFixed = true ∧
+  data.kappaGaugeGammaPlusThetaZero ∧
+  data.lightConeGaugeFixed ∧
   data.freeTransverseBosonCount = 8 ∧
   data.freeLeftMovingFermionCount = 8 ∧
   data.freeRightMovingFermionCount = 8
@@ -264,26 +266,26 @@ theorem green_schwarz_light_cone_gauge_package
 
 /-- Green-Schwarz superspace background-constraint data in general massless backgrounds. -/
 structure GreenSchwarzSuperspaceConstraintData where
-  superspaceCoordinatesInclude1032 : Bool
-  supermetricFromVielbein : Bool
-  superBFieldStrengthDefined : Bool
-  torsionConstraintsSatisfied : Bool
-  hFieldConstraintsSatisfied : Bool
-  kappaVariationCancelsInAction : Bool
-  describesOnShellTypeIISupergravityBackground : Bool
+  superspaceCoordinatesInclude1032 : SuperBackgroundClaim
+  supermetricFromVielbein : SuperBackgroundClaim
+  superBFieldStrengthDefined : SuperBackgroundClaim
+  torsionConstraintsSatisfied : SuperBackgroundClaim
+  hFieldConstraintsSatisfied : SuperBackgroundClaim
+  kappaVariationCancelsInAction : SuperBackgroundClaim
+  describesOnShellTypeIISupergravityBackground : SuperBackgroundClaim
 
 /-- Green-Schwarz superspace package:
 super-vielbein metric relation, torsion/`H` constraint set, and resulting kappa invariance
 for on-shell type-II supergravity backgrounds. -/
 def GreenSchwarzSuperspaceConstraintPackage
     (data : GreenSchwarzSuperspaceConstraintData) : Prop :=
-  data.superspaceCoordinatesInclude1032 = true ∧
-  data.supermetricFromVielbein = true ∧
-  data.superBFieldStrengthDefined = true ∧
-  data.torsionConstraintsSatisfied = true ∧
-  data.hFieldConstraintsSatisfied = true ∧
-  data.kappaVariationCancelsInAction = true ∧
-  data.describesOnShellTypeIISupergravityBackground = true
+  data.superspaceCoordinatesInclude1032 ∧
+  data.supermetricFromVielbein ∧
+  data.superBFieldStrengthDefined ∧
+  data.torsionConstraintsSatisfied ∧
+  data.hFieldConstraintsSatisfied ∧
+  data.kappaVariationCancelsInAction ∧
+  data.describesOnShellTypeIISupergravityBackground
 
 /-- Assumed Green-Schwarz superspace-constraint package from Section 9.4. -/
 theorem green_schwarz_superspace_constraint_package
