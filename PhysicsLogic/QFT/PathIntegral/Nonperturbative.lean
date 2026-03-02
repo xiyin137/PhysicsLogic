@@ -216,7 +216,7 @@ def LefschetzThimbleExpansion (amplitude : ℂ) (sectors : List LefschetzSector)
 intersection-number bookkeeping. -/
 def LefschetzThimbleDecomposition (amplitude : ℂ) (sectors : List LefschetzSector) : Prop :=
   LefschetzThimbleExpansion amplitude sectors ∧
-  ∀ sector ∈ sectors, ∃ n : ℤ, sector.coefficient = n
+  ∀ sector ∈ sectors, sector.coefficient ≠ 0
 
 /-- Assumed Lefschetz-thimble decomposition relation. -/
 theorem lefschetz_thimble_expansion
@@ -233,10 +233,9 @@ theorem lefschetz_thimble_decomposition
     (amplitude : ℂ) (sectors : List LefschetzSector)
     (h_phys : PhysicsAssumption
       AssumptionId.pathIntegralLefschetzThimbleExpansion
-      (LefschetzThimbleExpansion amplitude sectors)) :
+      (LefschetzThimbleExpansion amplitude sectors))
+    (h_nonzero : ∀ sector ∈ sectors, sector.coefficient ≠ 0) :
     LefschetzThimbleDecomposition amplitude sectors := by
-  refine ⟨lefschetz_thimble_expansion amplitude sectors h_phys, ?_⟩
-  intro sector h_mem
-  exact ⟨sector.coefficient, rfl⟩
+  exact ⟨lefschetz_thimble_expansion amplitude sectors h_phys, h_nonzero⟩
 
 end PhysicsLogic.QFT.PathIntegral

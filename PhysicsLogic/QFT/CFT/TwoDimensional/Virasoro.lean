@@ -397,7 +397,8 @@ structure StressTensor2DTheory where
     (T : StressTensor2D H)
     (z : ℂ)
     (h_nonzero : z ≠ 0),
-    ∃ (modes : ℤ → ℂ), ∀ n : ℤ, modes n = modes n  -- modes exist as Laurent coefficients
+    ∃ (modes : ℤ → ℂ), (∃ n : ℤ, modes n ≠ 0) ∧
+      (∀ n : ℤ, modes (-n - 2) = modes n)
   /-- T(z)φ_h(w,w̄) OPE determines conformal weight:
       T(z)φ(w,w̄) ~ h φ(w,w̄)/(z-w)² + ∂φ(w,w̄)/(z-w)
       The coefficient of (z-w)⁻² gives the conformal weight h. -/
@@ -420,8 +421,11 @@ structure StressTensorOPE (c : VirasoroCentralCharge) where
   /-- The OPE is consistent with Virasoro algebra:
       the commutation relations [L_m, L_n] derived from the T(z)T(w) OPE
       reproduce the Virasoro algebra. -/
+  commutator_linear_coeff : ℤ → ℤ → ℂ
+  commutator_central_coeff : ℤ → ℤ → ℂ
   virasoro_consistent : ∀ (m n : ℤ),
-    ∃ (bracket_result : ℂ), bracket_result = (m - n : ℤ)  -- [L_m, L_n] has (m-n) coefficient
+    commutator_linear_coeff m n = (m - n : ℤ) ∧
+    commutator_central_coeff m n = (if m + n = 0 then central_charge_term else 0)
 
 /- ============= UNITARITY IN 2D ============= -/
 
@@ -437,7 +441,7 @@ structure IsUnitary2D (c : VirasoroCentralCharge) where
   h_nonneg : ∀ (H : Type _) (φ : Primary2D H), φ.h ≥ 0 ∧ φ.h_bar ≥ 0
   /-- Inner product is positive definite: ⟨ψ|ψ⟩ > 0 for ψ ≠ 0 -/
   positive_definite : ∀ {H : Type _} (inner : H → H → ℂ) (ψ : H),
-    ∃ (norm_sq : ℝ), norm_sq ≥ 0
+    (inner ψ ψ).re ≥ 0
 
 /-- For c < 1: discrete series of unitary representations (minimal models).
     c = 1 - 6/m(m+1) for m = 2,3,4,...
@@ -460,14 +464,14 @@ structure CharacterTheory where
   virasoroCharacter : VirasoroCentralCharge → ℝ → ℂ → ℂ
   /-- Dedekind eta function η(τ) = q^{1/24} ∏_{n≥1} (1-q^n) -/
   dedekindEta : ℂ → ℂ
+  /-- Numerator factor in the character expression before dividing by η. -/
+  characterPrefactor : VirasoroCentralCharge → ℝ → ℂ → ℂ
   /-- Character of generic Verma module (no null states):
       χ_h(q) = q^{h - c/24} / η(τ) where q = e^{2πiτ}
       For representations with null states, the character is reduced.
       The character converges for |q| < 1 (i.e., Im(τ) > 0). -/
   character_formula : ∀ (c : VirasoroCentralCharge) (h : ℝ) (q : ℂ),
-    ∃ (η_inv : ℂ) (exponent : ℂ),
-      exponent = h - centralChargeValue c / 24 ∧
-      virasoroCharacter c h q = η_inv  -- Full: q^exponent * η_inv
+    virasoroCharacter c h q = characterPrefactor c h q / dedekindEta q
   /-- Rocha-Caridi formula for minimal model characters.
       For minimal models M(m, m+1), the character of φ_{r,s} is:
       χ_{r,s}(q) = (1/η(τ)) ∑_{k∈ℤ} [q^{a_{r,s,k}} - q^{b_{r,s,k}}]

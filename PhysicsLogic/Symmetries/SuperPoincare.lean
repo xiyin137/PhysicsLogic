@@ -101,7 +101,7 @@ def N1SuperspaceAlgebra {H : Type*} [AddCommGroup H] [Module ℂ H]
   (∀ ad bd : Fin 2, opAntiComm (data.Qbar ad) (data.Qbar bd) = 0) ∧
   (∀ a bd : Fin 2,
     opAntiComm (data.Q a) (data.Qbar bd) =
-      ∑ mu : Fin 4, (-2 * data.sigma mu a bd) • data.P mu) ∧
+      ∑ mu : Fin 4, (2 * data.sigma mu a bd) • data.P mu) ∧
   (∀ a b : Fin 2, opAntiComm (data.D a) (data.D b) = 0) ∧
   (∀ ad bd : Fin 2, opAntiComm (data.Dbar ad) (data.Dbar bd) = 0) ∧
   (∀ a bd : Fin 2,
