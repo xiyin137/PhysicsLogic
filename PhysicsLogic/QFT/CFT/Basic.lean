@@ -268,6 +268,10 @@ structure StressTensorTheory (d : ℕ) where
   /-- Tracelessness: T^μ_μ = 0 (classically, may be anomalous quantum mechanically) -/
   stress_traceless : ∀ (H : Type _) (T : StressTensor d H), Prop
 
+/-- Appendix-D naming for the stress-tensor/conformal-current interface. -/
+structure StressTensorConformalCurrents (d : ℕ) where
+  theory : StressTensorTheory d
+
 /- ============= CONFORMAL BLOCKS ============= -/
 
 /-- Conformal block: universal function of cross-ratios determined by
@@ -324,6 +328,12 @@ structure StateOperatorCorrespondence (d : ℕ) where
   hilbert_completeness : ∀ {H : Type _}
     (operators : List (QuasiPrimary d H)), Prop
 
+/-- Radial-quantization/OPE decomposition interface: combines state-operator
+correspondence data with OPE expansion/convergence data. -/
+structure RadialQuantizationOPEDecomposition (d : ℕ) where
+  stateOperator : StateOperatorCorrespondence d
+  ope : OPETheory d
+
 /- ============= COMPLETE CFT STRUCTURE ============= -/
 
 /-- Complete structure for a conformal field theory in d dimensions.
@@ -348,5 +358,11 @@ structure CFTTheory (d : ℕ) where
   conformalBlocks : ConformalBlockTheory d
   /-- State-operator correspondence -/
   stateOperator : StateOperatorCorrespondence d
+
+/-- Extract radial-quantization/OPE decomposition data from a complete CFT package. -/
+def CFTTheory.toRadialQuantizationOPEDecomposition {d : ℕ}
+    (theory : CFTTheory d) : RadialQuantizationOPEDecomposition d where
+  stateOperator := theory.stateOperator
+  ope := theory.ope
 
 end PhysicsLogic.QFT.CFT

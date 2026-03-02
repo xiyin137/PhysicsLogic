@@ -47,6 +47,12 @@ structure RelativisticCovariance (H : Type _) [QuantumStateSpace H] (d : ℕ) [N
       wft.wightmanFunction phi n (fun i μ => ∑ ν, Lambda.matrix μ ν * points i ν + a μ) =
       wft.wightmanFunction phi n points
 
+/-- Appendix-D naming for local-field Poincaré covariance. -/
+abbrev LocalFieldPoincareCovariance
+    (H : Type _) [QuantumStateSpace H] (d : ℕ) [NeZero d]
+    (wft : WightmanFunctionTheory H d) :=
+  RelativisticCovariance H d wft
+
 /-- Wightman Axiom W2: Spectrum condition (positivity of energy-momentum).
     The joint spectrum of the energy-momentum operators (P⁰, P¹,...) lies in the
     closed forward lightcone V⁺ = {p | p⁰ ≥ 0, p² ≥ 0} where p² = (p⁰)² - ∑ᵢ(pⁱ)².
@@ -83,6 +89,12 @@ structure Locality (H : Type _) [QuantumStateSpace H] (d : ℕ) [NeZero d]
     (state : H) (_h_domain : state ∈ domain),
     ops.smear phi f (ops.smear psi g state) =
     ops.smear psi g (ops.smear phi f state)
+
+/-- Appendix-D naming for microcausality commutator interface. -/
+abbrev MicrocausalityCommutator
+    (H : Type _) [QuantumStateSpace H] (d : ℕ) [NeZero d]
+    (ops : FieldOperatorOps H d) (supportOps : TestFunctionSupportOps d) :=
+  Locality H d ops supportOps
 
 /-- Structure for applying fields to vacuum -/
 structure VacuumFieldOps (H : Type _) [QuantumStateSpace H] (d : ℕ) where

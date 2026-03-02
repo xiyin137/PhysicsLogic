@@ -5,10 +5,6 @@ namespace PhysicsLogic.QFT.Euclidean
 
 open PhysicsLogic.QFT.Euclidean Real
 
-/-- Orthogonal matrix: preserves Euclidean inner product -/
-def IsOrthogonal {d : ℕ} (R : Fin d → Fin d → ℝ) : Prop :=
-  ∀ μ ν, ∑ ρ, R μ ρ * R ν ρ = if μ = ν then 1 else 0
-
 /-- Time reflection θ: reflects the time coordinate (first coordinate).
     θ(x₀, x) = (-x₀, x) for x = (x₁, ..., x_{d-1}) -/
 def timeReflection {d : ℕ} [NeZero d] (x : EuclideanPoint d) : EuclideanPoint d :=

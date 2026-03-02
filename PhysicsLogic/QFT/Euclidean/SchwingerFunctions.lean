@@ -15,6 +15,10 @@ def euclideanOrigin (d : ℕ) : EuclideanPoint d := fun _ => 0
 noncomputable def euclideanDistance {d : ℕ} (x y : EuclideanPoint d) : ℝ :=
   sqrt (∑ μ, (x μ - y μ)^2)
 
+/-- Orthogonal matrix in `d` Euclidean dimensions. -/
+def IsOrthogonal {d : ℕ} (R : Fin d → Fin d → ℝ) : Prop :=
+  ∀ μ ν, ∑ ρ, R μ ρ * R ν ρ = if μ = ν then 1 else 0
+
 /-- Radial distance from origin -/
 noncomputable def radialDistance {d : ℕ} (x : EuclideanPoint d) : ℝ :=
   euclideanDistance x (euclideanOrigin d)
@@ -34,6 +38,11 @@ structure QFT (d : ℕ) where
   /-- Translation invariance: correlations depend only on differences -/
   translation_invariant : ∀ n (points : Fin n → EuclideanPoint d) (a : EuclideanPoint d),
     schwinger n points = schwinger n (fun i μ => points i μ + a μ)
+  /-- Rotational invariance under Euclidean orthogonal transformations. -/
+  rotation_invariant : ∀ n (points : Fin n → EuclideanPoint d)
+    (rotation : Fin d → Fin d → ℝ),
+    IsOrthogonal rotation →
+    schwinger n points = schwinger n (fun i μ => ∑ ν, rotation μ ν * points i ν)
   /-- Permutation symmetry (bosonic fields) -/
   permutation_symmetric : ∀ n (points : Fin n → EuclideanPoint d) (σ : Equiv.Perm (Fin n)),
     schwinger n points = schwinger n (points ∘ σ)

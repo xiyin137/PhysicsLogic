@@ -54,6 +54,17 @@ structure WickRotationData (d : ℕ) [NeZero d] where
   wickRotation : ∀ (n : ℕ) (_W_analytic : AnalyticWightmanFunction d n),
     (Fin n → EuclideanPoint d) → ℝ
 
+/-- Appendix-D interface for analytic continuation from Lorentzian Wightman
+data to Euclidean correlators, with ordering/analytic-domain dependence
+implicit in the chosen `AnalyticWightmanFunction`. -/
+def WightmanToEuclideanContinuation {d : ℕ} [NeZero d]
+    (n : ℕ)
+    (W : AnalyticWightmanFunction d n)
+    (wick : WickRotationData d)
+    (euclideanCorrelator : (Fin n → EuclideanPoint d) → ℝ) : Prop :=
+  ∀ points : Fin n → EuclideanPoint d,
+    euclideanCorrelator points = wick.wickRotation n W points
+
 /-- Osterwalder-Schrader reconstruction theorem (corrected version):
     A Euclidean QFT satisfying the OS axioms E1-E5 can be analytically continued
     to a relativistic Wightman QFT.

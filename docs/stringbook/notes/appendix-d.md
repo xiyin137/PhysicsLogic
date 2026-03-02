@@ -19,6 +19,14 @@
 - `StressTensorConformalCurrents`: tracelessness-to-conformal-current map.
 - `RadialQuantizationOPEDecomposition`: Hilbert-space expansion yielding local OPE coefficients.
 
+## Formalization Progress
+- Implemented in `PhysicsLogic/QFT/Wightman/Axioms.lean`:
+  `LocalFieldPoincareCovariance`, `MicrocausalityCommutator`.
+- Implemented in `PhysicsLogic/QFT/Euclidean/WickRotation.lean`:
+  `WightmanToEuclideanContinuation`.
+- Implemented in `PhysicsLogic/QFT/CFT/Basic.lean`:
+  `StressTensorConformalCurrents`, `RadialQuantizationOPEDecomposition`.
+
 ## Assumption Candidates
 - Reuse existing: `wightmanTemperedness`, `wightmanSpinStatistics`, `wightmanPctTheorem`.
 - Reuse existing: `aqftGnsExistence`, `aqftReehSchlieder`.
