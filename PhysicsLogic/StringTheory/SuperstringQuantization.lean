@@ -29,7 +29,7 @@ structure SuperPolyakovGaugeData (WorldsheetConfig : Type*) where
   conformalGaugeAction : WorldsheetConfig → ComplexActionValue
   freeMatterAction : WorldsheetConfig → ComplexActionValue
   spacetimeDimension : ℕ
-  matterCentralCharge : ℚ
+  matterCentralCharge : CentralCharge
 
 /-- Super-Polyakov package:
 local SUSY and super-Weyl invariance hold, conformal gauge reduces to free fields,
@@ -39,7 +39,7 @@ def SuperPolyakovGaugePackage {WorldsheetConfig : Type*}
   data.localSusyVariationCancels ∧
   data.superWeylVariationCancels ∧
   (∀ cfg : WorldsheetConfig, data.conformalGaugeAction cfg = data.freeMatterAction cfg) ∧
-  data.matterCentralCharge = (3 / 2 : ℚ) * (data.spacetimeDimension : ℚ)
+  data.matterCentralCharge = (3 / 2 : CentralCharge) * (data.spacetimeDimension : ℝ)
 
 /-- Assumed super-Polyakov gauge package from Section 6.1. -/
 theorem super_polyakov_gauge_package
@@ -261,9 +261,9 @@ theorem superstring_physical_cohomology_package
 
 /-- OCQ representative data in NS and R sectors. -/
 structure SuperstringOcqRepresentativeData where
-  nsMatterWeight : ℚ
-  nsRepresentativePicture : ℚ
-  ramondRepresentativePicture : ℚ
+  nsMatterWeight : ScalingDimension
+  nsRepresentativePicture : ScalingDimension
+  ramondRepresentativePicture : ScalingDimension
   ramondHighestWeightSatisfiedUpTo : ℕ
 
 /-- OCQ representative package:
@@ -271,9 +271,9 @@ NS representatives `c e^{-phi} V` with `h(V)=1/2`,
 and R representatives `c e^{-phi/2} S` with super-Virasoro highest-weight data. -/
 def SuperstringOcqRepresentativePackage
     (data : SuperstringOcqRepresentativeData) : Prop :=
-  data.nsMatterWeight = (1 / 2 : ℚ) ∧
+  data.nsMatterWeight = (1 / 2 : ScalingDimension) ∧
   data.nsRepresentativePicture = -1 ∧
-  data.ramondRepresentativePicture = (-1 / 2 : ℚ) ∧
+  data.ramondRepresentativePicture = (-1 / 2 : ScalingDimension) ∧
   data.ramondHighestWeightSatisfiedUpTo > 0
 
 /-- Assumed OCQ representative package for superstring BRST cohomology. -/

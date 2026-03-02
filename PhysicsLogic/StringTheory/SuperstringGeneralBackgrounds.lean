@@ -11,8 +11,8 @@ abbrev SuperBackgroundClaim := Prop
 
 /-- NSR-sector state-space and GSO decomposition data in general superstring backgrounds. -/
 structure NsrSectorGsoData where
-  totalMatterCentralChargeLeft : ℚ
-  totalMatterCentralChargeRight : ℚ
+  totalMatterCentralChargeLeft : CentralCharge
+  totalMatterCentralChargeRight : CentralCharge
   pictureNumberNS : ℚ
   pictureNumberR : ℚ
   hilbertSpaceDecompositionBySectors : SuperBackgroundClaim
@@ -43,8 +43,8 @@ structure NsnsScftDeformationData where
   Configuration : Type
   actionFunctional : Configuration → ComplexActionValue
   deformedActionFunctional : Configuration → ComplexActionValue
-  matterWeightLeft : ℚ
-  matterWeightRight : ℚ
+  matterWeightLeft : ScalingDimension
+  matterWeightRight : ScalingDimension
   preservesSuperconformalAtFirstOrder : SuperBackgroundClaim
   higherOrderCountertermsNeeded : SuperBackgroundClaim
 
@@ -52,8 +52,8 @@ structure NsnsScftDeformationData where
 deformation by integrated superfield descendant with matter weight `(1/2,1/2)`,
 first-order superconformal preservation, and higher-order counterterm requirement. -/
 def NsnsScftDeformationPackage (data : NsnsScftDeformationData) : Prop :=
-  data.matterWeightLeft = (1 / 2 : ℚ) ∧
-  data.matterWeightRight = (1 / 2 : ℚ) ∧
+  data.matterWeightLeft = (1 / 2 : ScalingDimension) ∧
+  data.matterWeightRight = (1 / 2 : ScalingDimension) ∧
   data.preservesSuperconformalAtFirstOrder ∧
   data.higherOrderCountertermsNeeded
 
