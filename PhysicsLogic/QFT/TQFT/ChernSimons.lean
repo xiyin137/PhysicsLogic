@@ -1,4 +1,5 @@
 import PhysicsLogic.QFT.TQFT.Axioms
+import PhysicsLogic.Units
 import Mathlib.Data.Complex.Basic
 
 namespace PhysicsLogic.QFT.TQFT
@@ -129,11 +130,12 @@ structure ChernSimonsData (md : StandaloneManifoldData) where
   /-- Chern-Simons theory at level k with gauge group G -/
   chernSimonsTheory : (G : Type) → LieGroupData G → ℤ → md.TQFTTypeOf 3
   /-- Chern-Simons action functional -/
-  chernSimonsAction : (G : Type) → (gf : GaugeFieldData G) → ℤ → gf.ConnectionSpace → md.ManifoldOf 3 → ℝ
+  chernSimonsAction :
+    (G : Type) → (gf : GaugeFieldData G) → ℤ → gf.ConnectionSpace → md.ManifoldOf 3 → ActionScale
   /-- Witten-Reshetikhin-Turaev invariant -/
-  WRTinvariant : ℤ → md.ClosedManifoldOf 3 → ℂ
+  WRTinvariant : ℤ → md.ClosedManifoldOf 3 → ComplexAmplitude
   /-- Surgery invariant -/
-  surgeryInvariant : ℤ → Link → (Link → ℤ) → ℂ
+  surgeryInvariant : ℤ → Link → (Link → ℤ) → ComplexAmplitude
 
   /- === Invariance properties === -/
 
@@ -151,7 +153,7 @@ structure ChernSimonsData (md : StandaloneManifoldData) where
   /- === Other TQFT models === -/
 
   /-- Turaev-Viro state sum model for 3-manifolds -/
-  turaevViroModel : (quantum6j : Type) → md.ManifoldOf 3 → ℂ
+  turaevViroModel : (quantum6j : Type) → md.ManifoldOf 3 → ComplexAmplitude
   /-- Dijkgraaf-Witten theory for finite group G -/
   dijkgraafWittenTheory : (G : Type) → FiniteGroupData G → md.TQFTTypeOf 3
   /-- DW theory from group 3-cocycle -/
@@ -174,7 +176,7 @@ structure ChernSimonsData (md : StandaloneManifoldData) where
   /- === Computability === -/
 
   /-- Run algorithm to get complex number -/
-  runAlgorithm : Algorithm → ℂ
+  runAlgorithm : Algorithm → ComplexAmplitude
   /-- WRT invariant is algorithmically computable from triangulation -/
   wrt_computable : ∀ (k : ℤ) (M : md.ClosedManifoldOf 3)
     (tri : md.TriangulationOf (md.toManifoldOf 3 M.val)),
