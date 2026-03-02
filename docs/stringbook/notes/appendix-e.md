@@ -20,6 +20,20 @@
 - `WeylAnomalyFunctional`: curved-worldsheet Weyl response data.
 - `VirasoroBlockRecurrence`: recursion/analytic-continuation interface for conformal blocks.
 
+## Formalization Progress
+- Implemented in `PhysicsLogic/QFT/CFT/TwoDimensional/Virasoro.lean`:
+  `TwoDConformalCoordinateData`,
+  `StressTensorPrimaryOPEData`,
+  `VirasoroFromStressTensorOPE`,
+  `CylinderCasimirShift`,
+  `WeylAnomalyFunctional`,
+  `VirasoroBlockRecurrence`.
+- Added assumption IDs and registry wiring:
+  `cft2dStressTensorOPEDefinesVirasoro`,
+  `cft2dWeylAnomalyPolyakovFunctional`,
+  `cft2dCrossingAssociativity`,
+  `cft2dZamolodchikovRecurrenceValidity`.
+
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `cft2dStressTensorOPEDefinesVirasoro`.
 - Candidate new `AssumptionId`: `cft2dWeylAnomalyPolyakovFunctional`.

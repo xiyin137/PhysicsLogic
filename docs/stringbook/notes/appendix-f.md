@@ -19,6 +19,21 @@
 - `PeriodMatrixSymplecticTransform`: period-matrix action under `Sp(2h,Z)`.
 - `ModularCrossingConsistency`: higher-genus consistency from sphere crossing + torus modular covariance.
 
+## Formalization Progress
+- Implemented in `PhysicsLogic/QFT/CFT/TwoDimensional/ModularInvariance.lean`:
+  `SphereConformalKillingGroup`,
+  `TorusModularParameterization`,
+  `HigherGenusPlumbingData`,
+  `PeriodMatrixSymplecticTransform`,
+  `ModularCrossingConsistency`.
+- Added supporting modular-covariance/plumbing interfaces:
+  `TorusOnePointModularCovariance`,
+  `HigherGenusPlumbingCoordinates`.
+- Added assumption IDs and registry wiring:
+  `riemannSurfaceModuliPlumbingCoordinates`,
+  `cftTorusOnePointModularCovariance`,
+  `cftHigherGenusPantsDecompositionConsistency`.
+
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `riemannSurfaceModuliPlumbingCoordinates`.
 - Candidate new `AssumptionId`: `cftTorusOnePointModularCovariance`.

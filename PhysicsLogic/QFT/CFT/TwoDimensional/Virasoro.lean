@@ -1,6 +1,7 @@
 -- ModularPhysics/Core/QFT/CFT/TwoDimensional/Virasoro.lean
 import PhysicsLogic.QFT.CFT.Basic
 import PhysicsLogic.Symmetries.LieAlgebras
+import PhysicsLogic.Assumptions
 import Mathlib.Data.Complex.Basic
 
 namespace PhysicsLogic.QFT.CFT.TwoDimensional
@@ -30,6 +31,166 @@ structure AntiholomorphicFieldElement (H : Type _) where
 
 /-- Antiholomorphic field φ̄(z̄) -/
 abbrev AntiholomorphicField (H : Type _) := AntiholomorphicFieldElement H
+
+/- ============= APPENDIX-E CORE INTERFACES ============= -/
+
+/-- Appendix-E coordinate conventions:
+`z = σ + iτ`, `z̄ = σ - iτ`, and measure normalization `d²z = 2 d(Re z)d(Im z)`. -/
+structure TwoDConformalCoordinateData where
+  sigma : ℝ
+  tau : ℝ
+  z : ℂ
+  zBar : ℂ
+  z_formula : z = sigma + Complex.I * tau
+  zBar_formula : zBar = sigma - Complex.I * tau
+  z_real : z.re = sigma
+  z_imag : z.im = tau
+  zBar_real : zBar.re = sigma
+  zBar_imag : zBar.im = -tau
+  measureNormalization : ℝ
+  measureNormalization_formula : measureNormalization = 2
+
+/-- Stress-tensor OPE package with a Virasoro primary:
+second-order poles encode conformal weights and first-order poles encode derivatives. -/
+structure StressTensorPrimaryOPEData where
+  holomorphicWeight : ℝ
+  antiholomorphicWeight : ℝ
+  tMaxPoleOrder : ℕ
+  tBarMaxPoleOrder : ℕ
+  tSecondPoleCoeff : ℂ
+  tSimplePoleCoeff : ℂ
+  tBarSecondPoleCoeff : ℂ
+  tBarSimplePoleCoeff : ℂ
+  tMaxPoleOrder_isTwo : tMaxPoleOrder = 2
+  tBarMaxPoleOrder_isTwo : tBarMaxPoleOrder = 2
+  tSecondPoleFormula : tSecondPoleCoeff = holomorphicWeight
+  tSimplePoleFormula : tSimplePoleCoeff = 1
+  tBarSecondPoleFormula : tBarSecondPoleCoeff = antiholomorphicWeight
+  tBarSimplePoleFormula : tBarSimplePoleCoeff = 1
+
+/-- Virasoro commutator extracted from the stress-tensor OPE:
+`[L_n, L_m] = (n-m)L_{n+m} + (c/12)(n^3-n)δ_{n,-m}`. -/
+def VirasoroFromStressTensorOPE
+    (centralCharge : ℂ)
+    (L : ℤ → ℂ)
+    (commutator : ℤ → ℤ → ℂ) : Prop :=
+  ∀ n m : ℤ,
+    commutator n m =
+      ((n - m : ℤ) : ℂ) * L (n + m) +
+      (centralCharge / 12) * ((n ^ (3 : ℕ) - n : ℤ) : ℂ) *
+        (if n = -m then 1 else 0)
+
+/-- Assumed Appendix-E derivation of Virasoro mode commutators from the
+stress-tensor OPE. -/
+theorem virasoro_from_stress_tensor_ope
+    (centralCharge : ℂ)
+    (L : ℤ → ℂ)
+    (commutator : ℤ → ℤ → ℂ)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dStressTensorOPEDefinesVirasoro
+      (VirasoroFromStressTensorOPE centralCharge L commutator)) :
+    VirasoroFromStressTensorOPE centralCharge L commutator := by
+  exact h_phys
+
+/-- Cylinder energy/momentum Casimir shifts from the exponential map:
+`H = L₀ + L̄₀ - (c+c̄)/24`, `P = L₀ - L̄₀ - (c-c̄)/24`. -/
+structure CylinderCasimirShift where
+  holomorphicCentralCharge : ℝ
+  antiholomorphicCentralCharge : ℝ
+  holomorphicZeroMode : ℝ
+  antiholomorphicZeroMode : ℝ
+  hamiltonian : ℝ
+  momentum : ℝ
+  hamiltonianFormula :
+    hamiltonian =
+      holomorphicZeroMode + antiholomorphicZeroMode -
+        (holomorphicCentralCharge + antiholomorphicCentralCharge) / 24
+  momentumFormula :
+    momentum =
+      holomorphicZeroMode - antiholomorphicZeroMode -
+        (holomorphicCentralCharge - antiholomorphicCentralCharge) / 24
+
+/-- Weyl-anomaly package for 2D CFT on curved worldsheet:
+trace anomaly, Polyakov anomaly functional, and partition-function ratio. -/
+structure WeylAnomalyFunctional where
+  centralCharge : ℝ
+  scalarCurvature : ℝ
+  weylField : ℝ
+  kineticDensity : ℝ
+  traceStressTensor : ℝ
+  anomalyActionValue : ℝ
+  partitionFunctionRatio : ℝ
+  traceAnomalyFormula :
+    traceStressTensor = -(centralCharge / 12) * scalarCurvature
+  anomalyActionFormula :
+    anomalyActionValue =
+      -(centralCharge / (24 * Real.pi)) *
+        (kineticDensity + weylField * scalarCurvature)
+  partitionRatioFormula :
+    partitionFunctionRatio = Real.exp (-anomalyActionValue)
+
+/-- Propositional package form of the Weyl-anomaly data equations. -/
+def WeylAnomalyFunctionalPackage (data : WeylAnomalyFunctional) : Prop :=
+  data.traceStressTensor = -(data.centralCharge / 12) * data.scalarCurvature ∧
+  data.anomalyActionValue =
+    -(data.centralCharge / (24 * Real.pi)) *
+      (data.kineticDensity + data.weylField * data.scalarCurvature) ∧
+  data.partitionFunctionRatio = Real.exp (-data.anomalyActionValue)
+
+/-- Assumed Appendix-E Weyl/Polyakov-anomaly functional package. -/
+theorem weyl_anomaly_polyakov_functional
+    (data : WeylAnomalyFunctional)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dWeylAnomalyPolyakovFunctional
+      (WeylAnomalyFunctionalPackage data)) :
+    WeylAnomalyFunctionalPackage data := by
+  exact h_phys
+
+/-- Truncated Zamolodchikov-style recurrence interface for Virasoro blocks:
+global block plus residue contributions from shifted internal channels. -/
+structure VirasoroBlockRecurrence where
+  recurrenceCutoff : ℕ
+  block : ℂ → ℂ
+  globalLimitBlock : ℂ → ℂ
+  recurrenceCoefficient : ℕ → ℕ → ℂ
+  shiftedBlock : ℕ → ℕ → ℂ → ℂ
+  recurrenceFormula : ∀ z : ℂ,
+    block z = globalLimitBlock z +
+      ∑ r : Fin recurrenceCutoff, ∑ s : Fin recurrenceCutoff,
+        recurrenceCoefficient (r.1 + 2) (s.1 + 1) *
+          shiftedBlock (r.1 + 2) (s.1 + 1) z
+
+/-- Propositional package form of the truncated Virasoro-block recurrence. -/
+def VirasoroBlockRecurrencePackage (data : VirasoroBlockRecurrence) : Prop :=
+  ∀ z : ℂ,
+    data.block z = data.globalLimitBlock z +
+      ∑ r : Fin data.recurrenceCutoff, ∑ s : Fin data.recurrenceCutoff,
+        data.recurrenceCoefficient (r.1 + 2) (s.1 + 1) *
+          data.shiftedBlock (r.1 + 2) (s.1 + 1) z
+
+/-- Assumed validity of the Appendix-E/Zamolodchikov recurrence package for
+Virasoro conformal blocks in this abstraction layer. -/
+theorem virasoro_block_recurrence_validity
+    (data : VirasoroBlockRecurrence)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dZamolodchikovRecurrenceValidity
+      (VirasoroBlockRecurrencePackage data)) :
+    VirasoroBlockRecurrencePackage data := by
+  exact h_phys
+
+/-- Crossing/associativity interface for sphere four-point conformal-block
+decompositions (equality of distinct OPE-channel reconstructions). -/
+def CrossingAssociativity (sChannelValue tChannelValue : ℂ) : Prop :=
+  sChannelValue = tChannelValue
+
+/-- Assumed crossing-equation/associativity consistency package. -/
+theorem crossing_associativity
+    (sChannelValue tChannelValue : ℂ)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cft2dCrossingAssociativity
+      (CrossingAssociativity sChannelValue tChannelValue)) :
+    CrossingAssociativity sChannelValue tChannelValue := by
+  exact h_phys
 
 /- ============= VIRASORO ALGEBRA ============= -/
 

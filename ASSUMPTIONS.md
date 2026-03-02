@@ -1,7 +1,7 @@
 # Physics Assumptions Report
 
-- Registered assumptions: `250`
-- Assumptions referenced in non-Papers modules: `250`
+- Registered assumptions: `251`
+- Assumptions referenced in non-Papers modules: `251`
 - Assumptions with zero references outside registry: `0`
 
 | AssumptionId | Payload | Core refs | Papers refs | Total refs | Description |
@@ -40,6 +40,7 @@
 | `cft2dAds3Sl2RepresentationSpectrum` | `qft.cft.2d.ads3_sl2_representation_spectrum` | 1 | 0 | 1 | The AdS3 `SL(2,R)` representation-window package (discrete `1/2<j<(k-1)/2` with reflected window, continuous `j=1/2+is`, and `alpha in [0,1)`) is assumed in this abstraction layer. |
 | `cft2dAds3Sl2SpectralFlowAutomorphism` | `qft.cft.2d.ads3_sl2_spectral_flow_automorphism` | 2 | 0 | 2 | The AdS3 affine-`SL(2,R)` spectral-flow automorphism package (`J'^±_n = J^±_{n±w}`, `J'^3_n` and `L'_n` shifts) is assumed in this abstraction layer. |
 | `cft2dBuscherRules` | `qft.cft.2d.buscher_rules` | 1 | 0 | 1 | Buscher T-duality transformation rules (including dilaton shift) are assumed valid in this abstraction layer. |
+| `cft2dCrossingAssociativity` | `qft.cft.2d.crossing_associativity` | 1 | 0 | 1 | Crossing-equation consistency of sphere four-point conformal-block decompositions (equivalently OPE associativity) is assumed in this abstraction layer. |
 | `cft2dD1D5AttractorTauGamma0Level` | `qft.cft.2d.d1d5_attractor_tau_gamma0_level` | 2 | 0 | 2 | The D1-D5 attractor/U-duality package (`tau~ = (Q1/Q5)tau`, `Im(tau)>0`, and arithmetic `Gamma_0(k)` level relation with `k = Q1Q5/(gcd(Q1,Q5))^2`) is assumed in this abstraction layer. |
 | `cft2dD1D5ConformalManifoldQuaternionicQuotient` | `qft.cft.2d.d1d5_conformal_manifold_quaternionic_quotient` | 2 | 0 | 2 | The D1-D5 conformal-manifold geometry package (`k = Q1Q5/(gcd(Q1,Q5))^2`, quaternionic local geometry `SO(5,4)/(SO(5)xSO(4))`, and `20=4x5` marginal-direction counting) is assumed in this abstraction layer. |
 | `cft2dD1D5SymmetricProductOrbifoldLocus` | `qft.cft.2d.d1d5_symmetric_product_orbifold_locus` | 2 | 0 | 2 | The D1-D5 symmetric-product-orbifold locus package (regular/singular distinction `Re(tau)=1/2` vs `Re(tau)=0` and arithmetic locus relation `(a tau + b)/(Q1 tau + Q5)=1/2+i/g'`) is assumed in this abstraction layer. |

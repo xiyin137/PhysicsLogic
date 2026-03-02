@@ -153,6 +153,19 @@ def conformalPreservesNull : String := "spacetime.conformal_preserves_null"
 def conformalPreservesCausalStructure : String := "spacetime.conformal_preserves_causal_structure"
 def cftCrossRatiosPositiveFromPoints : String := "qft.cft.cross_ratios_positive_from_points"
 def cftTDualWeightSymmetry : String := "qft.cft.2d.t_dual_weight_symmetry"
+def cft2dStressTensorOPEDefinesVirasoro : String :=
+  "qft.cft.2d.stress_tensor_ope_defines_virasoro"
+def cft2dWeylAnomalyPolyakovFunctional : String :=
+  "qft.cft.2d.weyl_anomaly_polyakov_functional"
+def cft2dCrossingAssociativity : String := "qft.cft.2d.crossing_associativity"
+def cft2dZamolodchikovRecurrenceValidity : String :=
+  "qft.cft.2d.zamolodchikov_recurrence_validity"
+def riemannSurfaceModuliPlumbingCoordinates : String :=
+  "qft.cft.riemann_surface.moduli_plumbing_coordinates"
+def cftTorusOnePointModularCovariance : String :=
+  "qft.cft.torus_one_point_modular_covariance"
+def cftHigherGenusPantsDecompositionConsistency : String :=
+  "qft.cft.higher_genus.pants_decomposition_consistency"
 def cft2dIsingSigmaFourPointCrossing : String :=
   "qft.cft.2d.ising_sigma_four_point_crossing"
 def cft2dDefectFusionPentagon : String := "qft.cft.2d.defect_fusion_pentagon"
@@ -1014,6 +1027,20 @@ def assumptionRegistry : List AssumptionEntry :=
       "Computed CFT cross-ratios from the selected point configuration are in the positive region used by the bootstrap layer."⟩
   , ⟨AssumptionId.cftTDualWeightSymmetry,
       "Free-boson momentum/winding conformal weights obey the T-duality swap symmetry used in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dStressTensorOPEDefinesVirasoro,
+      "The Appendix-E derivation of Virasoro mode commutators from the stress-tensor OPE (`T(z)T(0)` central term and residue computation) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dWeylAnomalyPolyakovFunctional,
+      "The 2D CFT Weyl/trace-anomaly package (`T^a_a=-(c/12)R`) together with the Polyakov anomaly functional relation for partition-function ratios is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dCrossingAssociativity,
+      "Crossing-equation consistency of sphere four-point conformal-block decompositions (equivalently OPE associativity) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dZamolodchikovRecurrenceValidity,
+      "Validity of the Zamolodchikov recurrence framework for Virasoro conformal blocks (global-block limit plus pole/residue recursion) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.riemannSurfaceModuliPlumbingCoordinates,
+      "Plumbing-fixture coordinate description and corresponding genus-`h` moduli counting package for Riemann surfaces is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cftTorusOnePointModularCovariance,
+      "Modular covariance of torus one-point functions under `tau -> tau+1` and `tau -> -1/tau` is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cftHigherGenusPantsDecompositionConsistency,
+      "Higher-genus CFT consistency from pair-of-pants decomposition moves (sphere crossing plus torus modular covariance generating full consistency) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dIsingSigmaFourPointCrossing,
       "Crossing consistency of the Ising spin-field four-point decomposition (including the sigma-sigma-epsilon structure-constant value in this abstraction layer) is assumed."⟩
   , ⟨AssumptionId.cft2dDefectFusionPentagon,

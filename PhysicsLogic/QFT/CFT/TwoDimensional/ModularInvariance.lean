@@ -1,5 +1,6 @@
 -- ModularPhysics/Core/QFT/CFT/TwoDimensional/ModularInvariance.lean
 import PhysicsLogic.QFT.CFT.TwoDimensional.ConformalBlocks
+import PhysicsLogic.Assumptions
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Matrix.Basic
 
@@ -54,6 +55,120 @@ def tTransform : ModularTransform where
   c := 0
   d := 1
   determinant := by norm_num
+
+/- ============= APPENDIX-F GEOMETRY INTERFACES ============= -/
+
+/-- Sphere conformal Killing group interface:
+Möbius maps `z ↦ (Az+B)/(Cz+D)` with `AD-BC = 1`, modulo overall sign. -/
+structure SphereConformalKillingGroup where
+  A : ℂ
+  B : ℂ
+  C : ℂ
+  D : ℂ
+  determinantOne : A * D - B * C = 1
+
+/-- Möbius action of a sphere conformal-Killing-group element. -/
+noncomputable def sphereMobiusAction (g : SphereConformalKillingGroup) (z : ℂ) : ℂ :=
+  (g.A * z + g.B) / (g.C * z + g.D)
+
+/-- Torus modulus parameterization by upper-half-plane points modulo `PSL(2,ℤ)`. -/
+def TorusModularParameterization
+    (τ τ' : ModularParameter) (m : ModularTransform) : Prop :=
+  τ'.τ = applyModular m τ
+
+/-- Torus one-point modular covariance package:
+`τ→τ+1` periodicity and `τ→-1/τ` covariance with a weight factor. -/
+def TorusOnePointModularCovariance
+    (onePoint : ModularParameter → ℂ)
+    (weightFactor : ModularParameter → ℂ) : Prop :=
+  (∀ τ τT : ModularParameter, τT.τ = τ.τ + 1 → onePoint τT = onePoint τ) ∧
+  (∀ τ τS : ModularParameter, τS.τ = -1 / τ.τ →
+    onePoint τS = weightFactor τ * onePoint τ)
+
+/-- Assumed modular covariance package for torus one-point functions. -/
+theorem torus_one_point_modular_covariance
+    (onePoint : ModularParameter → ℂ)
+    (weightFactor : ModularParameter → ℂ)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cftTorusOnePointModularCovariance
+      (TorusOnePointModularCovariance onePoint weightFactor)) :
+    TorusOnePointModularCovariance onePoint weightFactor := by
+  exact h_phys
+
+/-- Higher-genus plumbing-fixture package:
+`w=q/z` gluing data and real-moduli counting `6h-6` for `h ≥ 2`. -/
+structure HigherGenusPlumbingData where
+  genusLeft : ℕ
+  genusRight : ℕ
+  plumbingParameter : ℂ
+  plumbingParameter_nonzero : plumbingParameter ≠ 0
+  plumbingParameter_norm_le_one : ‖plumbingParameter‖ ≤ 1
+  gluedGenus : ℕ
+  gluedGenus_formula : gluedGenus = genusLeft + genusRight
+  realModuliDimension : ℕ
+  moduliDimensionFormula :
+    2 ≤ gluedGenus → realModuliDimension = 6 * gluedGenus - 6
+
+/-- Coordinate-level plumbing/moduli relation expected from Appendix F. -/
+def HigherGenusPlumbingCoordinates (data : HigherGenusPlumbingData) : Prop :=
+  2 ≤ data.gluedGenus → data.realModuliDimension = 6 * data.gluedGenus - 6
+
+/-- Assumed Appendix-F plumbing-coordinate/moduli package. -/
+theorem higher_genus_plumbing_coordinates
+    (data : HigherGenusPlumbingData)
+    (h_phys : PhysicsAssumption
+      AssumptionId.riemannSurfaceModuliPlumbingCoordinates
+      (HigherGenusPlumbingCoordinates data)) :
+    HigherGenusPlumbingCoordinates data := by
+  exact h_phys
+
+/-- Period-matrix transformation package under a symplectic cycle-basis change. -/
+structure PeriodMatrixSymplecticTransform where
+  genus : ℕ
+  periodMatrix : Matrix (Fin genus) (Fin genus) ℂ
+  transformedPeriodMatrix : Matrix (Fin genus) (Fin genus) ℂ
+  A : Matrix (Fin genus) (Fin genus) ℤ
+  B : Matrix (Fin genus) (Fin genus) ℤ
+  C : Matrix (Fin genus) (Fin genus) ℤ
+  D : Matrix (Fin genus) (Fin genus) ℤ
+  symplecticRelations :
+    D * A.transpose - C * B.transpose = 1 ∧
+    B * A.transpose = A * B.transpose ∧
+    D * C.transpose = C * D.transpose
+  fractionalLinearAction :
+    Matrix (Fin genus) (Fin genus) ℂ →
+    Matrix (Fin genus) (Fin genus) ℂ →
+    Matrix (Fin genus) (Fin genus) ℂ →
+    Matrix (Fin genus) (Fin genus) ℂ →
+    Matrix (Fin genus) (Fin genus) ℂ →
+    Matrix (Fin genus) (Fin genus) ℂ
+  transformFormula :
+    transformedPeriodMatrix =
+      fractionalLinearAction
+        (A.map (fun z => (z : ℂ)))
+        (B.map (fun z => (z : ℂ)))
+        (C.map (fun z => (z : ℂ)))
+        (D.map (fun z => (z : ℂ)))
+        periodMatrix
+
+/-- Higher-genus modular consistency from sphere crossing plus torus modular covariance. -/
+def ModularCrossingConsistency
+    (sphereCrossing : Prop)
+    (torusOnePointCovariance : Prop)
+    (higherGenusConsistency : Prop) : Prop :=
+  sphereCrossing ∧ torusOnePointCovariance → higherGenusConsistency
+
+/-- Assumed Appendix-F consistency statement reducing higher-genus modular
+consistency to sphere crossing and torus one-point modular covariance. -/
+theorem modular_crossing_consistency
+    (sphereCrossing : Prop)
+    (torusOnePointCovariance : Prop)
+    (higherGenusConsistency : Prop)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cftHigherGenusPantsDecompositionConsistency
+      (ModularCrossingConsistency sphereCrossing torusOnePointCovariance higherGenusConsistency)) :
+    ModularCrossingConsistency sphereCrossing torusOnePointCovariance higherGenusConsistency := by
+  exact h_phys
 
 /-- Modular group theory: SL(2,ℤ) action and modular invariance -/
 structure ModularGroupTheory where
