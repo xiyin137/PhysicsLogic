@@ -59,22 +59,22 @@ theorem spin_statistics {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
       PhysicsLogic.AssumptionId.wightmanSpinStatistics
       ((spin.den = 1 →
         ∀ state ∈ qft.locality.domain,
-          qft.ops.smear phi f (qft.ops.smear phi g state) =
-          qft.ops.smear phi g (qft.ops.smear phi f state)) ∧
+          (qft.ops.smear phi f).apply ((qft.ops.smear phi g).apply state) =
+          (qft.ops.smear phi g).apply ((qft.ops.smear phi f).apply state)) ∧
       (spin.den = 2 →
         ∀ state ∈ qft.locality.domain,
-          qft.ops.smear phi f (qft.ops.smear phi g state) =
-          -(qft.ops.smear phi g (qft.ops.smear phi f state))))) :
+          (qft.ops.smear phi f).apply ((qft.ops.smear phi g).apply state) =
+          -((qft.ops.smear phi g).apply ((qft.ops.smear phi f).apply state))))) :
   -- Integer spin → bosonic commutation at spacelike separation
   (spin.den = 1 →
     ∀ state ∈ qft.locality.domain,
-      qft.ops.smear phi f (qft.ops.smear phi g state) =
-      qft.ops.smear phi g (qft.ops.smear phi f state)) ∧
+      (qft.ops.smear phi f).apply ((qft.ops.smear phi g).apply state) =
+      (qft.ops.smear phi g).apply ((qft.ops.smear phi f).apply state)) ∧
   -- Half-integer spin → fermionic anticommutation at spacelike separation
   (spin.den = 2 →
     ∀ state ∈ qft.locality.domain,
-      qft.ops.smear phi f (qft.ops.smear phi g state) =
-      -(qft.ops.smear phi g (qft.ops.smear phi f state))) := by
+      (qft.ops.smear phi f).apply ((qft.ops.smear phi g).apply state) =
+      -((qft.ops.smear phi g).apply ((qft.ops.smear phi f).apply state))) := by
   exact h_phys
 
 /-- Haag's theorem: In relativistic QFT, the free and interacting field theories

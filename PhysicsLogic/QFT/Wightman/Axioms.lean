@@ -214,8 +214,8 @@ structure Locality (H : Type _) [QuantumStateSpace H] (d : ℕ) [NeZero d]
     (_h_spacelike : spacelikeSeparated (supportOps.testFunctionSupport f)
                                       (supportOps.testFunctionSupport g))
     (state : H) (_h_domain : state ∈ domain),
-    ops.smear phi f (ops.smear psi g state) =
-    ops.smear psi g (ops.smear phi f state)
+    (ops.smear phi f).apply ((ops.smear psi g).apply state) =
+    (ops.smear psi g).apply ((ops.smear phi f).apply state)
 
 /-- Appendix-D microcausality commutator interface:
 spacelike-separated smeared fields commute on a specified dense domain. -/
@@ -229,8 +229,8 @@ structure MicrocausalityCommutator
     (_h_spacelike : spacelikeSeparated (supportOps.testFunctionSupport f)
                                       (supportOps.testFunctionSupport g))
     (state : H) (_h_domain : state ∈ domain),
-    ops.smear phi f (ops.smear psi g state) =
-    ops.smear psi g (ops.smear phi f state)
+    (ops.smear phi f).apply ((ops.smear psi g).apply state) =
+    (ops.smear psi g).apply ((ops.smear phi f).apply state)
 
 /-- Build the Appendix-D microcausality commutator interface from the core
 locality axiom. -/

@@ -32,20 +32,32 @@ structure SchwartzFunction (d : ℕ) where
     Smearing against a Schwartz function ensures the operator is well-defined on D,
     but does not make it bounded in general. -/
 structure SmearedFieldOperator (H : Type _) [QuantumStateSpace H] (d : ℕ) where
-  /-- Underlying linear action on Hilbert-space states. -/
+  /-- Dense/invariant domain where this (generally unbounded) operator is defined. -/
+  domain : Set H
+  /-- Domain is nonempty. -/
+  domain_nonempty : domain.Nonempty
+  /-- Underlying action on Hilbert-space states. -/
   apply : H → H
+  /-- The operator preserves its chosen domain. -/
+  preserves_domain : ∀ ψ : H, ψ ∈ domain → apply ψ ∈ domain
+  /-- Linearity on the chosen domain model. -/
+  linear : ∀ (a : ℂ) (ψ χ : H), apply (a • ψ + χ) = a • apply ψ + apply χ
   /-- Smearing test function used to define this unbounded operator. -/
   testFunction : SchwartzFunction d
 
 /-- Structure for quantum field operator operations -/
 structure FieldOperatorOps (H : Type _) [QuantumStateSpace H] (d : ℕ) where
-  /-- Smearing a field with a test function gives an operator on H -/
-  smear : SmearedFieldOperator H d → SchwartzFunction d → (H → H)
+  /-- Resmear a field operator with a new test function. -/
+  smear : SmearedFieldOperator H d → SchwartzFunction d → SmearedFieldOperator H d
+  /-- Smearing records the requested test function. -/
+  smear_records_test_function : ∀ (phi : SmearedFieldOperator H d) (f : SchwartzFunction d),
+    (smear phi f).testFunction = f
   /-- Hermitian adjoint of smeared field operator -/
   fieldAdjoint : SmearedFieldOperator H d → SmearedFieldOperator H d
   /-- Adjoint of smeared field: φ(f)† = φ(f̄) where f̄ is complex conjugate -/
   adjoint_smearing : ∀ (phi : SmearedFieldOperator H d) (f : SchwartzFunction d) (ψ χ : H),
-    innerProduct ψ (smear phi f χ) = innerProduct (smear (fieldAdjoint phi) f ψ) χ
+    innerProduct ψ ((smear phi f).apply χ) =
+      innerProduct ((smear (fieldAdjoint phi) f).apply ψ) χ
 
 /-- Formal notation: φ(x) as operator-valued distribution.
     This is NOT a function but a distribution — only makes sense when integrated
