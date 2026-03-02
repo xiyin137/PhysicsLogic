@@ -40,11 +40,11 @@ Green's functions. It is the bridge between correlation functions
 /-- Klein-Gordon operator: (□ + m²) where □ = ∂_μ ∂^μ is the d'Alembertian
 
     In Minkowski signature (+,-,-,-): □ = ∂²/∂t² - ∇² -/
-def KleinGordonOperatorExists (m : ℝ) (d : ℕ) : Prop :=
+def KleinGordonOperatorExists (m : InvariantMass) (d : ℕ) : Prop :=
   ∃ op : (((Fin d → ℝ) → ℂ) → ((Fin d → ℝ) → ℂ)),
     ∃ testField : (Fin d → ℝ) → ℂ, op testField ≠ 0
 
-noncomputable def kleinGordonOp (m : ℝ) {d : ℕ}
+noncomputable def kleinGordonOp (m : InvariantMass) {d : ℕ}
     (h_phys :
       PhysicsLogic.PhysicsAssumption
         PhysicsLogic.AssumptionId.lszKleinGordonOperatorExists
@@ -111,18 +111,18 @@ structure LSZData (d : ℕ) [NeZero d] where
 
   /-- Physical mass m_phys (location of pole in two-point function):
       G̃₂(p²) has pole at p² = m_phys² -/
-  physical_mass : ℝ
+  physical_mass : InvariantMass
   physical_mass_positive : physical_mass > 0
 
   /-- Self-energy Σ(p²): sum of 1PI two-point diagrams.
 
       Full propagator: G̃₂(p²) = [p² - m₀² - Σ(p²)]⁻¹
       Physical pole: physical_mass² = m₀² + Σ(physical_mass²) -/
-  self_energy : ℝ → ℂ
+  self_energy : MomentumSquaredScale → ℂ
 
   /-- Z = [1 - dΣ/dp²|_{p²=m²}]⁻¹ -/
   field_strength_from_self_energy :
-    ∃ (deriv_self_energy : ℝ),
+    ∃ (deriv_self_energy : ScalingDimension),
       field_strength_Z = 1 / (1 - deriv_self_energy)
 
   /- === Spectral representation === -/
@@ -149,12 +149,12 @@ structure LSZData (d : ℕ) [NeZero d] where
       yields an in-state amplitude.
 
       √Z lim_{x⁰ → -∞} ∫ d⁴x e^{ip·x} (□_x + m²) φ(x) |0⟩ ∝ |p, in⟩ -/
-  lsz_in_condition : ∀ (m : ℝ) (_ : m > 0) (p : OnShellMomentum m),
+  lsz_in_condition : ∀ (m : InvariantMass) (_ : m > 0) (p : OnShellMomentum m),
     ∃ (limit_amplitude : ℂ),
       ‖limit_amplitude‖ = sqrt field_strength_Z ∧
       limit_amplitude ≠ 0
   /-- LSZ asymptotic condition (out): similar, t → +∞ -/
-  lsz_out_condition : ∀ (m : ℝ) (_ : m > 0) (p : OnShellMomentum m),
+  lsz_out_condition : ∀ (m : InvariantMass) (_ : m > 0) (p : OnShellMomentum m),
     ∃ (limit_amplitude : ℂ),
       ‖limit_amplitude‖ = sqrt field_strength_Z ∧
       limit_amplitude ≠ 0
@@ -165,7 +165,7 @@ structure LSZData (d : ℕ) [NeZero d] where
 
       ∏ᵢ ∫d⁴xᵢ e^{ipᵢ·xᵢ} (□ᵢ + m²) ∏ⱼ ∫d⁴yⱼ e^{-ip'ⱼ·yⱼ} (□ⱼ + m²)
       × ⟨0| T φ(y₁)...φ(yₘ) φ(x₁)...φ(xₙ) |0⟩ -/
-  integral_of_green_function : (n m : ℕ) → (mass : ℝ) →
+  integral_of_green_function : (n m : ℕ) → (mass : InvariantMass) →
     (Fin n → OnShellMomentum mass) → (Fin m → OnShellMomentum mass) → ℂ
 
 /- ============= LSZ REDUCTION THEOREM ============= -/
@@ -183,7 +183,7 @@ structure LSZData (d : ℕ) [NeZero d] where
 theorem lsz_reduction {d : ℕ} [NeZero d]
     (lsz : LSZData d)
     (n m : ℕ)
-    (mass : ℝ)
+    (mass : InvariantMass)
     (p_in : Fin n → OnShellMomentum mass)
     (p_out : Fin m → OnShellMomentum mass)
     (h_phys :
@@ -215,9 +215,9 @@ structure LSZValidityData {d : ℕ} [NeZero d] (lsz : LSZData d) (st : Scatterin
       is only defined for IR-safe observables. -/
   mass_gap_isolated :
     ∀ (spectral : SpectralDensity d),
-      ∀ μ_sq : ℝ, lsz.physical_mass^2 < μ_sq →
-        μ_sq < (2 * lsz.physical_mass)^2 →
-        spectral.ρ μ_sq = 0
+      ∀ μSq : MassSquaredScale, lsz.physical_mass.value ^ (2 : ℕ) < μSq.value →
+        μSq.value < (2 * lsz.physical_mass.value) ^ (2 : ℕ) →
+        spectral.ρ μSq = 0
   /-- Asymptotic completeness: Møller operators have dense range.
 
       Range(Ω₊) is dense in ℋ (modulo bound states).

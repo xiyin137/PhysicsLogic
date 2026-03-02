@@ -3,6 +3,7 @@ import PhysicsLogic.Assumptions
 import PhysicsLogic.SpaceTime.Causality
 import PhysicsLogic.SpaceTime.Metrics
 import PhysicsLogic.SpaceTime.Minkowski
+import PhysicsLogic.Units
 
 namespace PhysicsLogic.QFT.Wightman
 
@@ -13,12 +14,12 @@ def inForwardLightcone {d : ℕ} [NeZero d] (p : Fin d → ℝ) : Prop :=
   p 0 ≥ 0 ∧ (p 0)^2 ≥ ∑ i : Fin d, if i = 0 then 0 else (p i)^2
 
 /-- Momentum is on mass shell: (p⁰)² - |p⃗|² = m² -/
-def onMassShell {d : ℕ} [NeZero d] (p : Fin d → ℝ) (m : ℝ) : Prop :=
-  (p 0)^2 - (∑ i : Fin d, if i = 0 then 0 else (p i)^2) = m^2
+def onMassShell {d : ℕ} [NeZero d] (p : Fin d → ℝ) (m : InvariantMass) : Prop :=
+  (p 0)^2 - (∑ i : Fin d, if i = 0 then 0 else (p i)^2) = m.value ^ (2 : ℕ)
 
 /-- On-shell condition: a momentum p is on shell for mass m if E² - |p⃗|² = m².
     This is a DEFINITION of what "on-shell" means, not a claim about all momenta. -/
-def isOnShell {d : ℕ} [NeZero d] (p : Fin d → ℝ) (m : ℝ) : Prop :=
+def isOnShell {d : ℕ} [NeZero d] (p : Fin d → ℝ) (m : InvariantMass) : Prop :=
   onMassShell p m ∧ p 0 ≥ 0
 
 /-- Two regions are spacelike separated: for all x in R₁, y in R₂, (x-y)² < 0 (spacelike) -/

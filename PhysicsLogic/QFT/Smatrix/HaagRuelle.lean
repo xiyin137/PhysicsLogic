@@ -40,7 +40,7 @@ of asymptotic particle states and the S-matrix in relativistic QFT.
     3. Have compact support in momentum space (finite energy)
 
     The "velocity" of the wave packet is v⃗ = p⃗/E in the center. -/
-structure MomentumSpaceWavePacket (m : ℝ) where
+structure MomentumSpaceWavePacket (m : InvariantMass) where
   /-- Smooth function f(p⃗) in 3-momentum space -/
   f : (Fin 3 → ℝ) → ℂ
   /-- Maximum momentum (compact support in momentum space) -/
@@ -57,7 +57,7 @@ structure PositionSpaceSmearing where
   /-- Smooth test function g(x⃗) in 3-space -/
   g : (Fin 3 → ℝ) → ℂ
   /-- Support radius (compact spatial support) -/
-  support_radius : ℝ
+  support_radius : ScalingDimension
   support_positive : support_radius > 0
   /-- Amplitude bound -/
   amplitude_bound : ∀ x : Fin 3 → ℝ, ‖g x‖ ≤ support_radius
@@ -82,7 +82,7 @@ structure PositionSpaceSmearing where
     - Asymptotic completeness -/
 structure HaagRuelleData (H : Type*) [NormedAddCommGroup H] [Module ℂ H] where
   /-- Mass of the stable particle -/
-  mass : ℝ
+  mass : InvariantMass
   /-- Mass gap: particle mass is positive -/
   mass_positive : mass > 0
   /-- Inner product on the interacting Hilbert space -/

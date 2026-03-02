@@ -11,8 +11,8 @@ set_option linter.unusedVariables false
 /-- Bare coupling constants on the lattice (depend on lattice spacing a).
     In renormalizable theories, these must be tuned as a → 0 to reach a continuum limit. -/
 structure BareCoupling where
-  spacing : ℝ
-  couplings : ℝ  -- Simplified: in reality this would be a vector of coupling constants
+  spacing : LengthScale
+  couplings : ScalingDimension  -- Simplified: in reality this would be a vector of coupling constants
 
 /- ============= LATTICE REGULARIZATION ============= -/
 
@@ -23,7 +23,7 @@ structure BareCoupling where
     as a finite-dimensional integral over field values at lattice sites. -/
 structure LatticeRegularizationData (d : ℕ) where
   /-- Map lattice sites to continuum points: site n → a·n -/
-  embed : (spacing : ℝ) → (Fin d → ℤ) → EuclideanPoint d
+  embed : (spacing : LengthScale) → (Fin d → ℤ) → EuclideanPoint d
   /-- Lattice Schwinger function with bare couplings g(a) -/
   latticeSchwinger : (params : BareCoupling) → (n : ℕ) → (Fin n → (Fin d → ℤ)) → ℝ
 
@@ -32,10 +32,10 @@ structure LatticeRegularizationData (d : ℕ) where
     This is the critical ingredient for defining the continuum limit. -/
 structure ContinuumLimitData {d : ℕ} (lattice : LatticeRegularizationData d) (theory : QFT d) where
   /-- Bare couplings as function of lattice spacing -/
-  rgTrajectory : (spacing : ℝ) → BareCoupling
+  rgTrajectory : (spacing : LengthScale) → BareCoupling
   /-- Continuum limit a → 0 along RG trajectory -/
   continuumLimit : ∀ (n : ℕ),
-    ∀ ε > 0, ∃ a₀ > 0, ∀ (spacing : ℝ) (_ : 0 < spacing) (_ : spacing < a₀),
+    ∀ ε > 0, ∃ a₀ > 0, ∀ (spacing : LengthScale) (_ : 0 < spacing) (_ : spacing < a₀),
     ∀ (lattice_points : Fin n → (Fin d → ℤ)),
       let continuum_points := fun i => lattice.embed spacing (lattice_points i)
       let g_a := rgTrajectory spacing
@@ -59,17 +59,17 @@ structure TransferMatrixData (d : ℕ) where
   /-- The transfer matrix type (abstract — could be an operator on Hilbert space) -/
   TransferMatrix : Type*
   /-- Extract Hamiltonian operator from transfer matrix: H = -log(T)/a -/
-  hamiltonian : (spacing : ℝ) → TransferMatrix → HamiltonianOperator State
+  hamiltonian : (spacing : LengthScale) → TransferMatrix → HamiltonianOperator State
   /-- Energy expectation functional for Hamiltonians on states. -/
-  energy : HamiltonianOperator State → State → ℝ
+  energy : HamiltonianOperator State → State → Energy
   /-- Transfer-matrix reconstruction: for each transfer matrix, small-a Hamiltonians
       converge (in matrix elements/expectation values) to a limiting Hamiltonian. -/
   transfer_matrix_limit :
     ∀ (T : TransferMatrix), ∃ (Hlim : HamiltonianOperator State),
-      ∀ ε > 0, ∃ a₀ > 0, ∀ (a : ℝ),
+      ∀ (ε : Energy), ε > 0 → ∃ (a₀ : LengthScale), a₀ > 0 → ∀ (a : LengthScale),
         0 < a → a < a₀ →
         ∀ (ψ : State),
-          |energy (hamiltonian a T) ψ - energy Hlim ψ| < ε
+          |(energy (hamiltonian a T) ψ).value - (energy Hlim ψ).value| < ε.value
 
 /- ============= EUCLIDEAN GENERATING FUNCTIONALS ============= -/
 
@@ -83,9 +83,9 @@ structure TransferMatrixData (d : ℕ) where
     generating 1PI (one-particle-irreducible) correlation functions. -/
 structure EuclideanGeneratingData {d : ℕ} (theory : QFT d) where
   /-- Generating functional Z[J] = ∫ Dφ e^{-S_E[φ] + ∫J·φ} -/
-  generatingFunctional : (source : EuclideanPoint d → ℝ) → ℝ
+  generatingFunctional : (source : EuclideanPoint d → ScalingDimension) → ComplexAmplitude
   /-- Effective action Γ[φ_cl] (1PI generating functional) -/
-  effectiveAction : (EuclideanPoint d → ℝ) → ℝ
+  effectiveAction : (EuclideanPoint d → ScalingDimension) → ActionScale
 
 /-- Schwinger-Dyson equations relate n-point and (n+1)-point functions.
     For a theory with action S[φ], the SD equation is:
