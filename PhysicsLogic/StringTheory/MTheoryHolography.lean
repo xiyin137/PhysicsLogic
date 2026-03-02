@@ -12,10 +12,10 @@ abbrev MTheoryHolographyClaim := Prop
 
 /-- Near-horizon package for coincident M2-branes. -/
 structure M2NearHorizonData where
-  planckMass : ℝ
+  planckMass : MassScale
   braneCount : ℕ
-  curvatureRadius : ℝ
-  adsRadius : ℝ
+  curvatureRadius : LengthScale
+  adsRadius : LengthScale
 
 /-- M2 near-horizon relations:
 `R^6 M11^6 = 32 pi^2 N2` and `R_AdS = R/2`. -/
@@ -38,10 +38,10 @@ theorem m2_near_horizon_package
 
 /-- Near-horizon package for coincident M5-branes. -/
 structure M5NearHorizonData where
-  planckMass : ℝ
+  planckMass : MassScale
   braneCount : ℕ
-  curvatureRadius : ℝ
-  adsRadius : ℝ
+  curvatureRadius : LengthScale
+  adsRadius : LengthScale
 
 /-- M5 near-horizon relations:
 `R^3 M11^3 = pi N5` and `R_AdS = 2R`. -/
@@ -64,11 +64,11 @@ theorem m5_near_horizon_package
 
 /-- D2/M-theory coupling-map data used in the 3D N=8 SYM decoupling argument. -/
 structure D2GaugeCouplingData where
-  typeIIAStringCoupling : ℝ
-  stringLength : ℝ
-  planckMass : ℝ
-  mTheoryCircleRadius : ℝ
-  yangMillsCouplingSq : ℝ
+  typeIIAStringCoupling : CouplingScale
+  stringLength : StringLength
+  planckMass : MassScale
+  mTheoryCircleRadius : LengthScale
+  yangMillsCouplingSq : CouplingScale
 
 /-- D2/M-theory coupling relations:
 `gYM^2 = g_A/ell_A = M11^(3/2) R10`, with `M11^(3/2)` encoded as
@@ -93,7 +93,8 @@ theorem d2_gauge_coupling_relation
 
 /-- Minimal infrared fixed-point package for 3D N=8 SYM. -/
 structure N8SymIrFixedPointData where
-  gaugeCouplingMassDimension : ℝ
+  /-- Scaling dimension `[gYM]` (equal to `1/2` in the 3D SYM package used here). -/
+  gaugeCouplingScalingDimension : ScalingDimension
   uvRSymmetryIsSo7 : MTheoryHolographyClaim
   irRSymmetryEnhancedToSo8 : MTheoryHolographyClaim
   hasOsp84SuperconformalAlgebra : MTheoryHolographyClaim
@@ -101,7 +102,7 @@ structure N8SymIrFixedPointData where
 /-- IR fixed-point package:
 3D coupling dimension `1/2`, `so(7)->so(8)` enhancement, and `osp(8|4)`. -/
 def N8SymIrFixedPointPackage (data : N8SymIrFixedPointData) : Prop :=
-  data.gaugeCouplingMassDimension = (1 : ℝ) / 2 ∧
+  data.gaugeCouplingScalingDimension = (1 : ScalingDimension) / 2 ∧
   data.uvRSymmetryIsSo7 ∧
   data.irRSymmetryEnhancedToSo8 ∧
   data.hasOsp84SuperconformalAlgebra
@@ -117,7 +118,7 @@ theorem n8_sym_ir_fixed_point_package
 
 /-- Coulomb-branch quotient data for the `SU(2)` N=8 SYM effective theory. -/
 structure N8SymCoulombBranchSU2Data (VacuumPoint : Type*) where
-  yangMillsCouplingSq : ℝ
+  yangMillsCouplingSq : CouplingScale
   sigmaPeriod : ℝ
   z2Action : VacuumPoint → VacuumPoint
   moduliSpaceMatchesS1R7Quotient : MTheoryHolographyClaim
@@ -181,13 +182,13 @@ theorem abjm_level_quantization_package
 
 /-- ABJM/M-theory holographic-map data. -/
 structure ABJMHolographicMapData where
-  planckMass : ℝ
+  planckMass : MassScale
   levelK : ℕ
   rankN : ℕ
-  curvatureRadius : ℝ
-  tHooftCoupling : ℝ
-  stringCoupling : ℝ
-  stringLength : ℝ
+  curvatureRadius : LengthScale
+  tHooftCoupling : DimensionlessCoupling
+  stringCoupling : DimensionlessCoupling
+  stringLength : StringLength
   geometryIsAdS4TimesS7Orbifold : MTheoryHolographyClaim
 
 /-- ABJM holographic-map package:
@@ -268,8 +269,8 @@ structure SixDZeroTwoSuperconformalData where
   hasOsp264SuperconformalAlgebra : MTheoryHolographyClaim
   hasStressTensorMultipletD02 : MTheoryHolographyClaim
   hasKkMultipletFamilyD0kForKGeTwo : MTheoryHolographyClaim
-  primaryScalingDimension : ℕ → ℝ
-  stressTensorPrimaryDimension : ℝ
+  primaryScalingDimension : ℕ → ScalingDimension
+  stressTensorPrimaryDimension : ScalingDimension
 
 /-- 6D `(0,2)` multiplet package:
 `osp(2,6|4)`, stress tensor multiplet `D[0,2]`, and `D[0,k]` with `Delta=2k`. -/
@@ -291,9 +292,9 @@ theorem six_d_zero_two_superconformal_package
 
 /-- Circle-compactification data from 6D `(0,2)` SCFT to 5D maximally supersymmetric YM. -/
 structure SixDZeroTwoToFiveDData where
-  compactificationRadius : ℝ
-  yangMillsCouplingSq : ℝ
-  instantonMass : ℕ → ℝ
+  compactificationRadius : LengthScale
+  yangMillsCouplingSq : CouplingScale
+  instantonMass : ℕ → MassScale
 
 /-- Compactification relation package:
 `gYM^2 = (2pi)^2 R_M` and `M_n = 4pi^2 n / gYM^2 = n/R_M`. -/
@@ -301,8 +302,9 @@ def SixDZeroTwoToFiveDPackage (data : SixDZeroTwoToFiveDData) : Prop :=
   data.compactificationRadius > 0 ∧
   data.yangMillsCouplingSq = (2 * Real.pi) ^ (2 : ℕ) * data.compactificationRadius ∧
   ∀ n : ℕ,
-    data.instantonMass n = (4 * Real.pi ^ (2 : ℕ) * (n : ℝ)) / data.yangMillsCouplingSq ∧
-    data.instantonMass n = (n : ℝ) / data.compactificationRadius
+    (data.instantonMass n).value =
+      (4 * Real.pi ^ (2 : ℕ) * (n : ℝ)) / data.yangMillsCouplingSq ∧
+    (data.instantonMass n).value = (n : ℝ) / data.compactificationRadius
 
 /-- Assumed 6D `(0,2)` circle-compactification package to 5D maximal SYM. -/
 theorem six_d_zero_two_to_five_d_package
