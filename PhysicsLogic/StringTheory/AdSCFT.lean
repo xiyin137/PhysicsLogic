@@ -67,22 +67,25 @@ theorem ads_cft_parameter_map
     AdSCFTParameterMap data := by
   exact h_phys
 
-/-- Minimal package for `N=4` SYM conformal/superconformal structure. -/
-structure NFourSYMConformalData where
+/-- Minimal package for `N=4` SYM conformal/superconformal structure.
+The trace of the stress tensor is represented operatorially (not as a scalar). -/
+structure NFourSYMConformalData (State : Type*) [Zero State] where
   betaFunctionValue : BetaFunctionValue
-  stressTensorTrace : ScalingDimension
+  traceStressTensorOperator : (Fin 4 → ℝ) → State → State
   hasPsu224SuperconformalSymmetry : AdSCFTClaim
 
 /-- `N=4` SYM conformal package:
-vanishing beta/traced stress tensor and `psu(2,2|4)` algebra label. -/
-def NFourSYMConformalPackage (data : NFourSYMConformalData) : Prop :=
+vanishing beta, operator-level tracelessness, and `psu(2,2|4)` label. -/
+def NFourSYMConformalPackage {State : Type*} [Zero State]
+    (data : NFourSYMConformalData State) : Prop :=
   data.betaFunctionValue = 0 ∧
-  data.stressTensorTrace = 0 ∧
+  (∀ (x : Fin 4 → ℝ) (ψ : State), data.traceStressTensorOperator x ψ = 0) ∧
   data.hasPsu224SuperconformalSymmetry
 
 /-- Assumed `N=4` SYM conformal/superconformal package. -/
 theorem n_four_sym_conformal_package
-    (data : NFourSYMConformalData)
+    {State : Type*} [Zero State]
+    (data : NFourSYMConformalData State)
     (h_phys : PhysicsAssumption
       AssumptionId.stringAdSCftN4SymConformalPackage
       (NFourSYMConformalPackage data)) :
@@ -183,18 +186,20 @@ theorem state_operator_map_relation
     StateOperatorMapRelation data := by
   exact h_phys
 
-/-- Global holographic-dictionary data at generating-functional/correlator level. -/
-structure AdSCFTDictionaryData where
-  qgPartitionValue : ComplexAmplitude
-  cftCorrelatorValue : ComplexAmplitude
+/-- Global holographic-dictionary data at generating-functional level. -/
+structure AdSCFTDictionaryData (Source : Type*) where
+  qgPartitionFunctional : Source → ComplexAmplitude
+  cftGeneratingFunctional : Source → ComplexAmplitude
 
 /-- AdS/CFT dictionary relation `Z_QG = <...>_CFT` at interface level. -/
-def AdSCFTDictionaryRelation (data : AdSCFTDictionaryData) : Prop :=
-  data.qgPartitionValue = data.cftCorrelatorValue
+def AdSCFTDictionaryRelation {Source : Type*}
+    (data : AdSCFTDictionaryData Source) : Prop :=
+  ∀ source : Source, data.qgPartitionFunctional source = data.cftGeneratingFunctional source
 
 /-- Assumed AdS/CFT generating-functional dictionary relation. -/
 theorem ads_cft_dictionary_relation
-    (data : AdSCFTDictionaryData)
+    {Source : Type*}
+    (data : AdSCFTDictionaryData Source)
     (h_phys : PhysicsAssumption
       AssumptionId.stringAdSCftDictionary
       (AdSCFTDictionaryRelation data)) :
@@ -304,7 +309,7 @@ structure HawkingPageTransitionData where
   beta : InverseTemperatureScale
   horizonRadius : LengthScale
   criticalHorizonRadius : LengthScale
-  kappaFive : ℝ
+  fiveDimGravityCoupling : GravitationalCouplingScale
   logPartitionShift : Dimful
   criticalBeta : InverseTemperatureScale
 
@@ -313,14 +318,15 @@ temperature-radius relation, critical inverse temperature, and BH/AdS free-energ
 def HawkingPageTransitionPackage (data : HawkingPageTransitionData) : Prop :=
   data.horizonRadius > 0 ∧
   data.criticalHorizonRadius > 0 ∧
-  data.kappaFive > 0 ∧
+  data.fiveDimGravityCoupling > 0 ∧
   data.beta = (((2 * Real.pi * data.horizonRadius) /
       (1 + 2 * data.horizonRadius ^ (2 : ℕ))) : InverseTemperatureScale) ∧
   data.criticalHorizonRadius ^ (2 : ℕ) = 1 ∧
   data.criticalBeta = (((2 * Real.pi * data.criticalHorizonRadius) /
       (1 + 2 * data.criticalHorizonRadius ^ (2 : ℕ))) : InverseTemperatureScale) ∧
   data.logPartitionShift =
-    (((Real.pi ^ (2 : ℕ) : ℝ) : Dimful) * data.beta / data.kappaFive ^ (2 : ℕ)) *
+    (((Real.pi ^ (2 : ℕ) : ℝ) : Dimful) * data.beta /
+      data.fiveDimGravityCoupling ^ (2 : ℕ)) *
       data.horizonRadius ^ (2 : ℕ) * (data.horizonRadius ^ (2 : ℕ) - 1)
 
 /-- Assumed Hawking-Page transition package for global AdS5 thermodynamics. -/

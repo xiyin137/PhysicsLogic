@@ -265,6 +265,32 @@ else
   echo "[ok] core complex coefficient/amplitude labels use semantic aliases in non-Papers modules"
 fi
 
+echo "[global-semantic-check] AdSCFT stress-tensor trace is operator-valued"
+raw_ads_trace_scalar_hits="$(
+  rg -n "^[[:space:]]+stressTensorTrace[[:space:]]*:[[:space:]]*(ScalingDimension|ConformalWeight|DimensionlessCoefficient|ℝ|Real|ComplexAmplitude|ℂ|Complex)([[:space:]]|$)" \
+    PhysicsLogic/StringTheory/AdSCFT.lean || true
+)"
+if [[ -n "$raw_ads_trace_scalar_hits" ]]; then
+  echo "$raw_ads_trace_scalar_hits"
+  echo "[fail] found scalar-typed AdSCFT stress-tensor trace fields"
+  status=1
+else
+  echo "[ok] AdSCFT stress-tensor trace is operator-valued"
+fi
+
+echo "[global-semantic-check] AdSCFT dictionary uses source-dependent functionals"
+legacy_ads_dictionary_value_hits="$(
+  rg -n "^[[:space:]]+(qgPartitionValue|cftCorrelatorValue)[[:space:]]*:" \
+    PhysicsLogic/StringTheory/AdSCFT.lean || true
+)"
+if [[ -n "$legacy_ads_dictionary_value_hits" ]]; then
+  echo "$legacy_ads_dictionary_value_hits"
+  echo "[fail] found legacy scalar-valued AdSCFT dictionary fields"
+  status=1
+else
+  echo "[ok] AdSCFT dictionary fields are functional interfaces"
+fi
+
 echo "[global-semantic-check] LSZ field-strength renormalization uses semantic alias"
 raw_field_strength_hits="$(
   rg -n "^[[:space:]]+field_strength_Z[[:space:]]*:[[:space:]]*(ℝ|Real)([[:space:]]|$)" \
@@ -304,6 +330,19 @@ if [[ -n "$raw_effective_map_hits" ]]; then
   status=1
 else
   echo "[ok] Wilsonian path-integral effective actions use explicit functional records"
+fi
+
+echo "[global-semantic-check] LG polynomial couplings use semantic aliases"
+raw_lg_coupling_hits="$(
+  rg -n "^[[:space:]]+coupling[[:space:]]*:[[:space:]]ℕ[[:space:]]*→[[:space:]](ℝ|Real)([[:space:]]|$)" \
+    PhysicsLogic/QFT/RG/TwoDimensionalFlows.lean || true
+)"
+if [[ -n "$raw_lg_coupling_hits" ]]; then
+  echo "$raw_lg_coupling_hits"
+  echo "[fail] found raw ℝ/Real LG polynomial couplings"
+  status=1
+else
+  echo "[ok] LG polynomial couplings use semantic aliases"
 fi
 
 exit "$status"

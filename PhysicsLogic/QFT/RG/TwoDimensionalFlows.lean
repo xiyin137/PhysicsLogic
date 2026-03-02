@@ -16,7 +16,7 @@ abbrev TwoDimensionalFlowClaim := Prop
 /-- Polynomial scalar potential data for 2D Landau-Ginzburg deformations. -/
 structure PolynomialPotentialData where
   maxDegree : ℕ
-  coupling : ℕ → ℝ
+  coupling : ℕ → DimensionlessCoupling
 
 /-- Truncation condition: couplings vanish above the maximal degree. -/
 def PolynomialTruncation (V : PolynomialPotentialData) : Prop :=
