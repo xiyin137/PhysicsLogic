@@ -1,4 +1,5 @@
 import PhysicsLogic.ClassicalMechanics.PhaseSpace
+import PhysicsLogic.Units
 import Mathlib.Analysis.Calculus.Deriv.Basic
 
 namespace PhysicsLogic.ClassicalMechanics
@@ -15,7 +16,7 @@ structure LagrangianSystem (n : ℕ) where
   /-- Potential energy V(q, t) -/
   potentialEnergy : GeneralizedCoordinates n → ℝ → ℝ
   /-- Action functional S[q] = ∫_{t₁}^{t₂} L(q, q̇, t) dt -/
-  action : Trajectory n → ℝ → ℝ → ℝ
+  action : Trajectory n → TimeScale → TimeScale → ActionScale
   /-- Partial derivative ∂L/∂qᵢ -/
   partialL_q : GeneralizedCoordinates n → GeneralizedVelocities n → ℝ → Fin n → ℝ
   /-- Partial derivative ∂L/∂q̇ᵢ -/
@@ -24,20 +25,21 @@ structure LagrangianSystem (n : ℕ) where
   generalizedForce : GeneralizedCoordinates n → ℝ → Fin n → ℝ
   /-- Principle of stationary action (Hamilton's principle) -/
   principle_of_stationary_action :
-    ∀ (q : Trajectory n) (t₁ t₂ : ℝ),
+    ∀ (q : Trajectory n) (t₁ t₂ : TimeScale),
     (∀ i, ∀ t, deriv (fun s => partialL_v (q s) (fun j => trajectoryDerivative q s j) s i) t =
                partialL_q (q t) (fun j => trajectoryDerivative q t j) t i) ↔
     (∀ (δq : Trajectory n),
       (δq t₁ = fun _ => 0) → (δq t₂ = fun _ => 0) →
-      deriv (fun ε => action (fun t i => q t i + ε * δq t i) t₁ t₂) 0 = 0)
+      deriv (fun ε => (action (fun t i => q t i + ε * δq t i) t₁ t₂).value) 0 = 0)
   /-- Conserved momentum for cyclic coordinate -/
   cyclic_conserved_momentum :
     ∀ (q : Trajectory n) (i : Fin n),
     (∀ q' v t, partialL_q q' v t i = 0) →
     (∀ j, ∀ t, deriv (fun s => partialL_v (q s) (fun k => trajectoryDerivative q s k) s j) t =
                partialL_q (q t) (fun k => trajectoryDerivative q t k) t j) →
-    ∀ t₁ t₂, partialL_v (q t₁) (fun j => trajectoryDerivative q t₁ j) t₁ i =
-             partialL_v (q t₂) (fun j => trajectoryDerivative q t₂ j) t₂ i
+    ∀ (t₁ t₂ : TimeScale),
+      partialL_v (q t₁) (fun j => trajectoryDerivative q t₁ j) t₁ i =
+        partialL_v (q t₂) (fun j => trajectoryDerivative q t₂ j) t₂ i
 
 /-- Standard Lagrangian: L = T - V -/
 def standardLagrangian {n : ℕ}
