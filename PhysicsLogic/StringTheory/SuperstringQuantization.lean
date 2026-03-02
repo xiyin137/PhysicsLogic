@@ -211,10 +211,10 @@ theorem super_critical_dimension_nat_eq_10
   exact Nat.cast_injective (by simpa using data.dimension_eq_ten)
 
 /-- Critical-dimension nilpotency condition:
-for `D = 10`, the BRST charge is nilpotent. -/
+for super-Weyl-critical data, the BRST charge is nilpotent. -/
 def SuperBRSTNilpotentInCriticalDimension
     (dimension : ℕ) (C : SuperBRSTComplex) : Prop :=
-  dimension = 10 → SuperBRSTNilpotent C
+  SuperCriticalDimensionCondition dimension → SuperBRSTNilpotent C
 
 /-- Assumed BRST nilpotency in the critical superstring dimension. -/
 theorem super_brst_nilpotency_critical
@@ -535,10 +535,8 @@ theorem superstring_quantization_consistency_consequences
     data.levelZeroCompatibility.massless.rr.momentumSq = 0 ∧
     data.levelZeroCompatibility.massless.fermionic.momentumSq = 0 := by
   rcases h_pkg with ⟨h_critical_dim, h_brst_critical, h_level_pkg⟩
-  have h_dim : data.spacetimeDimension = 10 :=
-    super_critical_dimension_nat_eq_10 h_critical_dim
   have h_brst_nil : SuperBRSTNilpotent data.brstComplex := by
-    exact h_brst_critical h_dim
+    exact h_brst_critical h_critical_dim
   have h_shell :=
     superstring_level_zero_massless_shell_consistency data.levelZeroCompatibility h_level_pkg
   rcases h_shell with ⟨h_mass, h_nsns, h_rr, h_ferm⟩
