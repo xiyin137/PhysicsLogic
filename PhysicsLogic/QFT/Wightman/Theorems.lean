@@ -6,6 +6,14 @@ namespace PhysicsLogic.QFT.Wightman
 
 open SpaceTime Quantum
 
+/-- Integer-spin predicate for the spin-statistics interface. -/
+def IsIntegerSpin (s : ℚ) : Prop :=
+  ∃ n : ℤ, s = n
+
+/-- Half-integer-spin predicate for the spin-statistics interface. -/
+def IsHalfIntegerSpin (s : ℚ) : Prop :=
+  ∃ n : ℤ, s = n + (1 / 2 : ℚ)
+
 /-- PCT theorem (Pauli-Lüders theorem): Every Lorentz-invariant QFT admits an
     antiunitary PCT operator Θ such that the Wightman functions satisfy:
     W_n(-xₙ,...,-x₁) = conj(W_n(x₁,...,xₙ))
@@ -51,27 +59,28 @@ theorem spin_statistics {H : Type _} [QuantumStateSpace H] {d : ℕ} [NeZero d]
   (phi : SmearedFieldOperator H d)
   (spin : ℚ)  -- Spin as rational number (0, 1/2, 1, 3/2, ...)
   (_h_nonneg : spin ≥ 0)
+  (_h_quantized : IsIntegerSpin spin ∨ IsHalfIntegerSpin spin)
   (f g : SchwartzFunction d)
   (_h_spacelike : spacelikeSeparated (qft.supportOps.testFunctionSupport f)
                                     (qft.supportOps.testFunctionSupport g))
   (h_phys :
     PhysicsLogic.PhysicsAssumption
       PhysicsLogic.AssumptionId.wightmanSpinStatistics
-      ((spin.den = 1 →
+      ((IsIntegerSpin spin →
         ∀ state ∈ qft.locality.domain,
           (qft.ops.smear phi f).apply ((qft.ops.smear phi g).apply state) =
           (qft.ops.smear phi g).apply ((qft.ops.smear phi f).apply state)) ∧
-      (spin.den = 2 →
+      (IsHalfIntegerSpin spin →
         ∀ state ∈ qft.locality.domain,
           (qft.ops.smear phi f).apply ((qft.ops.smear phi g).apply state) =
           -((qft.ops.smear phi g).apply ((qft.ops.smear phi f).apply state))))) :
   -- Integer spin → bosonic commutation at spacelike separation
-  (spin.den = 1 →
+  (IsIntegerSpin spin →
     ∀ state ∈ qft.locality.domain,
       (qft.ops.smear phi f).apply ((qft.ops.smear phi g).apply state) =
       (qft.ops.smear phi g).apply ((qft.ops.smear phi f).apply state)) ∧
   -- Half-integer spin → fermionic anticommutation at spacelike separation
-  (spin.den = 2 →
+  (IsHalfIntegerSpin spin →
     ∀ state ∈ qft.locality.domain,
       (qft.ops.smear phi f).apply ((qft.ops.smear phi g).apply state) =
       -((qft.ops.smear phi g).apply ((qft.ops.smear phi f).apply state))) := by
