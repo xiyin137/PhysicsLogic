@@ -19,8 +19,9 @@ This module defines the foundational concepts of the renormalization group:
 These concepts are common to both Wilsonian and Gell-Mann Low approaches.
 -/
 
-/-- Energy/momentum scale (positive real number representing an energy scale) -/
-abbrev Scale := ℝ
+/-- Energy/momentum scale carried as a unitful mass scale.
+    Positivity is imposed by wrappers such as `Cutoff`/`RenormScale`. -/
+abbrev Scale := MassScale
 
 /- ============= CUTOFFS ============= -/
 

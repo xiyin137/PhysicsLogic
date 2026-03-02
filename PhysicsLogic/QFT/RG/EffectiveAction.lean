@@ -501,17 +501,11 @@ def isMarginalOp {d : ℕ} (rg : RGFramework d) (O : rg.Operator) : Prop :=
 /-- Convert UVCutoff from PathIntegral to Cutoff from RG.Basic -/
 def cutoffFromUV (uv : UVCutoff) : Cutoff := by
   rcases uv with ⟨s, hs⟩
-  have hs_real : (0 : Scale) < (s : ℝ) := by
-    change (0 : PhysicsLogic.Units.MassScale).value < s.value at hs
-    simpa using hs
-  exact ⟨(s : ℝ), hs_real⟩
+  exact ⟨s, hs⟩
 
 /-- Convert Cutoff to UVCutoff -/
 def uvFromCutoff (c : Cutoff) : UVCutoff := by
-  refine ⟨(c.Λ : PhysicsLogic.Units.MassScale), ?_⟩
-  change (0 : PhysicsLogic.Units.MassScale).value <
-    ((c.Λ : PhysicsLogic.Units.MassScale)).value
-  simpa using c.positive
+  exact ⟨c.Λ, c.positive⟩
 
 /-- The regularized path integral from PathIntegral.Regularization
     is the foundation for the Wilsonian effective action.
