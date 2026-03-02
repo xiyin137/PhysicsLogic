@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import PhysicsLogic.Units
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Data.Complex.Basic
@@ -128,11 +129,11 @@ theorem type_iib_pseudo_action_constraints
 
 /-- Type I supergravity `H`-field package with Green-Schwarz completion. -/
 structure TypeISupergravityData where
-  Hhat : ℝ
-  H3 : ℝ
-  omegaAminusomegaL : ℝ
-  kappa : ℝ
-  gYM : ℝ
+  Hhat : CouplingScale
+  H3 : CouplingScale
+  omegaAminusomegaL : CouplingScale
+  kappa : CouplingScale
+  gYM : CouplingScale
 
 /-- Type I anomaly-canceling `Hhat` relation used in this abstraction layer. -/
 def TypeIGreenSchwarzHatH (data : TypeISupergravityData) : Prop :=
@@ -150,9 +151,9 @@ theorem type_i_green_schwarz_hat_h
 
 /-- 4D `${\cal N}=2` special-Kahler potential data. -/
 structure N2SpecialKahlerData where
-  kappa : ℝ
-  kahlerArgument : ℝ
-  K : ℝ
+  kappa : CouplingScale
+  kahlerArgument : DimensionlessCoupling
+  K : ActionScale
 
 /-- Special-Kahler potential relation `K = -kappa^{-2} log(argument)`. -/
 def N2SpecialKahlerPotential (data : N2SpecialKahlerData) : Prop :=
@@ -172,8 +173,8 @@ theorem n2_special_kahler_potential
 /-- Quaternionic-Kahler Ricci-curvature package for 4D `${\cal N}=2` hypermultiplet geometry. -/
 structure QuaternionicKahlerData where
   nH : ℕ
-  kappa : ℝ
-  ricciCoeff : ℝ
+  kappa : CouplingScale
+  ricciCoeff : CurvatureScale
 
 /-- Quaternionic-Kahler Ricci relation `R_ab = -(nH+2) kappa^2 H_ab` at coefficient level. -/
 def QuaternionicKahlerRicciRelation (data : QuaternionicKahlerData) : Prop :=
@@ -190,10 +191,10 @@ theorem quaternionic_kahler_ricci_relation
 
 /-- 4D `${\cal N}=2` gauged-supergravity scalar-potential decomposition data. -/
 structure N2GaugedPotentialData where
-  scalarPotential : ℝ
-  momentMapTerm : ℝ
-  hyperTerm : ℝ
-  vectorTerm : ℝ
+  scalarPotential : PotentialScale
+  momentMapTerm : PotentialScale
+  hyperTerm : PotentialScale
+  vectorTerm : PotentialScale
 
 /-- Scalar-potential decomposition interface for gauged 4D `${\cal N}=2` supergravity. -/
 def N2GaugedScalarPotentialDecomposition (data : N2GaugedPotentialData) : Prop :=
@@ -210,9 +211,9 @@ theorem n2_gauged_scalar_potential_decomposition
 
 /-- 4D `${\cal N}=1` supergravity gauge/potential package. -/
 structure N1SupergravityData where
-  scalarPotential : ℝ
-  fTermPotential : ℝ
-  dTermPotential : ℝ
+  scalarPotential : PotentialScale
+  fTermPotential : PotentialScale
+  dTermPotential : PotentialScale
   gaugeKineticLhs : ℂ
   gaugeKineticRhs : ℂ
   gaugeShift : ℂ
