@@ -176,27 +176,32 @@ theorem super_brst_nilpotency_critical
     SuperBRSTNilpotentInCriticalDimension dimension C := by
   exact h_phys
 
-/-- Siegel constraints for superstring states, including Ramond `beta_0` conditions. -/
-structure SuperstringSiegelConstraintData where
-  b0Left : ℂ
-  b0Right : ℂ
-  beta0Left : ℂ
-  beta0Right : ℂ
+/-- Siegel-constraint data for a candidate physical state, including Ramond
+`beta_0` conditions. The zero-mode objects are operators on state space rather
+than scalar values. -/
+structure SuperstringSiegelConstraintData (State : Type*) where
+  b0Left : State → State
+  b0Right : State → State
+  beta0Left : State → State
+  beta0Right : State → State
+  state : State
+  zeroState : State
   inRamondLeft : Bool
   inRamondRight : Bool
 
 /-- Superstring Siegel package:
 `b_0 = b~_0 = 0`, and `beta_0` constraints in Ramond sectors. -/
-def SuperstringSiegelConstraintPackage
-    (data : SuperstringSiegelConstraintData) : Prop :=
-  data.b0Left = 0 ∧
-  data.b0Right = 0 ∧
-  (if data.inRamondLeft then data.beta0Left = 0 else True) ∧
-  (if data.inRamondRight then data.beta0Right = 0 else True)
+def SuperstringSiegelConstraintPackage {State : Type*}
+    (data : SuperstringSiegelConstraintData State) : Prop :=
+  data.b0Left data.state = data.zeroState ∧
+  data.b0Right data.state = data.zeroState ∧
+  (if data.inRamondLeft then data.beta0Left data.state = data.zeroState else True) ∧
+  (if data.inRamondRight then data.beta0Right data.state = data.zeroState else True)
 
 /-- Assumed superstring Siegel-constraint package from Section 6.6. -/
 theorem superstring_siegel_constraint_package
-    (data : SuperstringSiegelConstraintData)
+    {State : Type*}
+    (data : SuperstringSiegelConstraintData State)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSuperstringSiegelConstraintPackage
       (SuperstringSiegelConstraintPackage data)) :

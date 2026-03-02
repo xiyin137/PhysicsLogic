@@ -63,6 +63,12 @@
 - Candidate new `AssumptionId`: `stringSuperstringMasslessSectorPackage`.
 - Candidate new `AssumptionId`: `stringSuperstringSpacetimeSusyAlgebra`.
 
+## Current Formalization Mapping
+- `PhysicsLogic/StringTheory/SuperstringQuantization.lean`:
+  `SuperstringSiegelConstraintPackage` is encoded as operator-on-state
+  constraints (b0, b0-tilde, and Ramond beta0) rather than
+  scalar placeholders.
+
 ## Subsections
 - [x] 6.1 Supersymmetric extension of Polyakov's action (p.117)
 - [x] 6.2 The superconformal ghost system (p.119)
