@@ -107,7 +107,7 @@ def D1D5SymmetricOrbifoldBridgePackage
     data.qftData /\
   data.stringData.q1 = data.qftData.q1 /\
   data.stringData.q5 = data.qftData.q5 /\
-  data.stringData.parityLocusTag = "Re(tau)=1/2 orbifold-symmetric locus" /\
+  data.stringData.orbifoldSymmetricLocusAtReTauHalf /\
   data.qftData.singularLocusReTau = 0 /\
   data.qftData.symmetricOrbifoldReTau = (1 / 2 : ℝ)
 
@@ -135,9 +135,10 @@ theorem d1_d5_symmetric_orbifold_bridge_package
   have h_qft_pkg_full :
       PhysicsLogic.QFT.CFT.TwoDimensional.D1D5SymmetricProductOrbifoldLocusPackage
         data.qftData := h_qft_pkg
-  rcases h_string_pkg with ⟨_, _, _, h_parity_tag, _⟩
+  rcases h_string_pkg with ⟨_, _, _, h_orbifold_locus, _⟩
   rcases h_qft_pkg with ⟨_, _, _, _, h_qft_singular_re, h_qft_orbifold_re, _, _, _, _⟩
-  exact ⟨h_string_pkg_full, h_qft_pkg_full, h_q1, h_q5, h_parity_tag, h_qft_singular_re, h_qft_orbifold_re⟩
+  exact ⟨h_string_pkg_full, h_qft_pkg_full, h_q1, h_q5, h_orbifold_locus,
+    h_qft_singular_re, h_qft_orbifold_re⟩
 
 /-- Cross-lane data for bosonic AdS3 WZW level/radius matching. -/
 structure AdS3BosonicWzwBridgeData where

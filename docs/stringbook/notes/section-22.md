@@ -35,8 +35,14 @@
 - Updated mixed-flux and NSNS package clauses from `field = true/false`
   constraints to logical predicates (`field`, `¬ field`) to prevent
   truth-value smuggling.
+- Replaced residual string-tag placeholders in
+  `PhysicsLogic/StringTheory/AdS3CFT2.lean` (branch structure, near-horizon
+  geometry/flux labels, conformal-manifold/orbifold labels, bosonic spectrum
+  labels, NSNS worldsheet labels) with claim-typed physics predicates.
 - Kept cross-lane compatibility with `PhysicsLogic/StringTheory/AdS3CFTBridge.lean`
-  while preserving existing compositional package interfaces.
+  by migrating the symmetric-orbifold bridge condition from a string literal
+  equality to the corresponding claim field, while preserving existing
+  compositional package interfaces.
 
 ## Candidate Formalization Units
 - `D1D5InstantonChargeMap`

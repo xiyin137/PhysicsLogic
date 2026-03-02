@@ -47,14 +47,14 @@ theorem d1_d5_instanton_charge_map
 structure D1D5BranchStructureData where
   fiDeformationScale : ℝ
   coulombBranchLifted : AdS3CftClaim
-  higgsBranchTag : String
-  adhmTag : String
+  higgsBranchFromDTermQuotient : AdS3CftClaim
+  higgsBranchMatchesAdhmInstantonModuli : AdS3CftClaim
 
 /-- Branch-structure package:
 FI deformation lifts the Coulomb branch and Higgs branch matches ADHM data. -/
 def D1D5BranchStructurePackage (data : D1D5BranchStructureData) : Prop :=
-  data.higgsBranchTag = "Higgs branch from D-term quotient" ∧
-  data.adhmTag = "ADHM instanton moduli space" ∧
+  data.higgsBranchFromDTermQuotient ∧
+  data.higgsBranchMatchesAdhmInstantonModuli ∧
   (data.fiDeformationScale > 0 → data.coulombBranchLifted)
 
 /-- Assumed D1-D5 branch-structure package with FI-induced lifting of Coulomb branch. -/
@@ -101,8 +101,8 @@ structure D1D5NearHorizonData where
   q5 : ℕ
   r1Sq : ℝ
   r5Sq : ℝ
-  geometryTag : String
-  fluxTag : String
+  geometryIsAdS3TimesS3TimesM4 : AdS3CftClaim
+  fluxQuantizationMatchesQ5Q1Charges : AdS3CftClaim
 
 /-- D1-D5 near-horizon package:
 `R1^2 = g Q1 α' (2π sqrt(α'))^4 / V4`, `R5^2 = g Q5 α'`, and
@@ -117,8 +117,8 @@ def D1D5NearHorizonPackage (data : D1D5NearHorizonData) : Prop :=
     data.stringCoupling * (data.q1 : ℝ) * data.alphaPrime *
       ((2 * Real.pi * Real.sqrt data.alphaPrime) ^ (4 : ℕ) / data.m4Volume) ∧
   data.r5Sq = data.stringCoupling * (data.q5 : ℝ) * data.alphaPrime ∧
-  data.geometryTag = "AdS_3 x S^3 x M_4" ∧
-  data.fluxTag = "F3 and dual F7 flux quantized by (Q5,Q1)"
+  data.geometryIsAdS3TimesS3TimesM4 ∧
+  data.fluxQuantizationMatchesQ5Q1Charges
 
 /-- Assumed D1-D5 near-horizon/decoupling package. -/
 theorem d1_d5_near_horizon_package
@@ -159,8 +159,8 @@ structure D1D5ConformalManifoldData where
   invariantK : ℕ
   tau : ℂ
   tauTilde : ℂ
-  moduliSpaceTag : String
-  dualityGroupTag : String
+  moduliSpaceMatchesQuaternionicCoset : AdS3CftClaim
+  gamma0SubgroupActsOnTau : AdS3CftClaim
 
 /-- Conformal-manifold/U-duality package:
 `Q1 Q5 = k (gcd(Q1,Q5))^2`, attractor `τ~ = (Q1/Q5) τ`,
@@ -171,8 +171,8 @@ def D1D5ConformalManifoldPackage (data : D1D5ConformalManifoldData) : Prop :=
   data.gcdCharge = Nat.gcd data.q1 data.q5 ∧
   data.invariantK * data.gcdCharge ^ (2 : ℕ) = data.q1 * data.q5 ∧
   data.tauTilde = ((data.q1 : ℂ) / (data.q5 : ℂ)) * data.tau ∧
-  data.moduliSpaceTag = "H_{Q1,Q5}\\SO(5,4)/(SO(5)xSO(4))" ∧
-  data.dualityGroupTag = "Gamma0(k1k5) subgroup action on tau"
+  data.moduliSpaceMatchesQuaternionicCoset ∧
+  data.gamma0SubgroupActsOnTau
 
 /-- Assumed D1-D5 conformal-manifold/U-duality package. -/
 theorem d1_d5_conformal_manifold_package
@@ -188,8 +188,8 @@ structure D1D5SymmetricOrbifoldData where
   q1 : ℕ
   q5 : ℕ
   fiDeformationScale : ℝ
-  orbifoldTag : String
-  parityLocusTag : String
+  orbifoldIsSymmetricProductT4 : AdS3CftClaim
+  orbifoldSymmetricLocusAtReTauHalf : AdS3CftClaim
   coulombBranchLifted : AdS3CftClaim
 
 /-- Symmetric-orbifold package:
@@ -197,8 +197,8 @@ structure D1D5SymmetricOrbifoldData where
 def D1D5SymmetricOrbifoldPackage (data : D1D5SymmetricOrbifoldData) : Prop :=
   data.q1 > 0 ∧
   data.q5 > 0 ∧
-  data.orbifoldTag = "Sym^(Q1 Q5)(T^4)" ∧
-  data.parityLocusTag = "Re(tau)=1/2 orbifold-symmetric locus" ∧
+  data.orbifoldIsSymmetricProductT4 ∧
+  data.orbifoldSymmetricLocusAtReTauHalf ∧
   (data.fiDeformationScale > 0 → data.coulombBranchLifted)
 
 /-- Assumed symmetric-product orbifold/FI-lift package for D1-D5 CFT. -/
@@ -270,8 +270,8 @@ structure AdS3BosonicPhysicalSpectrumData where
   jDiscrete : ℝ
   jContinuousRealPart : ℝ
   continuousParameter : ℝ
-  discreteTag : String
-  continuousTag : String
+  includesDiscreteSpectralFlowedRepresentations : AdS3CftClaim
+  includesContinuousSpectralFlowedRepresentations : AdS3CftClaim
 
 /-- Allowed representation package:
 discrete `1/2 < j < (k-1)/2`, continuous `j = 1/2 + i s`,
@@ -283,8 +283,8 @@ def AdS3BosonicPhysicalSpectrumPackage
   data.jDiscrete < (data.levelK - 1) / 2 ∧
   data.jContinuousRealPart = (1 : ℝ) / 2 ∧
   data.continuousParameter ≥ 0 ∧
-  data.discreteTag = "D_j^(±,w) with j in (1/2,(k-1)/2)" ∧
-  data.continuousTag = "C_(1/2+is)^(alpha,w)"
+  data.includesDiscreteSpectralFlowedRepresentations ∧
+  data.includesContinuousSpectralFlowedRepresentations
 
 /-- Assumed bosonic AdS3 physical-spectrum representation package. -/
 theorem ads3_bosonic_physical_spectrum_package
@@ -334,7 +334,7 @@ structure AdS3NSNSSuperstringBackgroundData where
   radius : ℝ
   alphaPrime : ℝ
   matterCentralCharge : ℝ
-  worldsheetTag : String
+  worldsheetMatterFactorizationClaim : AdS3CftClaim
 
 /-- NSNS superstring worldsheet package:
 `R^2 = k α'`, worldsheet SCFT
@@ -345,7 +345,7 @@ def AdS3NSNSSuperstringBackgroundPackage
   data.radius > 0 ∧
   data.alphaPrime > 0 ∧
   data.radius ^ (2 : ℕ) = data.levelK * data.alphaPrime ∧
-  data.worldsheetTag = "hatSL(2)_k x hatSU(2)_k x M_4" ∧
+  data.worldsheetMatterFactorizationClaim ∧
   data.matterCentralCharge = 15
 
 /-- Assumed purely-NSNS AdS3 superstring worldsheet package. -/
