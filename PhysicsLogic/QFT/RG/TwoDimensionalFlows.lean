@@ -28,7 +28,7 @@ def Z2EvenPotential (V : PolynomialPotentialData) : Prop :=
 
 /-- Flow interface from even polynomial LG model to the `m`-th minimal model. -/
 def LandauGinzburgMinimalModelFlow
-    (V : PolynomialPotentialData) (m : ℕ) (cIR : ℝ) : Prop :=
+    (V : PolynomialPotentialData) (m : ℕ) (cIR : CentralCharge) : Prop :=
   m ≥ 2 ∧
   V.maxDegree = 2 * m - 2 ∧
   PolynomialTruncation V ∧
@@ -37,7 +37,7 @@ def LandauGinzburgMinimalModelFlow
 
 /-- Assumed LG-to-minimal-model IR flow relation from Appendix K. -/
 theorem landau_ginzburg_minimal_model_flow
-    (V : PolynomialPotentialData) (m : ℕ) (cIR : ℝ)
+    (V : PolynomialPotentialData) (m : ℕ) (cIR : CentralCharge)
     (h_phys : PhysicsAssumption
       AssumptionId.cft2dLandauGinzburgMinimalModelFlow
       (LandauGinzburgMinimalModelFlow V m cIR)) :
@@ -47,7 +47,7 @@ theorem landau_ginzburg_minimal_model_flow
 /-- Basic `${\cal N}=2` LG superpotential package `W(X)=g X^k`. -/
 structure N2LandauGinzburgData where
   k : ℕ
-  coupling : ℂ
+  coupling : ComplexCoupling
 
 /-- Superpotential non-renormalization interface in a supersymmetric Wilsonian scheme. -/
 def N2SuperpotentialNonRenormalized
@@ -55,23 +55,24 @@ def N2SuperpotentialNonRenormalized
   ∀ X : ℂ, W_eff X = data.coupling * X ^ data.k
 
 /-- `${\cal N}=2` minimal-model central-charge relation reached in the IR. -/
-def N2MinimalModelCentralCharge (data : N2LandauGinzburgData) (c : ℝ) : Prop :=
+def N2MinimalModelCentralCharge
+    (data : N2LandauGinzburgData) (c : CentralCharge) : Prop :=
   data.k ≥ 2 ∧ c = (3 : ℝ) * (data.k - 2) / data.k
 
 /-- Chiral-primary weight relation `h = n/(2k)` in the LG minimal-model flow. -/
 def N2LandauGinzburgChiralWeight
-    (data : N2LandauGinzburgData) (n : ℕ) (h : ℝ) : Prop :=
+    (data : N2LandauGinzburgData) (n : ℕ) (h : ScalingDimension) : Prop :=
   n ≤ data.k - 2 ∧ h = n / (2 * data.k : ℝ)
 
 /-- Combined `${\cal N}=2` LG IR package used in this abstraction layer. -/
 def N2LandauGinzburgIRPackage
-    (data : N2LandauGinzburgData) (W_eff : ℂ → ℂ) (c : ℝ) : Prop :=
+    (data : N2LandauGinzburgData) (W_eff : ℂ → ℂ) (c : CentralCharge) : Prop :=
   N2SuperpotentialNonRenormalized data W_eff ∧
     N2MinimalModelCentralCharge data c
 
 /-- Assumed `${\cal N}=2` LG non-renormalization and minimal-model IR package. -/
 theorem n2_landau_ginzburg_ir_package
-    (data : N2LandauGinzburgData) (W_eff : ℂ → ℂ) (c : ℝ)
+    (data : N2LandauGinzburgData) (W_eff : ℂ → ℂ) (c : CentralCharge)
     (h_phys : PhysicsAssumption
       AssumptionId.cft2dN2LandauGinzburgNonRenormalization
       (N2LandauGinzburgIRPackage data W_eff c)) :
@@ -89,12 +90,12 @@ def totalCharge (data : GlsmChargeData) : ℤ :=
 
 /-- Axial-anomaly theta-angle shift relation `θ -> θ + 2(Σ q_a) φ`. -/
 def AxialAnomalyThetaShift
-    (data : GlsmChargeData) (theta theta' varphi : ℝ) : Prop :=
+    (data : GlsmChargeData) (theta theta' varphi : ThetaAngle) : Prop :=
   theta' = theta + (2 : ℝ) * (totalCharge data : ℝ) * varphi
 
 /-- Assumed axial-anomaly theta-angle shift in the Appendix-K GLSM setting. -/
 theorem axial_anomaly_theta_shift
-    (data : GlsmChargeData) (theta theta' varphi : ℝ)
+    (data : GlsmChargeData) (theta theta' varphi : ThetaAngle)
     (h_phys : PhysicsAssumption
       AssumptionId.cft2dGlsmAxialAnomalyThetaShift
       (AxialAnomalyThetaShift data theta theta' varphi)) :
@@ -126,8 +127,8 @@ deriving DecidableEq, Repr
 /-- Data controlling the Calabi-Yau/LG phase structure in abelian GLSM. -/
 structure CalabiYauLgPhaseData where
   k : ℕ
-  r : ℝ
-  theta : ℝ
+  r : DimensionlessCoupling
+  theta : ThetaAngle
   totalCharge : ℤ
   irPhase : GlsmIRPhase
   coulombLifted : TwoDimensionalFlowClaim
@@ -141,18 +142,18 @@ def CalabiYauLandauGinzburgPhaseFlow (data : CalabiYauLgPhaseData) : Prop :=
 
 /-- Central-charge agreement interface for the CY/LG phase pair (`c = 3(k-2)`). -/
 def CalabiYauLandauGinzburgCentralCharge
-    (data : CalabiYauLgPhaseData) (cTotal : ℝ) : Prop :=
+    (data : CalabiYauLgPhaseData) (cTotal : CentralCharge) : Prop :=
   cTotal = (3 : ℝ) * (data.k - 2)
 
 /-- Combined CY/LG phase-flow package. -/
 def CalabiYauLandauGinzburgPhasePackage
-    (data : CalabiYauLgPhaseData) (cTotal : ℝ) : Prop :=
+    (data : CalabiYauLgPhaseData) (cTotal : CentralCharge) : Prop :=
   CalabiYauLandauGinzburgPhaseFlow data ∧
     CalabiYauLandauGinzburgCentralCharge data cTotal
 
 /-- Assumed Appendix-K CY/LG phase-flow package in abelian GLSM. -/
 theorem calabi_yau_landau_ginzburg_phase_package
-    (data : CalabiYauLgPhaseData) (cTotal : ℝ)
+    (data : CalabiYauLgPhaseData) (cTotal : CentralCharge)
     (h_phys : PhysicsAssumption
       AssumptionId.cft2dCalabiYauLandauGinzburgPhaseFlow
       (CalabiYauLandauGinzburgPhasePackage data cTotal)) :
@@ -176,9 +177,9 @@ theorem abelian_duality_twisted_superpotential_match
 /-- Minimal data for the `${\cal N}=2` cigar/Liouville mirror pair. -/
 structure CigarLiouvilleMirrorData where
   k : ℕ
-  asymptoticKahlerCoeff : ℝ
-  cigarCentralCharge : ℝ
-  liouvilleCentralCharge : ℝ
+  asymptoticKahlerCoeff : DimensionlessCoupling
+  cigarCentralCharge : CentralCharge
+  liouvilleCentralCharge : CentralCharge
 
 /-- Mirror-duality interface for `${\cal N}=2` cigar and Liouville SCFTs. -/
 def CigarLiouvilleMirrorDuality (data : CigarLiouvilleMirrorData) : Prop :=

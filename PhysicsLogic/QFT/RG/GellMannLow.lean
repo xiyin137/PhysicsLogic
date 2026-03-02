@@ -69,7 +69,7 @@ def OnShell : RenormScheme := RenormScheme.OnShell
     Satisfies the RG equation: μ dg/dμ = β(g). -/
 structure RunningCoupling where
   /-- Coupling value as function of scale -/
-  g : RenormScale → ℝ
+  g : RenormScale → DimensionlessCoupling
   /-- Renormalization scheme used -/
   scheme : RenormScheme
 
@@ -81,17 +81,20 @@ structure RunningCoupling where
     Higher coefficients depend on the scheme. -/
 structure PerturbativeBeta where
   /-- One-loop coefficient β₀ -/
-  beta0 : ℝ
+  beta0 : BetaFunctionValue
   /-- Two-loop coefficient β₁ -/
-  beta1 : ℝ
+  beta1 : BetaFunctionValue
   /-- Higher-loop coefficients -/
-  higher : ℕ → ℝ
+  higher : ℕ → BetaFunctionValue
 
 /-- One-loop beta function: β(g) ≈ β₀ g³ -/
-noncomputable def oneLoopBeta (β₀ : ℝ) (g : ℝ) : ℝ := β₀ * g^3
+noncomputable def oneLoopBeta
+    (β₀ : BetaFunctionValue) (g : DimensionlessCoupling) : BetaFunctionValue :=
+  β₀ * g^3
 
 /-- Two-loop beta function: β(g) ≈ β₀ g³ + β₁ g⁵ -/
-noncomputable def twoLoopBeta (β₀ β₁ : ℝ) (g : ℝ) : ℝ :=
+noncomputable def twoLoopBeta
+    (β₀ β₁ : BetaFunctionValue) (g : DimensionlessCoupling) : BetaFunctionValue :=
   β₀ * g^3 + β₁ * g^5
 
 /-- One-loop running coupling (exact solution)
@@ -99,7 +102,9 @@ noncomputable def twoLoopBeta (β₀ β₁ : ℝ) (g : ℝ) : ℝ :=
     g²(μ) = g²(μ₀) / (1 - 2β₀ g²(μ₀) log(μ/μ₀))
 
     Valid when β(g) = β₀ g³ -/
-noncomputable def oneLoopRunning (β₀ g₀ : ℝ) (μ₀ μ : RenormScale) : ℝ :=
+noncomputable def oneLoopRunning
+    (β₀ : BetaFunctionValue) (g₀ : DimensionlessCoupling)
+    (μ₀ μ : RenormScale) : DimensionlessCoupling :=
   Real.sqrt (g₀^2 / (1 - 2 * β₀ * g₀^2 * Real.log (μ.μ / μ₀.μ)))
 
 /- ============= ASYMPTOTIC BEHAVIOR ============= -/
@@ -122,7 +127,8 @@ def AsymptoticallySlave (beta : PerturbativeBeta) : Prop :=
 
     For β₀ > 0, the one-loop running gives g → ∞ at finite μ.
     Indicates breakdown of perturbation theory, not necessarily of the theory. -/
-noncomputable def landauPole (β₀ g₀ : ℝ) (μ₀ : RenormScale)
+noncomputable def landauPole
+    (β₀ : BetaFunctionValue) (g₀ : DimensionlessCoupling) (μ₀ : RenormScale)
     (h : β₀ > 0) : Scale :=
   μ₀.μ * Real.exp (1 / (2 * β₀ * g₀^2))
 
@@ -145,11 +151,11 @@ noncomputable def lambdaQCD (beta : PerturbativeBeta) (g : RunningCoupling)
 structure AnomalousDimensionData {d : ℕ} (rg : RGFramework d) where
   /-- Anomalous dimension of a field: γ(g) = μ d(log Z)/dμ
       where Z is the field renormalization constant. -/
-  fieldAnomalousDimension : ℝ → ℝ
+  fieldAnomalousDimension : DimensionlessCoupling → ScalingDimension
   /-- Anomalous dimension matrix for operator mixing.
       When operators can mix under renormalization (same quantum numbers),
       the RG equation involves a matrix: μ dO_i/dμ = γ_ij O_j -/
-  mixingMatrix : rg.Operator → rg.Operator → ℝ → ℝ
+  mixingMatrix : rg.Operator → rg.Operator → DimensionlessCoupling → ScalingDimension
 
 /-- Callan-Symanzik equation
 
@@ -165,11 +171,11 @@ structure CallanSymanzikData {d : ℕ} (rg : RGFramework d) where
   /-- Abstract type of n-point Green's functions -/
   GreenFunction : ℕ → Type*
   /-- Beta function β(g) -/
-  beta : ℝ → ℝ
+  beta : DimensionlessCoupling → ScalingDimension
   /-- Field anomalous dimension γ(g) -/
-  gamma : ℝ → ℝ
+  gamma : DimensionlessCoupling → ScalingDimension
   /-- The n-point Green's function depends on coupling and scale -/
-  green_at : (n : ℕ) → ℝ → RenormScale → GreenFunction n
+  green_at : (n : ℕ) → DimensionlessCoupling → RenormScale → GreenFunction n
   -- The CS equation [μ∂/∂μ + β∂/∂g + nγ]G^(n) = 0 relates beta, gamma,
   -- and green_at. Its differential form requires derivatives not available here.
 
@@ -178,7 +184,9 @@ structure CallanSymanzikData {d : ℕ} (rg : RGFramework d) where
     The solution to the CS equation shows that resumming leading logs
     is equivalent to evaluating at the running coupling g(Q) where
     Q is the characteristic scale of the process. -/
-noncomputable def RGImproved (beta : PerturbativeBeta) (g₀ : ℝ) (μ₀ Q : RenormScale) : ℝ :=
+noncomputable def RGImproved
+    (beta : PerturbativeBeta) (g₀ : DimensionlessCoupling)
+    (μ₀ Q : RenormScale) : DimensionlessCoupling :=
   oneLoopRunning beta.beta0 g₀ μ₀ Q
 
 /- ============= SCHEME DEPENDENCE ============= -/
@@ -191,7 +199,7 @@ noncomputable def RGImproved (beta : PerturbativeBeta) (g₀ : ℝ) (μ₀ Q : R
     The first two beta function coefficients β₀, β₁ are scheme-independent. -/
 structure SchemeTransform where
   /-- Coefficients of the transformation -/
-  coefficients : ℕ → ℝ
+  coefficients : ℕ → DimensionlessCoupling
 
 /-- Scheme independence of the first two beta function coefficients.
 
@@ -222,7 +230,8 @@ structure CSOperatorMixing {d : ℕ} (rg : RGFramework d) where
   /-- Set of operators that can mix -/
   operators : List rg.Operator
   /-- Anomalous dimension matrix γ_ij(g) -/
-  gamma_matrix : rg.Operator → rg.Operator → ℝ → ℝ
+  gamma_matrix :
+    rg.Operator → rg.Operator → DimensionlessCoupling → ScalingDimension
   -- The CS equation with mixing [μ∂/∂μ + β∂/∂g + γ_ij]⟨O_i O_j⟩ = 0
   -- requires derivatives not available in this formalization.
 
@@ -234,14 +243,14 @@ structure CSOperatorMixing {d : ℕ} (rg : RGFramework d) where
     β₁ = (34 C_A² - 20 C_A T_F N_f - 12 C_F T_F N_f) / (16π²)²
 
     For SU(3): C_A = 3, C_F = 4/3, T_F = 1/2 -/
-noncomputable def qcdBeta0 (N_f : ℕ) : ℝ :=
+noncomputable def qcdBeta0 (N_f : ℕ) : BetaFunctionValue :=
   (11 * 3 - 4 * (1 / 2 : ℝ) * (N_f : ℝ)) / (16 * Real.pi^2)
 
-noncomputable def qcdBeta1 (N_f : ℕ) : ℝ :=
+noncomputable def qcdBeta1 (N_f : ℕ) : BetaFunctionValue :=
   (34 * 9 - 20 * 3 * (1 / 2 : ℝ) * (N_f : ℝ) -
       12 * (4 / 3 : ℝ) * (1 / 2 : ℝ) * (N_f : ℝ)) / (16 * Real.pi^2)^2
 
-/-- QCD one-loop coefficient is positive for N_f < 33/2 = 16.5.
+/-- QCD one-loop coefficient is positive for `N_f < 33/2`.
 
     With the convention β(g) = -β₀ g³ + O(g⁵), β₀ > 0 is asymptotic freedom. -/
 theorem qcd_asymptotic_freedom (N_f : ℕ) (_h_nf : N_f < 17)
@@ -255,7 +264,9 @@ theorem qcd_asymptotic_freedom (N_f : ℕ) (_h_nf : N_f < 17)
 /-- Running strong coupling α_s(μ) = g²/(4π)
 
     At one loop: α_s(μ) = α_s(M_Z) / (1 + (α_s(M_Z) β₀/(2π)) log(μ/M_Z)) -/
-noncomputable def alphaStrong (μ M_Z : RenormScale) (alpha_MZ : ℝ) (N_f : ℕ) : ℝ :=
+noncomputable def alphaStrong
+    (μ M_Z : RenormScale) (alpha_MZ : DimensionlessCoupling) (N_f : ℕ) :
+    DimensionlessCoupling :=
   alpha_MZ / (1 + alpha_MZ * qcdBeta0 N_f / (2 * Real.pi) * Real.log (μ.μ / M_Z.μ))
 
 end PhysicsLogic.QFT.RG.GellMannLow
