@@ -710,8 +710,8 @@ theorem ads3_mixed_flux_pulsating_package_from_compositional
 structure AdS3MixedFluxPulsatingThresholdData where
   excitationNumber : ScalingDimension
   levelK : ScalingDimension
-  poleExcitationNumber : ℝ
-  muOrderTwoCorrectionDenominator : ℝ
+  poleExcitationNumber : ScalingDimension
+  muOrderTwoCorrectionDenominator : ScalingDimension
   shortStringScalingDimensionAtPole : ScalingDimension
   nsnsLongStringThresholdDimension : ScalingDimension
 
@@ -896,8 +896,8 @@ theorem ads3_mixed_flux_pulsating_mass_shift_consistency_from_packages
 structure AdS3MixedFluxFiniteKWzwFourPointReductionData where
   levelK : ScalingDimension
   mu : ScalingDimension
-  slBosonicLevel : ℝ
-  suBosonicLevel : ℝ
+  slBosonicLevel : ScalingDimension
+  suBosonicLevel : ScalingDimension
   usesSlFundamentalPair : AdS3CftClaim
   usesSuFundamentalPair : AdS3CftClaim
   usesSlGenericPair : AdS3CftClaim
@@ -937,12 +937,12 @@ theorem ads3_mixed_flux_finite_k_wzw_four_point_reduction_package
 /-- Finite-`k` WZW OPE-constant normalization data for mixed-flux AdS3 RR deformation. -/
 structure AdS3MixedFluxWzwOpeStructureConstantData where
   levelK : ScalingDimension
-  cSuHalfHalfOne : ℝ
-  cSlMinusHalfMinusHalfMinusOne : ℝ
-  suIdentityOpeCoefficient : ℝ
-  slIdentityOpeCoefficient : ℝ
-  cSuLargeKAsymptoticValue : ℝ
-  cSlLargeKAsymptoticValue : ℝ
+  cSuHalfHalfOne : OPECoefficient
+  cSlMinusHalfMinusHalfMinusOne : OPECoefficient
+  suIdentityOpeCoefficient : OPECoefficient
+  slIdentityOpeCoefficient : OPECoefficient
+  cSuLargeKAsymptoticValue : OPECoefficient
+  cSlLargeKAsymptoticValue : OPECoefficient
 
 /-- Finite-`k` WZW OPE-constant package:
 identity coefficients normalized to `1`,
@@ -974,11 +974,11 @@ structure AdS3MixedFluxRrTwoStringBracketData where
   mu : ScalingDimension
   z0Abs : ℝ
   normalizationN1 : ℝ
-  overallCoefficient : ℝ
-  cSlMinusHalfMinusHalfMinusOne : ℝ
-  cSuHalfHalfOne : ℝ
-  slPower : ℝ
-  suPower : ℝ
+  overallCoefficient : OPECoefficient
+  cSlMinusHalfMinusHalfMinusOne : OPECoefficient
+  cSuHalfHalfOne : OPECoefficient
+  slPower : ScalingDimension
+  suPower : ScalingDimension
   slRelativeSign : ℤ
   suRelativeSign : ℤ
   projectedZeroWeightVanishesAtFiniteK : AdS3CftClaim

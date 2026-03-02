@@ -16,8 +16,8 @@ set_option linter.unusedVariables false
     Represents contribution of Virasoro primary h_p and its descendants -/
 structure ConformalBlock2D where
   central_charge : VirasoroCentralCharge
-  external_weights : Fin 4 → ℝ  -- h_1, h_2, h_3, h_4
-  internal_weight : ℝ            -- h_p (exchanged primary)
+  external_weights : Fin 4 → ConformalWeight  -- h_1, h_2, h_3, h_4
+  internal_weight : ConformalWeight            -- h_p (exchanged primary)
   eval : ℂ → ℂ
 
 /-- Term in a four-point conformal-block expansion. -/
@@ -70,20 +70,21 @@ structure ConformalBlock2DTheory where
     (identityBlockTerm φ₁ φ₂ φ₃ φ₄ z).holomorphicBlock.internal_weight = 0 ∧
     (identityBlockTerm φ₁ φ₂ φ₃ φ₄ z).antiholomorphicBlock.internal_weight = 0
   /-- Canonical universal block selected by `(c, h_ext, h_int)`. -/
-  universalBlock : VirasoroCentralCharge → (Fin 4 → ℝ) → ℝ → ConformalBlock2D
+  universalBlock :
+    VirasoroCentralCharge → (Fin 4 → ConformalWeight) → ConformalWeight → ConformalBlock2D
   /-- The selected universal block carries the requested kinematic data. -/
   universal_block_spec : ∀
     (c : VirasoroCentralCharge)
-    (h_ext : Fin 4 → ℝ)
-    (h_int : ℝ),
+    (h_ext : Fin 4 → ConformalWeight)
+    (h_int : ConformalWeight),
     (universalBlock c h_ext h_int).central_charge = c ∧
     (universalBlock c h_ext h_int).external_weights = h_ext ∧
     (universalBlock c h_ext h_int).internal_weight = h_int
   /-- Uniqueness up to functional equality among blocks with fixed kinematic labels. -/
   universal_block_unique : ∀
     (c : VirasoroCentralCharge)
-    (h_ext : Fin 4 → ℝ)
-    (h_int : ℝ)
+    (h_ext : Fin 4 → ConformalWeight)
+    (h_int : ConformalWeight)
     (block : ConformalBlock2D),
     block.central_charge = c →
     block.external_weights = h_ext →

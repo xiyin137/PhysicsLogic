@@ -240,8 +240,8 @@ theorem ads3_nsns_worldsheet_matter_scft_package
 /-- Bosonic-level shifts used in supersymmetric AdS3/S3 WZW current-algebra construction. -/
 structure AdS3NsnsAffineLevelShiftData where
   levelK : ScalingDimension
-  slBosonicLevel : ℝ
-  suBosonicLevel : ℝ
+  slBosonicLevel : ScalingDimension
+  suBosonicLevel : ScalingDimension
   slCurrentShiftByFermionBilinearUsed : CftClaim
   suCurrentShiftByFermionBilinearUsed : CftClaim
 
@@ -722,8 +722,8 @@ theorem ads3_mixed_flux_pulsating_spectrum_package_from_compositional
 structure AdS3MixedFluxPulsatingThresholdCftData where
   excitationNumber : ScalingDimension
   levelK : ScalingDimension
-  poleExcitationNumber : ℝ
-  muOrderTwoCorrectionDenominator : ℝ
+  poleExcitationNumber : ScalingDimension
+  muOrderTwoCorrectionDenominator : ScalingDimension
   shortStringScalingDimensionAtPole : ScalingDimension
   nsnsLongStringThresholdDimension : ScalingDimension
 
@@ -910,8 +910,8 @@ theorem ads3_mixed_flux_pulsating_mass_shift_consistency_from_packages_cft
 structure AdS3MixedFluxFiniteKWzwFourPointReductionCftData where
   levelK : ScalingDimension
   mu : ScalingDimension
-  slBosonicLevel : ℝ
-  suBosonicLevel : ℝ
+  slBosonicLevel : ScalingDimension
+  suBosonicLevel : ScalingDimension
   usesSlFundamentalPair : CftClaim
   usesSuFundamentalPair : CftClaim
   usesSlGenericPair : CftClaim
@@ -950,12 +950,12 @@ theorem ads3_mixed_flux_finite_k_wzw_four_point_reduction_cft_package
 /-- Finite-`k` WZW OPE-constant normalization data in the mixed-flux AdS3 QFT lane. -/
 structure AdS3MixedFluxWzwOpeStructureConstantCftData where
   levelK : ScalingDimension
-  cSuHalfHalfOne : ℝ
-  cSlMinusHalfMinusHalfMinusOne : ℝ
-  suIdentityOpeCoefficient : ℝ
-  slIdentityOpeCoefficient : ℝ
-  cSuLargeKAsymptoticValue : ℝ
-  cSlLargeKAsymptoticValue : ℝ
+  cSuHalfHalfOne : OPECoefficient
+  cSlMinusHalfMinusHalfMinusOne : OPECoefficient
+  suIdentityOpeCoefficient : OPECoefficient
+  slIdentityOpeCoefficient : OPECoefficient
+  cSuLargeKAsymptoticValue : OPECoefficient
+  cSlLargeKAsymptoticValue : OPECoefficient
 
 /-- Finite-`k` WZW OPE-constant package in the QFT lane:
 identity OPE normalization, `SL(2)`/`SU(2)` structure-constant relation
@@ -987,11 +987,11 @@ structure AdS3MixedFluxRrTwoStringBracketCftData where
   mu : ScalingDimension
   z0Abs : ℝ
   normalizationN1 : ℝ
-  overallCoefficient : ℝ
-  cSlMinusHalfMinusHalfMinusOne : ℝ
-  cSuHalfHalfOne : ℝ
-  slPower : ℝ
-  suPower : ℝ
+  overallCoefficient : OPECoefficient
+  cSlMinusHalfMinusHalfMinusOne : OPECoefficient
+  cSuHalfHalfOne : OPECoefficient
+  slPower : ScalingDimension
+  suPower : ScalingDimension
   slRelativeSign : ℤ
   suRelativeSign : ℤ
   projectedZeroWeightVanishesAtFiniteK : CftClaim

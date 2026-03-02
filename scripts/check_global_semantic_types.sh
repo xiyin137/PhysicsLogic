@@ -194,9 +194,22 @@ else
   echo "[ok] spin/conformal-weight fields use semantic aliases in non-Papers modules"
 fi
 
+echo "[global-semantic-check] conformal-block weight fields use ConformalWeight aliases"
+raw_block_weight_hits="$(
+  rg -n "^[[:space:]]+(external_weights|internal_weight)[[:space:]]*:[[:space:]].*(ℝ|Real)" \
+    PhysicsLogic/QFT/CFT/TwoDimensional/ConformalBlocks.lean || true
+)"
+if [[ -n "$raw_block_weight_hits" ]]; then
+  echo "$raw_block_weight_hits"
+  echo "[fail] found raw ℝ/Real conformal-block weight fields"
+  status=1
+else
+  echo "[ok] conformal-block weight fields use semantic aliases"
+fi
+
 echo "[global-semantic-check] AdS3 spectral-weight fields use ScalingDimension aliases"
 raw_ads3_weight_hits="$(
-  rg -n "^[[:space:]]+(jDiscrete|jReflected|jContinuousRealPart|continuousParameter|mQuantum|currentDescendantLevel|virasoroDescendantLevel|adsDescendantLevel|suDescendantLevel|internalWeight|j0Three|flowedLZero)[[:space:]]*:[[:space:]]*(ℝ|Real)([[:space:]]|$)" \
+  rg -n "^[[:space:]]+(jDiscrete|jReflected|jContinuousRealPart|continuousParameter|mQuantum|currentDescendantLevel|virasoroDescendantLevel|adsDescendantLevel|suDescendantLevel|internalWeight|j0Three|flowedLZero|poleExcitationNumber|muOrderTwoCorrectionDenominator|slBosonicLevel|suBosonicLevel|slPower|suPower)[[:space:]]*:[[:space:]]*(ℝ|Real)([[:space:]]|$)" \
     PhysicsLogic/StringTheory/AdS3CFT2.lean \
     PhysicsLogic/QFT/CFT/TwoDimensional/CurrentAlgebras.lean || true
 )"
@@ -206,6 +219,20 @@ if [[ -n "$raw_ads3_weight_hits" ]]; then
   status=1
 else
   echo "[ok] AdS3 spectral-weight fields use semantic aliases in core modules"
+fi
+
+echo "[global-semantic-check] AdS3 OPE/normalization coefficients use semantic aliases"
+raw_ads3_ope_hits="$(
+  rg -n "^[[:space:]]+(cSuHalfHalfOne|cSlMinusHalfMinusHalfMinusOne|suIdentityOpeCoefficient|slIdentityOpeCoefficient|cSuLargeKAsymptoticValue|cSlLargeKAsymptoticValue|overallCoefficient)[[:space:]]*:[[:space:]]*(ℝ|Real)([[:space:]]|$)" \
+    PhysicsLogic/StringTheory/AdS3CFT2.lean \
+    PhysicsLogic/QFT/CFT/TwoDimensional/CurrentAlgebras.lean || true
+)"
+if [[ -n "$raw_ads3_ope_hits" ]]; then
+  echo "$raw_ads3_ope_hits"
+  echo "[fail] found raw ℝ/Real AdS3 OPE/normalization coefficient fields in core modules"
+  status=1
+else
+  echo "[ok] AdS3 OPE/normalization coefficient fields use semantic aliases in core modules"
 fi
 
 echo "[global-semantic-check] LSZ field-strength renormalization uses semantic alias"
