@@ -11,8 +11,11 @@ set_option linter.unusedVariables false
 /-- Bare coupling constants on the lattice (depend on lattice spacing a).
     In renormalizable theories, these must be tuned as a → 0 to reach a continuum limit. -/
 structure BareCoupling where
+  /-- Labels for independent operators/couplings in the lattice action. -/
+  CouplingLabel : Type
   spacing : LengthScale
-  couplings : ScalingDimension  -- Simplified: in reality this would be a vector of coupling constants
+  /-- Bare coupling assignment at lattice spacing `a`. -/
+  coupling : CouplingLabel → CouplingScale
 
 /- ============= LATTICE REGULARIZATION ============= -/
 
@@ -82,10 +85,14 @@ structure TransferMatrixData (d : ℕ) where
     The effective action Γ[φ_cl] is the Legendre transform of log Z[J],
     generating 1PI (one-particle-irreducible) correlation functions. -/
 structure EuclideanGeneratingData {d : ℕ} (theory : QFT d) where
-  /-- Generating functional Z[J] = ∫ Dφ e^{-S_E[φ] + ∫J·φ} -/
-  generatingFunctional : (source : EuclideanPoint d → ScalingDimension) → ComplexAmplitude
-  /-- Effective action Γ[φ_cl] (1PI generating functional) -/
-  effectiveAction : (EuclideanPoint d → ScalingDimension) → ActionScale
+  /-- Source-configuration space for the generating functional. -/
+  SourceConfiguration : Type
+  /-- Classical-field configuration space for the Legendre-transformed 1PI functional. -/
+  ClassicalConfiguration : Type
+  /-- Generating functional `Z[J] = ∫ Dφ e^{-S_E[φ] + ∫J·φ}` as a functional on source space. -/
+  generatingFunctional : SourceConfiguration → ComplexAmplitude
+  /-- Effective action `Γ[φ_cl]` as a functional on classical-field space. -/
+  effectiveActionFunctional : ClassicalConfiguration → ActionScale
 
 /-- Schwinger-Dyson equations relate n-point and (n+1)-point functions.
     For a theory with action S[φ], the SD equation is:
@@ -128,11 +135,13 @@ structure WardTakahashiIdentity {d : ℕ} (theory : QFT d) where
   vacuum_conservation : ∀ (x : EuclideanPoint d),
     wardInsertion 0 x (fun i => nomatch i) = 0
 
-/-- A theory has ferromagnetic structure if all Schwinger functions are non-negative
-    and satisfy certain convexity properties. This is a strong condition! -/
+/-- A theory has ferromagnetic structure if its even-point Schwinger functions
+    are non-negative and satisfy positive-correlation inequalities.
+    This is a strong condition. -/
 structure IsFerromagnetic {d : ℕ} (theory : QFT d) where
-  /-- All correlation functions are non-negative -/
-  nonneg : ∀ n (points : Fin n → EuclideanPoint d), theory.schwinger n points ≥ 0
+  /-- Even-point Euclidean correlators are non-negative in the chosen ferromagnetic regime. -/
+  even_point_nonneg : ∀ n (points : Fin (2 * n) → EuclideanPoint d),
+    theory.schwinger (2 * n) points ≥ 0
   /-- Simplified positive-correlation form of FKG for two-point functions. -/
   fkg_condition : ∀ (x y : EuclideanPoint d),
     theory.schwinger 2 (fun i => if i = 0 then x else y) ≥
