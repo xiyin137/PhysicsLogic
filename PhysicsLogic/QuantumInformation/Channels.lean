@@ -25,8 +25,11 @@ structure SingleSpaceChannelTheory (H : Type _) [QuantumStateSpace H] where
   theory : ChannelTheory H H
   /-- Identity channel -/
   identityChannel : theory.QuantumChannel
-  /-- Maximally mixed state -/
-  maximallyMixed : ℕ → DensityOperator H
+  /-- Effective finite-dimensional sector used for capacity normalization. -/
+  stateDimension : ℕ
+  stateDimension_pos : stateDimension > 0
+  /-- Maximally mixed state on the chosen finite-dimensional sector. -/
+  maximallyMixed : DensityOperator H
   /-- Completely dephased state -/
   dephase : DensityOperator H → DensityOperator H
 
@@ -53,12 +56,14 @@ variable {H : Type _} [QuantumStateSpace H]
 
     This is a THEOREM (provable from quantum information theory), not an axiom itself. -/
 theorem holevo_bound
-  (sct : SingleSpaceChannelTheory H) (dim : ℕ)
+  (sct : SingleSpaceChannelTheory H)
   (h_phys :
     PhysicsLogic.PhysicsAssumption
       PhysicsLogic.AssumptionId.holevoBound
-      (sct.theory.classicalCapacity sct.identityChannel ≤ Real.log dim)) :
-  sct.theory.classicalCapacity sct.identityChannel ≤ Real.log dim := by
+      (sct.theory.classicalCapacity sct.identityChannel ≤
+        Real.log sct.stateDimension)) :
+  sct.theory.classicalCapacity sct.identityChannel ≤
+      Real.log sct.stateDimension := by
   exact h_phys
 
 end PhysicsLogic.QuantumInformation
