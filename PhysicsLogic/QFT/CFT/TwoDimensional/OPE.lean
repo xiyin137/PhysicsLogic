@@ -34,10 +34,24 @@ structure OPE2DTheory where
     (φ_i φ_j : Primary2D H)
     (z w : ℂ)
     (h : ‖z - w‖ < 1), Prop
-  /-- Associativity of OPE: (φ_i φ_j) φ_k = φ_i (φ_j φ_k) -/
+  /-- Left-nested OPE channel `(φ_i φ_j) φ_k`. -/
+  leftNestedOPE2D : ∀ {H : Type _}
+    (φ_i φ_j φ_k : Primary2D H)
+    (z_i z_j z_k : ℂ),
+    List (ℂ × Primary2D H)
+  /-- Right-nested OPE channel `φ_i (φ_j φ_k)`. -/
+  rightNestedOPE2D : ∀ {H : Type _}
+    (φ_i φ_j φ_k : Primary2D H)
+    (z_i z_j z_k : ℂ),
+    List (ℂ × Primary2D H)
+  /-- Associativity of OPE: both nested channel decompositions agree
+      in the overlap region `|z_i-z_j| < |z_j-z_k|`. -/
   ope_associativity_2d : ∀ {H : Type _}
     (φ_i φ_j φ_k : Primary2D H)
-    (z_i z_j z_k : ℂ), Prop
+    (z_i z_j z_k : ℂ)
+    (h_order : ‖z_i - z_j‖ < ‖z_j - z_k‖),
+    leftNestedOPE2D φ_i φ_j φ_k z_i z_j z_k =
+      rightNestedOPE2D φ_i φ_j φ_k z_i z_j z_k
 
 /- ============= STRUCTURE CONSTANTS ============= -/
 
@@ -75,10 +89,16 @@ noncomputable def applyMoebius (m : MoebiusTransform) (z : ℂ) : ℂ :=
 /-- Global conformal transformation theory in 2D -/
 structure GlobalConformalTheory2D where
   /-- Primary field transforms under Moebius: φ(z) → (cz+d)^{-2h} φ((az+b)/(cz+d)) -/
-  primary_moebius_transform : ∀ {H : Type _}
+  primary_moebius_transform : ∀ {H : Type _} [SMul ℂ H]
     (φ : Primary2D H)
     (m : MoebiusTransform)
-    (z : ℂ), Prop
+    (z zBar : ℂ)
+    (state : H),
+    ∃ (holomorphicFactor antiholomorphicFactor : ℂ),
+      holomorphicFactor ≠ 0 ∧
+      antiholomorphicFactor ≠ 0 ∧
+      φ.field (applyMoebius m z) (applyMoebius m zBar) state =
+        (holomorphicFactor * antiholomorphicFactor) • φ.field z zBar state
   /-- Global conformal Ward identity from SL(2,ℂ) -/
   global_conformal_ward : ∀ {H : Type _}
     (n : ℕ)
