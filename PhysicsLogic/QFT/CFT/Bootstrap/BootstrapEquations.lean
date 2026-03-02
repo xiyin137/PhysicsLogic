@@ -51,13 +51,22 @@ structure OPECoefficientTheory where
   /-- Structure constant from 3-point function -/
   structure_constant : ∀ {d : ℕ} {H : Type _}
     (φ_i φ_j φ_k : QuasiPrimary d H), ℂ
+  /-- Three-point correlator for quasi-primaries. -/
+  threePointFunction : ∀ {d : ℕ} {H : Type _}
+    (φ_i φ_j φ_k : QuasiPrimary d H)
+    (x_i x_j x_k : Fin d → ℝ), ComplexAmplitude
+  /-- Universal kinematic factor fixed by conformal covariance. -/
+  threePointKinematicFactor : ∀ {d : ℕ} {H : Type _}
+    (φ_i φ_j φ_k : QuasiPrimary d H)
+    (x_i x_j x_k : Fin d → ℝ), ComplexAmplitude
   /-- OPE coefficient determines 3-point function:
       ⟨φ_i(x_i) φ_j(x_j) φ_k(x_k)⟩ is fixed by C_{ijk} up to a universal conformal factor -/
   ope_coefficient_fixes_three_point : ∀ {d : ℕ} {H : Type _}
     (φ_i φ_j φ_k : QuasiPrimary d H)
     (x_i x_j x_k : Fin d → ℝ),
-    ∃ (C_ijk : ℂ) (conformal_factor : ℂ),
-      C_ijk = structure_constant φ_i φ_j φ_k ∧ conformal_factor ≠ 0
+    threePointFunction φ_i φ_j φ_k x_i x_j x_k =
+      structure_constant φ_i φ_j φ_k *
+        threePointKinematicFactor φ_i φ_j φ_k x_i x_j x_k
   /-- Symmetry of OPE coefficients: C_{ijk} = C_{jik}
       (for bosonic operators; fermionic operators pick up signs) -/
   ope_coefficient_symmetric : ∀ {d : ℕ} {H : Type _}
@@ -113,11 +122,24 @@ structure SelectionRulesTheory (ope : OPECoefficientTheory) where
     Associativity of the OPE is the fundamental consistency condition.
     It leads to crossing symmetry for 4-point functions and the bootstrap equations. -/
 structure OPEAssociativityTheory where
-  /-- OPE associativity: ((φ_i φ_j) φ_k) = (φ_i (φ_j φ_k))
-      This must hold in the overlap of convergence regions. -/
+  /-- Left-nested OPE channel `(φ_i φ_j) φ_k`. -/
+  leftNestedOPE : ∀ {d : ℕ} {H : Type _}
+    (φ_i φ_j φ_k : QuasiPrimary d H)
+    (x_i x_j x_k : Fin d → ℝ),
+    List (OPECoefficient d × QuasiPrimary d H)
+  /-- Right-nested OPE channel `φ_i (φ_j φ_k)`. -/
+  rightNestedOPE : ∀ {d : ℕ} {H : Type _}
+    (φ_i φ_j φ_k : QuasiPrimary d H)
+    (x_i x_j x_k : Fin d → ℝ),
+    List (OPECoefficient d × QuasiPrimary d H)
+  /-- OPE associativity: both channel decompositions agree in the overlap
+      of convergence regions. -/
   ope_associativity : ∀ {d : ℕ} {H : Type _}
     (φ_i φ_j φ_k : QuasiPrimary d H)
-    (x_i x_j x_k : Fin d → ℝ), Prop
+    (x_i x_j x_k : Fin d → ℝ)
+    (h_overlap : euclideanDistance x_i x_j < euclideanDistance x_j x_k),
+    leftNestedOPE φ_i φ_j φ_k x_i x_j x_k =
+      rightNestedOPE φ_i φ_j φ_k x_i x_j x_k
   /-- Explicit list of bootstrap constraints extracted from associativity. -/
   associativityConstraintSet : ∀ {d : ℕ} {H : Type _},
     QuasiPrimary d H → QuasiPrimary d H → QuasiPrimary d H → QuasiPrimary d H → List Prop
@@ -126,7 +148,7 @@ structure OPEAssociativityTheory where
       These are polynomial equations in the C_{ijk}. -/
   associativity_constraints : ∀ {d : ℕ} {H : Type _}
     (φ_i φ_j φ_k φ_l : QuasiPrimary d H),
-    (associativityConstraintSet φ_i φ_j φ_k φ_l).length > 0
+    ∀ c ∈ associativityConstraintSet φ_i φ_j φ_k φ_l, c
 
 /- ============= RELATION TO 4-POINT FUNCTIONS ============= -/
 
@@ -147,13 +169,13 @@ structure FourPointFunctionTheory where
     (blockExpansion φ₁ φ₂ φ₃ φ₄).length > 0
   /-- Canonical conformal block associated to an exchanged family. -/
   blockFromFamily : ∀ {d : ℕ} {H : Type _},
-    (Δ_ext : Fin 4 → ℝ) → (Δ_p : ℝ) → (ℓ_p : ℕ) →
+    (Δ_ext : Fin 4 → ℝ) → (Δ_p : ℝ) → (ℓ_p : SpinLabel) →
       ConformalMultiplet d H → CrossRatios → ℂ
   /-- Conformal block = contribution from primary + all descendants.
       Universal function determined by conformal symmetry. -/
   conformal_block_from_family : ∀ {d : ℕ} {H : Type _}
     (Δ_ext : Fin 4 → ℝ)
-    (Δ_p : ℝ) (ℓ_p : ℕ)
+    (Δ_p : ℝ) (ℓ_p : SpinLabel)
     (multiplet : ConformalMultiplet d H),
     ∃ (uv : CrossRatios), blockFromFamily Δ_ext Δ_p ℓ_p multiplet uv ≠ 0
 
