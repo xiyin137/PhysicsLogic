@@ -195,8 +195,8 @@ structure HaagRuelleData (H : Type*) [NormedAddCommGroup H] [Module ℂ H] where
   /-- S-matrix cluster decomposition: factorizes for separated groups -/
   smatrix_cluster : ∀ (n k : ℕ) (_ : k < n),
     ∀ (ε : ℝ), ε > 0 →
-      ∃ (R_min : ℝ), R_min > 0 ∧
-        ∀ (separation : ℝ), separation > R_min →
+      ∃ (R_min : LengthScale), R_min > 0 ∧
+        ∀ (separation : LengthScale), separation > R_min →
           ∃ (S_combined S_1 S_2 : ℂ), ‖S_combined - S_1 * S_2‖ < ε
 
   /- === Completeness and cluster property === -/
@@ -204,7 +204,7 @@ structure HaagRuelleData (H : Type*) [NormedAddCommGroup H] [Module ℂ H] where
   /-- Cluster property: correlation functions factorize at large separations.
       This follows from Wightman cluster decomposition axiom. -/
   cluster_property : ∀ (n m : ℕ) (ε : ℝ), ε > 0 →
-    ∃ (R : ℝ), R > 0
+    ∃ (R : LengthScale), R > 0
   /-- Asymptotic completeness: every state is scattering or bound.
 
       ℋ = Range(Ω₊) ⊕ ℋ_bound
