@@ -1205,4 +1205,53 @@ theorem ads3_mixed_flux_rr_spectrum_correction_compositional_bridge_package
       data.qftCompositional h_qft
   exact ⟨h_string_pkg, h_qft_pkg, h_mu, h_alpha, h_delta_mu, h_delta_zero, h_dm2, h_a04⟩
 
+/-- Cross-lane data for end-to-end matching of semiclassical pulsating and
+quantum RR-spectrum correction packages. -/
+structure AdS3MixedFluxSemiclassicalQuantumMatchBridgeData where
+  stringMatch : AdS3MixedFluxSemiclassicalQuantumMatchData
+  qftMatch : PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxSemiclassicalQuantumMatchCftData
+
+/-- Bridge package for end-to-end semiclassical/quantum match:
+lane-level match packages together with cross-lane identification of shared
+pulsating and mass-shift observables. -/
+def AdS3MixedFluxSemiclassicalQuantumMatchBridgePackage
+    (data : AdS3MixedFluxSemiclassicalQuantumMatchBridgeData) : Prop :=
+  AdS3MixedFluxSemiclassicalQuantumMatchPackage data.stringMatch /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxSemiclassicalQuantumMatchCftPackage
+    data.qftMatch /\
+  data.stringMatch.consistency.pulsating.n = data.qftMatch.consistency.spectrum.excitationNumber /\
+  data.stringMatch.consistency.pulsating.k = data.qftMatch.consistency.spectrum.levelK /\
+  data.stringMatch.consistency.pulsating.mu = data.qftMatch.consistency.spectrum.mu /\
+  data.stringMatch.consistency.pulsating.delta = data.qftMatch.consistency.spectrum.delta /\
+  data.stringMatch.consistency.massShift.scalingDimensionZero =
+    data.qftMatch.consistency.massShift.scalingDimensionZero /\
+  data.stringMatch.consistency.massShift.massSquaredShift =
+    data.qftMatch.consistency.massShift.massSquaredShift /\
+  data.stringMatch.consistency.massShift.fourPointAmplitude =
+    data.qftMatch.consistency.massShift.fourPointAmplitude
+
+/-- Derive cross-lane pulsating/mass-shift consistency from end-to-end
+semiclassical/quantum match packages. -/
+theorem ads3_mixed_flux_semiclassical_quantum_match_bridge_consistency_package
+    (data : AdS3MixedFluxSemiclassicalQuantumMatchBridgeData)
+    (h_match : AdS3MixedFluxSemiclassicalQuantumMatchBridgePackage data) :
+    AdS3MixedFluxPulsatingMassShiftConsistencyBridgePackage
+      { stringConsistency := data.stringMatch.consistency
+        qftConsistency := data.qftMatch.consistency } := by
+  rcases h_match with
+    ⟨h_string_match, h_qft_match, h_n, h_k, h_mu, h_delta, h_delta_zero, h_dm2, h_a04⟩
+  have h_string_cons :
+      AdS3MixedFluxPulsatingMassShiftConsistencyPackage data.stringMatch.consistency :=
+    ads3_mixed_flux_semiclassical_quantum_match_consistency_from_compositional
+      data.stringMatch h_string_match
+  have h_qft_cons :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxPulsatingMassShiftConsistencyCftPackage
+        data.qftMatch.consistency :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_semiclassical_quantum_match_consistency_from_compositional_cft
+      data.qftMatch h_qft_match
+  exact ads3_mixed_flux_pulsating_mass_shift_consistency_bridge_package
+    { stringConsistency := data.stringMatch.consistency
+      qftConsistency := data.qftMatch.consistency }
+    h_string_cons h_qft_cons h_n h_k h_mu h_delta h_delta_zero h_dm2 h_a04
+
 end PhysicsLogic.StringTheory

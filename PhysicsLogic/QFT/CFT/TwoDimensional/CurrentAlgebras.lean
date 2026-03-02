@@ -964,4 +964,50 @@ theorem ads3_mixed_flux_mass_shift_from_compositional_cft
       _ = true := h_proj_sft
   exact ⟨h_mu_nonneg_mass, h_alpha, h_nozero_one_true, h_nozero_nested_true, h_delta, h_dm2⟩
 
+/-- Data for end-to-end matching of semiclassical circular-pulsating shifts
+with quantum RR four-point mass-shift corrections in the QFT lane. -/
+structure AdS3MixedFluxSemiclassicalQuantumMatchCftData where
+  spectrumCompositional : AdS3MixedFluxPulsatingSpectrumCompositionalData
+  rrCompositional : AdS3MixedFluxRrSpectrumCorrectionCompositionalCftData
+  consistency : AdS3MixedFluxPulsatingMassShiftConsistencyCftData
+
+/-- End-to-end match package in the QFT lane:
+semiclassical circular-pulsating compositional data and quantum RR-spectrum
+compositional data are assembled and identified on shared `mu` and `Delta`
+observables, with NSNS baseline relation specified. -/
+def AdS3MixedFluxSemiclassicalQuantumMatchCftPackage
+    (data : AdS3MixedFluxSemiclassicalQuantumMatchCftData) : Prop :=
+  AdS3MixedFluxPulsatingSpectrumCompositionalPackage data.spectrumCompositional /\
+  AdS3MixedFluxRrSpectrumCorrectionCompositionalCftPackage data.rrCompositional /\
+  data.consistency.spectrum = data.spectrumCompositional.spectrum /\
+  data.consistency.massShift = data.rrCompositional.massShift /\
+  data.consistency.spectrum.mu = data.consistency.massShift.mu /\
+  data.consistency.spectrum.delta = data.consistency.massShift.scalingDimensionMu /\
+  data.consistency.massShift.scalingDimensionZero =
+    -2 * data.consistency.spectrum.excitationNumber +
+      2 * Real.sqrt (data.consistency.spectrum.excitationNumber * data.consistency.spectrum.levelK)
+
+/-- Build QFT-lane pulsating/mass-shift consistency from end-to-end
+semiclassical+quantum compositional match data. -/
+theorem ads3_mixed_flux_semiclassical_quantum_match_consistency_from_compositional_cft
+    (data : AdS3MixedFluxSemiclassicalQuantumMatchCftData)
+    (h_match : AdS3MixedFluxSemiclassicalQuantumMatchCftPackage data) :
+    AdS3MixedFluxPulsatingMassShiftConsistencyCftPackage data.consistency := by
+  rcases h_match with
+    ⟨h_spec_comp, h_rr_comp, h_spec_eq, h_mass_eq, h_mu, h_delta, h_delta_zero⟩
+  have h_spec_base :
+      AdS3MixedFluxPulsatingSpectrumPackage data.spectrumCompositional.spectrum :=
+    ads3_mixed_flux_pulsating_spectrum_package_from_compositional data.spectrumCompositional h_spec_comp
+  have h_mass_base :
+      AdS3MixedFluxMassShiftFromFourPointCftPackage data.rrCompositional.massShift :=
+    ads3_mixed_flux_mass_shift_from_compositional_cft data.rrCompositional h_rr_comp
+  have h_spec :
+      AdS3MixedFluxPulsatingSpectrumPackage data.consistency.spectrum := by
+    simpa [h_spec_eq] using h_spec_base
+  have h_mass :
+      AdS3MixedFluxMassShiftFromFourPointCftPackage data.consistency.massShift := by
+    simpa [h_mass_eq] using h_mass_base
+  exact ads3_mixed_flux_pulsating_mass_shift_consistency_from_packages_cft
+    data.consistency h_spec h_mass h_mu h_delta h_delta_zero
+
 end PhysicsLogic.QFT.CFT.TwoDimensional
