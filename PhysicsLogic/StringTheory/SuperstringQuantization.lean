@@ -179,6 +179,37 @@ structure SuperBRSTComplex where
 def SuperBRSTNilpotent (C : SuperBRSTComplex) : Prop :=
   ∀ ψ : C.State, C.Q (C.Q ψ) = C.zero
 
+/-- Super-Weyl central-charge cancellation package:
+matter and ghost contributions add to zero in the critical theory. -/
+structure SuperWeylCriticalityData (D : ℕ) where
+  matterCentralCharge : ℝ
+  ghostCentralCharge : ℝ
+  matter_c_formula : matterCentralCharge = (3 / 2 : ℝ) * (D : ℝ)
+  ghost_c_formula : ghostCentralCharge = -15
+  total_cancellation : matterCentralCharge + ghostCentralCharge = 0
+
+/-- Super-Weyl criticality implies the critical superstring spacetime dimension `D=10`. -/
+theorem SuperWeylCriticalityData.dimension_eq_ten
+    {D : ℕ} (data : SuperWeylCriticalityData D) : (D : ℝ) = 10 := by
+  have h_cancel :
+      (3 / 2 : ℝ) * (D : ℝ) - 15 = 0 := by
+    calc
+      (3 / 2 : ℝ) * (D : ℝ) - 15 = data.matterCentralCharge + data.ghostCentralCharge := by
+        rw [data.matter_c_formula, data.ghost_c_formula]
+        ring
+      _ = 0 := data.total_cancellation
+  nlinarith [h_cancel]
+
+/-- Proposition-level criticality condition for superstrings. -/
+def SuperCriticalDimensionCondition (D : ℕ) : Prop :=
+  Nonempty (SuperWeylCriticalityData D)
+
+/-- Nat-valued consequence of super-Weyl criticality: `D = 10`. -/
+theorem super_critical_dimension_nat_eq_10
+    {D : ℕ} (h : SuperCriticalDimensionCondition D) : D = 10 := by
+  rcases h with ⟨data⟩
+  exact Nat.cast_injective (by simpa using data.dimension_eq_ten)
+
 /-- Critical-dimension nilpotency condition:
 for `D = 10`, the BRST charge is nilpotent. -/
 def SuperBRSTNilpotentInCriticalDimension
@@ -484,7 +515,7 @@ def SuperstringQuantizationConsistencyPackage
     [Zero ConstraintResidual]
     (data : SuperstringQuantizationConsistencyData
       TransversalityResidual DiracResidual ConstraintResidual) : Prop :=
-  data.spacetimeDimension = 10 ∧
+  SuperCriticalDimensionCondition data.spacetimeDimension ∧
   SuperBRSTNilpotentInCriticalDimension data.spacetimeDimension data.brstComplex ∧
   SuperstringLevelZeroMasslessCompatibilityPackage data.levelZeroCompatibility
 
@@ -503,7 +534,9 @@ theorem superstring_quantization_consistency_consequences
     data.levelZeroCompatibility.massless.nsns.momentumSq = 0 ∧
     data.levelZeroCompatibility.massless.rr.momentumSq = 0 ∧
     data.levelZeroCompatibility.massless.fermionic.momentumSq = 0 := by
-  rcases h_pkg with ⟨h_dim, h_brst_critical, h_level_pkg⟩
+  rcases h_pkg with ⟨h_critical_dim, h_brst_critical, h_level_pkg⟩
+  have h_dim : data.spacetimeDimension = 10 :=
+    super_critical_dimension_nat_eq_10 h_critical_dim
   have h_brst_nil : SuperBRSTNilpotent data.brstComplex := by
     exact h_brst_critical h_dim
   have h_shell :=
