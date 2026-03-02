@@ -310,53 +310,74 @@ theorem superstring_mass_spectrum_package
   exact h_phys
 
 /-- Massless `(NS,NS)` data. -/
-structure MasslessNSNSData where
+structure MasslessNSNSData (TransversalityResidual : Type*)
+    [Zero TransversalityResidual] where
   momentumSq : MomentumSquaredScale
-  leftTransversalityResidual : ℂ
-  rightTransversalityResidual : ℂ
+  leftTransversalityResidual : TransversalityResidual
+  rightTransversalityResidual : TransversalityResidual
 
-def MasslessNSNSPackage (data : MasslessNSNSData) : Prop :=
+def MasslessNSNSPackage {TransversalityResidual : Type*}
+    [Zero TransversalityResidual]
+    (data : MasslessNSNSData TransversalityResidual) : Prop :=
   data.momentumSq = 0 ∧
   data.leftTransversalityResidual = 0 ∧
   data.rightTransversalityResidual = 0
 
 /-- Massless `(R,R)` data. -/
-structure MasslessRRData where
+structure MasslessRRData (DiracResidual : Type*) [Zero DiracResidual] where
   momentumSq : MomentumSquaredScale
-  leftDiracResidual : ℂ
-  rightDiracResidual : ℂ
+  leftDiracResidual : DiracResidual
+  rightDiracResidual : DiracResidual
 
-def MasslessRRPackage (data : MasslessRRData) : Prop :=
+def MasslessRRPackage {DiracResidual : Type*} [Zero DiracResidual]
+    (data : MasslessRRData DiracResidual) : Prop :=
   data.momentumSq = 0 ∧
   data.leftDiracResidual = 0 ∧
   data.rightDiracResidual = 0
 
 /-- Massless `(R,NS)` and `(NS,R)` fermionic-sector data. -/
-structure MasslessFermionicData where
+structure MasslessFermionicData (ConstraintResidual : Type*)
+    [Zero ConstraintResidual] where
   momentumSq : MomentumSquaredScale
-  transversalityAndDiracResidual : ℂ
-  gaugeRedundancyResidual : ℂ
+  transversalityAndDiracResidual : ConstraintResidual
+  gaugeRedundancyResidual : ConstraintResidual
 
-def MasslessFermionicPackage (data : MasslessFermionicData) : Prop :=
+def MasslessFermionicPackage {ConstraintResidual : Type*}
+    [Zero ConstraintResidual]
+    (data : MasslessFermionicData ConstraintResidual) : Prop :=
   data.momentumSq = 0 ∧
   data.transversalityAndDiracResidual = 0 ∧
   data.gaugeRedundancyResidual = 0
 
 /-- Combined massless-spectrum package for type-II superstrings. -/
-structure SuperstringMasslessSectorData where
-  nsns : MasslessNSNSData
-  rr : MasslessRRData
-  fermionic : MasslessFermionicData
+structure SuperstringMasslessSectorData
+    (TransversalityResidual DiracResidual ConstraintResidual : Type*)
+    [Zero TransversalityResidual]
+    [Zero DiracResidual]
+    [Zero ConstraintResidual] where
+  nsns : MasslessNSNSData TransversalityResidual
+  rr : MasslessRRData DiracResidual
+  fermionic : MasslessFermionicData ConstraintResidual
 
 def SuperstringMasslessSectorPackage
-    (data : SuperstringMasslessSectorData) : Prop :=
+    {TransversalityResidual DiracResidual ConstraintResidual : Type*}
+    [Zero TransversalityResidual]
+    [Zero DiracResidual]
+    [Zero ConstraintResidual]
+    (data : SuperstringMasslessSectorData
+      TransversalityResidual DiracResidual ConstraintResidual) : Prop :=
   MasslessNSNSPackage data.nsns ∧
   MasslessRRPackage data.rr ∧
   MasslessFermionicPackage data.fermionic
 
 /-- Assumed massless-sector package from Section 6.6.2. -/
 theorem superstring_massless_sector_package
-    (data : SuperstringMasslessSectorData)
+    {TransversalityResidual DiracResidual ConstraintResidual : Type*}
+    [Zero TransversalityResidual]
+    [Zero DiracResidual]
+    [Zero ConstraintResidual]
+    (data : SuperstringMasslessSectorData
+      TransversalityResidual DiracResidual ConstraintResidual)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSuperstringMasslessSectorPackage
       (SuperstringMasslessSectorPackage data)) :
@@ -364,15 +385,25 @@ theorem superstring_massless_sector_package
   exact h_phys
 
 /-- Compatibility data tying the level-zero mass formula to the massless sectors. -/
-structure SuperstringLevelZeroMasslessCompatibilityData where
+structure SuperstringLevelZeroMasslessCompatibilityData
+    (TransversalityResidual DiracResidual ConstraintResidual : Type*)
+    [Zero TransversalityResidual]
+    [Zero DiracResidual]
+    [Zero ConstraintResidual] where
   spectrum : SuperstringMassSpectrumData
   massless : SuperstringMasslessSectorData
+    TransversalityResidual DiracResidual ConstraintResidual
 
 /-- Level-zero/massless compatibility package:
 the mass formula, massless-sector constraints, and level-zero identification
 are imposed simultaneously so all sectors share the same on-shell `p^2=0`. -/
 def SuperstringLevelZeroMasslessCompatibilityPackage
-    (data : SuperstringLevelZeroMasslessCompatibilityData) : Prop :=
+    {TransversalityResidual DiracResidual ConstraintResidual : Type*}
+    [Zero TransversalityResidual]
+    [Zero DiracResidual]
+    [Zero ConstraintResidual]
+    (data : SuperstringLevelZeroMasslessCompatibilityData
+      TransversalityResidual DiracResidual ConstraintResidual) : Prop :=
   SuperstringMassSpectrumPackage data.spectrum ∧
   SuperstringMasslessSectorPackage data.massless ∧
   data.spectrum.leftLevel = 0 ∧
@@ -383,7 +414,12 @@ def SuperstringLevelZeroMasslessCompatibilityPackage
 
 /-- In the level-zero sector, the superstring mass formula enforces `m^2 = 0`. -/
 theorem superstring_level_zero_implies_mass_sq_zero
-    (data : SuperstringLevelZeroMasslessCompatibilityData)
+    {TransversalityResidual DiracResidual ConstraintResidual : Type*}
+    [Zero TransversalityResidual]
+    [Zero DiracResidual]
+    [Zero ConstraintResidual]
+    (data : SuperstringLevelZeroMasslessCompatibilityData
+      TransversalityResidual DiracResidual ConstraintResidual)
     (h_pkg : SuperstringLevelZeroMasslessCompatibilityPackage data) :
     data.spectrum.massSq = 0 := by
   rcases h_pkg with ⟨_, h_massless, _, _, h_nsns_link, _, _⟩
@@ -395,7 +431,12 @@ theorem superstring_level_zero_implies_mass_sq_zero
 /-- Massless-sector momentum squares agree with level-zero mass formula:
 all NSNS/RR/fermionic sectors satisfy `p^2 = 0` consistently. -/
 theorem superstring_level_zero_massless_shell_consistency
-    (data : SuperstringLevelZeroMasslessCompatibilityData)
+    {TransversalityResidual DiracResidual ConstraintResidual : Type*}
+    [Zero TransversalityResidual]
+    [Zero DiracResidual]
+    [Zero ConstraintResidual]
+    (data : SuperstringLevelZeroMasslessCompatibilityData
+      TransversalityResidual DiracResidual ConstraintResidual)
     (h_pkg : SuperstringLevelZeroMasslessCompatibilityPackage data) :
     data.spectrum.massSq = 0 ∧
     data.massless.nsns.momentumSq = 0 ∧
@@ -424,15 +465,25 @@ theorem superstring_level_zero_massless_shell_consistency
 
 /-- Quantization consistency package combining critical BRST nilpotency
 with level-zero/massless shell compatibility. -/
-structure SuperstringQuantizationConsistencyData where
+structure SuperstringQuantizationConsistencyData
+    (TransversalityResidual DiracResidual ConstraintResidual : Type*)
+    [Zero TransversalityResidual]
+    [Zero DiracResidual]
+    [Zero ConstraintResidual] where
   spacetimeDimension : ℕ
   brstComplex : SuperBRSTComplex
   levelZeroCompatibility : SuperstringLevelZeroMasslessCompatibilityData
+    TransversalityResidual DiracResidual ConstraintResidual
 
 /-- Critical-dimension quantization package:
 BRST nilpotency in `D=10` together with level-zero/massless shell consistency. -/
 def SuperstringQuantizationConsistencyPackage
-    (data : SuperstringQuantizationConsistencyData) : Prop :=
+    {TransversalityResidual DiracResidual ConstraintResidual : Type*}
+    [Zero TransversalityResidual]
+    [Zero DiracResidual]
+    [Zero ConstraintResidual]
+    (data : SuperstringQuantizationConsistencyData
+      TransversalityResidual DiracResidual ConstraintResidual) : Prop :=
   data.spacetimeDimension = 10 ∧
   SuperBRSTNilpotentInCriticalDimension data.spacetimeDimension data.brstComplex ∧
   SuperstringLevelZeroMasslessCompatibilityPackage data.levelZeroCompatibility
@@ -440,7 +491,12 @@ def SuperstringQuantizationConsistencyPackage
 /-- Consequence of the quantization-consistency package:
 BRST nilpotency and shared on-shell massless constraints. -/
 theorem superstring_quantization_consistency_consequences
-    (data : SuperstringQuantizationConsistencyData)
+    {TransversalityResidual DiracResidual ConstraintResidual : Type*}
+    [Zero TransversalityResidual]
+    [Zero DiracResidual]
+    [Zero ConstraintResidual]
+    (data : SuperstringQuantizationConsistencyData
+      TransversalityResidual DiracResidual ConstraintResidual)
     (h_pkg : SuperstringQuantizationConsistencyPackage data) :
     SuperBRSTNilpotent data.brstComplex ∧
     data.levelZeroCompatibility.spectrum.massSq = 0 ∧

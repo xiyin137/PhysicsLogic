@@ -201,16 +201,19 @@ theorem super_sft_rr_kinetic_package
   exact h_phys
 
 /-- Superstring field-equation data from the 1PI effective action. -/
-structure SuperSftFieldEquationData where
-  brstTerm : ℂ
-  higherBracketTerm : ℂ
-  equationResidual : ℂ
+structure SuperSftFieldEquationData (FieldResidual : Type*)
+    [Add FieldResidual] [Zero FieldResidual] where
+  brstTerm : FieldResidual
+  higherBracketTerm : FieldResidual
+  equationResidual : FieldResidual
   bracketDefinedByAuxiliaryPairing : SuperSftClaim
   infinitesimalGaugeRedundancyPresent : SuperSftClaim
 
 /-- Super-SFT field-equation package:
 `Q_B Ψ + Σ (1/n!)[Ψ^n] = 0` with bracket defined by 1PI auxiliary pairing data. -/
-def SuperSftFieldEquationPackage (data : SuperSftFieldEquationData) : Prop :=
+def SuperSftFieldEquationPackage
+    {FieldResidual : Type*} [Add FieldResidual] [Zero FieldResidual]
+    (data : SuperSftFieldEquationData FieldResidual) : Prop :=
   data.equationResidual = data.brstTerm + data.higherBracketTerm ∧
   data.equationResidual = 0 ∧
   data.bracketDefinedByAuxiliaryPairing ∧
@@ -218,7 +221,8 @@ def SuperSftFieldEquationPackage (data : SuperSftFieldEquationData) : Prop :=
 
 /-- Assumed super-SFT field-equation/bracket package from Section 10.5. -/
 theorem super_sft_field_equation_package
-    (data : SuperSftFieldEquationData)
+    {FieldResidual : Type*} [Add FieldResidual] [Zero FieldResidual]
+    (data : SuperSftFieldEquationData FieldResidual)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSuperSftFieldEquationBracketPackage
       (SuperSftFieldEquationPackage data)) :

@@ -30,6 +30,23 @@ else
   echo "[ok] closed-SFT EOM/operator residual fields are non-scalar"
 fi
 
+echo "[semantic-check] no scalar-typed residual/equation fields in StringTheory"
+residual_equation_hits="$( {
+  rg -n \
+    "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*(Residual|residual|equationResidual|brstTerm|higherBracketTerm)[A-Za-z0-9_']*[[:space:]]*:[[:space:]]*(ℂ|Complex|ℝ|Real)([[:space:]]|$)" \
+    PhysicsLogic/StringTheory --glob '*.lean' || true
+  rg -n \
+    "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*(Residual|residual|equationResidual|brstTerm|higherBracketTerm)[A-Za-z0-9_']*[[:space:]]*:[[:space:]].*→[[:space:]]*(ℂ|Complex|ℝ|Real)([[:space:]]|$)" \
+    PhysicsLogic/StringTheory --glob '*.lean' || true
+} | sort -u )"
+if [[ -n "$residual_equation_hits" ]]; then
+  echo "$residual_equation_hits"
+  echo "[fail] found scalar-typed residual/equation fields"
+  status=1
+else
+  echo "[ok] residual/equation fields are non-scalar"
+fi
+
 echo "[semantic-check] no scalar-typed operator fields in StringTheory data structures"
 operator_hits="$(rg -n \
   "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Oo]perator[[:space:]]*:[[:space:]]*(ℂ|Complex|ℝ|Real)([[:space:]]|$)" \
