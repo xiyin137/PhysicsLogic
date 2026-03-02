@@ -17,9 +17,9 @@ abbrev AdSCFTClaim := Prop
 
 /-- Low-energy decoupling-limit control parameters for D3-brane holography. -/
 structure D3DecouplingLimitData where
-  stringLength : ℝ
-  energyScale : ℝ
-  couplingScale : ℝ
+  stringLength : StringLength
+  energyScale : Energy
+  couplingScale : DimensionlessCoupling
 
 /-- Decoupling-limit package:
 `ℓ_s E << 1` and `couplingScale * ℓ_s E << 1`. -/
@@ -41,12 +41,12 @@ theorem d3_decoupling_limit
 
 /-- AdS/CFT parameter map data for the D3-brane system. -/
 structure AdSCFTParameterMapData where
-  gaugeCoupling : ℝ
-  stringCoupling : ℝ
+  gaugeCoupling : DimensionlessCoupling
+  stringCoupling : DimensionlessCoupling
   rankN : ℕ
-  tHooftCoupling : ℝ
-  adsRadius : ℝ
-  alphaPrime : ℝ
+  tHooftCoupling : DimensionlessCoupling
+  adsRadius : LengthScale
+  alphaPrime : StringSlope
 
 /-- Parameter relations:
 `g_B = g_YM^2/(2π)`, `λ = 2 g_YM^2 N`, and `R^4/α'^2 = λ`. -/
@@ -68,7 +68,7 @@ theorem ads_cft_parameter_map
 
 /-- Minimal package for `N=4` SYM conformal/superconformal structure. -/
 structure NFourSYMConformalData where
-  betaFunctionValue : ℝ
+  betaFunctionValue : BetaFunctionValue
   stressTensorTrace : ℝ
   hasPsu224SuperconformalSymmetry : AdSCFTClaim
 
@@ -92,7 +92,7 @@ theorem n_four_sym_conformal_package
 structure CoulombBranchVacuumData (N : ℕ) where
   scalarVEV : Fin N → Fin 6 → ℝ
   moduliSpaceMatchesR6PowerNQuotient : AdSCFTClaim
-  wBosonMass : Fin N → Fin N → ℝ
+  wBosonMass : Fin N → Fin N → MassScale
 
 /-- Squared Euclidean distance in the six scalar-vev directions. -/
 def CoulombBranchSeparationSq {N : ℕ}
@@ -105,7 +105,7 @@ def CoulombBranchVacuumPackage {N : ℕ}
     (data : CoulombBranchVacuumData N) : Prop :=
   data.moduliSpaceMatchesR6PowerNQuotient ∧
   ∀ a b : Fin N, a ≠ b →
-    data.wBosonMass a b = Real.sqrt (CoulombBranchSeparationSq data a b)
+    (data.wBosonMass a b).value = Real.sqrt (CoulombBranchSeparationSq data a b)
 
 /-- Assumed Coulomb-branch vacuum/moduli package for `N=4` SYM. -/
 theorem coulomb_branch_vacuum_package
@@ -119,8 +119,8 @@ theorem coulomb_branch_vacuum_package
 
 /-- Probe-D3 and Coulomb-branch EFT matching data. -/
 structure ProbeD3CoulombMatchingData (FieldConfig : Type*) where
-  probeAction : FieldConfig → ℂ
-  coulombAction : FieldConfig → ℂ
+  probeAction : FieldConfig → ComplexActionValue
+  coulombAction : FieldConfig → ComplexActionValue
 
 /-- Interface relation:
 probe D3 effective action matches Coulomb-branch `U(1)` effective action. -/
@@ -140,10 +140,10 @@ theorem probe_d3_coulomb_matching
 
 /-- Coordinate data for the Poincare-to-global Euclidean AdS map. -/
 structure PoincareGlobalCoordinateData where
-  euclideanTime : ℝ
-  radialNorm : ℝ
-  poincareZ : ℝ
-  rho : ℝ
+  euclideanTime : ScalingDimension
+  radialNorm : ScalingDimension
+  poincareZ : ScalingDimension
+  rho : ScalingDimension
 
 /-- Coordinate-map package:
 `e^τ = sqrt(|x|^2 + z^2)` and `tanh ρ = |x|/sqrt(|x|^2+z^2)`. -/
@@ -166,8 +166,8 @@ theorem poincare_global_coordinate_map
 
 /-- State/operator map data for global AdS energy and CFT dimension. -/
 structure StateOperatorMapData where
-  operatorDimension : ℝ
-  globalAdSEnergy : ℝ
+  operatorDimension : ScalingDimension
+  globalAdSEnergy : ScalingDimension
 
 /-- State/operator map relation: `E_global = Δ`. -/
 def StateOperatorMapRelation (data : StateOperatorMapData) : Prop :=
@@ -203,7 +203,7 @@ theorem ads_cft_dictionary_relation
 /-- Supergraviton chiral-primary package data in `N=4` SYM. -/
 structure SupergravitonChiralPrimaryData where
   n : ℕ
-  conformalWeight : ℝ
+  conformalWeight : ScalingDimension
   rSymmetryDynkin : ℕ × ℕ × ℕ
   halfBpsProtected : AdSCFTClaim
 
@@ -226,7 +226,7 @@ theorem supergraviton_chiral_primary_package
 /-- Massive-string scaling data at large 't Hooft coupling. -/
 structure MassiveStringScalingData where
   excitationLevel : ℕ
-  tHooftCoupling : ℝ
+  tHooftCoupling : DimensionlessCoupling
   conformalWeight : ℝ
 
 /-- Strong-coupling massive-string scaling:
@@ -247,7 +247,7 @@ theorem massive_string_strong_coupling_scaling
 
 /-- Large-spin folded-string twist data. -/
 structure SpinningStringTwistData where
-  tHooftCoupling : ℝ
+  tHooftCoupling : DimensionlessCoupling
   spin : ℝ
   twist : ℝ
 
@@ -273,9 +273,9 @@ theorem spinning_string_large_spin_twist
 /-- Giant-graviton data for BPS relation and operator dual. -/
 structure GiantGravitonData where
   rankN : ℕ
-  angularMomentum : ℝ
-  energy : ℝ
-  polarAngle : ℝ
+  angularMomentum : ScalingDimension
+  energy : ScalingDimension
+  polarAngle : Angle
   maximalGiantMatchesDeterminantOperator : AdSCFTClaim
   submaximalGiantMatchesSubdeterminantOperator : AdSCFTClaim
 
@@ -300,21 +300,22 @@ theorem giant_graviton_duality_package
 
 /-- Hawking-Page thermodynamic saddle data in AdS5. -/
 structure HawkingPageTransitionData where
-  beta : ℝ
-  horizonRadius : ℝ
+  beta : InverseTemperatureScale
+  horizonRadius : LengthScale
   kappaFive : ℝ
-  logPartitionShift : ℝ
-  criticalBeta : ℝ
+  logPartitionShift : Dimful
+  criticalBeta : InverseTemperatureScale
 
 /-- Hawking-Page package:
 temperature-radius relation, critical inverse temperature, and BH/AdS free-energy shift. -/
 def HawkingPageTransitionPackage (data : HawkingPageTransitionData) : Prop :=
   data.horizonRadius > 0 ∧
   data.kappaFive > 0 ∧
-  data.beta = (2 * Real.pi * data.horizonRadius) / (1 + 2 * data.horizonRadius ^ (2 : ℕ)) ∧
-  data.criticalBeta = 2 * Real.pi / 3 ∧
+  data.beta = (((2 * Real.pi * data.horizonRadius) /
+      (1 + 2 * data.horizonRadius ^ (2 : ℕ))) : InverseTemperatureScale) ∧
+  data.criticalBeta = ((2 * Real.pi / 3 : ℝ) : InverseTemperatureScale) ∧
   data.logPartitionShift =
-    (Real.pi ^ (2 : ℕ) * data.beta / data.kappaFive ^ (2 : ℕ)) *
+    (((Real.pi ^ (2 : ℕ) : ℝ) : Dimful) * data.beta / data.kappaFive ^ (2 : ℕ)) *
       data.horizonRadius ^ (2 : ℕ) * (data.horizonRadius ^ (2 : ℕ) - 1)
 
 /-- Assumed Hawking-Page transition package for global AdS5 thermodynamics. -/
@@ -328,7 +329,7 @@ theorem hawking_page_transition_package
 
 /-- Strong-coupling thermal free-energy coefficient data for `N=4` SYM. -/
 structure NFourThermalStrongCouplingData where
-  freeEnergyDensityCoefficient : ℝ
+  freeEnergyDensityCoefficient : ScalingDimension
 
 /-- Infinite-coupling thermal coefficient relation: `f(∞) = π^2/8`. -/
 def NFourThermalStrongCouplingLimit (data : NFourThermalStrongCouplingData) : Prop :=

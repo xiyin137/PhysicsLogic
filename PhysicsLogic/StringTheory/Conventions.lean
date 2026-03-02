@@ -17,10 +17,10 @@ noncomputable def positiveRealRationalPower (x : ℝ) (num den : ℝ) : ℝ :=
 structure BosonicNormalizationConventionData where
   genus : ℕ
   externalStates : ℕ
-  stringCoupling : ℝ
-  gravitationalCoupling : ℝ
-  amplitudeNormalization : ℝ
-  sphereCurvatureNormalization : ℝ
+  stringCoupling : DimensionlessCoupling
+  gravitationalCoupling : CouplingScale
+  amplitudeNormalization : Dimless
+  sphereCurvatureNormalization : Dimless
 
 /-- Bosonic normalization package:
 `N_{h,n} = g_s^(n+2h-2)` and `K_{S^2} = 8π/κ^2`. -/
@@ -45,14 +45,14 @@ theorem bosonic_normalization_convention_package
 
 /-- Cross-theory string/gravitational-coupling conversion data. -/
 structure GravitationalCouplingConventionData where
-  alphaPrime : ℝ
-  bosonicStringCoupling : ℝ
-  bosonicGravitationalCoupling : ℝ
-  typeIIStringCoupling : ℝ
-  typeIIGravitationalCoupling : ℝ
-  heteroticStringCoupling : ℝ
-  heteroticGravitationalCoupling : ℝ
-  heteroticYangMillsCoupling : ℝ
+  alphaPrime : StringSlope
+  bosonicStringCoupling : DimensionlessCoupling
+  bosonicGravitationalCoupling : CouplingScale
+  typeIIStringCoupling : DimensionlessCoupling
+  typeIIGravitationalCoupling : CouplingScale
+  heteroticStringCoupling : DimensionlessCoupling
+  heteroticGravitationalCoupling : CouplingScale
+  heteroticYangMillsCoupling : CouplingScale
 
 /-- Coupling-convention package:
 bosonic `κ = 2π g_s`, type-II `κ = (π/2) g_s`, heterotic `κ = π g_s`,
@@ -86,11 +86,11 @@ theorem gravitational_coupling_convention_package
 /-- Bosonic open/closed coupling and Dp-brane tension convention data. -/
 structure BosonicDbraneTensionConventionData where
   braneDimension : ℕ
-  alphaPrime : ℝ
-  openStringCoupling : ℝ
-  closedStringCoupling : ℝ
-  gravitationalCoupling : ℝ
-  dbraneTension : ℝ
+  alphaPrime : StringSlope
+  openStringCoupling : DimensionlessCoupling
+  closedStringCoupling : DimensionlessCoupling
+  gravitationalCoupling : CouplingScale
+  dbraneTension : TensionScale
 
 /-- Bosonic Dp-brane convention package:
 `g_s = g_o^2`,
@@ -122,9 +122,9 @@ theorem bosonic_dbrane_tension_convention_package
 /-- Type-II Dp-brane tension convention data. -/
 structure TypeIIDbraneTensionConventionData where
   braneDimension : ℕ
-  alphaPrime : ℝ
-  gravitationalCoupling : ℝ
-  dbraneTension : ℝ
+  alphaPrime : StringSlope
+  gravitationalCoupling : CouplingScale
+  dbraneTension : TensionScale
 
 /-- Type-II Dp-brane convention package:
 `T_p = (sqrt(π)/κ)(4π^2 α')^((3-p)/2)`. -/
@@ -149,13 +149,13 @@ theorem typeII_dbrane_tension_convention_package
 
 /-- Type-II dimensionless-coupling conversion data. -/
 structure TypeIIDimensionlessCouplingConventionData where
-  alphaPrime : ℝ
-  gravitationalCoupling : ℝ
-  stringCoupling : ℝ
-  d1Tension : ℝ
-  d0Tension : ℝ
-  typeIIBDimensionlessCoupling : ℝ
-  typeIIADimensionlessCoupling : ℝ
+  alphaPrime : StringSlope
+  gravitationalCoupling : CouplingScale
+  stringCoupling : DimensionlessCoupling
+  d1Tension : TensionScale
+  d0Tension : TensionScale
+  typeIIBDimensionlessCoupling : Dimless
+  typeIIADimensionlessCoupling : Dimless
 
 /-- Type-II dimensionless-coupling package:
 `g_B = 1/(2π α' T_1) = κ/(8π^(7/2) α'^2) = g_s/(16π^(5/2) α'^2)` and
@@ -192,12 +192,12 @@ theorem typeII_dimensionless_coupling_convention_package
 
 /-- M-theory Planck-scale and brane-tension convention data. -/
 structure MTheoryScaleTensionConventionData where
-  alphaPrime : ℝ
-  stringCouplingIIA : ℝ
-  gravitationalCoupling11Squared : ℝ
-  planckMass11 : ℝ
-  membraneTension : ℝ
-  fivebraneTension : ℝ
+  alphaPrime : StringSlope
+  stringCouplingIIA : DimensionlessCoupling
+  gravitationalCoupling11Squared : CouplingScale
+  planckMass11 : MassScale
+  membraneTension : TensionScale
+  fivebraneTension : TensionScale
 
 /-- M-theory convention package:
 `κ_11^2 = 2^7 π^8 α'^(9/2) g_A^3 = 2^7 π^8 M_11^(-9)`,
