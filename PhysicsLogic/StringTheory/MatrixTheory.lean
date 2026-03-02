@@ -13,6 +13,8 @@ open scoped BigOperators
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
+abbrev MatrixTheoryClaim := Prop
+
 /-- Positive real power represented via logarithm/exponential. -/
 noncomputable def realPowerRatio (x : ℝ) (num den : ℝ) : ℝ :=
   Real.exp ((num / den) * Real.log x)
@@ -231,7 +233,7 @@ structure MatrixStringSymmetricOrbifoldData where
   maxCycleLength : ℕ
   cycleMultiplicity : ℕ → ℕ
   partitionTotal : ℕ
-  moduliSpaceTag : String
+  moduliSpaceIsSymmetricProductR8 : MatrixTheoryClaim
 
 /-- Symmetric-product orbifold package:
 `M = Sym^N(R^8)` and cycle decomposition `N = Σ_K n_K K` up to a cutoff. -/
@@ -239,7 +241,7 @@ def MatrixStringSymmetricOrbifoldPackage
     (data : MatrixStringSymmetricOrbifoldData) : Prop :=
   data.rankN > 0 ∧
   data.maxCycleLength > 0 ∧
-  data.moduliSpaceTag = "Sym^N(R^8)" ∧
+  data.moduliSpaceIsSymmetricProductR8 ∧
   data.partitionTotal =
     Finset.sum (Finset.Icc 1 data.maxCycleLength) (fun K => data.cycleMultiplicity K * K) ∧
   data.partitionTotal = data.rankN

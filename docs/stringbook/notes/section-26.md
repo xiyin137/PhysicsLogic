@@ -1,6 +1,6 @@
 # Section 26: Matrix Theory
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 636
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/MatrixTheory.lean`
@@ -43,6 +43,14 @@
 - `DVVCoefficientNormalizationPackage`
 - `MatrixStringTreeAmplitudePackage`
 - `MatrixStringLargeNConjecturePackage`
+
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/MatrixTheory.lean` with all listed
+  package units assumption-wired.
+- Physics-interface hardening pass:
+  replaced the matrix-string symmetric-orbifold moduli-space string label with
+  a claim-typed field (`MatrixTheoryClaim := Prop`) and removed the literal
+  string-equality placeholder from `MatrixStringSymmetricOrbifoldPackage`.
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `stringMatrixBfssUpliftParameters`.
