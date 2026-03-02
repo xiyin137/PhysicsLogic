@@ -60,6 +60,7 @@
 - `AdS3MixedFluxRrSpectrumCorrectionCompositionalPackage`
 - `AdS3MixedFluxRrSpectrumFromSecondOrderPackage`
 - `AdS3MixedFluxSemiclassicalQuantumMatchPackage`
+- `AdS3MixedFluxSemiclassicalQuantumMatchFromSecondOrderPackage`
 - `D1D5ConformalManifoldGeometryPackage` (QFT lane)
 - `D1D5AttractorTauGamma0Package` (QFT lane)
 - `D1D5SymmetricProductOrbifoldLocusPackage` (QFT lane)
@@ -93,6 +94,7 @@
 - `AdS3MixedFluxRrSpectrumCorrectionCompositionalCftPackage` (QFT lane)
 - `AdS3MixedFluxRrSpectrumFromSecondOrderCftPackage` (QFT lane)
 - `AdS3MixedFluxSemiclassicalQuantumMatchCftPackage` (QFT lane)
+- `AdS3MixedFluxSemiclassicalQuantumMatchFromSecondOrderCftPackage` (QFT lane)
 - `AdS3BosonicWzwBridgePackage`
 - `AdS3SpectralMassShellBridgePackage`
 - `AdS3NsnsWorldsheetBridgePackage`
@@ -115,6 +117,7 @@
 - `AdS3MixedFluxRrSpectrumCorrectionCompositionalBridgePackage`
 - `AdS3MixedFluxRrSpectrumFromSecondOrderBridgePackage`
 - `AdS3MixedFluxSemiclassicalQuantumMatchBridgePackage`
+- `AdS3MixedFluxSemiclassicalQuantumMatchFromSecondOrderBridgePackage`
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `stringAdS3D1D5InstantonChargeMap`.
