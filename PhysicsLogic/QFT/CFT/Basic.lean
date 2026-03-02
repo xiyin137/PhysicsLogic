@@ -31,7 +31,7 @@ set_option linter.unusedVariables false
 
 /-- Dilatation: x^μ → λx^μ with λ > 0 -/
 structure Dilatation where
-  scale : ℝ
+  scale : ScalingDimension
   positive : scale > 0
 
 /-- Apply dilatation to coordinates -/
@@ -121,7 +121,7 @@ structure ConformalTransformationTheory (d : ℕ) where
     (param : SCTParameter)
     (x : Fin d → ℝ)
     (state : H),
-    ∃ (conformal_factor : ℝ), conformal_factor > 0
+    ∃ (conformal_factor : ScalingDimension), conformal_factor > 0
   /-- Poincaré covariance (for d=4): translations and Lorentz rotations
       preserve the field up to a representation matrix factor. -/
   poincare_covariance : ∀ {H : Type _}
@@ -129,7 +129,7 @@ structure ConformalTransformationTheory (d : ℕ) where
     (P : PoincareTransform)
     (x : Fin 4 → ℝ)
     (state : H),
-    ∃ (transform_factor : ℂ), transform_factor ≠ 0
+    ∃ (transform_factor : ComplexAmplitude), transform_factor ≠ 0
 
 /- ============= OPERATOR PRODUCT EXPANSION ============= -/
 
@@ -139,7 +139,7 @@ noncomputable def euclideanDistance {d : ℕ} (x y : Fin d → ℝ) : ℝ :=
 
 /-- OPE coefficient C_ijk -/
 structure OPECoefficient (d : ℕ) where
-  value : ℂ
+  value : ComplexAmplitude
 
 /-- Structure for Operator Product Expansion theory
 
@@ -156,7 +156,7 @@ structure OPETheory (d : ℕ) where
     (x y : Fin d → ℝ)
     (other_insertions : List (Fin d → ℝ))
     (h_separated : ∀ z ∈ other_insertions, euclideanDistance x y < euclideanDistance y z),
-    ∃ (radius : ℝ), radius > 0 ∧ euclideanDistance x y < radius
+    ∃ (radius : LengthScale), radius > 0 ∧ euclideanDistance x y < radius
   /-- OPE associativity: (φ_i φ_j) φ_k = φ_i (φ_j φ_k) in the overlap region.
       The iterated OPE in either order produces a consistent set of operators. -/
   ope_associativity : ∀ {H : Type _}
@@ -174,8 +174,8 @@ structure OPETheory (d : ℕ) where
 
 /-- Cross-ratios for 4-point functions -/
 structure CrossRatios (d : ℕ) where
-  u : ℝ
-  v : ℝ
+  u : ScalingDimension
+  v : ScalingDimension
   positive : u > 0 ∧ v > 0
 
 /-- Structure for correlation function theory -/
@@ -184,19 +184,19 @@ structure CorrelationFunctionTheory (d : ℕ) where
   correlationFunction : ∀ {H : Type _}
     (n : ℕ)
     (operators : Fin n → QuasiPrimary d H)
-    (points : Fin n → (Fin d → ℝ)), ℂ
+    (points : Fin n → (Fin d → ℝ)), ComplexAmplitude
   /-- 2-point function: ⟨φ(x)φ(y)⟩ = C/|x-y|^(2Δ) -/
   twopoint_conformal_form : ∀ {H : Type _}
     (φ : QuasiPrimary d H)
     (x y : Fin d → ℝ),
-    ∃ (C : ℂ),
+    ∃ (C : ComplexAmplitude),
       correlationFunction 2 (![φ, φ]) (![x, y]) =
       C * ((euclideanDistance x y : ℂ) ^ (-(2 * φ.scaling_dim : ℂ)))
   /-- 3-point function fixed by conformal symmetry up to one constant -/
   threepoint_conformal_form : ∀ {H : Type _}
     (φ_i φ_j φ_k : QuasiPrimary d H)
     (x_i x_j x_k : Fin d → ℝ),
-    ∃ (C_ijk : ℂ) (a b c : ℝ),
+    ∃ (C_ijk : ComplexAmplitude) (a b c : ScalingDimension),
       correlationFunction 3 (![φ_i, φ_j, φ_k]) (![x_i, x_j, x_k]) =
       C_ijk * ((euclideanDistance x_i x_j : ℂ) ^ (-a : ℂ)) *
               ((euclideanDistance x_j x_k : ℂ) ^ (-b : ℂ)) *
@@ -205,7 +205,7 @@ structure CorrelationFunctionTheory (d : ℕ) where
   fourpoint_cross_ratios : ∀ {H : Type _}
     (operators : Fin 4 → QuasiPrimary d H)
     (points : Fin 4 → (Fin d → ℝ)),
-    ∃ (cr : CrossRatios d) (g : CrossRatios d → ℂ),
+    ∃ (cr : CrossRatios d) (g : CrossRatios d → ComplexAmplitude),
       correlationFunction 4 operators points = g cr
 
 /- ============= CONFORMAL WARD IDENTITIES ============= -/
@@ -288,7 +288,7 @@ structure ConformalBlockElement (d : ℕ) where
   /-- Exchanged operator spin ℓ -/
   exchanged_spin : SpinLabel
   /-- The conformal block function g(u,v) -/
-  blockFunction : CrossRatios d → ℂ
+  blockFunction : CrossRatios d → ComplexAmplitude
 
 /-- Conformal block: universal function from conformal symmetry -/
 abbrev ConformalBlock (d : ℕ) := ConformalBlockElement d
@@ -344,7 +344,7 @@ def RadialQuantizationOPEConvergence {d : ℕ}
     (x y : Fin d → ℝ)
     (other_insertions : List (Fin d → ℝ)),
     (∀ z ∈ other_insertions, euclideanDistance x y < euclideanDistance y z) →
-    ∃ (radius : ℝ), radius > 0 ∧ euclideanDistance x y < radius
+    ∃ (radius : LengthScale), radius > 0 ∧ euclideanDistance x y < radius
 
 /-- Assumed Appendix-D convergence package for radial-quantization/OPE expansions. -/
 theorem radial_quantization_ope_convergence {d : ℕ}

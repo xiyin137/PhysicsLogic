@@ -12,15 +12,16 @@ abbrev NonperturbativeClaim := Prop
 open scoped BigOperators
 
 /-- Regulator-removal statement: discretized approximants converge to a continuum amplitude. -/
-def DiscretizedPathIntegralConverges (approx : ℕ → ℂ) (continuum : ℂ) : Prop :=
+def DiscretizedPathIntegralConverges
+    (approx : ℕ → ComplexAmplitude) (continuum : ComplexAmplitude) : Prop :=
   ∀ ε : ℝ, ε > 0 → ∃ N0 : ℕ, ∀ N : ℕ, N ≥ N0 → ‖approx N - continuum‖ < ε
 
 /-- Canonical discretized phase-space path-integral interface for Appendix B:
 finite-step approximants, continuum amplitude, and Gaussian momentum
 integration to the Lagrangian form. -/
 structure DiscretizedPhaseSpacePathIntegral where
-  approximant : ℕ → ℂ
-  continuumAmplitude : ℂ
+  approximant : ℕ → ComplexAmplitude
+  continuumAmplitude : ComplexAmplitude
   gaussianMomentumIntegrationUsed : NonperturbativeClaim
 
 /-- Package for discretized phase-space path integral with continuum limit. -/
@@ -31,7 +32,7 @@ def DiscretizedPhaseSpacePathIntegralPackage
 
 /-- Assumed continuum limit for a discretized path-integral family. -/
 theorem discretized_path_integral_continuum_limit
-    (approx : ℕ → ℂ) (continuum : ℂ)
+    (approx : ℕ → ComplexAmplitude) (continuum : ComplexAmplitude)
     (h_phys : PhysicsAssumption
       AssumptionId.pathIntegralDiscretizedContinuumLimit
       (DiscretizedPathIntegralConverges approx continuum)) :
@@ -52,7 +53,8 @@ theorem discretized_phase_space_path_integral_package
 
 /-- Leading instanton-sector amplitude: one-loop prefactor times semiclassical exponential. -/
 def InstantonSemiclassicalWeight
-    (euclideanActionValue hbar : ℝ) (oneLoopPrefactor amplitude : ℂ) : Prop :=
+    (euclideanActionValue hbar : ActionScale)
+    (oneLoopPrefactor amplitude : ComplexAmplitude) : Prop :=
   hbar ≠ 0 ∧
   amplitude = oneLoopPrefactor * Complex.exp (-(euclideanActionValue / hbar : ℂ))
 
@@ -61,10 +63,10 @@ collective-coordinate bookkeeping. -/
 structure InstantonSaddleData where
   FieldConfiguration : Type
   saddleConfiguration : FieldConfiguration
-  euclideanActionFunctional : FieldConfiguration → ℝ
-  hbar : ℝ
-  oneLoopPrefactor : ℂ
-  amplitude : ℂ
+  euclideanActionFunctional : FieldConfiguration → ActionScale
+  hbar : ActionScale
+  oneLoopPrefactor : ComplexAmplitude
+  amplitude : ComplexAmplitude
   zeroModeCount : ℕ
   collectiveCoordinateMeasureIncluded : NonperturbativeClaim
 
@@ -78,7 +80,8 @@ def InstantonSaddlePackage (data : InstantonSaddleData) : Prop :=
 
 /-- Assumed leading instanton semiclassical weighting relation. -/
 theorem instanton_semiclassical_weight
-    (euclideanActionValue hbar : ℝ) (oneLoopPrefactor amplitude : ℂ)
+    (euclideanActionValue hbar : ActionScale)
+    (oneLoopPrefactor amplitude : ComplexAmplitude)
     (h_phys : PhysicsAssumption
       AssumptionId.pathIntegralInstantonSemiclassicalWeight
       (InstantonSemiclassicalWeight euclideanActionValue hbar oneLoopPrefactor amplitude)) :
@@ -143,24 +146,26 @@ theorem witten_index_topological_invariance
 
 /-- Sokal-Watson-style factorial remainder bound for a perturbative expansion. -/
 def SokalWatsonRemainderBound
-    (f : ℝ → ℂ) (coeff : ℕ → ℂ) (A σ : ℝ) : Prop :=
-  ∀ (N : ℕ) (g : ℝ), 0 < g →
+    (f : DimensionlessCoupling → ComplexAmplitude)
+    (coeff : ℕ → ComplexAmplitude) (A σ : ScalingDimension) : Prop :=
+  ∀ (N : ℕ) (g : DimensionlessCoupling), 0 < g →
     ‖f g - (∑ n ∈ Finset.range (N + 1), coeff n * (g : ℂ) ^ n)‖ ≤
       A * (Nat.factorial N : ℝ) * (σ * g) ^ N
 
 /-- Borel-summability interface: factorial remainder control + equality with Borel reconstruction. -/
 def BorelSokalWatsonCriterion
-    (f borelResummed : ℝ → ℂ) (coeff : ℕ → ℂ) (A σ : ℝ) : Prop :=
+    (f borelResummed : DimensionlessCoupling → ComplexAmplitude)
+    (coeff : ℕ → ComplexAmplitude) (A σ : ScalingDimension) : Prop :=
   SokalWatsonRemainderBound f coeff A σ ∧
-  ∀ g : ℝ, 0 < g → f g = borelResummed g
+  ∀ g : DimensionlessCoupling, 0 < g → f g = borelResummed g
 
 /-- Borel-resummation data with explicit saddle bookkeeping. -/
 structure BorelResummationData where
-  asymptoticSeries : ℝ → ℂ
-  borelResummed : ℝ → ℂ
-  coefficients : ℕ → ℂ
-  remainderBoundA : ℝ
-  remainderScaleSigma : ℝ
+  asymptoticSeries : DimensionlessCoupling → ComplexAmplitude
+  borelResummed : DimensionlessCoupling → ComplexAmplitude
+  coefficients : ℕ → ComplexAmplitude
+  remainderBoundA : ScalingDimension
+  remainderScaleSigma : ScalingDimension
   additionalSaddlesHandledByThimbleDecomposition : NonperturbativeClaim
 
 /-- Package for Borel reconstruction plus remainder control. -/
@@ -174,7 +179,8 @@ def BorelResummationPackage (data : BorelResummationData) : Prop :=
 
 /-- Assumed Sokal-Watson/Borel criterion in the current abstraction layer. -/
 theorem borel_sokal_watson_criterion
-    (f borelResummed : ℝ → ℂ) (coeff : ℕ → ℂ) (A σ : ℝ)
+    (f borelResummed : DimensionlessCoupling → ComplexAmplitude)
+    (coeff : ℕ → ComplexAmplitude) (A σ : ScalingDimension)
     (h_phys : PhysicsAssumption
       AssumptionId.pathIntegralBorelSokalWatsonCriterion
       (BorelSokalWatsonCriterion f borelResummed coeff A σ)) :
@@ -203,33 +209,37 @@ theorem borel_resummation_package
 structure LefschetzSector where
   FieldConfiguration : Type
   saddleConfiguration : FieldConfiguration
-  actionFunctional : FieldConfiguration → ℂ
+  actionFunctional : FieldConfiguration → ComplexActionValue
   coefficient : ℤ
-  fluctuationWeight : ℂ
+  fluctuationWeight : ComplexAmplitude
 
 /-- Contribution of a single thimble sector. -/
-noncomputable def LefschetzSector.contribution (sector : LefschetzSector) : ℂ :=
+noncomputable def LefschetzSector.contribution
+    (sector : LefschetzSector) : ComplexAmplitude :=
   (sector.coefficient : ℂ) *
     Complex.exp (-(sector.actionFunctional sector.saddleConfiguration)) *
     sector.fluctuationWeight
 
 /-- Sum over finitely many Lefschetz-thimble sectors. -/
-noncomputable def LefschetzThimbleSum (sectors : List LefschetzSector) : ℂ :=
+noncomputable def LefschetzThimbleSum
+    (sectors : List LefschetzSector) : ComplexAmplitude :=
   (sectors.map LefschetzSector.contribution).foldl (· + ·) 0
 
 /-- Thimble decomposition statement for a given path-integral amplitude. -/
-def LefschetzThimbleExpansion (amplitude : ℂ) (sectors : List LefschetzSector) : Prop :=
+def LefschetzThimbleExpansion
+    (amplitude : ComplexAmplitude) (sectors : List LefschetzSector) : Prop :=
   amplitude = LefschetzThimbleSum sectors
 
 /-- Lefschetz-thimble decomposition interface with explicit integer
 intersection-number bookkeeping. -/
-def LefschetzThimbleDecomposition (amplitude : ℂ) (sectors : List LefschetzSector) : Prop :=
+def LefschetzThimbleDecomposition
+    (amplitude : ComplexAmplitude) (sectors : List LefschetzSector) : Prop :=
   LefschetzThimbleExpansion amplitude sectors ∧
   ∀ sector ∈ sectors, sector.coefficient ≠ 0
 
 /-- Assumed Lefschetz-thimble decomposition relation. -/
 theorem lefschetz_thimble_expansion
-    (amplitude : ℂ) (sectors : List LefschetzSector)
+    (amplitude : ComplexAmplitude) (sectors : List LefschetzSector)
     (h_phys : PhysicsAssumption
       AssumptionId.pathIntegralLefschetzThimbleExpansion
       (LefschetzThimbleExpansion amplitude sectors)) :
@@ -239,7 +249,7 @@ theorem lefschetz_thimble_expansion
 /-- Build the Lefschetz-thimble decomposition interface from the assumed
 thimble expansion relation. -/
 theorem lefschetz_thimble_decomposition
-    (amplitude : ℂ) (sectors : List LefschetzSector)
+    (amplitude : ComplexAmplitude) (sectors : List LefschetzSector)
     (h_phys : PhysicsAssumption
       AssumptionId.pathIntegralLefschetzThimbleExpansion
       (LefschetzThimbleExpansion amplitude sectors))

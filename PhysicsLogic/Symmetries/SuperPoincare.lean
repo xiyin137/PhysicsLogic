@@ -26,16 +26,16 @@ def opAntiComm {H : Type*} [AddCommGroup H] [Module ℂ H]
   A * B + B * A
 
 /-- Kronecker delta on finite indices. -/
-def deltaFin {n : ℕ} (i j : Fin n) : ℂ :=
+def deltaFin {n : ℕ} (i j : Fin n) : ComplexDimensionless :=
   if i = j then 1 else 0
 
 /-- Data package for `d`-dimensional `${\cal N}`-extended super-Poincare algebra. -/
 structure SuperPoincareAlgebraData (d N K : ℕ) (H : Type*) [AddCommGroup H] [Module ℂ H] where
-  gamma : Fin d → Fin K → Fin K → ℂ
+  gamma : Fin d → Fin K → Fin K → ComplexDimensionless
   Q : Fin N → Fin K → Endomorphism H
   Qbar : Fin N → Fin K → Endomorphism H
   P : Fin d → Endomorphism H
-  centralCharge : Fin N → Fin N → ℂ
+  centralCharge : Fin N → Fin N → ComplexDimensionless
 
 /-- Supercharge anticommutator relation with momentum and central-charge terms. -/
 def NExtendedSuperPoincareRelation {d N K : ℕ} {H : Type*} [AddCommGroup H] [Module ℂ H]
@@ -73,12 +73,12 @@ theorem massless_supermultiplet_dimension
   exact h_phys
 
 /-- BPS bound/saturation package for central-charge-extended supersymmetry. -/
-def BpsBoundSaturation (mass centralAbs : ℝ) (preservedSupercharges : ℕ) : Prop :=
+def BpsBoundSaturation (mass centralAbs : MassScale) (preservedSupercharges : ℕ) : Prop :=
   mass ≥ centralAbs ∧ (mass = centralAbs → preservedSupercharges > 0)
 
 /-- Assumed BPS bound/saturation relation from Appendix M. -/
 theorem bps_bound_saturation
-    (mass centralAbs : ℝ) (preservedSupercharges : ℕ)
+    (mass centralAbs : MassScale) (preservedSupercharges : ℕ)
     (h_phys : PhysicsAssumption
       AssumptionId.symSuperPoincareBpsBound
       (BpsBoundSaturation mass centralAbs preservedSupercharges)) :
@@ -87,7 +87,7 @@ theorem bps_bound_saturation
 
 /-- 4D `${\cal N}=1` superspace differential-operator data (`Q`, `D`, and translations). -/
 structure N1SuperspaceData (H : Type*) [AddCommGroup H] [Module ℂ H] where
-  sigma : Fin 4 → Fin 2 → Fin 2 → ℂ
+  sigma : Fin 4 → Fin 2 → Fin 2 → ComplexDimensionless
   Q : Fin 2 → Endomorphism H
   Qbar : Fin 2 → Endomorphism H
   D : Fin 2 → Endomorphism H
@@ -175,12 +175,13 @@ theorem n1_vector_gauge_field_strength_package
   exact h_phys
 
 /-- Holomorphic one-loop exact beta-function interface for 4D `${\cal N}=1` Wilsonian coupling. -/
-def N1HolomorphicOneLoopBeta (beta : ℂ → ℂ) : Prop :=
-  ∃ a0 : ℂ, ∀ tau : ℂ, beta tau = a0
+def N1HolomorphicOneLoopBeta
+    (beta : ComplexCoupling → ComplexCoupling) : Prop :=
+  ∃ a0 : ComplexCoupling, ∀ tau : ComplexCoupling, beta tau = a0
 
 /-- Assumed holomorphic one-loop beta-function structure in 4D `${\cal N}=1` gauge dynamics. -/
 theorem n1_holomorphic_one_loop_beta
-    (beta : ℂ → ℂ)
+    (beta : ComplexCoupling → ComplexCoupling)
     (h_phys : PhysicsAssumption
       AssumptionId.qftSusyN1HolomorphicOneLoopBeta
       (N1HolomorphicOneLoopBeta beta)) :
@@ -189,7 +190,8 @@ theorem n1_holomorphic_one_loop_beta
 
 /-- NSVZ beta-function relation interface for canonically normalized coupling. -/
 def NsvzBetaRelation
-    (N : ℕ) (sumCasimir anomalousWeight gCanonical lhs : ℝ) : Prop :=
+    (N : ℕ) (sumCasimir anomalousWeight gCanonical : ScalingDimension)
+    (lhs : BetaFunctionValue) : Prop :=
   lhs =
     (1 / (2 * Real.pi)) *
       ((3 * (N : ℝ) - sumCasimir * (1 - 2 * anomalousWeight)) /
@@ -198,7 +200,8 @@ def NsvzBetaRelation
 
 /-- Assumed NSVZ beta-function relation from Appendix M. -/
 theorem nsvz_beta_relation
-    (N : ℕ) (sumCasimir anomalousWeight gCanonical lhs : ℝ)
+    (N : ℕ) (sumCasimir anomalousWeight gCanonical : ScalingDimension)
+    (lhs : BetaFunctionValue)
     (h_phys : PhysicsAssumption
       AssumptionId.qftSusyN1NsvzBetaRelation
       (NsvzBetaRelation N sumCasimir anomalousWeight gCanonical lhs)) :
@@ -207,19 +210,23 @@ theorem nsvz_beta_relation
 
 /-- 4D `${\cal N}=2` prepotential package (`K` and `tau_{ij}` from one holomorphic `F`). -/
 structure N2PrepotentialData (r : ℕ) where
-  prepotential : (Fin r → ℂ) → ℂ
-  dF : Fin r → (Fin r → ℂ) → ℂ
-  d2F : Fin r → Fin r → (Fin r → ℂ) → ℂ
-  kahler : (Fin r → ℂ) → ℝ
-  tau : Fin r → Fin r → (Fin r → ℂ) → ℂ
+  prepotential :
+    (Fin r → ComplexDimensionless) → ComplexDimensionless
+  dF : Fin r → (Fin r → ComplexDimensionless) → ComplexDimensionless
+  d2F :
+    Fin r → Fin r → (Fin r → ComplexDimensionless) → ComplexDimensionless
+  kahler : (Fin r → ComplexDimensionless) → ScalingDimension
+  tau :
+    Fin r → Fin r → (Fin r → ComplexDimensionless) → ComplexDimensionless
 
 /-- `${\cal N}=2` prepotential constraints for Abelian vector multiplet effective actions. -/
 def N2PrepotentialConstraints {r : ℕ} (data : N2PrepotentialData r) : Prop :=
-  (∀ phi : Fin r → ℂ,
+  (∀ phi : Fin r → ComplexDimensionless,
     data.kahler phi =
       (1 / (2 * Real.pi)) *
         Complex.im (∑ i : Fin r, star (phi i) * data.dF i phi)) ∧
-  (∀ i j : Fin r, ∀ phi : Fin r → ℂ, data.tau i j phi = data.d2F i j phi)
+  (∀ i j : Fin r, ∀ phi : Fin r → ComplexDimensionless,
+    data.tau i j phi = data.d2F i j phi)
 
 /-- Assumed `${\cal N}=2` prepotential constraints from Appendix M. -/
 theorem n2_prepotential_constraints
@@ -232,12 +239,12 @@ theorem n2_prepotential_constraints
   exact h_phys
 
 /-- 3D `${\cal N}=2` Chern-Simons-matter `D`-term elimination interface. -/
-def ThreeDN2SigmaDtermRelation (k sigma source : ℝ) : Prop :=
+def ThreeDN2SigmaDtermRelation (k sigma source : ScalingDimension) : Prop :=
   k ≠ 0 ∧ sigma = -(2 * Real.pi / k) * source
 
 /-- Assumed 3D `${\cal N}=2` `D`-term elimination relation from Appendix M. -/
 theorem three_d_n2_sigma_dterm_relation
-    (k sigma source : ℝ)
+    (k sigma source : ScalingDimension)
     (h_phys : PhysicsAssumption
       AssumptionId.qftSusy3dN2SigmaDtermRelation
       (ThreeDN2SigmaDtermRelation k sigma source)) :
@@ -245,12 +252,13 @@ theorem three_d_n2_sigma_dterm_relation
   exact h_phys
 
 /-- 3D `${\cal N}=3` quartic superpotential relation after integrating out auxiliary adjoint chiral field. -/
-def ThreeDN3QuarticSuperpotential (k bilinear W : ℂ) : Prop :=
+def ThreeDN3QuarticSuperpotential
+    (k bilinear W : ComplexCoupling) : Prop :=
   k ≠ 0 ∧ W = ((2 * Real.pi) / k) * bilinear ^ (2 : ℕ)
 
 /-- Assumed 3D `${\cal N}=3` quartic superpotential relation from Appendix M. -/
 theorem three_d_n3_quartic_superpotential
-    (k bilinear W : ℂ)
+    (k bilinear W : ComplexCoupling)
     (h_phys : PhysicsAssumption
       AssumptionId.qftSusy3dN3QuarticSuperpotential
       (ThreeDN3QuarticSuperpotential k bilinear W)) :

@@ -14,10 +14,10 @@ set_option linter.unusedVariables false
 `boundaryLimit x` models `lim_{z→0} z^(Δ-d) φ(x,z)`. -/
 structure ScalarBoundaryConditionData (Boundary : Type*) where
   boundaryDimension : ℕ
-  operatorDimension : ℝ
-  rescalingPower : ℝ
-  boundaryLimit : Boundary → ℂ
-  source : Boundary → ℂ
+  operatorDimension : ScalingDimension
+  rescalingPower : ScalingDimension
+  boundaryLimit : Boundary → ComplexAmplitude
+  source : Boundary → ComplexAmplitude
 
 /-- Standard scalar boundary condition `z^(Δ-d) φ -> φ₀` in interface form. -/
 def ScalarStandardBoundaryCondition {Boundary : Type*}
@@ -38,10 +38,10 @@ theorem scalar_standard_boundary_condition
 /-- Scalar two-point data in the holographic normalization convention. -/
 structure ScalarTwoPointData (Boundary : Type*) where
   boundaryDimension : ℕ
-  operatorDimension : ℝ
-  normalizationCDelta : ℂ
-  distanceWeight : Boundary → Boundary → ℂ
-  correlator : Boundary → Boundary → ℂ
+  operatorDimension : ScalingDimension
+  normalizationCDelta : ComplexAmplitude
+  distanceWeight : Boundary → Boundary → ComplexAmplitude
+  correlator : Boundary → Boundary → ComplexAmplitude
 
 /-- Two-point relation:
 `<O(x₁) O(x₂)> = ((2Δ-d) C_Δ) / |x₁₂|^(2Δ)` encoded by `distanceWeight`. -/
@@ -66,10 +66,10 @@ theorem scalar_two_point_function
 /-- Dictionary data for a bulk `U(1)` gauge field and boundary conserved current. -/
 structure GaugeCurrentDictionaryData (Boundary CurrentIndex : Type*) where
   boundaryDimension : ℕ
-  source : CurrentIndex → Boundary → ℂ
-  current : CurrentIndex → Boundary → ℂ
-  currentDimension : ℝ
-  divergence : Boundary → ℂ
+  source : CurrentIndex → Boundary → ComplexAmplitude
+  current : CurrentIndex → Boundary → ComplexAmplitude
+  currentDimension : ScalingDimension
+  divergence : Boundary → ComplexAmplitude
 
 /-- Gauge/current dictionary package:
 current dimension `Δ_J = d-1` and current conservation. -/
@@ -91,10 +91,10 @@ theorem gauge_current_dictionary
 /-- Dictionary data for bulk graviton source and boundary stress tensor. -/
 structure GravityStressTensorDictionaryData (Boundary TensorIndex : Type*) where
   boundaryDimension : ℕ
-  metricSource : TensorIndex → TensorIndex → Boundary → ℂ
-  stressTensor : TensorIndex → TensorIndex → Boundary → ℂ
-  stressTensorDimension : ℝ
-  divergence : TensorIndex → Boundary → ℂ
+  metricSource : TensorIndex → TensorIndex → Boundary → ComplexAmplitude
+  stressTensor : TensorIndex → TensorIndex → Boundary → ComplexAmplitude
+  stressTensorDimension : ScalingDimension
+  divergence : TensorIndex → Boundary → ComplexAmplitude
 
 /-- Gravity/stress-tensor dictionary package:
 stress-tensor dimension `Δ_T = d` and conservation. -/
@@ -116,10 +116,10 @@ theorem gravity_stress_tensor_dictionary
 /-- Regularized AdS gravity action data:
 Einstein-Hilbert bulk term + Gibbons-Hawking term + local counterterm. -/
 structure RegulatedAdSGravityActionData (BulkConfiguration : Type*) where
-  bulkEinsteinHilbertFunctional : BulkConfiguration → ℂ
-  gibbonsHawkingFunctional : BulkConfiguration → ℂ
-  localCountertermFunctional : BulkConfiguration → ℂ
-  totalActionFunctional : BulkConfiguration → ℂ
+  bulkEinsteinHilbertFunctional : BulkConfiguration → ComplexActionValue
+  gibbonsHawkingFunctional : BulkConfiguration → ComplexActionValue
+  localCountertermFunctional : BulkConfiguration → ComplexActionValue
+  totalActionFunctional : BulkConfiguration → ComplexActionValue
 
 /-- Composition rule for the regularized gravitational action. -/
 def RegulatedAdSGravityAction {BulkConfiguration : Type*}
@@ -141,10 +141,10 @@ theorem regulated_ads_gravity_action
 
 /-- Cubic scalar Witten-diagram data for the boundary three-point function. -/
 structure ScalarCubicWittenData (Boundary : Type*) where
-  cubicCoupling : ℂ
-  conformalFactor : ℂ
-  distanceFactor : Boundary → Boundary → Boundary → ℂ
-  correlator : Boundary → Boundary → Boundary → ℂ
+  cubicCoupling : ComplexCoupling
+  conformalFactor : ComplexAmplitude
+  distanceFactor : Boundary → Boundary → Boundary → ComplexAmplitude
+  correlator : Boundary → Boundary → Boundary → ComplexAmplitude
 
 /-- Cubic Witten-diagram relation:
 `<OOO> = -g_3 a_Δ / (|x₁₂|^Δ |x₂₃|^Δ |x₁₃|^Δ)` encoded by `distanceFactor`. -/
@@ -167,8 +167,8 @@ theorem scalar_cubic_witten_three_point
 
 /-- Mellin-variable data for an `n`-point scalar correlator. -/
 structure MellinVariableData (n : ℕ) where
-  delta : Fin n → Fin n → ℂ
-  conformalWeight : Fin n → ℂ
+  delta : Fin n → Fin n → ComplexDimensionless
+  conformalWeight : Fin n → ComplexDimensionless
 
 /-- Mellin constraints:
 `δ_ij = δ_ji` and `Σ_{j ≠ i} δ_ij = Δ_i`. -/
@@ -189,12 +189,12 @@ theorem mellin_constraint_system
 
 /-- Contact-diagram Mellin-amplitude data. -/
 structure ContactMellinAmplitudeData (n : ℕ) where
-  amplitude : (Fin n → Fin n → ℂ) → ℂ
+  amplitude : (Fin n → Fin n → ComplexDimensionless) → ComplexAmplitude
 
 /-- Contact Witten diagram relation: Mellin amplitude is constant `1`. -/
 def ContactMellinAmplitudeIsUnity {n : ℕ}
     (data : ContactMellinAmplitudeData n) : Prop :=
-  ∀ deltaVars : Fin n → Fin n → ℂ, data.amplitude deltaVars = 1
+  ∀ deltaVars : Fin n → Fin n → ComplexDimensionless, data.amplitude deltaVars = 1
 
 /-- Assumed contact-diagram Mellin amplitude normalization `M = 1`. -/
 theorem contact_mellin_amplitude_is_unity
@@ -208,9 +208,9 @@ theorem contact_mellin_amplitude_is_unity
 
 /-- Exchange-channel Mellin pole data. -/
 structure MellinExchangePoleData where
-  exchangedDimension : ℝ
-  channelInvariant : ℕ → ℂ
-  residue : ℕ → ℂ
+  exchangedDimension : ScalingDimension
+  channelInvariant : ℕ → ComplexDimensionless
+  residue : ℕ → ComplexAmplitude
 
 /-- Scalar-exchange pole package:
 pole locations at `Δ + 2k` (nonzero residues included). -/
@@ -230,10 +230,10 @@ theorem mellin_exchange_pole_series
 
 /-- Mellin flat-space-limit data (Penedones transform interface). -/
 structure MellinFlatSpaceLimitData where
-  adsRadius : ℝ
-  mellinAmplitude : ℂ
-  transformedFlatAmplitude : ℂ
-  finiteRadiusCorrection : ℂ
+  adsRadius : LengthScale
+  mellinAmplitude : ComplexAmplitude
+  transformedFlatAmplitude : ComplexAmplitude
+  finiteRadiusCorrection : ComplexAmplitude
 
 /-- Flat-space-limit relation:
 the transformed flat amplitude equals the Mellin amplitude up to a correction

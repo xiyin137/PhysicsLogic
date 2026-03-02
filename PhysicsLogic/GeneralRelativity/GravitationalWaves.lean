@@ -2,6 +2,7 @@ import PhysicsLogic.GeneralRelativity.EinsteinEquations
 import PhysicsLogic.SpaceTime.Minkowski
 import PhysicsLogic.Assumptions
 import Mathlib.Analysis.Complex.Basic
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 namespace PhysicsLogic.GeneralRelativity
 
@@ -70,47 +71,54 @@ inductive GWPolarization
   | Cross     -- h×: stretches at 45° to x-y
 
 /-- Plane wave solution: h_μν = A_μν exp(ik^ρx_ρ) -/
-noncomputable def planeWave (A : Fin 4 → Fin 4 → ℂ) (k : Fin 4 → ℝ) : TensorField 4 4 :=
+noncomputable def planeWave (A : Fin 4 → Fin 4 → ℂ)
+    (k : Fin 4 → DimensionlessMomentum) : TensorField 4 4 :=
   fun x μ ν => (A μ ν * Complex.exp (Complex.I * (∑ ρ : Fin 4, k ρ * x ρ))).re
 
 /-- Structure for gravitational wave theory -/
 structure GWTheory (consts : GRConstants) (scalarOps : ScalarFieldOperators) where
   /-- Dispersion relation for GW: k_μk^μ = 0 (null wave vector) -/
-  satisfiesDispersionRelation : (Fin 4 → ℝ) → Prop
+  satisfiesDispersionRelation : (Fin 4 → DimensionlessMomentum) → Prop
   /-- GW travels at speed of light -/
-  gw_speed_of_light : ∀ (h : TensorField 4 4) (k : Fin 4 → ℝ)
+  gw_speed_of_light : ∀ (h : TensorField 4 4) (k : Fin 4 → DimensionlessMomentum)
     (A : Fin 4 → Fin 4 → ℂ),
     isGravitationalWave consts scalarOps h →
     h = planeWave A k →
     satisfiesDispersionRelation k →
     Real.sqrt ((k 1)^2 + (k 2)^2 + (k 3)^2) / |k 0| = consts.c
   /-- Gravitational wave strain: h ~ ΔL/L -/
-  gwStrain : TensorField 4 4 → SpaceTimePoint → ℝ
+  gwStrain : TensorField 4 4 → SpaceTimePoint → ScalingDimension
   /-- Energy flux in gravitational waves: dE/dt/dA = (c³/16πG)⟨ḣ²⟩ -/
-  gwEnergyFlux : TensorField 4 4 → SpaceTimePoint → ℝ
+  gwEnergyFlux : TensorField 4 4 → SpaceTimePoint → DensityScale
   /-- Memory effect: permanent displacement after GW passage -/
-  gwMemoryEffect : TensorField 4 4 → SpaceTimePoint → Fin 4 → Fin 4 → ℝ
+  gwMemoryEffect :
+    TensorField 4 4 → SpaceTimePoint → Fin 4 → Fin 4 → ScalingDimension
 
 /-- Binary inspiral: two masses spiraling toward merger -/
 structure BinarySystem where
-  m1 : ℝ
-  m2 : ℝ
-  separation : ℝ → ℝ
-  orbital_frequency : ℝ → ℝ
+  m1 : InvariantMass
+  m2 : InvariantMass
+  m1_pos : m1 > 0
+  m2_pos : m2 > 0
+  separation : TimeScale → LengthScale
+  orbital_frequency : TimeScale → FrequencyScale
 
 /-- Structure for gravitational wave sources -/
 structure GWSources (consts : GRConstants) where
   /-- Quadrupole formula for GW emission:
       P = (G/5c⁵) ⟨d³Q_ij/dt³⟩²
       where Q_ij is mass quadrupole moment -/
-  quadrupoleFormula : (ℝ → Fin 3 → Fin 3 → ℝ) → ℝ
+  quadrupoleFormula : (TimeScale → Fin 3 → Fin 3 → Dimful) → Dimful
   /-- Chirp mass: M_chirp = (m₁m₂)^(3/5)/(m₁+m₂)^(1/5) -/
-  chirpMass : ℝ → ℝ → ℝ
+  chirpMass : InvariantMass → InvariantMass → InvariantMass
   /-- Chirp mass formula -/
-  chirp_mass_formula : ∀ (m1 m2 : ℝ),
-    chirpMass m1 m2 = (m1 * m2)^(3/5) / (m1 + m2)^(1/5)
+  chirp_mass_formula : ∀ (m1 m2 : InvariantMass),
+    m1 > 0 → m2 > 0 →
+    chirpMass m1 m2 =
+      ((Real.rpow (m1.value * m2.value) (3 / 5 : ℝ)) /
+        (Real.rpow (m1.value + m2.value) (1 / 5 : ℝ)) : InvariantMass)
   /-- GW frequency from binary: f_GW = 2 f_orb -/
-  gw_frequency_from_binary : BinarySystem → ℝ → ℝ
+  gw_frequency_from_binary : BinarySystem → TimeScale → FrequencyScale
   /-- Inspiral waveform: frequency increases as system loses energy -/
   inspiralWaveform : BinarySystem → TensorField 4 4
   /-- Merger and ringdown phases -/
@@ -120,9 +128,9 @@ structure GWSources (consts : GRConstants) where
 structure GWDetection (consts : GRConstants) where
   /-- Detection via laser interferometry (LIGO/Virgo) -/
   gwDetectorResponse : TensorField 4 4 →
-    (Fin 3 → Fin 3 → ℝ) →  -- detector orientation
-    ℝ → ℝ  -- time-dependent strain response
+    (Fin 3 → Fin 3 → ScalingDimension) →  -- detector orientation
+    TimeScale → ScalingDimension  -- time-dependent strain response
   /-- Stochastic gravitational wave background -/
-  gwBackground : ℝ → ℝ  -- function of frequency
+  gwBackground : FrequencyScale → ScalingDimension  -- function of frequency
 
 end PhysicsLogic.GeneralRelativity

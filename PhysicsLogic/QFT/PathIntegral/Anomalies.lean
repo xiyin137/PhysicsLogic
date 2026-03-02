@@ -14,8 +14,8 @@ set_option linter.unusedVariables false
 
 /-- 2D axial-anomaly data for a massless Dirac fermion coupled to a background `U(1)` field. -/
 structure TwoDAxialAnomalyData where
-  axialCurrentDivergence : ℝ
-  fieldStrengthDual : ℝ
+  axialCurrentDivergence : DensityScale
+  fieldStrengthDual : DensityScale
 
 /-- 2D axial anomaly relation `∂_μ j_A^μ = (1 / 2π) ε^{μν} F_{μν}` at coefficient level. -/
 def TwoDAxialCurrentAnomaly (data : TwoDAxialAnomalyData) : Prop :=
@@ -32,8 +32,8 @@ theorem two_d_axial_current_anomaly
 
 /-- 4D axial-anomaly data for a massless Dirac fermion in a background Abelian field. -/
 structure FourDAxialAnomalyData where
-  axialCurrentDivergence : ℝ
-  pontryaginDensity : ℝ
+  axialCurrentDivergence : DensityScale
+  pontryaginDensity : DensityScale
 
 /-- 4D axial anomaly relation `∂_μ j_A^μ = (1 / 16π²) ε^{μνρσ} F_{μν} F_{ρσ}`. -/
 def FourDAxialCurrentAnomaly (data : FourDAxialAnomalyData) : Prop :=
@@ -53,8 +53,8 @@ theorem four_d_axial_current_anomaly
 structure U1ChiralGaugeAnomalyData where
   VariationSource : Type
   sourceConfiguration : VariationSource
-  effectiveActionVariationFunctional : VariationSource → ℝ
-  integratedZetaFF : VariationSource → ℝ
+  effectiveActionVariationFunctional : VariationSource → ActionScale
+  integratedZetaFF : VariationSource → ActionScale
 
 /-- 4D chiral `U(1)` gauge-anomaly variation relation.
 `δ_ζ Γ = -(1 / 96π²) ∫ ζ ε^{μνρσ} F_{μν} F_{ρσ}`. -/
@@ -74,8 +74,8 @@ theorem u1_chiral_gauge_variation_anomaly
 
 /-- Multi-`U(1)` chiral-fermion charge data and cubic-anomaly coefficients. -/
 structure MultiU1ChargeData (nFermions nU1 : ℕ) where
-  charges : Fin nFermions → Fin nU1 → ℝ
-  dCoeff : Fin nU1 → Fin nU1 → Fin nU1 → ℝ
+  charges : Fin nFermions → Fin nU1 → ScalingDimension
+  dCoeff : Fin nU1 → Fin nU1 → Fin nU1 → ScalingDimension
 
 /-- Cubic anomaly coefficients:
 `d_{abc} = Σ_j q_j^{(a)} q_j^{(b)} q_j^{(c)}`. -/
@@ -97,9 +97,9 @@ theorem multi_u1_cubic_anomaly_coefficients
 
 /-- Counterterm-shift data for multi-`U(1)` gauge-anomaly coefficients. -/
 structure MultiU1CountertermData (nU1 : ℕ) where
-  baseDCoeff : Fin nU1 → Fin nU1 → Fin nU1 → ℝ
-  shiftedDCoeff : Fin nU1 → Fin nU1 → Fin nU1 → ℝ
-  hCoeff : Fin nU1 → Fin nU1 → Fin nU1 → ℝ
+  baseDCoeff : Fin nU1 → Fin nU1 → Fin nU1 → ScalingDimension
+  shiftedDCoeff : Fin nU1 → Fin nU1 → Fin nU1 → ScalingDimension
+  hCoeff : Fin nU1 → Fin nU1 → Fin nU1 → ScalingDimension
 
 /-- Counterterm ambiguity relation:
 `d'_{abc} = d_{abc} + 1/2 (h_{ab,c} + h_{ac,b})` with `h_{ab,c} = -h_{ba,c}`. -/
@@ -124,12 +124,12 @@ theorem multi_u1_counterterm_shift
 /-- General gauge-anomaly descent data in even spacetime dimension `d`. -/
 structure GaugeDescentData where
   d : ℕ
-  deltaGamma : ℂ
-  integralId : ℂ
-  dId : ℂ
-  deltaIdPlus1 : ℂ
-  dIdPlus1 : ℂ
-  idPlus2 : ℂ
+  deltaGamma : ComplexAmplitude
+  integralId : ComplexAmplitude
+  dId : ComplexAmplitude
+  deltaIdPlus1 : ComplexAmplitude
+  dIdPlus1 : ComplexAmplitude
+  idPlus2 : ComplexAmplitude
 
 /-- Descent relations:
 `δ_ζ Γ = -∫ I_d`, `d I_d = δ_ζ I_{d+1}`, `d I_{d+1} = I_{d+2}`. -/
@@ -151,8 +151,8 @@ theorem gauge_descent_relations
 /-- Chiral-fermion gauge-anomaly-polynomial data in even spacetime dimension `d`. -/
 structure ChiralFermionGaugeAnomalyPolynomialData where
   d : ℕ
-  anomalyPolynomial : ℂ
-  tracePower : ℂ
+  anomalyPolynomial : ComplexAmplitude
+  tracePower : ComplexAmplitude
 
 /-- Anomaly-polynomial relation for a Weyl fermion in representation `R`:
 `I_{d+2} = 1 / (((d+2)/2)! (2π)^{d/2}) * tr_R(F^{(d+2)/2})`. -/
@@ -178,10 +178,10 @@ theorem chiral_fermion_gauge_anomaly_polynomial
 structure GravitationalDescentData where
   k : ℕ
   dimension : ℕ
-  dI4k2 : ℂ
-  deltaI4k3 : ℂ
-  dI4k3 : ℂ
-  i4k4 : ℂ
+  dI4k2 : ComplexAmplitude
+  deltaI4k3 : ComplexAmplitude
+  dI4k3 : ComplexAmplitude
+  i4k4 : ComplexAmplitude
 
 /-- Gravitational descent relations in `d = 4k+2` dimensions. -/
 def GravitationalDescentRelations (data : GravitationalDescentData) : Prop :=
@@ -201,8 +201,8 @@ theorem gravitational_descent_relations
 /-- Gravitational-anomaly-polynomial data for a complex Weyl fermion in `d = 4k+2`. -/
 structure GravitationalAnomalyPolynomialData where
   k : ℕ
-  anomalyPolynomial : ℂ
-  ahatTopFormComponent : ℂ
+  anomalyPolynomial : ComplexAmplitude
+  ahatTopFormComponent : ComplexAmplitude
 
 /-- Gravitational anomaly-polynomial relation:
 `I_{4k+4} = -(2π)^{-(2k+1)} [det((R/2)/sinh(R/2))]^{1/2}|_{R^{2k+2}}`. -/
@@ -222,10 +222,10 @@ theorem gravitational_anomaly_polynomial
 
 /-- Explicit 10D Majorana-Weyl gravitational anomaly-polynomial coefficient data. -/
 structure D10MajoranaWeylAnomalyData where
-  anomalyPolynomial : ℂ
-  trR6 : ℂ
-  trR4trR2 : ℂ
-  trR2cubed : ℂ
+  anomalyPolynomial : ComplexAmplitude
+  trR6 : ComplexAmplitude
+  trR4trR2 : ComplexAmplitude
+  trR2cubed : ComplexAmplitude
 
 /-- 10D Majorana-Weyl anomaly-polynomial coefficient package from Appendix O. -/
 def D10MajoranaWeylAnomalyPolynomial

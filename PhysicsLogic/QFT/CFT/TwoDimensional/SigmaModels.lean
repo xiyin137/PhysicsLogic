@@ -10,15 +10,15 @@ set_option linter.unusedVariables false
 
 /-- Nonlinear-sigma-model background couplings in a 2D CFT interface. -/
 structure SigmaModelBackground (Target : Type*) where
-  metric : Target → Target → ℝ
-  bField : Target → Target → ℝ
-  dilaton : Target → ℝ
+  metric : Target → Target → ScalingDimension
+  bField : Target → Target → ScalingDimension
+  dilaton : Target → ScalingDimension
 
 /-- Hatted Weyl-anomaly coefficients that multiply renormalized worldsheet operators. -/
 structure HattedWeylAnomaly (Target : Type*) where
-  betaMetric : Target → Target → ℝ
-  betaBField : Target → Target → ℝ
-  betaDilaton : Target → ℝ
+  betaMetric : Target → Target → ScalingDimension
+  betaBField : Target → Target → ScalingDimension
+  betaDilaton : Target → ScalingDimension
 
 /-- Conformal fixed-point condition: hatted Weyl-anomaly coefficients vanish. -/
 def NlsmWeylAnomalyVanishing {Target : Type*}
@@ -38,11 +38,11 @@ theorem nlsm_weyl_anomaly_vanishing {Target : Type*}
 
 /-- Minimal Buscher-T-duality data along one isometry circle direction. -/
 structure BuscherCircleData (Base : Type*) where
-  alphaPrime : ℝ
-  metricCircle : Base → ℝ
-  dualMetricCircle : Base → ℝ
-  dilaton : Base → ℝ
-  dualDilaton : Base → ℝ
+  alphaPrime : StringSlope
+  metricCircle : Base → ScalingDimension
+  dualMetricCircle : Base → ScalingDimension
+  dilaton : Base → ScalingDimension
+  dualDilaton : Base → ScalingDimension
 
 /-- Buscher-rule interface: circle-radius inversion and dilaton shift. -/
 def BuscherRules {Base : Type*} (data : BuscherCircleData Base) : Prop :=
@@ -63,16 +63,16 @@ theorem buscher_rules {Base : Type*}
 
 /-- Minimal gauged-WZW/coset-flow package. -/
 structure GaugedWzwCosetData where
-  alphaPrime : ℝ
+  alphaPrime : StringSlope
   level : ℕ
-  radiusSq : ℝ
+  radiusSq : StringSlope
   irCosetTheory : Type*
 
 /-- IR-flow interface from gauged WZW description to a conformal coset model. -/
 def GaugedWzwCosetFlow (data : GaugedWzwCosetData) : Prop :=
   data.alphaPrime > 0 ∧
   data.level > 0 ∧
-  data.radiusSq = data.alphaPrime * data.level ∧
+  data.radiusSq = data.alphaPrime * (data.level : ScalingDimension) ∧
   data.radiusSq > 0 ∧
   Nonempty data.irCosetTheory
 
@@ -86,20 +86,20 @@ theorem gauged_wzw_coset_flow
   exact h_phys
 
 /-- Liouville background-charge relation for marginal exponential interaction. -/
-def LiouvilleMarginality (b Q : ℝ) : Prop :=
+def LiouvilleMarginality (b Q : ScalingDimension) : Prop :=
   b ≠ 0 ∧ Q = b + 1 / b
 
 /-- Liouville central-charge relation. -/
-def LiouvilleCentralCharge (Q c : ℝ) : Prop :=
+def LiouvilleCentralCharge (Q : ScalingDimension) (c : CentralCharge) : Prop :=
   c = 1 + 6 * Q ^ (2 : ℕ)
 
 /-- Assumed Liouville marginality/central-charge compatibility at conformal point. -/
-def LiouvilleMarginalityData (b Q c : ℝ) : Prop :=
+def LiouvilleMarginalityData (b Q : ScalingDimension) (c : CentralCharge) : Prop :=
   LiouvilleMarginality b Q ∧ LiouvilleCentralCharge Q c
 
 /-- Assumed Liouville marginality relation used in this abstraction layer. -/
 theorem liouville_marginality
-    (b Q c : ℝ)
+    (b Q : ScalingDimension) (c : CentralCharge)
     (h_phys : PhysicsAssumption
       AssumptionId.cft2dLiouvilleMarginality
       (LiouvilleMarginalityData b Q c)) :
@@ -108,13 +108,16 @@ theorem liouville_marginality
 
 /-- Degenerate-field bootstrap recursion interface for Liouville structure constants. -/
 def LiouvilleDozzRecursion
-    (C : ℝ → ℝ → ℝ → ℂ) (b : ℝ) : Prop :=
+    (C : ScalingDimension → ScalingDimension → ScalingDimension →
+      ComplexAmplitude) (b : ScalingDimension) : Prop :=
   b ≠ 0 ∧
-  ∀ P₁ P₂ P₃ : ℝ, C (P₁ + b) P₂ P₃ ≠ 0 ↔ C P₁ P₂ P₃ ≠ 0
+  ∀ P₁ P₂ P₃ : ScalingDimension,
+    C (P₁ + b) P₂ P₃ ≠ 0 ↔ C P₁ P₂ P₃ ≠ 0
 
 /-- Assumed DOZZ-type recursion constraints from degenerate Liouville insertions. -/
 theorem liouville_dozz_recursion
-    (C : ℝ → ℝ → ℝ → ℂ) (b : ℝ)
+    (C : ScalingDimension → ScalingDimension → ScalingDimension →
+      ComplexAmplitude) (b : ScalingDimension)
     (h_phys : PhysicsAssumption
       AssumptionId.cft2dLiouvilleDozzRecursion
       (LiouvilleDozzRecursion C b)) :

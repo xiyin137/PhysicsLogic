@@ -17,10 +17,10 @@ abbrev AdS5MirrorClaim := Prop
 
 /-- Double-Wick map data relating physical and mirror magnon kinematics. -/
 structure MirrorDoubleWickData where
-  physicalEnergy : ℝ
-  physicalMomentum : ℝ
-  mirrorEnergy : ℝ
-  mirrorMomentum : ℝ
+  physicalEnergy : DimensionlessEnergy
+  physicalMomentum : DimensionlessMomentum
+  mirrorEnergy : DimensionlessEnergy
+  mirrorMomentum : DimensionlessMomentum
 
 /-- Double-Wick map package:
 `E = i p_tilde`, `p = i E_tilde` in complexified kinematics. -/
@@ -39,9 +39,9 @@ theorem mirror_double_wick_map_package
 
 /-- Mirror-magnon dispersion data. -/
 structure MirrorMagnonDispersionData where
-  mirrorMomentum : ℝ
-  interpolatingCoupling : ℝ
-  mirrorEnergy : ℝ
+  mirrorMomentum : DimensionlessMomentum
+  interpolatingCoupling : DimensionlessCoupling
+  mirrorEnergy : DimensionlessEnergy
 
 /-- Mirror-magnon dispersion package from the all-order magnon relation:
 `sinh(E_tilde/2) = sqrt(1+p_tilde^2)/(4 h)`. -/
@@ -61,19 +61,19 @@ theorem mirror_magnon_dispersion_package
 
 /-- One-species TBA data. -/
 structure OneSpeciesMirrorTBAData where
-  inverseTemperature : ℝ
-  singleParticleEnergy : ℝ → ℂ
-  chemicalPotential : ℂ
-  pseudoEnergy : ℝ → ℂ
-  convolutionTerm : ℝ → ℂ
+  inverseTemperature : InverseTemperatureScale
+  singleParticleEnergy : Rapidity → ComplexEnergy
+  chemicalPotential : ComplexChemicalPotential
+  pseudoEnergy : Rapidity → ComplexDimensionless
+  convolutionTerm : Rapidity → ComplexDimensionless
 
 /-- One-species TBA package:
 `zeta = beta epsilon + mu + K * log(1 + exp(-zeta))`. -/
 def OneSpeciesMirrorTBAPackage (data : OneSpeciesMirrorTBAData) : Prop :=
   data.inverseTemperature > 0 ∧
-  ∀ u : ℝ,
+  ∀ u : Rapidity,
     data.pseudoEnergy u =
-      (data.inverseTemperature : ℂ) * data.singleParticleEnergy u +
+      (data.inverseTemperature.value : ℂ) * data.singleParticleEnergy u +
         data.chemicalPotential + data.convolutionTerm u
 
 /-- Assumed one-species mirror-TBA package. -/
@@ -88,17 +88,17 @@ theorem one_species_mirror_tba_package
 /-- Excited-state TBA data with defect rapidities. -/
 structure MirrorExcitedStateTBAData where
   defectCount : ℕ
-  shiftedPseudoEnergy : ℂ → ℂ
-  sourceTerm : ℂ → ℂ
-  defectShift : ℂ → ℂ
-  convolutionTerm : ℂ → ℂ
-  defectSpectralParameter : Fin defectCount → ℂ
+  shiftedPseudoEnergy : ComplexSpectralParameter → ComplexEnergy
+  sourceTerm : ComplexSpectralParameter → ComplexEnergy
+  defectShift : ComplexSpectralParameter → ComplexEnergy
+  convolutionTerm : ComplexSpectralParameter → ComplexEnergy
+  defectSpectralParameter : Fin defectCount → ComplexSpectralParameter
   quantumNumber : Fin defectCount → ℤ
 
 /-- Excited-state quantization package:
 modified TBA equation plus zero condition `1 + exp(-zeta(u_j)) = 0`. -/
 def MirrorExcitedStateQuantizationPackage (data : MirrorExcitedStateTBAData) : Prop :=
-  (∀ u : ℂ,
+  (∀ u : ComplexSpectralParameter,
     data.shiftedPseudoEnergy u =
       data.sourceTerm u - data.defectShift u + data.convolutionTerm u) ∧
   (∀ j : Fin data.defectCount,
@@ -116,10 +116,10 @@ theorem mirror_excited_state_quantization_package
 
 /-- Generic mirror Bethe-Yang factorization data. -/
 structure MirrorBetheYangFactorizationData (Excitation : Type*) where
-  spatialLength : ℝ
-  momentum : Excitation → ℂ
-  phaseFactor : Excitation → ℂ
-  factorizedScattering : Excitation → ℂ
+  spatialLength : ScalingDimension
+  momentum : Excitation → ComplexDimensionless
+  phaseFactor : Excitation → ComplexAmplitude
+  factorizedScattering : Excitation → ComplexAmplitude
 
 /-- Bethe-Yang factorization package:
 `exp(i p_A L) = product_B S^{BA}` in compressed form. -/
@@ -143,8 +143,8 @@ theorem mirror_bethe_yang_factorization_package
 
 /-- Mirror Bethe-string classification data. -/
 structure MirrorBetheStringData where
-  interpolatingCoupling : ℝ
-  zhukovsky : ℂ → ℂ
+  interpolatingCoupling : DimensionlessCoupling
+  zhukovsky : ComplexSpectralParameter → ComplexSpectralParameter
   hasLevelIQParticleFamily : AdS5MirrorClaim
   hasLevelIIYParticleAndYwStringFamilies : AdS5MirrorClaim
   hasLevelIIIWStringFamily : AdS5MirrorClaim
@@ -153,7 +153,8 @@ structure MirrorBetheStringData where
 branch-cut Zhukovsky relation and level-I/II/III string-family tags. -/
 def MirrorBetheStringPackage (data : MirrorBetheStringData) : Prop :=
   data.interpolatingCoupling > 0 ∧
-  (∀ u : ℂ, data.zhukovsky u + 1 / data.zhukovsky u = u / (data.interpolatingCoupling : ℂ)) ∧
+  (∀ u : ComplexSpectralParameter,
+    data.zhukovsky u + 1 / data.zhukovsky u = u / (data.interpolatingCoupling : ℂ)) ∧
   data.hasLevelIQParticleFamily ∧
   data.hasLevelIIYParticleAndYwStringFamilies ∧
   data.hasLevelIIIWStringFamily
@@ -169,20 +170,20 @@ theorem mirror_bethe_string_package
 
 /-- Multi-species mirror-TBA data. -/
 structure MirrorMultiSpeciesTBAData (Species : Type*) where
-  inverseTemperature : ℝ
-  pseudoEnergy : Species → ℂ → ℂ
-  sourceEnergy : Species → ℂ → ℂ
-  chemicalPotential : Species → ℂ
-  convolutionTerm : Species → ℂ → ℂ
+  inverseTemperature : InverseTemperatureScale
+  pseudoEnergy : Species → ComplexSpectralParameter → ComplexDimensionless
+  sourceEnergy : Species → ComplexSpectralParameter → ComplexDimensionless
+  chemicalPotential : Species → ComplexChemicalPotential
+  convolutionTerm : Species → ComplexSpectralParameter → ComplexDimensionless
 
 /-- Multi-species mirror-TBA package:
 `zeta_A = beta epsilon_A + mu_A + sum_B K_AB * log(1 + exp(-zeta_B))`. -/
 def MirrorMultiSpeciesTBAPackage {Species : Type*}
     (data : MirrorMultiSpeciesTBAData Species) : Prop :=
   data.inverseTemperature > 0 ∧
-  ∀ A : Species, ∀ u : ℂ,
+  ∀ A : Species, ∀ u : ComplexSpectralParameter,
     data.pseudoEnergy A u =
-      (data.inverseTemperature : ℂ) * data.sourceEnergy A u +
+      (data.inverseTemperature.value : ℂ) * data.sourceEnergy A u +
         data.chemicalPotential A + data.convolutionTerm A u
 
 /-- Assumed multi-species mirror-TBA package. -/
@@ -197,12 +198,12 @@ theorem mirror_multi_species_tba_package
 
 /-- Y-system/Hirota data on a T-hook-like index set. -/
 structure MirrorYSystemData where
-  y : ℤ → ℤ → ℂ
-  yShiftPlus : ℤ → ℤ → ℂ
-  yShiftMinus : ℤ → ℤ → ℂ
-  t : ℤ → ℤ → ℂ
-  tShiftPlus : ℤ → ℤ → ℂ
-  tShiftMinus : ℤ → ℤ → ℂ
+  y : ℤ → ℤ → ComplexDimensionless
+  yShiftPlus : ℤ → ℤ → ComplexDimensionless
+  yShiftMinus : ℤ → ℤ → ComplexDimensionless
+  t : ℤ → ℤ → ComplexDimensionless
+  tShiftPlus : ℤ → ℤ → ComplexDimensionless
+  tShiftMinus : ℤ → ℤ → ComplexDimensionless
   tHookIndex : ℤ → ℤ → Prop
 
 /-- Mirror Y-system/Hirota package:
@@ -231,9 +232,9 @@ theorem mirror_y_system_package
 structure FiniteVolumeMirrorEnergyData where
   boundStateCount : ℕ
   physicalDefectCount : ℕ
-  physicalDefectMomentum : Fin physicalDefectCount → ℂ
-  mirrorDensityContribution : ℂ
-  totalEnergy : ℂ
+  physicalDefectMomentum : Fin physicalDefectCount → ComplexDimensionless
+  mirrorDensityContribution : ComplexAmplitude
+  totalEnergy : ComplexEnergy
 
 /-- Finite-volume mirror-energy package:
 physical-defect energy plus thermal mirror-bath correction. -/
@@ -253,9 +254,9 @@ theorem finite_volume_mirror_energy_package
 
 /-- Konishi wrapping-correction data in the mirror-TBA framework. -/
 structure KonishiWrappingData where
-  asymptoticEnergy : ℝ
-  wrappingCorrection : ℝ
-  fullScalingDimension : ℝ
+  asymptoticEnergy : ScalingDimension
+  wrappingCorrection : ScalingDimension
+  fullScalingDimension : ScalingDimension
   circumference : ℕ
 
 /-- Konishi wrapping package:
@@ -280,11 +281,11 @@ private def idx4 : Fin 4 := ⟨3, by decide⟩
 
 /-- `Pmu`-system data for the AdS5xS5 quantum spectral curve. -/
 structure QuantumSpectralCurvePMuData where
-  p : Fin 4 → ℂ → ℂ
-  pRaised : Fin 4 → ℂ → ℂ
-  mu : Fin 4 → Fin 4 → ℂ → ℂ
-  pMonodromy : Fin 4 → ℂ → ℂ
-  muMonodromy : Fin 4 → Fin 4 → ℂ → ℂ
+  p : Fin 4 → ComplexSpectralParameter → ComplexAmplitude
+  pRaised : Fin 4 → ComplexSpectralParameter → ComplexAmplitude
+  mu : Fin 4 → Fin 4 → ComplexSpectralParameter → ComplexAmplitude
+  pMonodromy : Fin 4 → ComplexSpectralParameter → ComplexAmplitude
+  muMonodromy : Fin 4 → Fin 4 → ComplexSpectralParameter → ComplexAmplitude
 
 /-- `Pmu`-system package:
 antisymmetric `mu`, quadratic constraint, monodromy relation for `mu`,
@@ -313,19 +314,19 @@ theorem quantum_spectral_curve_pmu_package
 
 /-- Large-`u` asymptotic data for the `Pmu` system. -/
 structure PMuAsymptoticData where
-  chargeJ : ℝ
-  scalingDimension : ℝ
-  lorentzSpin : ℝ
-  a1 : ℂ
-  a2 : ℂ
-  a3 : ℂ
-  a4 : ℂ
-  pLeadingPower : Fin 4 → ℝ
-  mu12LeadingPower : ℝ
-  mu13LeadingPower : ℝ
-  mu14LeadingPower : ℝ
-  mu24LeadingPower : ℝ
-  mu34LeadingPower : ℝ
+  chargeJ : ScalingDimension
+  scalingDimension : ScalingDimension
+  lorentzSpin : ScalingDimension
+  a1 : ComplexAmplitude
+  a2 : ComplexAmplitude
+  a3 : ComplexAmplitude
+  a4 : ComplexAmplitude
+  pLeadingPower : Fin 4 → ScalingDimension
+  mu12LeadingPower : ScalingDimension
+  mu13LeadingPower : ScalingDimension
+  mu14LeadingPower : ScalingDimension
+  mu24LeadingPower : ScalingDimension
+  mu34LeadingPower : ScalingDimension
 
 /-- `Pmu` asymptotic package:
 large-`u` powers for `P_a`, `mu_ab`, and coefficient products
@@ -365,10 +366,10 @@ theorem p_mu_asymptotic_package
 structure WeakCouplingBaxterData where
   chainLength : ℕ
   spin : ℕ
-  baxterQ : ℂ → ℂ
-  baxterT : ℂ → ℂ
-  oneLoopRoot : Fin spin → ℝ
-  oneLoopAnomalousDimension : ℝ
+  baxterQ : ComplexSpectralParameter → ComplexAmplitude
+  baxterT : ComplexSpectralParameter → ComplexAmplitude
+  oneLoopRoot : Fin spin → Rapidity
+  oneLoopAnomalousDimension : ScalingDimension
 
 /-- Weak-coupling package:
 `Pmu` reduction to the one-loop `SL(2)` Baxter equation and the
@@ -393,15 +394,15 @@ theorem weak_coupling_baxter_package
 
 /-- Small-spin expansion data for solving the `Pmu` system. -/
 structure SmallSpinExpansionData where
-  lorentzSpin : ℝ
-  deltaMinusJ : ℝ
-  pScale : ℝ
-  mu12Leading : ℂ
-  mu13Leading : ℂ
-  mu14Leading : ℂ
-  mu23Leading : ℂ
-  mu24Leading : ℂ
-  mu34Leading : ℂ
+  lorentzSpin : ScalingDimension
+  deltaMinusJ : ScalingDimension
+  pScale : ScalingDimension
+  mu12Leading : ComplexAmplitude
+  mu13Leading : ComplexAmplitude
+  mu14Leading : ComplexAmplitude
+  mu23Leading : ComplexAmplitude
+  mu24Leading : ComplexAmplitude
+  mu34Leading : ComplexAmplitude
 
 /-- Small-spin expansion package:
 `K -> 0` analytic continuation around the BPS vacuum with

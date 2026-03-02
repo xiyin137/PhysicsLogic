@@ -10,17 +10,17 @@ open Quantum
 /-- Structure for von Neumann entropy theory on a Hilbert space -/
 structure EntropyTheory (H : Type _) [QuantumStateSpace H] where
   /-- Von Neumann entropy S(ρ) = -Tr(ρ log ρ) -/
-  vonNeumannEntropy : DensityOperator H → ℝ
+  vonNeumannEntropy : DensityOperator H → EntropyMeasure
   /-- Effective Hilbert-space dimension for this entropy model. -/
   stateDimension : ℕ
   /-- The entropy dimension parameter is positive. -/
   stateDimension_pos : 0 < stateDimension
   /-- Convex combination of density operators -/
-  convexCombination : ℝ → DensityOperator H → DensityOperator H → DensityOperator H
+  convexCombination : ProbabilityWeight → DensityOperator H → DensityOperator H → DensityOperator H
   /-- Relative entropy D(ρ||σ) -/
-  relativeEntropy : DensityOperator H → DensityOperator H → ℝ
+  relativeEntropy : DensityOperator H → DensityOperator H → EntropyMeasure
   /-- Purity (Tr[ρ²]) -/
-  purity : DensityOperator H → ℝ
+  purity : DensityOperator H → ProbabilityWeight
   /-- Von Neumann entropy is non-negative -/
   vonNeumann_nonneg : ∀ (rho : DensityOperator H), vonNeumannEntropy rho ≥ 0
   /-- Pure states have zero entropy -/
@@ -32,7 +32,7 @@ structure EntropyTheory (H : Type _) [QuantumStateSpace H] where
   maxmixed_max_entropy : ∀ (rho : DensityOperator H),
     vonNeumannEntropy rho ≤ Real.log stateDimension
   /-- Concavity of von Neumann entropy -/
-  entropy_concave : ∀ (rho sigma : DensityOperator H) (lambda : ℝ),
+  entropy_concave : ∀ (rho sigma : DensityOperator H) (lambda : ProbabilityWeight),
     0 ≤ lambda → lambda ≤ 1 →
     vonNeumannEntropy (convexCombination lambda rho sigma) ≥
     lambda * vonNeumannEntropy rho + (1 - lambda) * vonNeumannEntropy sigma
@@ -59,7 +59,7 @@ structure CompositeEntropyTheory {H1 H2 : Type _}
   /-- Partial trace over second subsystem (returns H1) -/
   pt2 : PartialTrace2 T
   /-- Conditional entropy for tensor product states -/
-  conditionalEntropy : DensityOperator T.carrier → ℝ
+  conditionalEntropy : DensityOperator T.carrier → EntropyMeasure
   /-- Subadditivity of entropy -/
   entropy_subadditive : ∀ (rho : DensityOperator T.carrier),
     etC.vonNeumannEntropy rho ≤
