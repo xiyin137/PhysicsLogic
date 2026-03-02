@@ -71,6 +71,19 @@ else
   echo "[ok] no scalar-typed fields ending in Functional"
 fi
 
+echo "[semantic-check] no raw scalar-valued mode maps in StringTheory data structures"
+mode_hits="$(rg -n \
+  "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Mm]ode[A-Za-z0-9_']*[[:space:]]*:[[:space:]]*.*→[[:space:]]*(ℂ|Complex|ℝ|Real)([[:space:]]|$)" \
+  PhysicsLogic/StringTheory --glob '*.lean' \
+  | rg -v "(Eigenvalue|Value|Coefficient|Amplitude)" || true)"
+if [[ -n "$mode_hits" ]]; then
+  echo "$mode_hits"
+  echo "[fail] found scalar-valued raw mode maps in StringTheory"
+  status=1
+else
+  echo "[ok] no scalar-valued raw mode maps in StringTheory"
+fi
+
 echo "[semantic-check] ActionFunctional domains must be configuration spaces (not ℝ/ℂ)"
 action_functional_domain_hits="$(rg -n \
   "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Aa]ction[Ff]unctional[[:space:]]*:[[:space:]]*(ℂ|Complex|ℝ|Real)[[:space:]]*→" \

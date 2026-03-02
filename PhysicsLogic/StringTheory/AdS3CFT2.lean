@@ -240,10 +240,10 @@ theorem ads3_bosonic_wzw_level_radius_relation
 structure AdS3BosonicSpectralFlowData where
   levelK : ScalingDimension
   flowW : ℤ
-  j3Mode : ℤ → ℝ
-  virasoroMode : ℤ → ℝ
-  flowedJ3Mode : ℤ → ℝ
-  flowedVirasoroMode : ℤ → ℝ
+  j3ModeEigenvalue : ℤ → ℝ
+  virasoroModeEigenvalue : ℤ → ℝ
+  flowedJ3ModeEigenvalue : ℤ → ℝ
+  flowedVirasoroModeEigenvalue : ℤ → ℝ
 
 /-- Spectral-flow automorphism package:
 `J_n^3 -> J_n^3 - (k/2) w δ_{n,0}`,
@@ -251,12 +251,12 @@ structure AdS3BosonicSpectralFlowData where
 def AdS3BosonicSpectralFlowPackage (data : AdS3BosonicSpectralFlowData) : Prop :=
   data.levelK > 2 ∧
   (∀ n : ℤ,
-    data.flowedJ3Mode n =
-      data.j3Mode n -
+    data.flowedJ3ModeEigenvalue n =
+      data.j3ModeEigenvalue n -
         (data.levelK / 2) * (data.flowW : ℝ) * (if n = 0 then 1 else 0)) ∧
   (∀ n : ℤ,
-    data.flowedVirasoroMode n =
-      data.virasoroMode n + (data.flowW : ℝ) * data.j3Mode n -
+    data.flowedVirasoroModeEigenvalue n =
+      data.virasoroModeEigenvalue n + (data.flowW : ℝ) * data.j3ModeEigenvalue n -
         (data.levelK / 4) * (data.flowW : ℝ) ^ (2 : ℕ) * (if n = 0 then 1 else 0))
 
 /-- Assumed bosonic AdS3 spectral-flow automorphism package. -/
