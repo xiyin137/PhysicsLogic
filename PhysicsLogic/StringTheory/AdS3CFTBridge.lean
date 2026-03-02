@@ -643,7 +643,7 @@ def AdS3MixedFluxPulsatingTurningPointBridgePackage
   data.stringTurningPoint.radiusSquared = data.qftTurningPoint.radiusSquared /\
   data.stringTurningPoint.k5Flux = data.qftTurningPoint.k5Flux /\
   data.stringTurningPoint.maximalRadius = data.qftTurningPoint.maximalRadius /\
-  data.stringTurningPoint.turningPointEnergy = data.qftTurningPoint.turningPointEnergy /\
+  data.stringTurningPoint.turningPointScalingDimension = data.qftTurningPoint.turningPointScalingDimension /\
   data.stringTurningPoint.radialVelocityAtTurningPoint =
     data.qftTurningPoint.radialVelocityAtTurningPoint /\
   data.stringTurningPoint.maximalRadiusIsTurningPoint =
@@ -663,7 +663,7 @@ theorem ads3_mixed_flux_pulsating_turning_point_bridge_package
     (h_r2 : data.stringTurningPoint.radiusSquared = data.qftTurningPoint.radiusSquared)
     (h_k5 : data.stringTurningPoint.k5Flux = data.qftTurningPoint.k5Flux)
     (h_r0 : data.stringTurningPoint.maximalRadius = data.qftTurningPoint.maximalRadius)
-    (h_delta : data.stringTurningPoint.turningPointEnergy = data.qftTurningPoint.turningPointEnergy)
+    (h_delta : data.stringTurningPoint.turningPointScalingDimension = data.qftTurningPoint.turningPointScalingDimension)
     (h_rdot :
       data.stringTurningPoint.radialVelocityAtTurningPoint =
         data.qftTurningPoint.radialVelocityAtTurningPoint)
@@ -773,7 +773,7 @@ theorem ads3_mixed_flux_pulsating_bohr_sommerfeld_bridge_package
     (h_turn_r0 :
       data.stringBohr.turningPoint.maximalRadius = data.qftBohr.turningPoint.maximalRadius)
     (h_turn_delta :
-      data.stringBohr.turningPoint.turningPointEnergy = data.qftBohr.turningPoint.turningPointEnergy)
+      data.stringBohr.turningPoint.turningPointScalingDimension = data.qftBohr.turningPoint.turningPointScalingDimension)
     (h_turn_rdot :
       data.stringBohr.turningPoint.radialVelocityAtTurningPoint =
         data.qftBohr.turningPoint.radialVelocityAtTurningPoint)
@@ -890,7 +890,7 @@ def AdS3MixedFluxPulsatingThresholdBridgePackage
   data.stringThreshold.poleExcitationNumber = data.qftThreshold.poleExcitationNumber /\
   data.stringThreshold.muOrderTwoCorrectionDenominator =
     data.qftThreshold.muOrderTwoCorrectionDenominator /\
-  data.stringThreshold.shortStringEnergyAtPole = data.qftThreshold.shortStringEnergyAtPole /\
+  data.stringThreshold.shortStringScalingDimensionAtPole = data.qftThreshold.shortStringScalingDimensionAtPole /\
   data.stringThreshold.nsnsLongStringThresholdDimension =
     data.qftThreshold.nsnsLongStringThresholdDimension
 
@@ -912,7 +912,7 @@ theorem ads3_mixed_flux_pulsating_threshold_bridge_package
       data.stringThreshold.muOrderTwoCorrectionDenominator =
         data.qftThreshold.muOrderTwoCorrectionDenominator)
     (h_energy :
-      data.stringThreshold.shortStringEnergyAtPole = data.qftThreshold.shortStringEnergyAtPole)
+      data.stringThreshold.shortStringScalingDimensionAtPole = data.qftThreshold.shortStringScalingDimensionAtPole)
     (h_threshold :
       data.stringThreshold.nsnsLongStringThresholdDimension =
         data.qftThreshold.nsnsLongStringThresholdDimension) :

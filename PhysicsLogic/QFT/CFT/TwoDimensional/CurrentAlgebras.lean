@@ -546,7 +546,7 @@ structure AdS3MixedFluxPulsatingTurningPointCftData where
   radiusSquared : StringSlope
   k5Flux : FluxQuantum
   maximalRadius : LengthScale
-  turningPointEnergy : ScalingDimension
+  turningPointScalingDimension : ScalingDimension
   radialVelocityAtTurningPoint : VelocitySquared
   maximalRadiusIsTurningPoint : CftClaim
 
@@ -562,7 +562,7 @@ def AdS3MixedFluxPulsatingTurningPointCftPackage
   data.maximalRadius >= 0 /\
   data.maximalRadiusIsTurningPoint /\
   data.radialVelocityAtTurningPoint = 0 /\
-  data.turningPointEnergy =
+  data.turningPointScalingDimension =
     (data.radiusSquared / data.alphaPrime).value * data.maximalRadius.value *
       Real.sqrt (1 + data.maximalRadius.value ^ (2 : Nat)) -
       data.k5Flux * data.maximalRadius.value ^ (2 : Nat)
@@ -724,12 +724,12 @@ structure AdS3MixedFluxPulsatingThresholdCftData where
   levelK : ScalingDimension
   poleExcitationNumber : ℝ
   muOrderTwoCorrectionDenominator : ℝ
-  shortStringEnergyAtPole : ScalingDimension
+  shortStringScalingDimensionAtPole : ScalingDimension
   nsnsLongStringThresholdDimension : ScalingDimension
 
 /-- Mixed-flux pulsating-threshold package in the QFT lane:
 the order-`mu^2` pulsating correction denominator vanishes at `n = k/4`,
-and the `mu=0` short-string energy at that point equals the NSNS long-string
+and the `mu=0` short-string scaling dimension at that point equals the NSNS long-string
 continuum threshold `Delta = k/2`. -/
 def AdS3MixedFluxPulsatingThresholdCftPackage
     (data : AdS3MixedFluxPulsatingThresholdCftData) : Prop :=
@@ -740,11 +740,11 @@ def AdS3MixedFluxPulsatingThresholdCftPackage
     2 * Real.sqrt data.excitationNumber - Real.sqrt data.levelK /\
   (data.excitationNumber = data.poleExcitationNumber ->
     data.muOrderTwoCorrectionDenominator = 0) /\
-  data.shortStringEnergyAtPole =
+  data.shortStringScalingDimensionAtPole =
     -2 * data.poleExcitationNumber +
       2 * Real.sqrt (data.poleExcitationNumber * data.levelK) /\
   data.nsnsLongStringThresholdDimension = data.levelK / 2 /\
-  data.shortStringEnergyAtPole = data.nsnsLongStringThresholdDimension
+  data.shortStringScalingDimensionAtPole = data.nsnsLongStringThresholdDimension
 
 /-- Assumed mixed-flux pulsating-threshold package in the 2D CFT lane. -/
 theorem ads3_mixed_flux_pulsating_threshold_cft_package
