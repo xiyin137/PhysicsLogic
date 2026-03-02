@@ -228,7 +228,7 @@ theorem supergraviton_chiral_primary_package
 structure MassiveStringScalingData where
   excitationLevel : ℕ
   tHooftCoupling : DimensionlessCoupling
-  conformalWeight : ℝ
+  conformalWeight : ScalingDimension
 
 /-- Strong-coupling massive-string scaling:
 `Δ ≈ 2 sqrt(n) λ^(1/4)` at fixed level. -/
@@ -249,7 +249,7 @@ theorem massive_string_strong_coupling_scaling
 /-- Large-spin folded-string twist data. -/
 structure SpinningStringTwistData where
   tHooftCoupling : DimensionlessCoupling
-  spin : ℝ
+  spin : ScalingDimension
   twist : ℝ
 
 /-- Folded-string large-spin twist relation:

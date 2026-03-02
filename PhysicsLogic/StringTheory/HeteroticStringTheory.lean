@@ -19,10 +19,10 @@ structure HeteroticWorldsheetData where
   rightMovingTargetFermionCount : ℕ
   rightTargetFermionCount_matches_dimension :
     rightMovingTargetFermionCount = spacetimeDimension
-  leftMatterCentralCharge : ℝ
-  rightMatterCentralCharge : ℝ
-  leftGhostCentralCharge : ℝ
-  rightGhostCentralCharge : ℝ
+  leftMatterCentralCharge : CentralCharge
+  rightMatterCentralCharge : CentralCharge
+  leftGhostCentralCharge : CentralCharge
+  rightGhostCentralCharge : CentralCharge
   left_matter_formula :
     leftMatterCentralCharge =
       (spacetimeDimension : ℝ) + (leftMovingFermionCount : ℝ) / 2

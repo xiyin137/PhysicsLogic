@@ -184,9 +184,9 @@ def SuperBRSTNilpotent (C : SuperBRSTComplex) : Prop :=
 /-- Super-Weyl central-charge cancellation package:
 matter and ghost contributions add to zero in the critical theory. -/
 structure SuperWeylCriticalityData (D : ℕ) where
-  matterCentralCharge : ℝ
-  ghostCentralCharge : ℝ
-  matter_c_formula : matterCentralCharge = (3 / 2 : ℝ) * (D : ℝ)
+  matterCentralCharge : CentralCharge
+  ghostCentralCharge : CentralCharge
+  matter_c_formula : matterCentralCharge = (3 / 2 : CentralCharge) * (D : ℝ)
   ghost_c_formula : ghostCentralCharge = -15
   total_cancellation : matterCentralCharge + ghostCentralCharge = 0
 

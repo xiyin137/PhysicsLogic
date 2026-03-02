@@ -163,4 +163,35 @@ else
   echo "[ok] no raw scalar base scale aliases in non-Papers modules"
 fi
 
+echo "[global-semantic-check] central-charge fields use CentralCharge aliases"
+raw_central_charge_hits="$(
+  rg -n "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*CentralCharge[[:space:]]*:[[:space:]]*(ℝ|Real)([[:space:]]|$)" \
+    PhysicsLogic --glob '*.lean' \
+  | rg -v '^PhysicsLogic/Papers/' || true
+)"
+if [[ -n "$raw_central_charge_hits" ]]; then
+  echo "$raw_central_charge_hits"
+  echo "[fail] found raw ℝ/Real central-charge fields in non-Papers modules"
+  status=1
+else
+  echo "[ok] central-charge fields use semantic aliases in non-Papers modules"
+fi
+
+echo "[global-semantic-check] spin/conformal-weight fields use ScalingDimension aliases"
+raw_spin_weight_hits="$(
+  {
+    rg -n "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[Ss]pin[A-Za-z0-9_']*[[:space:]]*:[[:space:]]*(ℝ|Real)([[:space:]]|$)" \
+      PhysicsLogic --glob '*.lean'
+    rg -n "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*conformalWeight[A-Za-z0-9_']*[[:space:]]*:[[:space:]]*(ℝ|Real)([[:space:]]|$)" \
+      PhysicsLogic --glob '*.lean'
+  } | rg -v '^PhysicsLogic/Papers/' || true
+)"
+if [[ -n "$raw_spin_weight_hits" ]]; then
+  echo "$raw_spin_weight_hits"
+  echo "[fail] found raw ℝ/Real spin or conformal-weight fields in non-Papers modules"
+  status=1
+else
+  echo "[ok] spin/conformal-weight fields use semantic aliases in non-Papers modules"
+fi
+
 exit "$status"

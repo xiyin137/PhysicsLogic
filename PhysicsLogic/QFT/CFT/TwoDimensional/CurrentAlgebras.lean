@@ -166,7 +166,7 @@ theorem ads3_sl2_representation_spectrum_package
 /-- AdS3 bosonic mass-shell and spacetime scaling-data in the 2D CFT lane. -/
 structure AdS3Sl2MassShellData where
   levelK : ScalingDimension
-  spinJ : ℝ
+  spinJ : ScalingDimension
   mQuantum : ℝ
   flowW : ℤ
   currentDescendantLevel : ℝ
@@ -423,7 +423,7 @@ theorem ads3_nsns_sl2_spectral_flow_operator_automorphism
 /-- `(NS,NS)` superstring mass-shell/BPS data in the AdS3/S3/M4 worldsheet SCFT. -/
 structure AdS3NsnsSuperstringMassShellData where
   levelK : ScalingDimension
-  spinJ : ℝ
+  spinJ : ScalingDimension
   mQuantum : ℝ
   flowW : ℤ
   adsDescendantLevel : ℝ

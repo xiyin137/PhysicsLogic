@@ -340,7 +340,7 @@ theorem ads3_bosonic_physical_spectrum_package
 /-- Bosonic AdS3 string mass-shell/spacetime-energy data. -/
 structure AdS3BosonicMassShellData where
   levelK : ScalingDimension
-  spinJ : ℝ
+  spinJ : ScalingDimension
   mQuantum : ℝ
   flowW : ℤ
   currentDescendantLevel : ℝ
@@ -402,7 +402,7 @@ theorem ads3_nsns_superstring_background_package
 /-- `(NS,NS)` AdS3 superstring mass-shell/BPS data. -/
 structure AdS3NSNSSuperstringMassShellData where
   levelK : ScalingDimension
-  spinJ : ℝ
+  spinJ : ScalingDimension
   mQuantum : ℝ
   flowW : ℤ
   adsDescendantLevel : ℝ
