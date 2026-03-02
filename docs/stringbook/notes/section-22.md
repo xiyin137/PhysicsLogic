@@ -56,6 +56,7 @@
 - `AdS3MixedFluxFiniteKWzwFourPointReductionPackage`
 - `AdS3MixedFluxWzwOpeStructureConstantPackage`
 - `AdS3MixedFluxRrTwoStringBracketPackage`
+- `AdS3MixedFluxSftRrSecondOrderCompositionalPackage`
 - `AdS3MixedFluxRrSpectrumCorrectionCompositionalPackage`
 - `AdS3MixedFluxSemiclassicalQuantumMatchPackage`
 - `D1D5ConformalManifoldGeometryPackage` (QFT lane)
@@ -87,6 +88,7 @@
 - `AdS3MixedFluxFiniteKWzwFourPointReductionCftPackage` (QFT lane)
 - `AdS3MixedFluxWzwOpeStructureConstantCftPackage` (QFT lane)
 - `AdS3MixedFluxRrTwoStringBracketCftPackage` (QFT lane)
+- `AdS3MixedFluxSftRrSecondOrderCompositionalCftPackage` (QFT lane)
 - `AdS3MixedFluxRrSpectrumCorrectionCompositionalCftPackage` (QFT lane)
 - `AdS3MixedFluxSemiclassicalQuantumMatchCftPackage` (QFT lane)
 - `AdS3BosonicWzwBridgePackage`
@@ -107,6 +109,7 @@
 - `AdS3MixedFluxFiniteKWzwReductionBridgePackage`
 - `AdS3MixedFluxWzwOpeConstantBridgePackage`
 - `AdS3MixedFluxRrTwoStringBracketBridgePackage`
+- `AdS3MixedFluxSftRrSecondOrderCompositionalBridgePackage`
 - `AdS3MixedFluxRrSpectrumCorrectionCompositionalBridgePackage`
 - `AdS3MixedFluxSemiclassicalQuantumMatchBridgePackage`
 

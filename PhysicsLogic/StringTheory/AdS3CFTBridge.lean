@@ -1143,6 +1143,77 @@ theorem ads3_mixed_flux_rr_two_string_bracket_bridge_package
   exact ⟨h_string_pkg, h_qft_pkg, h_k, h_mu, h_z0, h_n1, h_coeff, h_c_sl, h_c_su,
     h_pow_sl, h_pow_su, h_sign_sl, h_sign_su, h_proj⟩
 
+/-- Cross-lane data for compositional reconstruction of the mixed-flux
+RR-deformation SFT second-order block. -/
+structure AdS3MixedFluxSftRrSecondOrderCompositionalBridgeData where
+  stringSecondOrder : AdS3MixedFluxSftRrSecondOrderCompositionalData
+  qftSecondOrder :
+    PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxSftRrSecondOrderCompositionalCftData
+
+/-- Compositional bridge package for mixed-flux RR-deformation SFT second-order
+data. -/
+def AdS3MixedFluxSftRrSecondOrderCompositionalBridgePackage
+    (data : AdS3MixedFluxSftRrSecondOrderCompositionalBridgeData) : Prop :=
+  AdS3MixedFluxSftRrSecondOrderCompositionalPackage data.stringSecondOrder /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxSftRrSecondOrderCompositionalCftPackage
+    data.qftSecondOrder /\
+  data.stringSecondOrder.sft.mu = data.qftSecondOrder.sft.mu /\
+  data.stringSecondOrder.sft.levelK = data.qftSecondOrder.sft.levelK /\
+  data.stringSecondOrder.sft.firstOrderRrVertexUsed =
+    data.qftSecondOrder.sft.firstOrderRrVertexUsed /\
+  data.stringSecondOrder.sft.projectedTwoStringBracketVanishesAtFiniteK =
+    data.qftSecondOrder.sft.projectedTwoStringBracketVanishesAtFiniteK /\
+  data.stringSecondOrder.sft.secondOrderFieldSetToZero =
+    data.qftSecondOrder.sft.secondOrderFieldSetToZero /\
+  data.stringSecondOrder.sft.secondOrderCorrectionUsesSiegelResolvent =
+    data.qftSecondOrder.sft.secondOrderCorrectionUsesSiegelResolvent /\
+  data.stringSecondOrder.sft.secondOrderEquationCoefficient =
+    data.qftSecondOrder.sft.secondOrderEquationCoefficient /\
+  data.stringSecondOrder.sft.largeKNormalizationMatchingUsed =
+    data.qftSecondOrder.sft.largeKNormalizationMatchingUsed
+
+/-- Bridge package for mixed-flux RR-deformation SFT second-order data, built
+from the compositional second-order units in both lanes. -/
+def AdS3MixedFluxSftRrSecondOrderBridgePackage
+    (data : AdS3MixedFluxSftRrSecondOrderCompositionalBridgeData) : Prop :=
+  AdS3MixedFluxSftRrDeformationPackage data.stringSecondOrder.sft /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxSftRrDeformationCftPackage
+    data.qftSecondOrder.sft /\
+  data.stringSecondOrder.sft.mu = data.qftSecondOrder.sft.mu /\
+  data.stringSecondOrder.sft.levelK = data.qftSecondOrder.sft.levelK /\
+  data.stringSecondOrder.sft.firstOrderRrVertexUsed =
+    data.qftSecondOrder.sft.firstOrderRrVertexUsed /\
+  data.stringSecondOrder.sft.projectedTwoStringBracketVanishesAtFiniteK =
+    data.qftSecondOrder.sft.projectedTwoStringBracketVanishesAtFiniteK /\
+  data.stringSecondOrder.sft.secondOrderFieldSetToZero =
+    data.qftSecondOrder.sft.secondOrderFieldSetToZero /\
+  data.stringSecondOrder.sft.secondOrderCorrectionUsesSiegelResolvent =
+    data.qftSecondOrder.sft.secondOrderCorrectionUsesSiegelResolvent /\
+  data.stringSecondOrder.sft.secondOrderEquationCoefficient =
+    data.qftSecondOrder.sft.secondOrderEquationCoefficient /\
+  data.stringSecondOrder.sft.largeKNormalizationMatchingUsed =
+    data.qftSecondOrder.sft.largeKNormalizationMatchingUsed
+
+/-- Reconstruct the mixed-flux RR-deformation SFT second-order bridge package
+from compositional second-order units. -/
+theorem ads3_mixed_flux_sft_rr_second_order_bridge_package_from_compositional
+    (data : AdS3MixedFluxSftRrSecondOrderCompositionalBridgeData)
+    (h_comp : AdS3MixedFluxSftRrSecondOrderCompositionalBridgePackage data) :
+    AdS3MixedFluxSftRrSecondOrderBridgePackage data := by
+  rcases h_comp with
+    ⟨h_string_comp, h_qft_comp, h_mu, h_k, h_first, h_proj, h_second_zero,
+      h_siegel, h_coeff, h_largek⟩
+  have h_string_sft : AdS3MixedFluxSftRrDeformationPackage data.stringSecondOrder.sft :=
+    ads3_mixed_flux_sft_rr_deformation_from_second_order_compositional
+      data.stringSecondOrder h_string_comp
+  have h_qft_sft :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxSftRrDeformationCftPackage
+        data.qftSecondOrder.sft :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_sft_rr_deformation_from_second_order_compositional_cft
+      data.qftSecondOrder h_qft_comp
+  exact ⟨h_string_sft, h_qft_sft, h_mu, h_k, h_first, h_proj, h_second_zero,
+    h_siegel, h_coeff, h_largek⟩
+
 /-- Cross-lane data for compositional reconstruction of mixed-flux RR-spectrum
 correction. -/
 structure AdS3MixedFluxRrSpectrumCorrectionCompositionalBridgeData where

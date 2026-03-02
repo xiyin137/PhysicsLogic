@@ -956,6 +956,49 @@ theorem ads3_mixed_flux_rr_two_string_bracket_package
     AdS3MixedFluxRrTwoStringBracketPackage data := by
   exact h_phys
 
+/-- Data for compositional reconstruction of the mixed-flux RR-deformation SFT
+second-order block from explicit two-string-bracket data. -/
+structure AdS3MixedFluxSftRrSecondOrderCompositionalData where
+  bracket : AdS3MixedFluxRrTwoStringBracketData
+  sft : AdS3MixedFluxSftRrDeformationData
+
+/-- Compositional package for mixed-flux RR-deformation SFT second-order data:
+the finite-`k` vanishing projected two-string bracket is tied to the SFT
+second-order block (`W^(2)=0` / Siegel-resolvent correction) with aligned
+`mu` and `k`. -/
+def AdS3MixedFluxSftRrSecondOrderCompositionalPackage
+    (data : AdS3MixedFluxSftRrSecondOrderCompositionalData) : Prop :=
+  AdS3MixedFluxRrTwoStringBracketPackage data.bracket ∧
+  data.sft.levelK = data.bracket.levelK ∧
+  data.sft.mu = data.bracket.mu ∧
+  data.sft.projectedTwoStringBracketVanishesAtFiniteK =
+    data.bracket.projectedZeroWeightVanishesAtFiniteK ∧
+  data.sft.firstOrderRrVertexUsed = true ∧
+  data.sft.secondOrderFieldSetToZero = true ∧
+  data.sft.secondOrderCorrectionUsesSiegelResolvent = true ∧
+  data.sft.secondOrderEquationCoefficient = (-(1 / 2 : ℝ)) ∧
+  data.sft.largeKNormalizationMatchingUsed = true
+
+/-- Reconstruct the mixed-flux RR-deformation SFT package from the compositional
+second-order bracket block. -/
+theorem ads3_mixed_flux_sft_rr_deformation_from_second_order_compositional
+    (data : AdS3MixedFluxSftRrSecondOrderCompositionalData)
+    (h_comp : AdS3MixedFluxSftRrSecondOrderCompositionalPackage data) :
+    AdS3MixedFluxSftRrDeformationPackage data.sft := by
+  rcases h_comp with ⟨h_bracket, h_k, h_mu, h_proj_id, h_first, h_second_zero,
+    h_siegel, h_coeff, h_largek⟩
+  rcases h_bracket with ⟨h_k_pos_br, h_mu_nonneg_br, _, _, _, _, _, _, _, _, _, _, h_proj_br⟩
+  have h_k_pos : data.sft.levelK > 0 := by
+    simpa [h_k] using h_k_pos_br
+  have h_mu_nonneg : data.sft.mu >= 0 := by
+    simpa [h_mu] using h_mu_nonneg_br
+  have h_proj : data.sft.projectedTwoStringBracketVanishesAtFiniteK = true := by
+    calc
+      data.sft.projectedTwoStringBracketVanishesAtFiniteK =
+          data.bracket.projectedZeroWeightVanishesAtFiniteK := h_proj_id
+      _ = true := h_proj_br
+  exact ⟨h_mu_nonneg, h_k_pos, h_first, h_proj, h_second_zero, h_siegel, h_coeff, h_largek⟩
+
 /-- Data for compositional reconstruction of the mixed-flux RR-spectrum
 correction from SFT recursion, RR two-string bracket, finite-`k` WZW reduction,
 and OPE-constant units. -/
