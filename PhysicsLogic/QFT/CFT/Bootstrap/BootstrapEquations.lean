@@ -197,24 +197,33 @@ structure FourPointFunctionTheory where
     Input: conformal symmetry + unitarity + associativity (crossing)
     Output: constraints on {Δ_i, ℓ_i, C_ijk} -/
 structure BootstrapPhilosophyTheory where
+  /-- Predicate: a proposed OPE-data package satisfies bootstrap consistency
+      (crossing, unitarity, positivity, and selected spectrum assumptions). -/
+  isBootstrapConsistent : List Prop → Prop
   /-- Bootstrap constrains OPE data: the consistency conditions
       (crossing + unitarity + positivity) determine a restricted set
       of allowed OPE data. In favorable cases, this uniquely determines the CFT. -/
   bootstrap_constrains_ope : ∀ {d : ℕ}
     (assumptions : List Prop),
-    ∃ (allowed_ope_data : Set (List Prop)),
-      assumptions ∈ allowed_ope_data ∧
-      ∃ (candidate : List Prop), candidate ∉ allowed_ope_data
+    isBootstrapConsistent assumptions
+  /-- Consistency is nontrivial: at least one candidate package is excluded. -/
+  bootstrap_excludes_inconsistent : ∀ {d : ℕ},
+    ∃ (candidate : List Prop), ¬ isBootstrapConsistent candidate
+  /-- OPE coefficient for identical-external operators and exchanged family. -/
+  selfOPECoefficient : ∀ {d : ℕ} {H : Type _},
+    QuasiPrimary d H → QuasiPrimary d H → ℂ
   /-- Identity always appears in the OPE: C_{φφ𝟙} ≠ 0 by normalization.
       This is the leading term in the identity channel. -/
   identity_in_ope : ∀ {d : ℕ} {H : Type _}
-    (φ : QuasiPrimary d H),
-    ∃ (C : ℂ), C ≠ 0
+    (φ oneOp : QuasiPrimary d H)
+    (h_identity : oneOp.scaling_dim = 0 ∧ oneOp.spin = 0),
+    selfOPECoefficient φ oneOp ≠ 0
   /-- Stress tensor appears in OPE of any operator with itself:
       C_{φφT} ≠ 0 (from conformal Ward identity). -/
   stress_tensor_in_ope : ∀ {d : ℕ} {H : Type _}
-    (T : QuasiPrimary d H)
+    (φ T : QuasiPrimary d H)
+    (h_phi_scalar : φ.spin = 0)
     (h_stress : T.scaling_dim = d ∧ T.spin = 2),
-    ∃ (C : ℂ), C ≠ 0
+    selfOPECoefficient φ T ≠ 0
 
 end PhysicsLogic.QFT.CFT.Bootstrap
