@@ -84,8 +84,30 @@ structure ExtendedFieldSpace where
   paired : antifields.length = fields.length
 
 /-- A point/configuration in the extended BV field-antifield arena.
-This project keeps this lightweight as an interface alias. -/
-abbrev ExtendedFieldConfiguration := ExtendedFieldSpace
+
+This keeps the kinematic carrier (`fields`, `antifields`) explicit while also
+recording a value assignment for each field/antifield component. -/
+structure ExtendedFieldConfiguration where
+  /-- The field labels present in this configuration. -/
+  fields : List Field
+  /-- The antifield labels present in this configuration. -/
+  antifields : List Antifield
+  /-- Each field has one conjugate antifield. -/
+  paired : antifields.length = fields.length
+  /-- Assigned values for field components in this configuration. -/
+  fieldValues : List ℝ
+  /-- Assigned values for antifield components in this configuration. -/
+  antifieldValues : List ℝ
+  /-- Value list has one entry per field component. -/
+  fieldValues_length : fieldValues.length = fields.length
+  /-- Value list has one entry per antifield component. -/
+  antifieldValues_length : antifieldValues.length = antifields.length
+
+/-- Forget value assignment and retain only the underlying field-space labels. -/
+def ExtendedFieldConfiguration.toSpace (cfg : ExtendedFieldConfiguration) : ExtendedFieldSpace where
+  fields := cfg.fields
+  antifields := cfg.antifields
+  paired := cfg.paired
 
 /-- Number of field-antifield pairs -/
 def ExtendedFieldSpace.numPairs (E : ExtendedFieldSpace) : ℕ := E.fields.length
