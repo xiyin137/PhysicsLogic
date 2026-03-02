@@ -216,20 +216,26 @@ structure LegendreInvolution (S : SourceSpace) (F : FieldConfigurationSpace)
     These are the vertices that remain connected when any single
     internal propagator is cut. The full Green's functions are
     reconstructed from 1PI vertices via tree diagrams. -/
+abbrev VertexKernel (F : FieldConfigurationSpace) (n : ℕ) :=
+  (Fin n → F.carrier) → ComplexActionValue
+
+/-- 1PI vertex-function data.
+Each `n`-point vertex is represented as a functional on `n` external field inputs,
+not as a single element of field configuration space. -/
 structure OnePIVertices (F : FieldConfigurationSpace) where
   /-- The effective action -/
   Gamma : F.carrier → ActionScale
   /-- Vacuum field configuration -/
   vacuum : F.carrier
-  /-- n-point 1PI vertex (abstract representation) -/
-  vertex : ℕ → F.carrier
+  /-- n-point 1PI vertex kernel `Γ^(n)` evaluated on `n` external field inputs. -/
+  vertex : (n : ℕ) → VertexKernel F n
 
 /-- 2-point 1PI function = inverse propagator -/
-def twoPointVertex (v : OnePIVertices F) : F.carrier := v.vertex 2
+def twoPointVertex (v : OnePIVertices F) : VertexKernel F 2 := v.vertex 2
 
-/-- Physical mass from pole of propagator (2-point function at p² = m²) -/
+/-- Physical mass scale from the pole of the 2-point function. -/
 noncomputable def physicalMassSquared (v : OnePIVertices F)
-    (extractMass : F.carrier → ℝ) : ℝ :=
+    (extractMass : VertexKernel F 2 → MassScale) : MassScale :=
   extractMass (v.vertex 2)
 
 /- ============================================================================
