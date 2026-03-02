@@ -26,15 +26,18 @@ structure ConformalBlock2DTheory where
   conformal_block_holomorphic : ∀ (block : ConformalBlock2D)
     (z : ℂ) (hz : z ≠ 0 ∧ z ≠ 1),
     DifferentiableAt ℂ block.eval z
-  /-- Four-point function decomposes into conformal blocks:
-      ⟨φ₁(0) φ₂(z,z̄) φ₃(1) φ₄(∞)⟩ = ∑_p C_{12p} C_{34p} F_p(z) F̄_p(z̄)
-      This is the fundamental structure: correlation functions factorize into
-      universal blocks times OPE coefficients -/
-  fourpoint_block_expansion : ∀ {H : Type _}
+  /-- Explicit four-point block-expansion terms:
+      each term stores left/right OPE coefficients and holomorphic/antiholomorphic
+      blocks in the chosen channel. -/
+  fourpoint_block_terms : ∀ {H : Type _}
     (φ₁ φ₂ φ₃ φ₄ : Primary2D H)
     (z : ℂ),
-    ∃ (terms : List (ℂ × ℂ × ConformalBlock2D × ConformalBlock2D)),
-      terms.length > 0  -- at least identity block contributes
+    List (ℂ × ℂ × ConformalBlock2D × ConformalBlock2D)
+  /-- Four-point block expansion is nontrivial (identity block at minimum). -/
+  fourpoint_block_expansion_nonempty : ∀ {H : Type _}
+    (φ₁ φ₂ φ₃ φ₄ : Primary2D H)
+    (z : ℂ),
+    (fourpoint_block_terms φ₁ φ₂ φ₃ φ₄ z).length > 0
   /-- Conformal blocks are universal: independent of which CFT.
       Given (c, h_ext, h_int), there exists a unique block function. -/
   blocks_universal : ∀
@@ -79,8 +82,15 @@ structure RecursionRelationTheory where
     (h_ext : Fin 4 → ℝ)
     (h_p : ℝ)
     (level : ℕ),
-    ∃ (recursion : ConformalBlock2D → List (ℂ × ConformalBlock2D)),
-      ∀ block, (recursion block).length > 0
+    ConformalBlock2D → List (ℂ × ConformalBlock2D)
+  /-- Recursion step always returns at least one contribution term. -/
+  zamolodchikov_recursion_nonempty : ∀
+    (c : VirasoroCentralCharge)
+    (h_ext : Fin 4 → ℝ)
+    (h_p : ℝ)
+    (level : ℕ)
+    (block : ConformalBlock2D),
+    (zamolodchikov_recursion c h_ext h_p level block).length > 0
   /-- Blocks can be computed iteratively using recursion -/
   block_computation : ∀
     (block : ConformalBlock2D)
@@ -94,17 +104,37 @@ structure RecursionRelationTheory where
 structure CrossingSymmetry2DTheory where
   /-- s-channel vs t-channel: different OPE expansions of same 4-point function
       ⟨1234⟩ = ∑_p C₁₂ₚC₃₄ₚ Fₚˢ(z) = ∑_q C₁₄ᵧC₂₃ᵧ Fᵧᵗ(1-z) -/
+  t_channel_blocks : ∀
+    (c : VirasoroCentralCharge)
+    (h_ext : Fin 4 → ℝ)
+    (block_s : ConformalBlock2D)
+    (z : ℂ),
+    List ConformalBlock2D
+  /-- Crossing kernel F_{pq} relates s-channel to t-channel blocks:
+      Fₚˢ(z) = ∑_q F_{pq}(c, {h_i}) F_qᵗ(1-z)
+      The kernel entry is a function of (c, h_ext, p, q). -/
+  crossing_kernel : VirasoroCentralCharge → (Fin 4 → ℝ) → ℕ → ℕ → ℂ
+  /-- Reconstructed t-channel value for the chosen s-channel input block. -/
+  t_channel_reconstruction : ∀
+    (c : VirasoroCentralCharge)
+    (h_ext : Fin 4 → ℝ)
+    (block_s : ConformalBlock2D)
+    (z : ℂ), ℂ
+  /-- Crossing symmetry as equality between s-channel block value and explicit
+      t-channel reconstruction. -/
   crossing_symmetry : ∀
     (c : VirasoroCentralCharge)
     (h_ext : Fin 4 → ℝ)
     (block_s : ConformalBlock2D)
     (z : ℂ),
-    ∃ (kernel : ℕ → ℕ → ℂ) (blocks_t : List ConformalBlock2D),
-      blocks_t.length > 0
-  /-- Crossing kernel F_{pq} relates s-channel to t-channel blocks:
-      Fₚˢ(z) = ∑_q F_{pq}(c, {h_i}) F_qᵗ(1-z)
-      The kernel entry is a function of (c, h_ext, p, q). -/
-  crossing_kernel : VirasoroCentralCharge → (Fin 4 → ℝ) → ℕ → ℕ → ℂ
+    block_s.eval z = t_channel_reconstruction c h_ext block_s z
+  /-- The selected t-channel block family is nonempty. -/
+  t_channel_nonempty : ∀
+    (c : VirasoroCentralCharge)
+    (h_ext : Fin 4 → ℝ)
+    (block_s : ConformalBlock2D)
+    (z : ℂ),
+    (t_channel_blocks c h_ext block_s z).length > 0
 
 /- ============= NORMALIZATION ============= -/
 
