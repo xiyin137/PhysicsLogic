@@ -38,16 +38,20 @@ structure Dilatation where
 def Dilatation.apply (D : Dilatation) (x : Fin 4 → ℝ) : Fin 4 → ℝ :=
   fun μ => D.scale * x μ
 
-/-- Special conformal transformation parameter -/
-structure SCTParameter where
-  b : Fin 4 → ℝ
+/-- Special conformal transformation parameter in `d` dimensions. -/
+structure SCTParameter (d : ℕ) where
+  b : Fin d → ℝ
 
-/-- Apply SCT: x^μ → (x^μ + b^μ x²)/(1 + 2b·x + b²x²)
-    where x² and b·x use Minkowski inner product -/
-noncomputable def applySCT (param : SCTParameter) (x : Fin 4 → ℝ) : Fin 4 → ℝ :=
-  let x_squared := minkowskiInnerProduct x x
-  let b_dot_x := minkowskiInnerProduct param.b x
-  let b_squared := minkowskiInnerProduct param.b param.b
+/-- Euclidean dot product in `d` dimensions. -/
+noncomputable def euclideanDot {d : ℕ} (x y : Fin d → ℝ) : ℝ :=
+  ∑ μ, x μ * y μ
+
+/-- Apply Euclidean SCT in `d` dimensions:
+`x^μ ↦ (x^μ + b^μ x²)/(1 + 2 b·x + b² x²)`. -/
+noncomputable def applySCT {d : ℕ} (param : SCTParameter d) (x : Fin d → ℝ) : Fin d → ℝ :=
+  let x_squared := euclideanDot x x
+  let b_dot_x := euclideanDot param.b x
+  let b_squared := euclideanDot param.b param.b
   let denominator := 1 + 2 * b_dot_x + b_squared * x_squared
   fun μ => (x μ + param.b μ * x_squared) / denominator
 
@@ -59,11 +63,15 @@ def conformalGroupDim (d : ℕ) : ℕ := (d + 1) * (d + 2) / 2
 
 /- ============= SCALING DIMENSIONS AND SPINS ============= -/
 
-/-- Scaling dimension Δ (eigenvalue under dilatations) -/
-abbrev ScalingDimension := ℝ
+/-- Scaling dimension Δ (eigenvalue under dilatations). -/
+abbrev ScalingDimension := PhysicsLogic.ScalingDimension
 
-/-- Spin label (simplified for now) -/
-abbrev SpinLabel := ℕ
+/-- Spin label in units where physical spin is integer/half-integer. -/
+abbrev SpinLabel := ℚ
+
+/-- Physical spin quantization condition: `s ∈ (1/2)ℤ`. -/
+def IsPhysicalSpin (s : SpinLabel) : Prop :=
+  ∃ n : ℤ, s = (n : ℚ) / 2
 
 /- ============= QUASI-PRIMARY OPERATORS ============= -/
 
@@ -77,6 +85,7 @@ structure QuasiPrimary (d : ℕ) (H : Type _) where
   field : (Fin d → ℝ) → (H → H)
   scaling_dim : ScalingDimension
   spin : SpinLabel
+  spin_quantized : IsPhysicalSpin spin
 
 /-- Descendant operator: obtained by applying derivatives to quasi-primary -/
 structure Descendant (d : ℕ) (H : Type _) where
@@ -118,12 +127,14 @@ structure ConformalTransformationTheory (d : ℕ) where
       Under SCT x → x', the quasi-primary transforms as:
       φ'(x') = Ω(x)^Δ · φ(x) where Ω(x) is the conformal factor.
       We assert the existence of a positive conformal factor. -/
-  sct_covariance : ∀ {H : Type _}
+  sct_covariance : ∀ {H : Type _} [SMul ℂ H]
     (φ : QuasiPrimary d H)
-    (param : SCTParameter)
+    (param : SCTParameter d)
     (x : Fin d → ℝ)
     (state : H),
     ∃ (conformal_factor : ScalingDimension), conformal_factor > 0
+      ∧ φ.field (applySCT param x) state =
+          ((conformal_factor : ℂ) ^ ((-φ.scaling_dim : ℝ) : ℂ)) • φ.field x state
   /-- Poincaré covariance (for d=4): translations and Lorentz rotations
       preserve the field up to a representation matrix factor. -/
   poincare_covariance : ∀ {H : Type _}
@@ -159,14 +170,22 @@ structure OPETheory (d : ℕ) where
     (other_insertions : List (Fin d → ℝ))
     (h_separated : ∀ z ∈ other_insertions, euclideanDistance x y < euclideanDistance y z),
     ∃ (radius : LengthScale), radius > 0 ∧ euclideanDistance x y < radius
-  /-- OPE associativity: (φ_i φ_j) φ_k = φ_i (φ_j φ_k) in the overlap region.
-      The iterated OPE in either order produces a consistent set of operators. -/
+  /-- Left-nested OPE channel `(φ_i φ_j) φ_k` in the overlap region. -/
+  leftNestedOPE : ∀ {H : Type _}
+    (φ_i φ_j φ_k : QuasiPrimary d H)
+    (x y z : Fin d → ℝ),
+    List (OPECoefficient d × QuasiPrimary d H)
+  /-- Right-nested OPE channel `φ_i (φ_j φ_k)` in the overlap region. -/
+  rightNestedOPE : ∀ {H : Type _}
+    (φ_i φ_j φ_k : QuasiPrimary d H)
+    (x y z : Fin d → ℝ),
+    List (OPECoefficient d × QuasiPrimary d H)
+  /-- OPE associativity: both nested decompositions agree in the common domain. -/
   ope_associativity : ∀ {H : Type _}
     (φ_i φ_j φ_k : QuasiPrimary d H)
     (x y z : Fin d → ℝ)
     (h_order : euclideanDistance x y < euclideanDistance y z),
-    ∃ (common_expansion : List (OPECoefficient d × QuasiPrimary d H)),
-      common_expansion.length > 0
+    leftNestedOPE φ_i φ_j φ_k x y z = rightNestedOPE φ_i φ_j φ_k x y z
   /-- Identity operator (Δ=0, ℓ=0) -/
   identityOperator : ∀ (H : Type _), QuasiPrimary d H
   /-- Identity dimension is 0 -/
