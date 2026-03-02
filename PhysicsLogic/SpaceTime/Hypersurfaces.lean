@@ -10,20 +10,28 @@ noncomputable def hypersurfaceNormalNormSq
     (x : SpaceTimePoint) : ℝ :=
   ∑ μ, ∑ ν, metric.g x μ ν * normal x μ * normal x ν
 
+/-- Nonvanishing normal condition on a hypersurface region. -/
+def NormalNonvanishingOn (normal : SpaceTimePoint → Fin 4 → ℝ)
+    (S : Set SpaceTimePoint) : Prop :=
+  ∀ x ∈ S, ∃ μ : Fin 4, normal x μ ≠ 0
+
 /-- Spacelike hypersurface (Cauchy surface candidate) -/
 def SpacelikeHypersurface (metric : SpacetimeMetric) (S : Set SpaceTimePoint) : Prop :=
   ∃ normal : SpaceTimePoint → Fin 4 → ℝ,
+    NormalNonvanishingOn normal S ∧
     ∀ x ∈ S, hypersurfaceNormalNormSq metric normal x < 0
 
 /-- Timelike hypersurface -/
 def TimelikeHypersurface (metric : SpacetimeMetric) (S : Set SpaceTimePoint) : Prop :=
   ∃ normal : SpaceTimePoint → Fin 4 → ℝ,
+    NormalNonvanishingOn normal S ∧
     ∀ x ∈ S, hypersurfaceNormalNormSq metric normal x > 0
 
 /-- Null hypersurface with respect to a given metric (event horizon is an example):
     the normal is null on the surface. -/
 def NullHypersurface (metric : SpacetimeMetric) (S : Set SpaceTimePoint) : Prop :=
   ∃ normal : SpaceTimePoint → Fin 4 → ℝ,
+    NormalNonvanishingOn normal S ∧
     ∀ x ∈ S, hypersurfaceNormalNormSq metric normal x = 0
 
 /-- Foliation of spacetime by spacelike hypersurfaces -/

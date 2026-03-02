@@ -226,12 +226,14 @@ structure HasSplitProperty {d : ℕ} [NeZero d] (qft : HaagKastlerQFT d) where
   split : ∀ (O₁ O₂ : Set (SpaceTimePointD d))
     (h : O₁ ⊆ O₂)
     (ω₁ : StateOnAlgebra qft.net O₁)
-    (_ω₂ : StateOnAlgebra qft.net (causalComplement O₂))
+    (ω₂ : StateOnAlgebra qft.net (causalComplement O₂))
     (O_full : Set (SpaceTimePointD d))
-    (h1 : O₂ ⊆ O_full) (_h2 : causalComplement O₂ ⊆ O_full),
+    (h1 : O₂ ⊆ O_full) (h2 : causalComplement O₂ ⊆ O_full),
     ∃ (ω : StateOnAlgebra qft.net O_full),
       ∀ A : qft.net.Algebra O₁,
-        ω.omega (qft.net.inclusion (h.trans h1) A) = ω₁.omega A
+        ω.omega (qft.net.inclusion (h.trans h1) A) = ω₁.omega A ∧
+      ∀ B : qft.net.Algebra (causalComplement O₂),
+        ω.omega (qft.net.inclusion h2 B) = ω₂.omega B
 
 /- ============= HAAG'S THEOREM ============= -/
 
