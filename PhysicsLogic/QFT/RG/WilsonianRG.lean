@@ -1,5 +1,6 @@
 import PhysicsLogic.QFT.RG.Basic
 import PhysicsLogic.Assumptions
+import Mathlib.Data.Complex.Basic
 
 namespace PhysicsLogic.QFT.RG.Wilsonian
 
@@ -26,7 +27,8 @@ set_option linter.unusedVariables false
 
     S_Λ[φ] = ∫ d^d x ∑_i g_i(Λ) O_i(φ(x))
 
-    Parametrized by an RG framework that specifies the operator content. -/
+    This real-valued version models Euclidean Wilsonian actions.
+    The complex-valued generalization is `ComplexWilsonianAction`. -/
 structure WilsonianAction {d : ℕ} (rg : RGFramework d) where
   /-- The cutoff scale -/
   cutoff : Cutoff
@@ -35,6 +37,27 @@ structure WilsonianAction {d : ℕ} (rg : RGFramework d) where
   action : FieldConfig → ℝ
   /-- Wilson coefficients for each operator -/
   coefficients : rg.Operator → ℝ
+
+/-- Complex-valued Wilsonian action at cutoff Λ.
+
+    This captures Lorentzian/complex effective actions where the functional
+    weight is oscillatory and the action is not restricted to ℝ. -/
+structure ComplexWilsonianAction {d : ℕ} (rg : RGFramework d) where
+  /-- The cutoff scale -/
+  cutoff : Cutoff
+  /-- The action functional on a field configuration type -/
+  FieldConfig : Type*
+  action : FieldConfig → ℂ
+  /-- Wilson coefficients for each operator (possibly complex). -/
+  coefficients : rg.Operator → ℂ
+
+/-- Embed a real Wilsonian action into the complex-valued interface. -/
+def WilsonianAction.toComplex {d : ℕ} {rg : RGFramework d}
+    (S : WilsonianAction rg) : ComplexWilsonianAction rg where
+  cutoff := S.cutoff
+  FieldConfig := S.FieldConfig
+  action := fun φ => (S.action φ : ℂ)
+  coefficients := fun O => (S.coefficients O : ℂ)
 
 /-- The Wilson coefficient for operator O at scale Λ -/
 def wilsonCoeff {d : ℕ} {rg : RGFramework d} (S : WilsonianAction rg) (O : rg.Operator) : ℝ :=
@@ -83,6 +106,27 @@ structure WetterichFlow {d : ℕ} (rg : RGFramework d) where
       (The full Wetterich equation ∂_t Γ_k = ... requires functional
       derivatives not available in this formalization.) -/
   regulator_ir_vanish : ∀ (p : ℝ), regulator 0 p = 0
+
+/-- Complex-valued Wetterich flow.
+
+    Useful for real-time or contour-deformed formulations where Γ_k can be
+    complex-valued. -/
+structure ComplexWetterichFlow {d : ℕ} (rg : RGFramework d) where
+  /-- Effective average action at each scale (complex-valued). -/
+  FieldConfig : Type*
+  effective_action : Scale → FieldConfig → ℂ
+  /-- Regulator function R_k on momentum magnitudes. -/
+  regulator : Scale → ℝ → ℝ
+  /-- IR limit of the regulator. -/
+  regulator_ir_vanish : ∀ (p : ℝ), regulator 0 p = 0
+
+/-- Embed a real Wetterich flow into the complex-valued interface. -/
+def WetterichFlow.toComplex {d : ℕ} {rg : RGFramework d}
+    (W : WetterichFlow rg) : ComplexWetterichFlow rg where
+  FieldConfig := W.FieldConfig
+  effective_action := fun k φ => (W.effective_action k φ : ℂ)
+  regulator := W.regulator
+  regulator_ir_vanish := W.regulator_ir_vanish
 
 /- ============= LOCALITY AND DERIVATIVE EXPANSION ============= -/
 

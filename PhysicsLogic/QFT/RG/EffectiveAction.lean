@@ -2,6 +2,7 @@ import PhysicsLogic.QFT.RG.Basic
 import PhysicsLogic.QFT.BV.BatalinVilkovisky
 import PhysicsLogic.QFT.PathIntegral.PathIntegrals
 import PhysicsLogic.QFT.PathIntegral.Regularization
+import Mathlib.Data.Complex.Basic
 
 namespace PhysicsLogic.QFT.RG.EffectiveAction
 
@@ -239,11 +240,13 @@ noncomputable def physicalMassSquared (v : OnePIVertices F)
     Γ[φ] = S[φ] + ℏ Γ₁[φ] + ℏ² Γ₂[φ] + O(ℏ³)
 
     where:
-    - S[φ] is the classical action (tree level)
-    - Γ₁[φ] = (i/2) Tr log(δ²S/δφ²) is the one-loop correction
+    - S[φ] is the Euclidean classical action (tree level)
+    - Γ₁[φ] = (1/2) Tr log(δ²S/δφ²) is the one-loop correction
     - Γₙ[φ] is the n-loop correction
 
-    This expansion is what makes the 1PI action rigorously defined
+    This real-valued version models Euclidean effective actions. A complex-valued
+    Lorentzian version is provided by `ComplexLoopExpansion` below.
+    The expansion is what makes the 1PI action rigorously defined
     at the perturbative level: each Γₙ is computed from Feynman diagrams. -/
 structure LoopExpansion (F : FieldConfigurationSpace) where
   /-- Classical action S[φ] (zeroth order in ℏ) -/
@@ -255,8 +258,8 @@ structure LoopExpansion (F : FieldConfigurationSpace) where
 
 /-- One-loop effective action via functional determinant
 
-    Γ₁[φ] = (i/2) Tr log(δ²S/δφ²)
-          = (i/2) log det(δ²S/δφ²)
+    Γ₁[φ] = (1/2) Tr log(δ²S/δφ²)
+          = (1/2) log det(δ²S/δφ²)
 
     The second functional derivative δ²S/δφ² is the fluctuation
     operator around configuration φ. -/
@@ -283,6 +286,58 @@ noncomputable def oneLoopApprox (L : LoopExpansion F) (hbar : ℝ) (φ : F.carri
 /-- Two-loop approximation -/
 noncomputable def twoLoopApprox (L : LoopExpansion F) (hbar : ℝ) (φ : F.carrier) : ℝ :=
   L.classical_action φ + hbar * L.loop_correction 1 φ + hbar^2 * L.loop_correction 2 φ
+
+/-- Complex-valued loop expansion of the 1PI effective action.
+
+    This interface captures the general Lorentzian/complex setting:
+    Γ[φ] = S[φ] + ℏΓ₁[φ] + ℏ²Γ₂[φ] + ...
+    with all coefficients potentially complex-valued. -/
+structure ComplexLoopExpansion (F : FieldConfigurationSpace) where
+  /-- Classical action term (possibly complex). -/
+  classical_action : F.carrier → ℂ
+  /-- n-loop correction Γₙ[φ] (possibly complex). -/
+  loop_correction : ℕ → (F.carrier → ℂ)
+  /-- ℏ = 0 limit is classical. -/
+  loop_correction_zero : loop_correction 0 = classical_action
+
+/-- Embed a real (Euclidean) loop expansion into the complex-valued interface. -/
+def LoopExpansion.toComplex (L : LoopExpansion F) : ComplexLoopExpansion F where
+  classical_action := fun φ => (L.classical_action φ : ℂ)
+  loop_correction := fun n φ => (L.loop_correction n φ : ℂ)
+  loop_correction_zero := by
+    funext φ
+    exact congrArg (fun f => (f φ : ℂ)) L.loop_correction_zero
+
+/-- Evaluate the full complex 1PI action at `nLoops` loop order. -/
+noncomputable def evaluateComplexLoopExpansion
+    (L : ComplexLoopExpansion F) (hbar : ℂ) (φ : F.carrier) (nLoops : ℕ) : ℂ :=
+  (List.range (nLoops + 1)).foldl (fun acc n => acc + hbar^n * L.loop_correction n φ) 0
+
+/-- Complex tree-level approximation. -/
+def complexTreeLevel (L : ComplexLoopExpansion F) : F.carrier → ℂ := L.classical_action
+
+/-- Complex one-loop approximation: S + ℏΓ₁. -/
+noncomputable def complexOneLoopApprox
+    (L : ComplexLoopExpansion F) (hbar : ℂ) (φ : F.carrier) : ℂ :=
+  L.classical_action φ + hbar * L.loop_correction 1 φ
+
+/-- Complex two-loop approximation. -/
+noncomputable def complexTwoLoopApprox
+    (L : ComplexLoopExpansion F) (hbar : ℂ) (φ : F.carrier) : ℂ :=
+  L.classical_action φ + hbar * L.loop_correction 1 φ + hbar^2 * L.loop_correction 2 φ
+
+/-- Complex one-loop effective action via functional determinant.
+
+    In Lorentzian signature one often has
+    Γ₁[φ] = (i/2) Tr log(δ²S/δφ²),
+    which naturally lives in ℂ. -/
+structure ComplexOneLoopCorrection (F : FieldConfigurationSpace) where
+  /-- Classical action. -/
+  classical_action : F.carrier → ℂ
+  /-- Fluctuation operator at configuration φ. -/
+  fluctuation_operator : F.carrier → (F.carrier → F.carrier)
+  /-- One-loop correction (complex in general). -/
+  one_loop : F.carrier → ℂ
 
 /- ============================================================================
    PART V: WILSONIAN EFFECTIVE ACTION (NON-PERTURBATIVE)
@@ -336,6 +391,30 @@ structure WilsonianEffectiveAction (F : FieldConfigurationSpace) where
   action_at_scale : Cutoff → (F.carrier → ℝ)
   /-- At bare scale, Wilsonian action equals bare action -/
   initial_condition : action_at_scale bare_cutoff = bare_action
+
+/-- Complex-valued Wilsonian effective action.
+
+    This covers theories with theta terms, complex saddles, or Lorentzian
+    phase formulations where the effective action is not real-valued. -/
+structure ComplexWilsonianEffectiveAction (F : FieldConfigurationSpace) where
+  /-- Bare UV cutoff -/
+  bare_cutoff : Cutoff
+  /-- Bare action at UV scale (possibly complex). -/
+  bare_action : F.carrier → ℂ
+  /-- Wilsonian action at scale Λ ≤ Λ₀ (possibly complex). -/
+  action_at_scale : Cutoff → (F.carrier → ℂ)
+  /-- At bare scale, Wilsonian action equals bare action. -/
+  initial_condition : action_at_scale bare_cutoff = bare_action
+
+/-- Embed a real Wilsonian effective action into the complex-valued interface. -/
+def WilsonianEffectiveAction.toComplex (W : WilsonianEffectiveAction F) :
+    ComplexWilsonianEffectiveAction F where
+  bare_cutoff := W.bare_cutoff
+  bare_action := fun φ => (W.bare_action φ : ℂ)
+  action_at_scale := fun Λ φ => (W.action_at_scale Λ φ : ℂ)
+  initial_condition := by
+    funext φ
+    exact congrArg (fun f => (f φ : ℂ)) W.initial_condition
 
 /-- Partition function independence
 
@@ -432,6 +511,20 @@ structure WilsonianFromPathIntegral (F : Type _) where
   uv_cutoff : UVCutoff
   /-- The effective action at scale Λ ≤ uv_cutoff (implicitly defined) -/
   effective_at_scale : UVCutoff → (F → ℝ)
+
+/-- Path-integral interface to complex Wilsonian effective actions.
+
+    This is the general Lorentzian/complex counterpart of
+    `WilsonianFromPathIntegral`. -/
+structure ComplexWilsonianFromPathIntegral (F : Type _) where
+  /-- The bare action as a complex-valued functional. -/
+  bare_action : ComplexActionFunctional F
+  /-- Field measure. -/
+  measure : FieldMeasure F
+  /-- UV cutoff. -/
+  uv_cutoff : UVCutoff
+  /-- Complex effective action at scale Λ ≤ uv_cutoff (implicitly defined). -/
+  effective_at_scale : UVCutoff → (F → ℂ)
 
 /- The 1PI effective action Γ[φ_cl] is defined as the Legendre transform of W[J] = -iℏ log Z[J].
 
