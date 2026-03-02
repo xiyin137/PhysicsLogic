@@ -254,7 +254,7 @@ theorem super_sft_flat_bracket_package
 
 /-- pp-wave massless super-SFT solution data. -/
 structure SuperSftPpWaveSolutionData where
-  deformationParameter : ℝ
+  deformationParameter : DimensionlessCoupling
   rrFiveFormFluxTurnedOn : SuperSftClaim
   nsnsMetricBackreactionIncluded : SuperSftClaim
   boostSymmetryTruncatesHigherMasslessBrackets : SuperSftClaim
