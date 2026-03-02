@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.Basic
@@ -315,7 +316,7 @@ theorem heterotic_non_bps_spinor_mass_renormalization_package
 /-- Background-field `(0,1)` sigma-model data for heterotic strings. -/
 structure HeteroticBackgroundNlsmData where
   Configuration : Type
-  actionFunctional : Configuration → ComplexActionValue
+  actionFunctional : QFT.PathIntegral.ComplexActionFunctional Configuration
   alphaPrime : StringSlope
   hasMetricBackground : HeteroticClaim
   hasBFieldBackground : HeteroticClaim

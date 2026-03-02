@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import Mathlib.Analysis.SpecialFunctions.Complex.Log
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Data.Complex.Basic
@@ -20,7 +21,8 @@ structure MaldacenaWilsonLoopSaddleData where
   contourLength : LengthScale
   WorldsheetConfiguration : Type
   saddleConfiguration : WorldsheetConfiguration
-  worldsheetActionFunctional : WorldsheetConfiguration → ComplexActionValue
+  worldsheetActionFunctional :
+    QFT.PathIntegral.ComplexActionFunctional WorldsheetConfiguration
   expectationValue : ComplexAmplitude
 
 /-- Regulated holographic Wilson-loop saddle package:
@@ -33,7 +35,7 @@ def MaldacenaWilsonLoopSaddlePackage
   data.contourLength ≥ 0 ∧
   data.expectationValue =
     Complex.exp
-      (-(data.worldsheetActionFunctional data.saddleConfiguration -
+      (-(data.worldsheetActionFunctional.eval data.saddleConfiguration -
         (((data.adsRadius / (2 * Real.pi * data.alphaPrime * data.cutoff)) *
             data.contourLength : LengthScale) : ℂ)))
 

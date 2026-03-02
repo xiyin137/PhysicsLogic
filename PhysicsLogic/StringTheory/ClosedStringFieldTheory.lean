@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.Basic
 
@@ -134,17 +135,17 @@ theorem siegel_gauge_propagator_package
 
 /-- 1PI effective-action data in the Siegel gauge. -/
 structure OnePIEffectiveActionSiegelData (StringField : Type*) where
-  kineticContribution : StringField → ComplexActionValue
-  interactionContribution : StringField → ComplexActionValue
-  effectiveActionFunctional : StringField → ComplexActionValue
+  kineticContribution : QFT.PathIntegral.ComplexActionFunctional StringField
+  interactionContribution : QFT.PathIntegral.ComplexActionFunctional StringField
+  effectiveActionFunctional : QFT.PathIntegral.ComplexActionFunctional StringField
 
 /-- Siegel 1PI package:
 `Γ = kinetic - interaction`, matching the SFT 1PI decomposition. -/
 def OnePIEffectiveActionSiegelPackage
     {StringField : Type*} (data : OnePIEffectiveActionSiegelData StringField) : Prop :=
   ∀ ψ : StringField,
-    data.effectiveActionFunctional ψ =
-      data.kineticContribution ψ - data.interactionContribution ψ
+    data.effectiveActionFunctional.eval ψ =
+      data.kineticContribution.eval ψ - data.interactionContribution.eval ψ
 
 /-- Assumed Siegel-gauge 1PI effective-action package. -/
 theorem one_pi_effective_action_siegel_package

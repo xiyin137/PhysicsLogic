@@ -1,4 +1,5 @@
 import PhysicsLogic.QFT.Euclidean.SchwingerFunctions
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import PhysicsLogic.Assumptions
 import Mathlib.Analysis.SpecialFunctions.Exp
 
@@ -92,7 +93,7 @@ structure EuclideanGeneratingData {d : ℕ} (theory : QFT d) where
   /-- Generating functional `Z[J] = ∫ Dφ e^{-S_E[φ] + ∫J·φ}` as a functional on source space. -/
   generatingFunctional : SourceConfiguration → ComplexAmplitude
   /-- Effective action `Γ[φ_cl]` as a functional on classical-field space. -/
-  effectiveActionFunctional : ClassicalConfiguration → ActionScale
+  effectiveActionFunctional : QFT.PathIntegral.ActionFunctional ClassicalConfiguration
 
 /-- Schwinger-Dyson equations relate n-point and (n+1)-point functions.
     For a theory with action S[φ], the SD equation is:

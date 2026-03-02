@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.Basic
@@ -54,7 +55,7 @@ structure COneZzInstantonData where
   stringCoupling : DimensionlessCoupling
   alphaPrime : StringSlope
   matrixModelMu : MassScale
-  zzInstantonActionFunctional : InstantonConfiguration → ComplexActionValue
+  zzInstantonActionFunctional : QFT.PathIntegral.ComplexActionFunctional InstantonConfiguration
   zzActionFromBraneMassRelationUsed : DInstantonClaim
   matrixModelBounceDictionaryUsed : DInstantonClaim
   leadingOneToNAmplitudeFromDiscOnePointFunctions : DInstantonClaim
@@ -67,7 +68,7 @@ def COneZzInstantonPackage (data : COneZzInstantonData) : Prop :=
   data.stringCoupling > 0 /\
   data.alphaPrime > 0 /\
   data.matrixModelMu > 0 /\
-  data.zzInstantonActionFunctional data.selectedConfiguration =
+  data.zzInstantonActionFunctional.eval data.selectedConfiguration =
     ((1 / (2 * data.stringCoupling) : ℝ) : ℂ) /\
   data.zzActionFromBraneMassRelationUsed /\
   data.matrixModelBounceDictionaryUsed /\
@@ -91,8 +92,8 @@ structure TypeIIBDMinusOneInstantonData where
   tau1 : Real
   tau2 : Real
   axioDilatonField : InstantonConfiguration → ComplexDimensionless
-  dMinusOneActionFunctional : InstantonConfiguration → ComplexActionValue
-  antiDMinusOneActionFunctional : InstantonConfiguration → ComplexActionValue
+  dMinusOneActionFunctional : QFT.PathIntegral.ComplexActionFunctional InstantonConfiguration
+  antiDMinusOneActionFunctional : QFT.PathIntegral.ComplexActionFunctional InstantonConfiguration
   antiInstantonActionUsesConjugateAxioDilaton : DInstantonClaim
   nmInstantonActionUsed : DInstantonClaim
   axionShiftBrokenToIntegerSubgroup : DInstantonClaim
@@ -107,10 +108,10 @@ def TypeIIBDMinusOneInstantonPackage
   data.tau2 > 0 /\
   data.axioDilatonField data.selectedConfiguration =
     data.tau1 + data.tau2 * Complex.I /\
-  data.dMinusOneActionFunctional data.selectedConfiguration =
+  data.dMinusOneActionFunctional.eval data.selectedConfiguration =
     -2 * Real.pi * Complex.I *
       data.axioDilatonField data.selectedConfiguration /\
-  data.antiDMinusOneActionFunctional data.selectedConfiguration =
+  data.antiDMinusOneActionFunctional.eval data.selectedConfiguration =
     -2 * Real.pi * Complex.I *
       star (data.axioDilatonField data.selectedConfiguration) /\
   data.antiInstantonActionUsesConjugateAxioDilaton /\
@@ -130,8 +131,9 @@ theorem type_iib_d_minus_one_instanton_package
 
 /-- Open+closed SFT data for D-instanton zero-mode and gauge-volume treatment. -/
 structure DInstantonOpenClosedSftZeroModeData (ClosedField OpenField : Type*) where
-  coupledBvActionFunctional : ClosedField → OpenField → ComplexActionValue
-  closedEffectiveActionFunctional : ClosedField → ComplexActionValue
+  coupledBvActionFunctional :
+    QFT.PathIntegral.ComplexActionFunctional (ClosedField × OpenField)
+  closedEffectiveActionFunctional : QFT.PathIntegral.ComplexActionFunctional ClosedField
   lagrangianSubmanifoldInOpenFieldSpaceChosen : DInstantonClaim
   openCollectiveModesReparametrizeInstantonModuli : DInstantonClaim
   openFieldSpaceBackgroundIndependenceMapUsed : DInstantonClaim

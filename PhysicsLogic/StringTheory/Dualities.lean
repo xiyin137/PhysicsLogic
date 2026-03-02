@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.Basic
 
@@ -389,7 +390,8 @@ theorem heterotic_strong_coupling_interval_package
 
 /-- Horava-Witten bulk-boundary anomaly-inflow data. -/
 structure HoravaWittenBoundaryData (BulkField BoundaryField : Type*) where
-  effectiveActionFunctional : BulkField → BoundaryField → ComplexActionValue
+  effectiveActionFunctional :
+    QFT.PathIntegral.ComplexActionFunctional (BulkField × BoundaryField)
   boundaryConditionForG4IncludesGaugeAndCurvatureChernClasses : DualityClaim
   c3GaugeShiftCompensatesBoundaryGaugeVariation : DualityClaim
   bulkChernSimonsTermGeneratesBoundaryAnomalyInflow : DualityClaim

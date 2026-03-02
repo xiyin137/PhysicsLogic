@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.Basic
@@ -409,7 +410,7 @@ structure ConifoldWorldsheetInstantonData where
   windingNumber : Nat
   windingNumberOf : InstantonConfiguration → Nat
   complexifiedKahlerModulus : Complex
-  instantonActionFunctional : InstantonConfiguration → ComplexActionValue
+  instantonActionFunctional : QFT.PathIntegral.ComplexActionFunctional InstantonConfiguration
   holomorphicMapsToExceptionalSphereUsed : GeometricSingularityClaim
   rationalMapModuliSpaceWithNonzeroResultantUsed : GeometricSingularityClaim
   topologicalTwistLocalizationUsed : GeometricSingularityClaim
@@ -423,7 +424,7 @@ def ConifoldWorldsheetInstantonPackage
     (data : ConifoldWorldsheetInstantonData) : Prop :=
   data.windingNumber > 0 /\
   data.windingNumberOf data.selectedConfiguration = data.windingNumber /\
-  data.instantonActionFunctional data.selectedConfiguration =
+  data.instantonActionFunctional.eval data.selectedConfiguration =
     -2 * Real.pi * Complex.I * (data.windingNumber : Complex) *
       data.complexifiedKahlerModulus /\
   data.holomorphicMapsToExceptionalSphereUsed /\

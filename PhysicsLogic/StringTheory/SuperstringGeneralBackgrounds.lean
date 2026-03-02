@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.Basic
 
@@ -41,8 +42,8 @@ theorem nsr_sector_gso_package
 /-- NSNS worldsheet deformation data by integrated `(1,1)` superprimary insertions. -/
 structure NsnsScftDeformationData where
   Configuration : Type
-  actionFunctional : Configuration → ComplexActionValue
-  deformedActionFunctional : Configuration → ComplexActionValue
+  actionFunctional : QFT.PathIntegral.ComplexActionFunctional Configuration
+  deformedActionFunctional : QFT.PathIntegral.ComplexActionFunctional Configuration
   matterWeightLeft : ScalingDimension
   matterWeightRight : ScalingDimension
   preservesSuperconformalAtFirstOrder : SuperBackgroundClaim
@@ -69,7 +70,7 @@ theorem nsns_scft_deformation_package
 /-- Supersymmetric NSNS sigma-model background data. -/
 structure SupersymmetricNsnsNlsmData where
   Configuration : Type
-  actionFunctional : Configuration → ComplexActionValue
+  actionFunctional : QFT.PathIntegral.ComplexActionFunctional Configuration
   alphaPrime : StringSlope
   hasMetricBackground : SuperBackgroundClaim
   hasBFieldBackground : SuperBackgroundClaim
@@ -214,7 +215,7 @@ theorem calabi_yau_instanton_b_field_package
 /-- Green-Schwarz flat-background action and symmetry data. -/
 structure GreenSchwarzFlatActionData where
   Configuration : Type
-  actionFunctional : Configuration → ComplexActionValue
+  actionFunctional : QFT.PathIntegral.ComplexActionFunctional Configuration
   decomposesAsSOnePlusSTwo : SuperBackgroundClaim
   spacetimeSupersymmetryInvariant : SuperBackgroundClaim
   kappaSymmetryInvariant : SuperBackgroundClaim

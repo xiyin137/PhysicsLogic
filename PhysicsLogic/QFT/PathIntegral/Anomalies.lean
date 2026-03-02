@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Data.Complex.Basic
@@ -53,15 +54,15 @@ theorem four_d_axial_current_anomaly
 structure U1ChiralGaugeAnomalyData where
   VariationSource : Type
   sourceConfiguration : VariationSource
-  effectiveActionVariationFunctional : VariationSource → ActionScale
-  integratedZetaFF : VariationSource → ActionScale
+  effectiveActionVariationFunctional : ActionFunctional VariationSource
+  integratedZetaFF : ActionFunctional VariationSource
 
 /-- 4D chiral `U(1)` gauge-anomaly variation relation.
 `δ_ζ Γ = -(1 / 96π²) ∫ ζ ε^{μνρσ} F_{μν} F_{ρσ}`. -/
 def U1ChiralGaugeVariationAnomaly (data : U1ChiralGaugeAnomalyData) : Prop :=
-  data.effectiveActionVariationFunctional data.sourceConfiguration =
+  data.effectiveActionVariationFunctional.eval data.sourceConfiguration =
     -((1 / (96 * Real.pi ^ (2 : ℕ))) *
-      data.integratedZetaFF data.sourceConfiguration)
+      data.integratedZetaFF.eval data.sourceConfiguration)
 
 /-- Assumed 4D chiral `U(1)` gauge-anomaly variation relation from Appendix O. -/
 theorem u1_chiral_gauge_variation_anomaly

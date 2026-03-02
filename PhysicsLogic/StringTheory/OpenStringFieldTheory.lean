@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.Basic
@@ -17,7 +18,7 @@ structure ClassicalBosonicOsftBvData (OpenField : Type*) where
   cyclicOpenVerticesFromBoundaryModuliChains : OpenSftClaim
   geometricMasterEquationForOpenVerticesUsed : OpenSftClaim
   vertexNormalizationRecursionSatisfied : OpenSftClaim
-  classicalActionFunctional : OpenField → ComplexActionValue
+  classicalActionFunctional : QFT.PathIntegral.ComplexActionFunctional OpenField
   actionInterpretedAsFunctionalNotScalarObservable : OpenSftClaim
 
 /-- Section 15.1.1 package:

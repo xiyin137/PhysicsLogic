@@ -1,12 +1,13 @@
 -- ModularPhysics/Core/QFT/CFT/TwoDimensional/Virasoro.lean
 import PhysicsLogic.QFT.CFT.Basic
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import PhysicsLogic.Symmetries.LieAlgebras
 import PhysicsLogic.Assumptions
 import Mathlib.Data.Complex.Basic
 
 namespace PhysicsLogic.QFT.CFT.TwoDimensional
 
-open CFT
+open CFT PhysicsLogic.QFT.PathIntegral
 
 set_option linter.unusedVariables false
 
@@ -119,31 +120,31 @@ structure WeylAnomalyFunctional where
   weylField : WeylConfiguration → ℝ
   kineticDensity : WeylConfiguration → ℝ
   traceStressTensor : WeylConfiguration → ℝ
-  anomalyActionFunctional : WeylConfiguration → ComplexActionValue
+  anomalyActionFunctional : ComplexActionFunctional WeylConfiguration
   partitionFunctionRatio : WeylConfiguration → ComplexAmplitude
   traceAnomalyFormula :
     traceStressTensor selectedConfiguration =
       -(centralCharge / 12) * scalarCurvature selectedConfiguration
   anomalyActionFormula :
-    anomalyActionFunctional selectedConfiguration =
+    anomalyActionFunctional.eval selectedConfiguration =
       (-(centralCharge / (24 * Real.pi)) *
         (kineticDensity selectedConfiguration +
           weylField selectedConfiguration * scalarCurvature selectedConfiguration) : ℂ)
   partitionRatioFormula :
     partitionFunctionRatio selectedConfiguration =
-      Complex.exp (-(anomalyActionFunctional selectedConfiguration))
+      Complex.exp (-(anomalyActionFunctional.eval selectedConfiguration))
 
 /-- Propositional package form of the Weyl-anomaly data equations. -/
 def WeylAnomalyFunctionalPackage (data : WeylAnomalyFunctional) : Prop :=
   data.traceStressTensor data.selectedConfiguration =
     -(data.centralCharge / 12) * data.scalarCurvature data.selectedConfiguration ∧
-  data.anomalyActionFunctional data.selectedConfiguration =
+  data.anomalyActionFunctional.eval data.selectedConfiguration =
     (-(data.centralCharge / (24 * Real.pi)) *
       (data.kineticDensity data.selectedConfiguration +
         data.weylField data.selectedConfiguration *
           data.scalarCurvature data.selectedConfiguration) : ℂ) ∧
   data.partitionFunctionRatio data.selectedConfiguration =
-    Complex.exp (-(data.anomalyActionFunctional data.selectedConfiguration))
+    Complex.exp (-(data.anomalyActionFunctional.eval data.selectedConfiguration))
 
 /-- Assumed Appendix-E Weyl/Polyakov-anomaly functional package. -/
 theorem weyl_anomaly_polyakov_functional

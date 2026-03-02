@@ -1,4 +1,5 @@
 import PhysicsLogic.Assumptions
+import PhysicsLogic.QFT.PathIntegral.ActionAndMeasure
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.Basic
 
@@ -202,7 +203,7 @@ structure TypeIEffectiveActionData (FieldConfig : Type*) where
   alphaPrime : StringSlope
   gravitationalCoupling : CouplingScale
   yangMillsCouplingSq : CouplingScale
-  effectiveActionFunctional : FieldConfig → ComplexActionValue
+  effectiveActionFunctional : QFT.PathIntegral.ComplexActionFunctional FieldConfig
   sphereAndDiscDilatonWeightsIncluded : TypeIOrientifoldClaim
   gravityAndGaugeCouplingsMatchedToThreePointAmplitudes : TypeIOrientifoldClaim
   rrChernSimonsCouplingsToGaugeFieldsIncluded : TypeIOrientifoldClaim

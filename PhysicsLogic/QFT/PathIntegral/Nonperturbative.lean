@@ -63,7 +63,7 @@ collective-coordinate bookkeeping. -/
 structure InstantonSaddleData where
   FieldConfiguration : Type
   saddleConfiguration : FieldConfiguration
-  euclideanActionFunctional : FieldConfiguration → ActionScale
+  euclideanActionFunctional : ActionFunctional FieldConfiguration
   hbar : ActionScale
   oneLoopPrefactor : ComplexAmplitude
   amplitude : ComplexAmplitude
@@ -72,10 +72,10 @@ structure InstantonSaddleData where
 
 /-- Instanton-saddle consistency package. -/
 def InstantonSaddlePackage (data : InstantonSaddleData) : Prop :=
-  data.euclideanActionFunctional data.saddleConfiguration > 0 ∧
+  data.euclideanActionFunctional.eval data.saddleConfiguration > 0 ∧
   data.collectiveCoordinateMeasureIncluded ∧
   InstantonSemiclassicalWeight
-    (data.euclideanActionFunctional data.saddleConfiguration)
+    (data.euclideanActionFunctional.eval data.saddleConfiguration)
     data.hbar data.oneLoopPrefactor data.amplitude
 
 /-- Assumed leading instanton semiclassical weighting relation. -/
@@ -95,14 +95,14 @@ theorem instanton_saddle_package
     (h_phys : PhysicsAssumption
       AssumptionId.pathIntegralInstantonSemiclassicalWeight
       (InstantonSemiclassicalWeight
-        (data.euclideanActionFunctional data.saddleConfiguration)
+        (data.euclideanActionFunctional.eval data.saddleConfiguration)
         data.hbar data.oneLoopPrefactor data.amplitude))
-    (h_action : data.euclideanActionFunctional data.saddleConfiguration > 0)
+    (h_action : data.euclideanActionFunctional.eval data.saddleConfiguration > 0)
     (h_zero_modes : data.collectiveCoordinateMeasureIncluded) :
     InstantonSaddlePackage data := by
   exact ⟨h_action, h_zero_modes,
     instanton_semiclassical_weight
-      (data.euclideanActionFunctional data.saddleConfiguration)
+      (data.euclideanActionFunctional.eval data.saddleConfiguration)
       data.hbar data.oneLoopPrefactor data.amplitude h_phys⟩
 
 /-- Sign contribution associated with a Morse index. -/
@@ -209,7 +209,7 @@ theorem borel_resummation_package
 structure LefschetzSector where
   FieldConfiguration : Type
   saddleConfiguration : FieldConfiguration
-  actionFunctional : FieldConfiguration → ComplexActionValue
+  actionFunctional : ComplexActionFunctional FieldConfiguration
   coefficient : ℤ
   fluctuationWeight : ComplexAmplitude
 
@@ -217,7 +217,7 @@ structure LefschetzSector where
 noncomputable def LefschetzSector.contribution
     (sector : LefschetzSector) : ComplexAmplitude :=
   (sector.coefficient : ℂ) *
-    Complex.exp (-(sector.actionFunctional sector.saddleConfiguration)) *
+    Complex.exp (-(sector.actionFunctional.eval sector.saddleConfiguration)) *
     sector.fluctuationWeight
 
 /-- Sum over finitely many Lefschetz-thimble sectors. -/
