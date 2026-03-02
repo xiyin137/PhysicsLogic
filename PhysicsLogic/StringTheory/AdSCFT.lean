@@ -250,7 +250,7 @@ theorem massive_string_strong_coupling_scaling
 structure SpinningStringTwistData where
   tHooftCoupling : DimensionlessCoupling
   spin : ScalingDimension
-  twist : ℝ
+  twist : ScalingDimension
 
 /-- Folded-string large-spin twist relation:
 `Δ-J ≈ (sqrt(λ)/π) log(J/sqrt(λ))`. -/

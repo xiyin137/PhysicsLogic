@@ -136,7 +136,7 @@ structure AdS3Sl2RepresentationSpectrumData where
   jReflected : ScalingDimension
   jContinuousRealPart : ScalingDimension
   continuousParameter : ScalingDimension
-  alphaParameter : ℝ
+  alphaParameter : ScalingDimension
 
 /-- AdS3 representation-window package:
 discrete `1/2 < j < (k-1)/2` with reflected `j^vee = k/2-j` in same window,

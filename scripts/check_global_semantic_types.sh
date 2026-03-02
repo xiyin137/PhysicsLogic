@@ -184,6 +184,8 @@ raw_spin_weight_hits="$(
       PhysicsLogic --glob '*.lean'
     rg -n "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*conformalWeight[A-Za-z0-9_']*[[:space:]]*:[[:space:]]*(ℝ|Real)([[:space:]]|$)" \
       PhysicsLogic --glob '*.lean'
+    rg -n "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*twist[A-Za-z0-9_']*[[:space:]]*:[[:space:]]*(ℝ|Real)([[:space:]]|$)" \
+      PhysicsLogic --glob '*.lean'
   } | rg -v '^PhysicsLogic/Papers/' || true
 )"
 if [[ -n "$raw_spin_weight_hits" ]]; then
@@ -209,7 +211,7 @@ fi
 
 echo "[global-semantic-check] AdS3 spectral-weight fields use ScalingDimension aliases"
 raw_ads3_weight_hits="$(
-  rg -n "^[[:space:]]+(jDiscrete|jReflected|jContinuousRealPart|continuousParameter|mQuantum|currentDescendantLevel|virasoroDescendantLevel|adsDescendantLevel|suDescendantLevel|internalWeight|j0Three|flowedLZero|poleExcitationNumber|muOrderTwoCorrectionDenominator|slBosonicLevel|suBosonicLevel|slPower|suPower)[[:space:]]*:[[:space:]]*(ℝ|Real)([[:space:]]|$)" \
+  rg -n "^[[:space:]]+(jDiscrete|jReflected|jContinuousRealPart|continuousParameter|alphaParameter|mQuantum|currentDescendantLevel|virasoroDescendantLevel|adsDescendantLevel|suDescendantLevel|internalWeight|j0Three|flowedLZero|poleExcitationNumber|muOrderTwoCorrectionDenominator|slBosonicLevel|suBosonicLevel|slPower|suPower)[[:space:]]*:[[:space:]]*(ℝ|Real)([[:space:]]|$)" \
     PhysicsLogic/StringTheory/AdS3CFT2.lean \
     PhysicsLogic/QFT/CFT/TwoDimensional/CurrentAlgebras.lean || true
 )"
