@@ -375,13 +375,15 @@ noncomputable def spin2D {H : Type _} (φ : Primary2D H) : ℝ :=
     This is the defining property of a primary field - it transforms with
     a definite conformal weight under holomorphic coordinate changes. -/
 structure PrimaryTransformationTheory where
-  primary_transformation : ∀ {H : Type _}
+  primary_transformation : ∀ {H : Type _} [SMul ℂ H]
     (φ : Primary2D H)
     (f : ℂ → ℂ)
     (f_deriv : ℂ → ℂ)  -- f'(z)
     (z z_bar : ℂ)
     (state : H),
-    ∃ (transform_factor : ℂ), transform_factor ≠ 0  -- The Jacobian factor (f')^h (f̄')^h̄
+    ∃ (transform_factor : ℂ), transform_factor ≠ 0 ∧
+      φ.field (f z) (f z_bar) state = transform_factor • φ.field z z_bar state
+      -- The Jacobian factor `(f')^h (f̄')^h̄` rescales the field.
 
 /- ============= DESCENDANTS ============= -/
 
