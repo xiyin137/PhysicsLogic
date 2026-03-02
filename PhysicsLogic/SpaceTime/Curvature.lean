@@ -24,11 +24,11 @@ structure CurvatureTheory (metric : SpacetimeMetric) where
   riemann_pair_symmetry : ∀ x μ ν ρ σ,
     ∑ l, ∑ k, metric.g x μ l * metric.g x ν k * riemannTensor x l k ρ σ =
     ∑ l, ∑ k, metric.g x ρ l * metric.g x σ k * riemannTensor x l k μ ν
-  /-- Bianchi first identity -/
+  /-- First Bianchi identity (cyclic in the last three slots for fixed first slot). -/
   bianchi_first_identity : ∀ x μ ν ρ σ,
     riemannTensor x μ ν ρ σ +
-    riemannTensor x ν ρ μ σ +
-    riemannTensor x ρ μ ν σ = 0
+    riemannTensor x μ ρ σ ν +
+    riemannTensor x μ σ ν ρ = 0
   /-- Bianchi second identity -/
   bianchi_second_identity : ∀ x μ ν ρ σ τ,
     covariantDerivativeRiemann x μ ν ρ σ τ +

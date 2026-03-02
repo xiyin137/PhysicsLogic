@@ -78,7 +78,9 @@ structure ShorteningConditionsTheory where
   null_state_at_unitarity_bound : ∀ (d : ℕ) {H : Type _}
     (O : QuasiPrimary d H) (ℓ : ℕ)
     (h_saturate : O.scaling_dim = ℓ + (d - 2 : ℝ) / 2),
-    ∃ (level : ℕ), level ≥ 1
+    ∃ (level : ℕ) (null_descendant : Descendant d H), level ≥ 1 ∧
+      null_descendant.quasi_primary = O ∧
+      null_descendant.level = level
 
 /-- Long multiplet: Δ > ℓ + (d-2)/2
     Generic case, full descendant tower -/

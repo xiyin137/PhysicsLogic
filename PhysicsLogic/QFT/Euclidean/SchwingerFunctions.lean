@@ -144,10 +144,11 @@ structure SpectralDensity (d : ℕ) where
     - Continuum (multi-particle states): smooth ρ(m²) -/
 structure HasSpectralRepresentation {d : ℕ} (theory : QFT d) where
   spectral : SpectralDensity d
+  /-- Spectral integral prediction for the two-point function. -/
+  spectralTwoPoint : EuclideanPoint d → ℝ
   /-- The 2-point function admits the spectral decomposition -/
   decomposition : ∀ x : EuclideanPoint d,
-    ∃ continuous_part : ℝ,
-    correlationFunction theory x (euclideanOrigin d) = continuous_part
+    correlationFunction theory x (euclideanOrigin d) = spectralTwoPoint x
     -- In a full formalization, this would be the actual integral
     -- ∫₀^∞ dm² spectral.ρ(m²) · K.kernel d (√m²) (radialDistance x)
 
@@ -157,10 +158,11 @@ structure IsolatedMass {d : ℕ} (K : MassiveKernelData) (spec : SpectralDensity
   /-- The residue Z > 0 (field strength renormalization) -/
   residue : ℝ
   residue_pos : residue > 0
-  /-- The contribution of this pole to correlations -/
-  pole_contribution : ∀ (x : EuclideanPoint d),
-    ∃ pole_part : ℝ,
-    pole_part = residue * K.kernel d m₀ (radialDistance x)
+  /-- Pole contribution profile from the isolated mass shell m₀. -/
+  poleContribution : EuclideanPoint d → ℝ
+  /-- Pole contribution equals residue times the massive kernel. -/
+  pole_contribution_formula : ∀ (x : EuclideanPoint d),
+    poleContribution x = residue * K.kernel d m₀ (radialDistance x)
 
 /-- Spectral decomposition: correlation function splits into isolated poles + continuum.
     For a theory with isolated masses, the 2-point function is:

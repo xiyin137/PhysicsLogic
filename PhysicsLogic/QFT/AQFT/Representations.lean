@@ -134,6 +134,23 @@ def CausallyComplete {d : ℕ} [NeZero d]
     (O : Set (SpaceTimePointD d)) : Prop :=
   causalComplement (causalComplement O) = O
 
+/- ============= EMBEDDED SUBALGEBRAS/COMMUTANTS ============= -/
+
+/-- Image of `A(O)` inside a larger algebra `A(O_full)` via isotony inclusion. -/
+def EmbeddedAlgebraInRegion {d : ℕ} [NeZero d]
+    (qft : HaagKastlerQFT d)
+    (O O_full : Set (SpaceTimePointD d))
+    (hO : O ⊆ O_full) : Set (qft.net.Algebra O_full) :=
+  {B | ∃ A : qft.net.Algebra O, qft.net.inclusion hO A = B}
+
+/-- Relative commutant of `A(O)` inside `A(O_full)`. -/
+def RelativeCommutantInRegion {d : ℕ} [NeZero d]
+    (qft : HaagKastlerQFT d)
+    (O O_full : Set (SpaceTimePointD d))
+    (hO : O ⊆ O_full) : Set (qft.net.Algebra O_full) :=
+  {B | ∀ A : qft.net.Algebra O,
+      qft.net.Commute (qft.net.inclusion hO A) B}
+
 /- ============= HAAG DUALITY ============= -/
 
 /-- Haag duality: for causally complete regions, the commutant of A(O)
@@ -146,16 +163,15 @@ def CausallyComplete {d : ℕ} [NeZero d]
     must be localized in the causal complement O'.
     Nothing "hides" between O and O'. -/
 structure HasHaagDuality {d : ℕ} [NeZero d] (qft : HaagKastlerQFT d) where
-  /-- Observables in O and O' commute when embedded in a common region -/
+  /-- Relative commutant equality:
+      `A(O)' ∩ A(O_full) = A(O') ∩ A(O_full)` for causally complete `O`. -/
   haag_duality : ∀ (O : Set (SpaceTimePointD d))
     (_h_complete : CausallyComplete O)
-    (A : qft.net.Algebra O)
-    (B : qft.net.Algebra (causalComplement O))
     (O_full : Set (SpaceTimePointD d))
-    (h1 : O ⊆ O_full)
-    (h2 : causalComplement O ⊆ O_full),
-    qft.net.mul (qft.net.inclusion h1 A) (qft.net.inclusion h2 B) =
-    qft.net.mul (qft.net.inclusion h2 B) (qft.net.inclusion h1 A)
+    (hO : O ⊆ O_full)
+    (hOc : causalComplement O ⊆ O_full),
+    RelativeCommutantInRegion qft O O_full hO =
+      EmbeddedAlgebraInRegion qft (causalComplement O) O_full hOc
 
 /- ============= REEH-SCHLIEDER THEOREM ============= -/
 
@@ -286,10 +302,23 @@ structure ModularData {d : ℕ} [NeZero d] {qft : HaagKastlerQFT d}
   /-- J is an involution: J² = id -/
   J_involution : ∀ ψ : gns.HilbertSpace,
     modular_conjugation (modular_conjugation ψ) = ψ
-  /-- Modular flow σ_t preserves the algebra -/
-  flow_preserves_algebra : ∀ (_t : ℝ) (A : qft.net.Algebra O),
-    ∃ (B : qft.net.Algebra O), ∀ ψ : gns.HilbertSpace,
-      gns.representation B ψ = gns.representation A ψ
+  /-- Modular automorphism flow `σ_t` on the local algebra. -/
+  modular_flow : ℝ → qft.net.Algebra O → qft.net.Algebra O
+  /-- One-parameter group identity: σ₀ = id. -/
+  flow_zero : ∀ A : qft.net.Algebra O, modular_flow 0 A = A
+  /-- One-parameter group composition: σ_{s+t} = σ_s ∘ σ_t. -/
+  flow_add : ∀ (s t : ℝ) (A : qft.net.Algebra O),
+    modular_flow (s + t) A = modular_flow s (modular_flow t A)
+  /-- Each `σ_t` is multiplicative. -/
+  flow_respects_mul : ∀ (t : ℝ) (A B : qft.net.Algebra O),
+    modular_flow t (qft.net.mul A B) = qft.net.mul (modular_flow t A) (modular_flow t B)
+  /-- Each `σ_t` respects adjoint. -/
+  flow_respects_adjoint : ∀ (t : ℝ) (A : qft.net.Algebra O),
+    modular_flow t (qft.net.adjoint A) = qft.net.adjoint (modular_flow t A)
+  /-- Each `σ_t` preserves unit. -/
+  flow_respects_unit : ∀ (t : ℝ), modular_flow t qft.net.one = qft.net.one
+  /-- Each `σ_t` is bijective (automorphism). -/
+  flow_bijective : ∀ t : ℝ, Function.Bijective (modular_flow t)
 
 /-- Tomita-Takesaki theorem: modular data exists for any local algebra
     with respect to the vacuum state, provided the vacuum is cyclic
@@ -318,38 +347,52 @@ theorem tomita_takesaki {d : ℕ} [NeZero d]
 def standardWedge (d : ℕ) [NeZero d] (h : d ≥ 2) : Set (SpaceTimePointD d) :=
   {x | x ⟨1, by omega⟩ > |x 0|}
 
+/-- If a Poincaré transformation preserves a region setwise, transport covariance
+    to an endomorphism of the same local algebra. -/
+noncomputable def covarianceOnInvariantRegion {d : ℕ} [NeZero d]
+    (qft : HaagKastlerQFT d)
+    (O : Set (SpaceTimePointD d))
+    (g : PoincareTransformGen d)
+    (h_inv : poincareImageGen g O = O) :
+    qft.net.Algebra O → qft.net.Algebra O := by
+  intro A
+  exact cast (by rw [h_inv]) ((qft.covariance O g).alpha A)
+
 /- ============= BISOGNANO-WICHMANN THEOREM ============= -/
 
+/-- Candidate geometric boost action on wedge-local observables. -/
+structure WedgeBoostActionData {d : ℕ} [NeZero d]
+    (qft : HaagKastlerQFT d) (h_dim : d ≥ 2) where
+  /-- Geometric boost family in the Poincaré group. -/
+  boost : ℝ → PoincareTransformGen d
+  /-- Each boost preserves the right wedge setwise. -/
+  preserves_wedge : ∀ t : ℝ,
+    poincareImageGen (boost t) (standardWedge d h_dim) = standardWedge d h_dim
+  /-- Induced action on wedge-local algebra. -/
+  boost_action :
+    ℝ → qft.net.Algebra (standardWedge d h_dim) → qft.net.Algebra (standardWedge d h_dim)
+  /-- The induced action agrees with covariance transported along wedge invariance. -/
+  agrees_with_covariance : ∀ (t : ℝ) (A : qft.net.Algebra (standardWedge d h_dim)),
+    boost_action t A =
+      covarianceOnInvariantRegion qft (standardWedge d h_dim) (boost t) (preserves_wedge t) A
+  /-- One-parameter group law on the induced wedge action. -/
+  one_parameter_group : ∀ (s t : ℝ) (A : qft.net.Algebra (standardWedge d h_dim)),
+    boost_action (s + t) A = boost_action s (boost_action t A)
+
 /-- Bisognano-Wichmann theorem: for wedge regions, the modular automorphism
-    group σ_t = Δ^{it}(·)Δ^{-it} acts as Lorentz boosts with rapidity 2πt,
-    and the modular conjugation J acts as PCT transformation.
-
-    σ_t(A) = α_{Λ(2πt)}(A)  for A ∈ A(W)
-    where Λ(η) is the boost with rapidity η in the x¹ direction.
-
-    This remarkable connection links:
-    - Abstract algebraic structure (modular theory)
-    - Geometric symmetry (Lorentz boosts)
-    - Thermodynamics (KMS condition at inverse temperature β = 2π)
-
-    This is a THEOREM derivable from the Haag-Kastler axioms. -/
+    group coincides with a geometric boost action. -/
 theorem bisognano_wichmann {d : ℕ} [NeZero d]
     (qft : HaagKastlerQFT d) (vac : VacuumStateData qft)
     (h_dim : d ≥ 2)
     (gns : GNSRepresentation (vac.vacuumState (standardWedge d h_dim)))
-    (_modular : @ModularData d _ qft vac _ gns) :
+    (modular : @ModularData d _ qft vac _ gns) :
     PhysicsAssumption AssumptionId.aqftBisognanoWichmann
-      (∃ (_boost : ℝ → PoincareTransformGen d),
-        ∀ (_t : ℝ) (A : qft.net.Algebra (standardWedge d h_dim)),
-          ∃ (B : qft.net.Algebra (standardWedge d h_dim)),
-            ∀ ψ : gns.HilbertSpace,
-              gns.representation B ψ = gns.representation A ψ) →
-    /- The modular flow coincides with Lorentz boosts -/
-    ∃ (_boost : ℝ → PoincareTransformGen d),
-      ∀ (_t : ℝ) (A : qft.net.Algebra (standardWedge d h_dim)),
-        ∃ (B : qft.net.Algebra (standardWedge d h_dim)),
-          ∀ ψ : gns.HilbertSpace,
-            gns.representation B ψ = gns.representation A ψ := by
+      (∃ bw : WedgeBoostActionData qft h_dim,
+        ∀ (t : ℝ) (A : qft.net.Algebra (standardWedge d h_dim)),
+          modular.modular_flow t A = bw.boost_action t A) →
+    ∃ bw : WedgeBoostActionData qft h_dim,
+      ∀ (t : ℝ) (A : qft.net.Algebra (standardWedge d h_dim)),
+        modular.modular_flow t A = bw.boost_action t A := by
   intro h_phys
   simpa [PhysicsAssumption] using h_phys
 

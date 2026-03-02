@@ -15,11 +15,11 @@ structure DensityOperator (H : Type _) [QuantumStateSpace H] where
   self_adjoint : ∀ (ψ φ : H), @inner ℂ H _ ψ (op φ) = @inner ℂ H _ (op ψ) φ
   /-- Positive semi-definite: ⟨ψ|ρ|ψ⟩ ≥ 0 -/
   positive : ∀ (ψ : H), 0 ≤ (@inner ℂ H _ ψ (op ψ)).re
-  /-- Trace is 1: for any orthonormal basis {eᵢ}, Σᵢ ⟨eᵢ|ρ|eᵢ⟩ = 1 -/
-  trace_one : ∀ (basis : ℕ → H),
+  /-- Trace normalization on a nonempty finite orthonormal index family. -/
+  trace_one : ∃ (ι : Type _) (_ : Fintype ι) (_ : Nonempty ι) (basis : ι → H),
     (∀ i, ‖basis i‖ = 1) →
     (∀ i j, i ≠ j → @inner ℂ H _ (basis i) (basis j) = 0) →
-    HasSum (fun i => (@inner ℂ H _ (basis i) (op (basis i))).re) 1
+    (∑ i, (@inner ℂ H _ (basis i) (op (basis i))).re) = 1
 
 /- Convert pure state to density operator: ρ = |ψ⟩⟨ψ|. -/
 /-- Rank-one operator underlying the pure-state density construction. -/
@@ -34,10 +34,10 @@ structure PureToDensityAssumptions {H : Type _} [QuantumStateSpace H]
     @inner ℂ H _ φ₁ (pureToDensityOp ψ φ₂) =
     @inner ℂ H _ (pureToDensityOp ψ φ₁) φ₂
   positive : ∀ (φ : H), 0 ≤ (@inner ℂ H _ φ (pureToDensityOp ψ φ)).re
-  trace_one : ∀ (basis : ℕ → H),
+  trace_one : ∃ (ι : Type _) (_ : Fintype ι) (_ : Nonempty ι) (basis : ι → H),
     (∀ i, ‖basis i‖ = 1) →
     (∀ i j, i ≠ j → @inner ℂ H _ (basis i) (basis j) = 0) →
-    HasSum (fun i => (@inner ℂ H _ (basis i) (pureToDensityOp ψ (basis i))).re) 1
+    (∑ i, (@inner ℂ H _ (basis i) (pureToDensityOp ψ (basis i))).re) = 1
 
 /-- Convert pure state to density operator: ρ = |ψ⟩⟨ψ| -/
 noncomputable def pureToDensity {H : Type _} [QuantumStateSpace H]

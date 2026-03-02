@@ -42,15 +42,32 @@ def teleportation_classical_cost : ℝ := 2
 
 variable {H : Type _} [QuantumStateSpace H]
 
+/-- Entropy functionals entering strong subadditivity for a fixed tripartite state space. -/
+structure StrongSubadditivityData {HA HB HC : Type _}
+    [QuantumStateSpace HA] [QuantumStateSpace HB] [QuantumStateSpace HC]
+    (T_BC : TensorProductSpace HB HC)
+    (T_A_BC : TensorProductSpace HA T_BC.carrier) where
+  /-- Entropy of the full state ρ_{ABC}. -/
+  entropyABC : DensityOperator T_A_BC.carrier → ℝ
+  /-- Entropy of the reduced state ρ_{AB}. -/
+  entropyAB : DensityOperator T_A_BC.carrier → ℝ
+  /-- Entropy of the reduced state ρ_{BC}. -/
+  entropyBC : DensityOperator T_A_BC.carrier → ℝ
+  /-- Entropy of the reduced state ρ_B. -/
+  entropyB : DensityOperator T_A_BC.carrier → ℝ
+
 /-- Strong subadditivity (SSA).
 
     This is a THEOREM (Lieb-Ruskai 1973), not an axiom itself. -/
 theorem strong_subadditivity {HA HB HC : Type _}
   [QuantumStateSpace HA] [QuantumStateSpace HB] [QuantumStateSpace HC]
-  (S_ABC S_AB S_BC S_B : ℝ)
+  (T_BC : TensorProductSpace HB HC)
+  (T_A_BC : TensorProductSpace HA T_BC.carrier)
+  (ssa : StrongSubadditivityData T_BC T_A_BC)
+  (rho : DensityOperator T_A_BC.carrier)
   (h_phys : PhysicsAssumption AssumptionId.qiStrongSubadditivity
-    (S_ABC + S_B ≤ S_AB + S_BC)) :
-  S_ABC + S_B ≤ S_AB + S_BC := by
+    (ssa.entropyABC rho + ssa.entropyB rho ≤ ssa.entropyAB rho + ssa.entropyBC rho)) :
+  ssa.entropyABC rho + ssa.entropyB rho ≤ ssa.entropyAB rho + ssa.entropyBC rho := by
   exact h_phys
 
 /-- No-cloning theorem (Wootters-Zurek 1982, Dieks 1982).

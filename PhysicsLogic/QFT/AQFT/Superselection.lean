@@ -162,18 +162,41 @@ structure DoplicherRobertsData {d : ℕ} [NeZero d] (Sector : Type*)
   FieldAlgebra : Type*
   /-- The compact gauge group type -/
   GaugeGroup : Type*
+  /-- Gauge-group structure on the reconstructed compact gauge group. -/
+  [gaugeGroupStructure : Group GaugeGroup]
   /-- Gauge group acts on field algebra -/
   gaugeAction : GaugeGroup → FieldAlgebra → FieldAlgebra
-  /-- Observable algebra is the fixed-point subalgebra: A = F^G -/
-  fixed_point_is_observable :
-    ∀ (O : Set (SpaceTimePointD d)) (f : FieldAlgebra),
-      (∀ g : GaugeGroup, gaugeAction g f = f) → Nonempty (qft.net.Algebra O)
-  /-- Each sector corresponds to a representation of the gauge group -/
-  sector_representation : Sector → (GaugeGroup → GaugeGroup)
-  /-- Field algebra decomposes under the gauge group: F = ⊕_ρ H_ρ ⊗ A
-      (Peter-Weyl decomposition) -/
-  peter_weyl_decomposition :
-    ∀ (_f : FieldAlgebra), Nonempty Sector
+  /-- Observable projection map from fields to local observables. -/
+  observableOfField : (O : Set (SpaceTimePointD d)) → FieldAlgebra → qft.net.Algebra O
+  /-- Observable projection is gauge invariant: gauge orbits map to one observable. -/
+  observable_gauge_invariant : ∀ (O : Set (SpaceTimePointD d)) (g : GaugeGroup) (f : FieldAlgebra),
+    observableOfField O (gaugeAction g f) = observableOfField O f
+  /-- Sector representation spaces carrying irreducible gauge-group representations. -/
+  SectorRepSpace : Sector → Type*
+  /-- Representation of the gauge group on each sector space. -/
+  sectorRepresentation :
+    (ρ : Sector) → GaugeGroup → SectorRepSpace ρ → SectorRepSpace ρ
+  /-- Sector representation identity law. -/
+  sector_representation_one :
+    ∀ (ρ : Sector) (v : SectorRepSpace ρ), sectorRepresentation ρ 1 v = v
+  /-- Sector representation multiplication law. -/
+  sector_representation_mul :
+    ∀ (ρ : Sector) (g h : GaugeGroup) (v : SectorRepSpace ρ),
+      sectorRepresentation ρ (g * h) v =
+        sectorRepresentation ρ g (sectorRepresentation ρ h v)
+  /-- Sector projectors implementing Peter-Weyl decomposition on field algebra. -/
+  sectorProjector : Sector → FieldAlgebra → FieldAlgebra
+  /-- Sector projectors are idempotent. -/
+  sector_projector_idempotent : ∀ (ρ : Sector) (f : FieldAlgebra),
+    sectorProjector ρ (sectorProjector ρ f) = sectorProjector ρ f
+  /-- Sector projectors intertwine with gauge action. -/
+  sector_projector_covariant : ∀ (ρ : Sector) (g : GaugeGroup) (f : FieldAlgebra),
+    sectorProjector ρ (gaugeAction g f) = gaugeAction g (sectorProjector ρ f)
+  /-- Assembler for sector components. -/
+  assembleFromSectors : (Sector → FieldAlgebra) → FieldAlgebra
+  /-- Peter-Weyl reconstruction: recombining sector components recovers the field. -/
+  peter_weyl_reconstruction : ∀ f : FieldAlgebra,
+    assembleFromSectors (fun ρ => sectorProjector ρ f) = f
 
 /-- Doplicher-Roberts reconstruction theorem: the reconstruction data exists
     for any Haag-Kastler QFT with finitely many superselection sectors satisfying

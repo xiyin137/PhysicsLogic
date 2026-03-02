@@ -105,15 +105,18 @@ structure PauliVillarsRegularization where
     The key insight of renormalizability: only finitely many counterterms
     (corresponding to relevant and marginal operators) are needed. -/
 structure CountertermData (F : Type*) where
-  /-- The bare action -/
-  bare_action : ActionFunctional F
+  /-- Bare action at cutoff Λ (running bare couplings). -/
+  bare_action : UVCutoff → ActionFunctional F
   /-- Counterterms (divergent parts to be subtracted) -/
   counterterms : UVCutoff → ActionFunctional F
-  /-- The renormalized action -/
-  renormalized_action : ActionFunctional F
-  /-- Renormalized = bare + counterterms -/
+  /-- Renormalized action extracted at cutoff Λ. -/
+  renormalized_action : UVCutoff → ActionFunctional F
+  /-- Renormalized = bare + counterterms at fixed cutoff. -/
   renormalization_relation : ∀ (φ : F) (Λ : UVCutoff),
-    renormalized_action.eval φ = bare_action.eval φ + (counterterms Λ).eval φ
+    (renormalized_action Λ).eval φ = (bare_action Λ).eval φ + (counterterms Λ).eval φ
+  /-- Physical renormalized action is cutoff independent along the chosen scheme. -/
+  renormalized_cutoff_independent : ∀ (φ : F) (Λ₁ Λ₂ : UVCutoff),
+    (renormalized_action Λ₁).eval φ = (renormalized_action Λ₂).eval φ
 
 /- ============= MEASURE THEORY FOR PATH INTEGRALS ============= -/
 

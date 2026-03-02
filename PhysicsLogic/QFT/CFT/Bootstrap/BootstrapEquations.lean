@@ -70,7 +70,7 @@ structure OPECoefficientTheory where
   /-- Positivity: |C_{φφO}|² ≥ 0 for identical external operators -/
   ope_coefficient_positive : ∀ {d : ℕ} {H : Type _}
     (φ O : QuasiPrimary d H),
-    ∃ (C_squared : ℝ), C_squared ≥ 0
+    0 ≤ Complex.normSq (structure_constant φ φ O)
 
 /- ============= SELECTION RULES ============= -/
 
@@ -147,7 +147,7 @@ structure FourPointFunctionTheory where
     (Δ_p : ℝ) (ℓ_p : ℕ)
     (multiplet : ConformalMultiplet d H),
     ∃ (block : CrossRatios → ℂ),
-      ∀ (uv : CrossRatios), block uv = block uv  -- block is well-defined
+      ∃ (uv : CrossRatios), block uv ≠ 0
 
 /- ============= BOOTSTRAP PHILOSOPHY ============= -/
 
@@ -163,7 +163,9 @@ structure BootstrapPhilosophyTheory where
       of allowed OPE data. In favorable cases, this uniquely determines the CFT. -/
   bootstrap_constrains_ope : ∀ {d : ℕ}
     (assumptions : List Prop),
-    ∃ (allowed_ope_data : Type), Nonempty allowed_ope_data
+    ∃ (allowed_ope_data : Set (List Prop)),
+      assumptions ∈ allowed_ope_data ∧
+      ∃ (candidate : List Prop), candidate ∉ allowed_ope_data
   /-- Identity always appears in the OPE: C_{φφ𝟙} ≠ 0 by normalization.
       This is the leading term in the identity channel. -/
   identity_in_ope : ∀ {d : ℕ} {H : Type _}
