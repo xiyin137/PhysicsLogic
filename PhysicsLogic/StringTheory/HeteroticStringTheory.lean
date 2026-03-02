@@ -95,6 +95,21 @@ theorem heterotic_worldsheet_package
     HeteroticWorldsheetPackage data := by
   exact h_phys
 
+/-- Worldsheet package consequences: the critical heterotic field-content counts
+follow from left/right central-charge cancellation bookkeeping. -/
+theorem heterotic_worldsheet_package_implies_critical_counts
+    (data : HeteroticWorldsheetData)
+    (_h_pkg : HeteroticWorldsheetPackage data) :
+    data.spacetimeDimension = 10 ∧
+      data.rightMovingTargetFermionCount = 10 ∧
+      data.leftMovingFermionCount = 32 := by
+  have h_dim : data.spacetimeDimension = 10 := data.spacetime_dimension_nat_eq_ten
+  have h_right : data.rightMovingTargetFermionCount = 10 := by
+    simpa [data.rightTargetFermionCount_matches_dimension] using h_dim
+  have h_left : data.leftMovingFermionCount = 32 :=
+    data.left_moving_fermion_count_nat_eq_thirty_two
+  exact ⟨h_dim, h_right, h_left⟩
+
 /-- GSO/chiral-CFT data for the left-moving fermion system in heterotic strings. -/
 structure HeteroticLambdaGsoData where
   rightMovingChiralGsoApplied : HeteroticClaim
