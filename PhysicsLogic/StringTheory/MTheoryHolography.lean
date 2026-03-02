@@ -270,7 +270,12 @@ structure SixDZeroTwoSuperconformalData where
   hasStressTensorMultipletD02 : MTheoryHolographyClaim
   hasKkMultipletFamilyD0kForKGeTwo : MTheoryHolographyClaim
   primaryScalingDimension : ℕ → ScalingDimension
-  stressTensorPrimaryDimension : ScalingDimension
+
+/-- Scaling dimension of the stress-tensor-multiplet primary in a 6D `(0,2)` package.
+By representation-theory input this is the `k=2` member of `D[0,k]`. -/
+def sixDZeroTwoStressTensorPrimaryDimension
+    (data : SixDZeroTwoSuperconformalData) : ScalingDimension :=
+  data.primaryScalingDimension 2
 
 /-- 6D `(0,2)` multiplet package:
 `osp(2,6|4)`, stress tensor multiplet `D[0,2]`, and `D[0,k]` with `Delta=2k`. -/
@@ -278,7 +283,6 @@ def SixDZeroTwoSuperconformalPackage (data : SixDZeroTwoSuperconformalData) : Pr
   data.hasOsp264SuperconformalAlgebra ∧
   data.hasStressTensorMultipletD02 ∧
   data.hasKkMultipletFamilyD0kForKGeTwo ∧
-  data.stressTensorPrimaryDimension = 4 ∧
   ∀ k : ℕ, k ≥ 2 → data.primaryScalingDimension k = 2 * (k : ℝ)
 
 /-- Assumed 6D `(0,2)` superconformal/multiplet package. -/
@@ -289,6 +293,17 @@ theorem six_d_zero_two_superconformal_package
       (SixDZeroTwoSuperconformalPackage data)) :
     SixDZeroTwoSuperconformalPackage data := by
   exact h_phys
+
+/-- In the 6D `(0,2)` multiplet package, the stress-tensor primary has scaling
+dimension `Delta=4`, derived from the `D[0,k]` law at `k=2`. -/
+theorem six_d_zero_two_stress_tensor_primary_dimension_eq_four
+    (data : SixDZeroTwoSuperconformalData)
+    (h_pkg : SixDZeroTwoSuperconformalPackage data) :
+    sixDZeroTwoStressTensorPrimaryDimension data = 4 := by
+  unfold sixDZeroTwoStressTensorPrimaryDimension
+  have h_dim := h_pkg.2.2.2 2 (by norm_num)
+  norm_num at h_dim
+  exact h_dim
 
 /-- Circle-compactification data from 6D `(0,2)` SCFT to 5D maximally supersymmetric YM. -/
 structure SixDZeroTwoToFiveDData where
