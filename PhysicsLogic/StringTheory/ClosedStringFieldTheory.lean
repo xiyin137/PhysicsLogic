@@ -35,9 +35,9 @@ structure OffShellAmplitudeCycleData where
   genus : ℕ
   punctures : ℕ
   cycleDimension : ℤ
-  prefactor : ℂ
-  cycleIntegral : ℂ
-  offShellAmplitude : ℂ
+  prefactor : ComplexAmplitude
+  cycleIntegral : ComplexAmplitude
+  offShellAmplitude : ComplexAmplitude
 
 /-- Off-shell cycle package:
 `dim S_{h,n} = 6h-6+2n` and `A_{h,n} = prefactor * ∫_{S_{h,n}} Ω`. -/
@@ -123,9 +123,9 @@ theorem siegel_gauge_propagator_package
 
 /-- 1PI effective-action data in the Siegel gauge. -/
 structure OnePIEffectiveActionSiegelData (StringField : Type*) where
-  kineticContribution : StringField → ℂ
-  interactionContribution : StringField → ℂ
-  effectiveActionFunctional : StringField → ℂ
+  kineticContribution : StringField → ComplexActionValue
+  interactionContribution : StringField → ComplexActionValue
+  effectiveActionFunctional : StringField → ComplexActionValue
 
 /-- Siegel 1PI package:
 `Γ = kinetic - interaction`, matching the SFT 1PI decomposition. -/
@@ -259,7 +259,7 @@ theorem massless_field_dictionary_package
 structure BackgroundIndependenceMapData where
   FieldConfiguration : Type
   pulledBackSymplecticDifference : FieldConfiguration → ℂ
-  pulledBackMeasureActionDifference : FieldConfiguration → ℂ
+  pulledBackMeasureActionDifference : FieldConfiguration → ComplexActionValue
 
 /-- Background-independence package:
 the map preserves symplectic structure and measure-weighted action. -/

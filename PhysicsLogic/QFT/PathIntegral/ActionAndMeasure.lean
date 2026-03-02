@@ -8,6 +8,7 @@
 -- Together they define correlation functions ⟨O⟩ = (1/Z) ∫ Dφ O(φ) e^{iS[φ]/ℏ}
 import PhysicsLogic.QFT.PathIntegral.FieldConfigurations
 import PhysicsLogic.QFT.PathIntegral.Supergeometry
+import PhysicsLogic.Units
 import Mathlib.Data.Complex.Basic
 
 namespace PhysicsLogic.QFT.PathIntegral
@@ -16,12 +17,12 @@ set_option linter.unusedVariables false
 
 /- ============= ACTION FUNCTIONAL ============= -/
 
-/-- Real-valued action functional S[φ] on field configurations.
-    This models classical/Euclidean actions where stationarity gives equations of
-    motion via δS/δφ = 0. -/
+/-- Real-action interface S[φ] on field configurations.
+    The codomain is `ActionScale` rather than raw `ℝ` to keep unit semantics explicit
+    in path-integral formulas. -/
 structure ActionFunctional (F : Type*) where
   /-- Evaluation: S[φ] -/
-  eval : F → ℝ
+  eval : F → ActionScale
 
 /-- Complex-valued action functional.
 
@@ -29,7 +30,7 @@ structure ActionFunctional (F : Type*) where
     action may be complex (for instance in Lorentzian or complexified contours). -/
 structure ComplexActionFunctional (F : Type*) where
   /-- Evaluation: S[φ] ∈ ℂ -/
-  eval : F → ℂ
+  eval : F → ComplexActionValue
 
 /-- Every real-valued action can be viewed canonically as a complex-valued action. -/
 def ActionFunctional.toComplex {F : Type*} (S : ActionFunctional F) :
@@ -41,7 +42,7 @@ def ActionFunctional.toComplex {F : Type*} (S : ActionFunctional F) :
     Locality is a fundamental principle of relativistic QFT. -/
 structure LocalAction (F : Type*) extends ActionFunctional F where
   /-- The Lagrangian density as a functional -/
-  lagrangian_density : F → ℝ
+  lagrangian_density : F → ActionScale
   /-- The action is the integral of the Lagrangian density -/
   action_from_lagrangian : ∀ (φ : F), eval φ = lagrangian_density φ
 
@@ -50,7 +51,7 @@ structure LocalAction (F : Type*) extends ActionFunctional F where
     path integral weight e^{-S_E[φ]}. -/
 structure EuclideanAction (F : Type*) extends ActionFunctional F where
   /-- Euclidean action is bounded below: S_E[φ] ≥ c for some constant c -/
-  bounded_below : ∃ (c : ℝ), ∀ φ : F, eval φ ≥ c
+  bounded_below : ∃ (c : ActionScale), ∀ φ : F, eval φ ≥ c
 
 /-- View a Euclidean action as a complex-valued action by scalar embedding. -/
 def EuclideanAction.toComplex {F : Type*} (S : EuclideanAction F) :

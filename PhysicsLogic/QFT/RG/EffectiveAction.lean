@@ -96,15 +96,15 @@ structure SourceSpace where
 /-- Bilinear pairing between source and field spaces: ⟨J, φ⟩ = ∫ J(x)φ(x) d^d x -/
 structure SourceFieldPairing (S : SourceSpace) (F : FieldConfigurationSpace) where
   /-- The pairing function -/
-  pair : S.carrier → F.carrier → ℝ
+  pair : S.carrier → F.carrier → ActionScale
   /-- Linearity in source -/
   linear_source : ∀ J₁ J₂ φ, pair (S.add J₁ J₂) φ = pair J₁ φ + pair J₂ φ
   /-- Linearity in field -/
   linear_field : ∀ J φ₁ φ₂, pair J (F.add φ₁ φ₂) = pair J φ₁ + pair J φ₂
   /-- Scalar multiplication in source -/
-  smul_source : ∀ c J φ, pair (S.smul c J) φ = c * pair J φ
+  smul_source : ∀ c J φ, pair (S.smul c J) φ = (c : ActionScale) * pair J φ
   /-- Scalar multiplication in field -/
-  smul_field : ∀ c J φ, pair J (F.smul c φ) = c * pair J φ
+  smul_field : ∀ c J φ, pair J (F.smul c φ) = (c : ActionScale) * pair J φ
 
 /- ============================================================================
    PART II: 1PI EFFECTIVE ACTION (PERTURBATIVE)
@@ -119,8 +119,8 @@ structure SourceFieldPairing (S : SourceSpace) (F : FieldConfigurationSpace) whe
 
     At the perturbative level, this is defined as a formal power series in ℏ. -/
 structure ConnectedGeneratingFunctional (S : SourceSpace) where
-  /-- The functional W: J → ℝ (imaginary part absorbed into definition) -/
-  W : S.carrier → ℝ
+  /-- The functional W: J ↦ action scale (imaginary part absorbed into definition). -/
+  W : S.carrier → ActionScale
   /-- Normalization: W[0] = 0 -/
   normalized : W S.zero = 0
 
@@ -163,8 +163,8 @@ structure OnePIEffectiveAction (S : SourceSpace) (F : FieldConfigurationSpace)
     (pairing : SourceFieldPairing S F) where
   /-- The invertible classical field map -/
   field_map : InvertibleClassicalField S F
-  /-- The 1PI effective action Γ[φ] -/
-  Gamma : F.carrier → ℝ
+  /-- The 1PI effective action Γ[φ]. -/
+  Gamma : F.carrier → ActionScale
   /-- Legendre transform relation -/
   legendre_transform : ∀ φ,
     Gamma φ = field_map.W.W (field_map.source_of_field φ) -
@@ -183,9 +183,10 @@ structure QuantumEOM (S : SourceSpace) (F : FieldConfigurationSpace)
 /-- Convexity of the 1PI effective action
 
     As a Legendre transform of a convex functional, Γ is convex. -/
-def OnePIConvexity (F : FieldConfigurationSpace) (Γ : F.carrier → ℝ) : Prop :=
+def OnePIConvexity (F : FieldConfigurationSpace) (Γ : F.carrier → ActionScale) : Prop :=
   ∀ φ₁ φ₂ : F.carrier, ∀ t : ℝ, 0 ≤ t → t ≤ 1 →
-    Γ (F.add (F.smul t φ₁) (F.smul (1-t) φ₂)) ≤ t * Γ φ₁ + (1-t) * Γ φ₂
+    (Γ (F.add (F.smul t φ₁) (F.smul (1 - t) φ₂))).value ≤
+      t * (Γ φ₁).value + (1 - t) * (Γ φ₂).value
 
 /-- Double Legendre transform involution
 
@@ -200,7 +201,7 @@ structure LegendreInvolution (S : SourceSpace) (F : FieldConfigurationSpace)
   /-- Forward: W → Γ -/
   forward : OnePIEffectiveAction S F pairing
   /-- Backward: Γ → W' (Legendre transform of Γ) -/
-  backward_Gamma : S.carrier → ℝ
+  backward_Gamma : S.carrier → ActionScale
   /-- Involution property: W' = W -/
   involution : ∀ J, backward_Gamma J = forward.field_map.W.W J
 
@@ -217,7 +218,7 @@ structure LegendreInvolution (S : SourceSpace) (F : FieldConfigurationSpace)
     reconstructed from 1PI vertices via tree diagrams. -/
 structure OnePIVertices (F : FieldConfigurationSpace) where
   /-- The effective action -/
-  Gamma : F.carrier → ℝ
+  Gamma : F.carrier → ActionScale
   /-- Vacuum field configuration -/
   vacuum : F.carrier
   /-- n-point 1PI vertex (abstract representation) -/
@@ -250,9 +251,9 @@ noncomputable def physicalMassSquared (v : OnePIVertices F)
     at the perturbative level: each Γₙ is computed from Feynman diagrams. -/
 structure LoopExpansion (F : FieldConfigurationSpace) where
   /-- Classical action S[φ] (zeroth order in ℏ) -/
-  classical_action : F.carrier → ℝ
+  classical_action : F.carrier → ActionScale
   /-- n-loop correction Γₙ[φ] for n ≥ 1 -/
-  loop_correction : ℕ → (F.carrier → ℝ)
+  loop_correction : ℕ → (F.carrier → ActionScale)
   /-- ℏ = 0 limit is classical -/
   loop_correction_zero : loop_correction 0 = classical_action
 
@@ -265,26 +266,28 @@ structure LoopExpansion (F : FieldConfigurationSpace) where
     operator around configuration φ. -/
 structure OneLoopCorrection (F : FieldConfigurationSpace) where
   /-- Classical action -/
-  classical_action : F.carrier → ℝ
+  classical_action : F.carrier → ActionScale
   /-- Fluctuation operator at configuration φ -/
   fluctuation_operator : F.carrier → (F.carrier → F.carrier)
   /-- One-loop correction (log determinant, requires regularization) -/
-  one_loop : F.carrier → ℝ
+  one_loop : F.carrier → ActionScale
 
 /-- Evaluate the full 1PI action at L loops -/
-noncomputable def evaluateLoopExpansion (L : LoopExpansion F) (hbar : ℝ) (φ : F.carrier)
-    (nLoops : ℕ) : ℝ :=
+noncomputable def evaluateLoopExpansion (L : LoopExpansion F) (hbar : ActionScale) (φ : F.carrier)
+    (nLoops : ℕ) : ActionScale :=
   (List.range (nLoops + 1)).foldl (fun acc n => acc + hbar^n * L.loop_correction n φ) 0
 
 /-- Tree-level approximation: just the classical action -/
-def treeLevel (L : LoopExpansion F) : F.carrier → ℝ := L.classical_action
+def treeLevel (L : LoopExpansion F) : F.carrier → ActionScale := L.classical_action
 
 /-- One-loop approximation: S + ℏΓ₁ -/
-noncomputable def oneLoopApprox (L : LoopExpansion F) (hbar : ℝ) (φ : F.carrier) : ℝ :=
+noncomputable def oneLoopApprox
+    (L : LoopExpansion F) (hbar : ActionScale) (φ : F.carrier) : ActionScale :=
   L.classical_action φ + hbar * L.loop_correction 1 φ
 
 /-- Two-loop approximation -/
-noncomputable def twoLoopApprox (L : LoopExpansion F) (hbar : ℝ) (φ : F.carrier) : ℝ :=
+noncomputable def twoLoopApprox
+    (L : LoopExpansion F) (hbar : ActionScale) (φ : F.carrier) : ActionScale :=
   L.classical_action φ + hbar * L.loop_correction 1 φ + hbar^2 * L.loop_correction 2 φ
 
 /-- Complex-valued loop expansion of the 1PI effective action.
@@ -294,36 +297,40 @@ noncomputable def twoLoopApprox (L : LoopExpansion F) (hbar : ℝ) (φ : F.carri
     with all coefficients potentially complex-valued. -/
 structure ComplexLoopExpansion (F : FieldConfigurationSpace) where
   /-- Classical action term (possibly complex). -/
-  classical_action : F.carrier → ℂ
+  classical_action : F.carrier → ComplexActionValue
   /-- n-loop correction Γₙ[φ] (possibly complex). -/
-  loop_correction : ℕ → (F.carrier → ℂ)
+  loop_correction : ℕ → (F.carrier → ComplexActionValue)
   /-- ℏ = 0 limit is classical. -/
   loop_correction_zero : loop_correction 0 = classical_action
 
 /-- Embed a real (Euclidean) loop expansion into the complex-valued interface. -/
 def LoopExpansion.toComplex (L : LoopExpansion F) : ComplexLoopExpansion F where
-  classical_action := fun φ => (L.classical_action φ : ℂ)
-  loop_correction := fun n φ => (L.loop_correction n φ : ℂ)
+  classical_action := fun φ => ((L.classical_action φ).value : ℂ)
+  loop_correction := fun n φ => ((L.loop_correction n φ).value : ℂ)
   loop_correction_zero := by
     funext φ
     exact congrArg (fun f => (f φ : ℂ)) L.loop_correction_zero
 
 /-- Evaluate the full complex 1PI action at `nLoops` loop order. -/
 noncomputable def evaluateComplexLoopExpansion
-    (L : ComplexLoopExpansion F) (hbar : ℂ) (φ : F.carrier) (nLoops : ℕ) : ℂ :=
+    (L : ComplexLoopExpansion F) (hbar : ComplexActionValue)
+    (φ : F.carrier) (nLoops : ℕ) : ComplexActionValue :=
   (List.range (nLoops + 1)).foldl (fun acc n => acc + hbar^n * L.loop_correction n φ) 0
 
 /-- Complex tree-level approximation. -/
-def complexTreeLevel (L : ComplexLoopExpansion F) : F.carrier → ℂ := L.classical_action
+def complexTreeLevel (L : ComplexLoopExpansion F) : F.carrier → ComplexActionValue :=
+  L.classical_action
 
 /-- Complex one-loop approximation: S + ℏΓ₁. -/
 noncomputable def complexOneLoopApprox
-    (L : ComplexLoopExpansion F) (hbar : ℂ) (φ : F.carrier) : ℂ :=
+    (L : ComplexLoopExpansion F) (hbar : ComplexActionValue) (φ : F.carrier) :
+    ComplexActionValue :=
   L.classical_action φ + hbar * L.loop_correction 1 φ
 
 /-- Complex two-loop approximation. -/
 noncomputable def complexTwoLoopApprox
-    (L : ComplexLoopExpansion F) (hbar : ℂ) (φ : F.carrier) : ℂ :=
+    (L : ComplexLoopExpansion F) (hbar : ComplexActionValue) (φ : F.carrier) :
+    ComplexActionValue :=
   L.classical_action φ + hbar * L.loop_correction 1 φ + hbar^2 * L.loop_correction 2 φ
 
 /-- Complex one-loop effective action via functional determinant.
@@ -333,11 +340,11 @@ noncomputable def complexTwoLoopApprox
     which naturally lives in ℂ. -/
 structure ComplexOneLoopCorrection (F : FieldConfigurationSpace) where
   /-- Classical action. -/
-  classical_action : F.carrier → ℂ
+  classical_action : F.carrier → ComplexActionValue
   /-- Fluctuation operator at configuration φ. -/
   fluctuation_operator : F.carrier → (F.carrier → F.carrier)
   /-- One-loop correction (complex in general). -/
-  one_loop : F.carrier → ℂ
+  one_loop : F.carrier → ComplexActionValue
 
 /- ============================================================================
    PART V: WILSONIAN EFFECTIVE ACTION (NON-PERTURBATIVE)
@@ -386,9 +393,9 @@ structure WilsonianEffectiveAction (F : FieldConfigurationSpace) where
   /-- Bare UV cutoff -/
   bare_cutoff : Cutoff
   /-- Bare action at UV scale -/
-  bare_action : F.carrier → ℝ
+  bare_action : F.carrier → ActionScale
   /-- Wilsonian action at scale Λ ≤ Λ₀ -/
-  action_at_scale : Cutoff → (F.carrier → ℝ)
+  action_at_scale : Cutoff → (F.carrier → ActionScale)
   /-- At bare scale, Wilsonian action equals bare action -/
   initial_condition : action_at_scale bare_cutoff = bare_action
 
@@ -400,9 +407,9 @@ structure ComplexWilsonianEffectiveAction (F : FieldConfigurationSpace) where
   /-- Bare UV cutoff -/
   bare_cutoff : Cutoff
   /-- Bare action at UV scale (possibly complex). -/
-  bare_action : F.carrier → ℂ
+  bare_action : F.carrier → ComplexActionValue
   /-- Wilsonian action at scale Λ ≤ Λ₀ (possibly complex). -/
-  action_at_scale : Cutoff → (F.carrier → ℂ)
+  action_at_scale : Cutoff → (F.carrier → ComplexActionValue)
   /-- At bare scale, Wilsonian action equals bare action. -/
   initial_condition : action_at_scale bare_cutoff = bare_action
 
@@ -410,8 +417,8 @@ structure ComplexWilsonianEffectiveAction (F : FieldConfigurationSpace) where
 def WilsonianEffectiveAction.toComplex (W : WilsonianEffectiveAction F) :
     ComplexWilsonianEffectiveAction F where
   bare_cutoff := W.bare_cutoff
-  bare_action := fun φ => (W.bare_action φ : ℂ)
-  action_at_scale := fun Λ φ => (W.action_at_scale Λ φ : ℂ)
+  bare_action := fun φ => ((W.bare_action φ).value : ℂ)
+  action_at_scale := fun Λ φ => ((W.action_at_scale Λ φ).value : ℂ)
   initial_condition := by
     funext φ
     exact congrArg (fun f => (f φ : ℂ)) W.initial_condition
@@ -448,7 +455,7 @@ structure PolchinskiEquation (F : FieldConfigurationSpace) where
   /-- Scale derivative of propagator -/
   propagator_derivative : Cutoff → (F.carrier → F.carrier → ℝ)
   /-- The RG flow (Λ ∂/∂Λ) of the action -/
-  rg_flow : Cutoff → (F.carrier → ℝ)
+  rg_flow : Cutoff → (F.carrier → ActionScale)
 
 /-- Local operator expansion of Wilsonian action
 
@@ -490,10 +497,19 @@ def isMarginalOp {d : ℕ} (rg : RGFramework d) (O : rg.Operator) : Prop :=
    ============================================================================ -/
 
 /-- Convert UVCutoff from PathIntegral to Cutoff from RG.Basic -/
-def cutoffFromUV (uv : UVCutoff) : Cutoff := ⟨uv.scale, uv.positive⟩
+def cutoffFromUV (uv : UVCutoff) : Cutoff := by
+  rcases uv with ⟨s, hs⟩
+  have hs_real : (0 : Scale) < (s : ℝ) := by
+    change (0 : PhysicsLogic.Units.MassScale).value < s.value at hs
+    simpa using hs
+  exact ⟨(s : ℝ), hs_real⟩
 
 /-- Convert Cutoff to UVCutoff -/
-def uvFromCutoff (c : Cutoff) : UVCutoff := ⟨c.Λ, c.positive⟩
+def uvFromCutoff (c : Cutoff) : UVCutoff := by
+  refine ⟨(c.Λ : PhysicsLogic.Units.MassScale), ?_⟩
+  change (0 : PhysicsLogic.Units.MassScale).value <
+    ((c.Λ : PhysicsLogic.Units.MassScale)).value
+  simpa using c.positive
 
 /-- The regularized path integral from PathIntegral.Regularization
     is the foundation for the Wilsonian effective action.
@@ -510,7 +526,7 @@ structure WilsonianFromPathIntegral (F : Type _) where
   /-- UV cutoff -/
   uv_cutoff : UVCutoff
   /-- The effective action at scale Λ ≤ uv_cutoff (implicitly defined) -/
-  effective_at_scale : UVCutoff → (F → ℝ)
+  effective_at_scale : UVCutoff → (F → ActionScale)
 
 /-- Path-integral interface to complex Wilsonian effective actions.
 
@@ -524,7 +540,7 @@ structure ComplexWilsonianFromPathIntegral (F : Type _) where
   /-- UV cutoff. -/
   uv_cutoff : UVCutoff
   /-- Complex effective action at scale Λ ≤ uv_cutoff (implicitly defined). -/
-  effective_at_scale : UVCutoff → (F → ℂ)
+  effective_at_scale : UVCutoff → (F → ComplexActionValue)
 
 /- The 1PI effective action Γ[φ_cl] is defined as the Legendre transform of W[J] = -iℏ log Z[J].
 
@@ -685,7 +701,7 @@ structure HighMomentumLagrangian where
   /-- The gauge-fixing fermion V_> defining the Lagrangian submanifold -/
   V : BVGaugeFixing
   /-- The constraint Φ*_{I>} = δV_>/δΦ^I_> -/
-  constraint : ExtendedFieldSpace → Prop
+  constraint : ExtendedFieldConfiguration → Prop
   /-- L_{V_>} is isotropic (ω|_{L_{V_>}} = 0) -/
   isotropic : ∀ s₁ s₂, constraint s₁ → constraint s₂ → omega.pairing s₁ s₂ = 0
 
@@ -700,8 +716,8 @@ structure HighMomentumLagrangian where
 
     Uses the QuantumMasterEquation from BatalinVilkovisky.lean. -/
 def WilsonianSatisfiesQME (ab : Antibracket) (Δ : BVLaplacian)
-    (S_BV : WilsonianEffectiveActionBV) (Λ : Cutoff) (hbar : ℝ) : Prop :=
-  ∀ s : ExtendedFieldSpace,
+    (S_BV : WilsonianEffectiveActionBV) (Λ : Cutoff) (hbar : ActionScale) : Prop :=
+  ∀ s : ExtendedFieldConfiguration,
     (ab.bracket (S_BV.S_Lambda Λ) (S_BV.S_Lambda Λ)).functional s =
     2 * hbar * (Δ.laplacian (S_BV.S_Lambda Λ)).functional s
 
@@ -725,7 +741,7 @@ def WilsonianSatisfiesQME (ab : Antibracket) (Δ : BVLaplacian)
 
     The vanishing follows from the Lagrangian property of L_{V_>}. -/
 def QMEPreservedUnderRG (ab : Antibracket) (Δ : BVLaplacian)
-    (S_BV : WilsonianEffectiveActionBV) (hbar : ℝ) : Prop :=
+    (S_BV : WilsonianEffectiveActionBV) (hbar : ActionScale) : Prop :=
   WilsonianSatisfiesQME ab Δ S_BV S_BV.bare_cutoff hbar →
     ∀ Λ : Cutoff, Λ.Λ ≤ S_BV.bare_cutoff.Λ → WilsonianSatisfiesQME ab Δ S_BV Λ hbar
 

@@ -59,10 +59,12 @@ structure InvariantSymmetry {F : Type*}
 theorem symmetry_preserves_weight {F : Type*}
     (pid : PathIntegralData F)
     (σ : InvariantSymmetry pid.action pid.measure)
-    (ℏ : ℝ) :
+    (ℏ : ActionScale) :
     ∀ φ,
-      Complex.exp (Complex.I * ↑(pid.action.eval (σ.toSymmetryTransform.transform φ) / ℏ)) =
-      Complex.exp (Complex.I * ↑(pid.action.eval φ / ℏ)) := by
+      Complex.exp
+          (Complex.I *
+            (((pid.action.eval (σ.toSymmetryTransform.transform φ)).value / ℏ.value : ℝ) : ℂ)) =
+      Complex.exp (Complex.I * (((pid.action.eval φ).value / ℏ.value : ℝ) : ℂ)) := by
   intro φ
   simp [σ.action_invariant φ]
 
@@ -70,16 +72,21 @@ theorem symmetry_preserves_weight {F : Type*}
 theorem path_integral_symmetry {F : Type*}
     (pid : PathIntegralData F)
     (σ : InvariantSymmetry pid.action pid.measure)
-    (ℏ : ℝ) :
+    (ℏ : ActionScale) :
     pid.measure.integrate
-      (fun φ => Complex.exp (Complex.I * ↑(pid.action.eval (σ.toSymmetryTransform.transform φ) / ℏ))) =
+      (fun φ =>
+        Complex.exp
+          (Complex.I *
+            (((pid.action.eval (σ.toSymmetryTransform.transform φ)).value / ℏ.value : ℝ) : ℂ))) =
     pathIntegral pid ℏ := by
   have h_measure :
       pid.measure.integrate
-        ((fun φ => Complex.exp (Complex.I * ↑(pid.action.eval φ / ℏ))) ∘
+        ((fun φ => Complex.exp (Complex.I * (((pid.action.eval φ).value / ℏ.value : ℝ) : ℂ))) ∘
           σ.toSymmetryTransform.transform) =
-      pid.measure.integrate (fun φ => Complex.exp (Complex.I * ↑(pid.action.eval φ / ℏ))) :=
-    σ.measure_invariant (fun φ => Complex.exp (Complex.I * ↑(pid.action.eval φ / ℏ)))
+      pid.measure.integrate
+        (fun φ => Complex.exp (Complex.I * (((pid.action.eval φ).value / ℏ.value : ℝ) : ℂ))) :=
+    σ.measure_invariant
+      (fun φ => Complex.exp (Complex.I * (((pid.action.eval φ).value / ℏ.value : ℝ) : ℂ)))
   simpa [Function.comp, pathIntegral] using h_measure
 
 /-- Observable transforms under symmetry by pullback:

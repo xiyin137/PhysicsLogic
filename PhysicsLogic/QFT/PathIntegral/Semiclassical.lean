@@ -32,22 +32,23 @@ structure SemiclassicalData (F : Type*) where
   FluctuationOperator : Type*
   /-- The fluctuation operator at the classical solution -/
   fluctuation_op : FluctuationOperator
-  /-- The functional determinant det(K) -/
-  functional_determinant : ℂ
+  /-- One-loop determinant value `det(K)^{-1/2}` from Gaussian fluctuations. -/
+  oneLoopDeterminant : ComplexAmplitude
 
 /-- One-loop approximation to the path integral:
     Z₁₋loop = e^{iS[φ_cl]/ℏ} · det(K)^{-1/2}
 
     This is the leading quantum correction to the classical approximation.
     Higher loops give corrections of order ℏ², ℏ³, ... -/
-noncomputable def oneLoopApproximation (F : Type*) (sd : SemiclassicalData F) (ℏ : ℝ) : ℂ :=
-  Complex.exp (Complex.I * (sd.action.eval sd.classical_solution / (ℏ : ℂ))) *
-  sd.functional_determinant
+noncomputable def oneLoopApproximation (F : Type*) (sd : SemiclassicalData F)
+    (ℏ : ActionScale) : ℂ :=
+  Complex.exp (Complex.I * (sd.action.eval sd.classical_solution / (ℏ.value : ℂ))) *
+  sd.oneLoopDeterminant
 
 /-- Loop expansion parameter: ℏ/S_cl.
     When this is small, the semiclassical expansion converges (typically).
     When it is not small, nonperturbative effects dominate. -/
-noncomputable def loopExpansion (ℏ : ℝ) (S_cl : ℝ) : ℝ := ℏ / S_cl
+noncomputable def loopExpansion (ℏ S_cl : ActionScale) : ScalingDimension := ℏ.value / S_cl.value
 
 /- ============= INSTANTONS ============= -/
 
@@ -67,7 +68,7 @@ structure Instanton (F : Type*) (S_E : EuclideanAction F) where
   -- The instanton satisfies δS_E/δφ = 0 (Euclidean equations of motion).
   -- This criticality condition requires functional derivatives to state precisely.
   /-- Instanton has finite Euclidean action (bounded by some constant) -/
-  action_bound : ℝ
+  action_bound : ActionScale
   finite_action : S_E.eval config ≤ action_bound
 
 /-- Instanton contribution to the path integral.
@@ -80,15 +81,15 @@ structure Instanton (F : Type*) (S_E : EuclideanAction F) where
     3. Collective coordinate integrals (zero modes)
     4. Multi-instanton corrections (dilute gas approximation) -/
 noncomputable def instantonContribution (F : Type*) (S_E : EuclideanAction F)
-    (inst : Instanton F S_E) (ℏ : ℝ) : ℝ :=
-  Real.exp (-S_E.eval inst.config / ℏ)
+    (inst : Instanton F S_E) (ℏ : ActionScale) : ProbabilityWeight :=
+  Real.exp (-(S_E.eval inst.config / ℏ).value)
 
 /-- Multi-instanton sector: n-instanton contribution.
     In the dilute instanton gas approximation:
     Z_n ~ (1/n!) · (e^{-S_inst/ℏ})^n
     which sums to Z_inst = exp(e^{-S_inst/ℏ}). -/
 noncomputable def multiInstantonContribution (F : Type*) (S_E : EuclideanAction F)
-    (inst : Instanton F S_E) (n : ℕ) (ℏ : ℝ) : ℝ :=
+    (inst : Instanton F S_E) (n : ℕ) (ℏ : ActionScale) : ProbabilityWeight :=
   (1 / n.factorial : ℝ) * (instantonContribution F S_E inst ℏ) ^ n
 
 /-- WKB approximation (Wentzel-Kramers-Brillouin): semiclassical limit ℏ → 0.

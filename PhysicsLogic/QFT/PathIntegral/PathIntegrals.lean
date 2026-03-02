@@ -43,24 +43,28 @@ def PathIntegralData.toComplex {F : Type*} (pid : PathIntegralData F) :
 
 /-- The path integral Z = ∫ Dφ e^{iS[φ]/ℏ} (partition function).
     This is defined in terms of the measure's integration functional. -/
-noncomputable def pathIntegral {F : Type*} (pid : PathIntegralData F) (ℏ : ℝ) : ℂ :=
-  pid.measure.integrate (fun φ => Complex.exp (Complex.I * ↑(pid.action.eval φ / ℏ)))
+noncomputable def pathIntegral {F : Type*} (pid : PathIntegralData F) (ℏ : ActionScale) : ℂ :=
+  pid.measure.integrate (fun φ =>
+    Complex.exp (Complex.I * (((pid.action.eval φ).value / ℏ.value : ℝ) : ℂ)))
 
 /-- Complex-action path integral Z = ∫ Dφ exp(i S[φ] / ℏ). -/
 noncomputable def pathIntegralComplex {F : Type*} (pid : ComplexPathIntegralData F)
-    (ℏ : ℝ) : ℂ :=
-  pid.measure.integrate (fun φ => Complex.exp (Complex.I * (pid.action.eval φ / (ℏ : ℂ))))
+    (ℏ : ActionScale) : ℂ :=
+  pid.measure.integrate (fun φ =>
+    Complex.exp (Complex.I * (pid.action.eval φ / (ℏ.value : ℂ))))
 
 /-- Expectation value ⟨O⟩ = ∫ Dφ O(φ) e^{iS[φ]/ℏ} (unnormalized).
     To get the physical expectation value, divide by Z. -/
 noncomputable def expectationValue {F : Type*}
-    (pid : PathIntegralData F) (O : F → ℂ) (ℏ : ℝ) : ℂ :=
-  pid.measure.integrate (fun φ => O φ * Complex.exp (Complex.I * ↑(pid.action.eval φ / ℏ)))
+    (pid : PathIntegralData F) (O : F → ℂ) (ℏ : ActionScale) : ℂ :=
+  pid.measure.integrate (fun φ =>
+    O φ * Complex.exp (Complex.I * (((pid.action.eval φ).value / ℏ.value : ℝ) : ℂ)))
 
 /-- Complex-action expectation value ⟨O⟩ = ∫ Dφ O(φ) exp(i S[φ]/ℏ) (unnormalized). -/
 noncomputable def expectationValueComplex {F : Type*}
-    (pid : ComplexPathIntegralData F) (O : F → ℂ) (ℏ : ℝ) : ℂ :=
-  pid.measure.integrate (fun φ => O φ * Complex.exp (Complex.I * (pid.action.eval φ / (ℏ : ℂ))))
+    (pid : ComplexPathIntegralData F) (O : F → ℂ) (ℏ : ActionScale) : ℂ :=
+  pid.measure.integrate (fun φ =>
+    O φ * Complex.exp (Complex.I * (pid.action.eval φ / (ℏ.value : ℂ))))
 
 /-- Euclidean path integral Z_E = ∫ Dφ e^{-S_E[φ]}
     (better convergence due to damping instead of oscillation). -/
@@ -84,7 +88,7 @@ structure CorrelationFunctionData (F : Type*) (M : Type*) where
 /-- n-point correlation function -/
 noncomputable def correlationFunction {F M : Type*}
     (cfd : CorrelationFunctionData F M)
-    (n : ℕ) (points : Fin n → M) (ℏ : ℝ) : ℂ :=
+    (n : ℕ) (points : Fin n → M) (ℏ : ActionScale) : ℂ :=
   expectationValue cfd.pid
     (fun φ => ∏ i : Fin n, cfd.field_eval φ (points i)) ℏ
 
@@ -108,10 +112,13 @@ structure GeneratingFunctionalData (F : Type*) (M : Type*) where
     Disconnected diagrams are automatically removed. -/
 noncomputable def connectedGenerating {F M : Type*}
     (gfd : GeneratingFunctionalData F M)
-    (J : M → ℂ) (ℏ : ℝ) : ℂ :=
-  -Complex.I * ℏ * Complex.log (
+    (J : M → ℂ) (ℏ : ActionScale) : ℂ :=
+  -Complex.I * (ℏ.value : ℂ) * Complex.log (
     gfd.pid.measure.integrate
-      (fun φ => Complex.exp (Complex.I * ↑(gfd.pid.action.eval φ / ℏ) + gfd.source_coupling J φ)))
+      (fun φ =>
+        Complex.exp
+          (Complex.I * (((gfd.pid.action.eval φ).value / ℏ.value : ℝ) : ℂ) +
+            gfd.source_coupling J φ)))
 
 /-- Effective action Γ[φ_cl] (Legendre transform of W[J]).
     Generates one-particle-irreducible (1PI) correlation functions.
@@ -123,12 +130,12 @@ noncomputable def connectedGenerating {F M : Type*}
     - Γ = S_classical at tree level, with loop corrections added perturbatively -/
 structure EffectiveActionData (F : Type*) where
   /-- The effective action functional -/
-  effective_action : F → ℂ
+  effective_action : F → ComplexActionValue
   /-- The classical action it's derived from -/
   classical_action : ActionFunctional F
   /-- At tree level, Γ reduces to the classical action -/
   classical_limit : ∀ (φ : F),
-    effective_action φ = (classical_action.eval φ : ℂ)
+    effective_action φ = ((classical_action.eval φ).value : ℂ)
 
 /- ============= FIELD REDEFINITION INVARIANCE ============= -/
 
@@ -140,7 +147,7 @@ structure EffectiveActionData (F : Type*) where
 theorem path_integral_bosonic_redef {F₁ F₂ : Type*}
     (pid : PathIntegralData F₁)
     (f : BosonicFieldRedefinition F₁ F₂)
-    (ℏ : ℝ)
+    (ℏ : ActionScale)
     (h_jacobian : f.jacobian = 1) :
     pathIntegral pid ℏ =
     f.jacobian * pathIntegral ⟨action_bosonic_redef pid.action f,
@@ -177,12 +184,12 @@ structure SchwingerDysonData (F : Type*) where
   /-- Path integral data -/
   pid : PathIntegralData F
   /-- Functional derivative of the action -/
-  action_variation : F → F → ℝ
+  action_variation : F → F → ActionScale
   /-- Functional derivative of an observable -/
   observable_variation : (F → ℂ) → F → (F → ℂ)
   /-- Schwinger-Dyson equation holds -/
-  schwinger_dyson : ∀ (O : F → ℂ) (φ₀ : F) (ℏ : ℝ),
-    expectationValue pid (fun φ => ↑(action_variation φ φ₀) * O φ) ℏ =
-    -Complex.I * ℏ * expectationValue pid (observable_variation O φ₀) ℏ
+  schwinger_dyson : ∀ (O : F → ℂ) (φ₀ : F) (ℏ : ActionScale),
+    expectationValue pid (fun φ => ((action_variation φ φ₀).value : ℂ) * O φ) ℏ =
+    -Complex.I * (ℏ.value : ℂ) * expectationValue pid (observable_variation O φ₀) ℏ
 
 end PhysicsLogic.QFT.PathIntegral

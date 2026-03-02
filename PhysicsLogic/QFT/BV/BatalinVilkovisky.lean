@@ -1,5 +1,6 @@
 import PhysicsLogic.QFT.BV.BRST
 import PhysicsLogic.Assumptions
+import PhysicsLogic.Units
 import Mathlib.Data.Complex.Basic
 
 namespace PhysicsLogic.QFT.BV
@@ -82,6 +83,10 @@ structure ExtendedFieldSpace where
   /-- Each field has its antifield -/
   paired : antifields.length = fields.length
 
+/-- A point/configuration in the extended BV field-antifield arena.
+This project keeps this lightweight as an interface alias. -/
+abbrev ExtendedFieldConfiguration := ExtendedFieldSpace
+
 /-- Number of field-antifield pairs -/
 def ExtendedFieldSpace.numPairs (E : ExtendedFieldSpace) : ℕ := E.fields.length
 
@@ -104,7 +109,7 @@ def ExtendedFieldSpace.numFermionic (E : ExtendedFieldSpace) : ℕ :=
 /-- Functional on the extended field space -/
 structure BVFunctional where
   /-- The functional -/
-  functional : ExtendedFieldSpace → ℝ
+  functional : ExtendedFieldConfiguration → ℝ
   /-- Ghost number -/
   ghost_number : GhostNumber
   /-- Grassmann parity -/
@@ -116,7 +121,7 @@ structure BVFunctional where
     where functionals need not be real-valued. -/
 structure ComplexBVFunctional where
   /-- The functional -/
-  functional : ExtendedFieldSpace → ℂ
+  functional : ExtendedFieldConfiguration → ℂ
   /-- Ghost number -/
   ghost_number : GhostNumber
   /-- Grassmann parity -/
@@ -155,7 +160,7 @@ structure OddSymplecticForm where
   /-- ω has odd Grassmann parity -/
   parity : GrassmannParity := GrassmannParity.odd
   /-- Pairing of tangent vectors (represents ω(v,w)) -/
-  pairing : ExtendedFieldSpace → ExtendedFieldSpace → ℝ
+  pairing : ExtendedFieldConfiguration → ExtendedFieldConfiguration → ℝ
   /-- Graded antisymmetry: ω(v,w) = -(-1)^{ε(v)ε(w)+1} ω(w,v) -/
   graded_antisym : ∀ s₁ s₂, pairing s₁ s₂ = -pairing s₂ s₁  -- simplified for even base
   /-- Non-degeneracy (separating): the pairing distinguishes elements.
@@ -178,13 +183,13 @@ structure LagrangianSubmanifoldBV where
   /-- The odd symplectic form -/
   omega : OddSymplecticForm
   /-- Constraint defining the submanifold (as a condition on field-antifield configs) -/
-  constraint : ExtendedFieldSpace → Prop
+  constraint : ExtendedFieldConfiguration → Prop
   /-- ω vanishes on L: ω(v,w) = 0 for tangent vectors v, w to L -/
   isotropic : ∀ s₁ s₂, constraint s₁ → constraint s₂ → omega.pairing s₁ s₂ = 0
   /-- Maximality: L is non-empty and not properly contained in any isotropic subspace.
       Full statement (dim L = ½ dim M) requires dimension theory. -/
   nonempty : ∃ s, constraint s
-  maximal_isotropic : ∀ (constraint' : ExtendedFieldSpace → Prop),
+  maximal_isotropic : ∀ (constraint' : ExtendedFieldConfiguration → Prop),
     (∀ s, constraint s → constraint' s) →
     (∀ s₁ s₂, constraint' s₁ → constraint' s₂ → omega.pairing s₁ s₂ = 0) →
     (∀ s, constraint' s → constraint s)
@@ -341,14 +346,14 @@ structure ProperSolution where
   action : BVAction
   ab : Antibracket
   master_eq : ClassicalMasterEquation ab action
-  classical_action : ExtendedFieldSpace → ℝ
+  classical_action : ExtendedFieldConfiguration → ActionScale
 
 /-- Proper solution with complex-valued classical action. -/
 structure ComplexProperSolution where
   action : BVAction
   ab : Antibracket
   master_eq : ClassicalMasterEquation ab action
-  classical_action : ExtendedFieldSpace → ℂ
+  classical_action : ExtendedFieldConfiguration → ComplexActionValue
 
 /-- BV differential s = (S, ·) -/
 def bvDifferential (ab : Antibracket) (S : BVAction) (F : BVFunctional) : BVFunctional :=
@@ -412,7 +417,7 @@ structure BVGaugeFixing where
   parity_constraint : psi.parity = GrassmannParity.odd
   /-- Ψ depends only on fields, not antifields: configurations with the
       same fields but different antifields give the same value. -/
-  field_dependent : ∀ s₁ s₂ : ExtendedFieldSpace,
+  field_dependent : ∀ s₁ s₂ : ExtendedFieldConfiguration,
     s₁.fields = s₂.fields → psi.functional s₁ = psi.functional s₂
 
 /-- Lagrangian submanifold from gauge-fixing fermion
@@ -426,7 +431,7 @@ structure LagrangianFromGF where
   /-- The gauge-fixing fermion -/
   gf : BVGaugeFixing
   /-- The constraint φ*_A = ∂Ψ/∂φ^A defines L_Ψ -/
-  constraint : ExtendedFieldSpace → Prop
+  constraint : ExtendedFieldConfiguration → Prop
   /-- L_Ψ is isotropic with respect to ω -/
   isotropic : ∀ s₁ s₂, constraint s₁ → constraint s₂ → omega.pairing s₁ s₂ = 0
 
@@ -452,12 +457,12 @@ structure BVPathIntegral where
 
     This is what appears in the exponent of the path integral. -/
 noncomputable def gaugeFixedBVAction (S : BVAction) (L : LagrangianFromGF) :
-    ExtendedFieldSpace → ℝ :=
+    ExtendedFieldConfiguration → ℝ :=
   S.action.functional
 
 /-- Complex-valued gauge-fixed action from a complex BV action. -/
 noncomputable def gaugeFixedComplexBVAction (S : ComplexBVAction) (L : LagrangianFromGF) :
-    ExtendedFieldSpace → ℂ :=
+    ExtendedFieldConfiguration → ℂ :=
   S.action.functional
 
 /-- Stokes' theorem for BV: Independence of gauge-fixing choice
@@ -560,17 +565,17 @@ theorem bv_master_equation_expansion
 
 /-- BRST recovery interface from BV gauge-fixing-fermion data. -/
 def BVGaugeFixingRecoversBRST
-    (fromBV fromBRST : ExtendedFieldSpace → ℝ) : Prop :=
-  ∀ s : ExtendedFieldSpace, fromBRST s = fromBV s
+    (fromBV fromBRST : ExtendedFieldConfiguration → ActionScale) : Prop :=
+  ∀ s : ExtendedFieldConfiguration, fromBRST s = fromBV s
 
 /-- Appendix-C name for BRST recovery from BV gauge-fixing fermion data. -/
 abbrev BVGaugeFixingFromFermion
-    (fromBV fromBRST : ExtendedFieldSpace → ℝ) : Prop :=
+    (fromBV fromBRST : ExtendedFieldConfiguration → ActionScale) : Prop :=
   BVGaugeFixingRecoversBRST fromBV fromBRST
 
 /-- Assumed recovery of BRST gauge-fixed action from BV gauge-fixing data. -/
 theorem bv_gauge_fixing_fermion_recovers_brst
-    (fromBV fromBRST : ExtendedFieldSpace → ℝ)
+    (fromBV fromBRST : ExtendedFieldConfiguration → ActionScale)
     (h_phys : PhysicsAssumption
       AssumptionId.bvGaugeFixingFermionRecoversBrst
       (BVGaugeFixingRecoversBRST fromBV fromBRST)) :
@@ -579,7 +584,7 @@ theorem bv_gauge_fixing_fermion_recovers_brst
 
 /-- Assumed BV gauge-fixing-from-fermion package in Appendix-C naming. -/
 theorem bv_gauge_fixing_from_fermion
-    (fromBV fromBRST : ExtendedFieldSpace → ℝ)
+    (fromBV fromBRST : ExtendedFieldConfiguration → ActionScale)
     (h_phys : PhysicsAssumption
       AssumptionId.bvGaugeFixingFermionRecoversBrst
       (BVGaugeFixingFromFermion fromBV fromBRST)) :
@@ -673,18 +678,18 @@ structure BVLaplacian where
     in existing modules; the fully complex form is
     `ComplexQuantumMasterEquation` below. -/
 def QuantumMasterEquation (ab : Antibracket) (Δ : BVLaplacian)
-    (S : BVAction) (hbar : ℝ) : Prop :=
-  ∀ s : ExtendedFieldSpace,
+    (S : BVAction) (hbar : ActionScale) : Prop :=
+  ∀ s : ExtendedFieldConfiguration,
     (ab.bracket S.action S.action).functional s =
-    2 * hbar * (Δ.laplacian S.action).functional s
+    2 * hbar.value * (Δ.laplacian S.action).functional s
 
 /-- Complex-valued quantum master equation in the standard BV normalization:
     `(S,S) = 2 i ℏ ΔS`. -/
 def ComplexQuantumMasterEquation (ab : Antibracket) (Δ : BVLaplacian)
-    (S : BVAction) (hbar : ℝ) : Prop :=
-  ∀ s : ExtendedFieldSpace,
+    (S : BVAction) (hbar : ActionScale) : Prop :=
+  ∀ s : ExtendedFieldConfiguration,
     ((ab.bracket S.action S.action).functional s : ℂ) =
-      2 * Complex.I * (hbar : ℂ) * ((Δ.laplacian S.action).functional s : ℂ)
+      2 * Complex.I * (hbar.value : ℂ) * ((Δ.laplacian S.action).functional s : ℂ)
 
 /-- At ℏ = 0, QME reduces to CME -/
 theorem qme_classical_limit (ab : Antibracket) (Δ : BVLaplacian) (S : BVAction) :
@@ -694,12 +699,12 @@ theorem qme_classical_limit (ab : Antibracket) (Δ : BVLaplacian) (S : BVAction)
   · intro h
     ext s
     have hs := h s
-    simp only [mul_zero, zero_mul] at hs
-    exact hs
+    have hzero : (0 : ActionScale).value = 0 := by simp
+    simpa [hzero, mul_zero, zero_mul] using hs
   · intro h s
-    have := congrFun h s
-    simp only [mul_zero, zero_mul]
-    exact this
+    have hs : (ab.bracket S.action S.action).functional s = 0 := congrFun h s
+    have hzero : (0 : ActionScale).value = 0 := by simp
+    simpa [hzero, mul_zero, zero_mul] using hs
 
 /-- At ℏ = 0, the complex QME also reduces to CME. -/
 theorem complex_qme_classical_limit (ab : Antibracket) (Δ : BVLaplacian) (S : BVAction) :
@@ -797,12 +802,12 @@ structure BVAnomaly where
               (Δ.laplacian anomaly).functional s) = fun _ => 0
 
 /-- Anomaly-free theory: QME can be satisfied -/
-def AnomalyFreeBV (ab : Antibracket) (Δ : BVLaplacian) (S : BVAction) (hbar : ℝ) : Prop :=
+def AnomalyFreeBV (ab : Antibracket) (Δ : BVLaplacian) (S : BVAction) (hbar : ActionScale) : Prop :=
   QuantumMasterEquation ab Δ S hbar
 
 /-- Anomaly-free theory in the complex BV normalization `(S,S) = 2 i ℏ ΔS`. -/
 def ComplexAnomalyFreeBV (ab : Antibracket) (Δ : BVLaplacian)
-    (S : BVAction) (hbar : ℝ) : Prop :=
+    (S : BVAction) (hbar : ActionScale) : Prop :=
   ComplexQuantumMasterEquation ab Δ S hbar
 
 /- ============= ZINN-JUSTIN EQUATION ============= -/
@@ -903,7 +908,7 @@ structure TrivialLagrangian where
   /-- The odd symplectic form -/
   omega : OddSymplecticForm
   /-- The constraint φ* = 0 -/
-  constraint : ExtendedFieldSpace → Prop
+  constraint : ExtendedFieldConfiguration → Prop
   /-- This is Lagrangian (isotropic) -/
   isotropic : ∀ s₁ s₂, constraint s₁ → constraint s₂ → omega.pairing s₁ s₂ = 0
 
@@ -911,7 +916,7 @@ structure TrivialLagrangian where
 
     S_BRST[φ,c,c̄,B] = S_BV[φ,c,c̄,B, φ*=0, c*=0, c̄*=0, B*=0] -/
 noncomputable def brst_action_from_bv (bv : BRSTFromBV) (L₀ : TrivialLagrangian) :
-    ExtendedFieldSpace → ℝ :=
+    ExtendedFieldConfiguration → ℝ :=
   gaugeFixedBVAction bv.bv_action ⟨L₀.omega, ⟨⟨fun _ => 0, ⟨-1⟩, .odd⟩, rfl, rfl,
     fun _ _ _ => rfl⟩, L₀.constraint, L₀.isotropic⟩
 

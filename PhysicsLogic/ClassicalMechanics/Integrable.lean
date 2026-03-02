@@ -1,4 +1,5 @@
 import PhysicsLogic.ClassicalMechanics.CanonicalTransforms
+import PhysicsLogic.Units
 import Mathlib.MeasureTheory.Measure.MeasureSpace
 
 namespace PhysicsLogic.ClassicalMechanics
@@ -23,7 +24,7 @@ structure IntegrableSystemTheory (n : ℕ) where
   /-- The canonical transform theory -/
   ctTheory : CanonicalTransformTheory n
   /-- Action variable Iᵢ = ∮ pᵢ dqᵢ (adiabatic invariant) -/
-  actionVariable : Fin n → PhaseSpaceTrajectory n → ℝ
+  actionVariable : Fin n → PhaseSpaceTrajectory n → ActionScale
   /-- Angle variable θᵢ (conjugate to action) -/
   angleVariable : Fin n → PhaseSpaceTrajectory n → ℝ → ℝ
   /-- Action-angle variables form canonical coordinates -/

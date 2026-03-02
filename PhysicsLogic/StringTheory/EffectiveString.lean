@@ -33,16 +33,16 @@ def WorldsheetMetric.pullback (h : WorldsheetMetric) (ρ : Reparametrization) : 
 
 /-- Minimal Nambu-Goto data package. -/
 structure NambuGotoData (D : ℕ) where
-  tension : ℝ
-  action : Embedding D → ℂ
+  tension : TensionScale
+  action : Embedding D → ComplexActionValue
   reparam_invariant :
     ∀ (ρ : Reparametrization) (X : Embedding D),
       action (Embedding.reparametrize X ρ) = action X
 
 /-- Minimal Polyakov data package. -/
 structure PolyakovData (D : ℕ) where
-  inverseStringTension : ℝ
-  action : WorldsheetMetric → Embedding D → ℂ
+  inverseStringTension : StringSlope
+  action : WorldsheetMetric → Embedding D → ComplexActionValue
   reparam_invariant :
     ∀ (ρ : Reparametrization) (h : WorldsheetMetric) (X : Embedding D),
       action (WorldsheetMetric.pullback h ρ) (Embedding.reparametrize X ρ) = action h X
@@ -60,11 +60,11 @@ abbrev NambuGotoModel (D : ℕ) := NambuGotoData D
 abbrev PolyakovModel (D : ℕ) := PolyakovData D
 
 /-- Regge trajectory relation for rotating closed strings. -/
-def ReggeTrajectory (tension energy spin : ℝ) : Prop :=
-  energy ^ (2 : ℕ) = 4 * Real.pi * tension * spin
+def ReggeTrajectory (tension : TensionScale) (energy : Energy) (spin : ScalingDimension) : Prop :=
+  energy.value ^ (2 : ℕ) = 4 * Real.pi * tension.value * spin
 
 /-- Section-02 canonical interface name for the rotating-string Regge law. -/
-def ReggeTrajectoryLaw (tension energy spin : ℝ) : Prop :=
+def ReggeTrajectoryLaw (tension : TensionScale) (energy : Energy) (spin : ScalingDimension) : Prop :=
   ReggeTrajectory tension energy spin
 
 /-- Effective-string assumption: NG and Polyakov classical actions are equivalent. -/
@@ -79,7 +79,7 @@ theorem nambu_goto_polyakov_equivalence {D : ℕ}
 
 /-- Effective-string assumption: classical Regge trajectory relation. -/
 theorem regge_trajectory
-    (tension energy spin : ℝ)
+    (tension : TensionScale) (energy : Energy) (spin : ScalingDimension)
     (h_phys : PhysicsAssumption
       AssumptionId.stringEffectiveReggeTrajectory
       (ReggeTrajectory tension energy spin)) :
@@ -105,7 +105,7 @@ theorem BosonicWeylCriticalityData.dimension_eq_26
   have h_matter26 : data.matterCentralCharge = 26 := by
     simpa using h_matter
   calc
-    (D : ℤ) = data.matterCentralCharge := by simpa [data.matter_charge]
+    (D : ℤ) = data.matterCentralCharge := by simp [data.matter_charge]
     _ = 26 := h_matter26
 
 /-- Weyl-anomaly cancellation package for bosonic string quantization.
