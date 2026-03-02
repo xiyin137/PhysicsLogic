@@ -1,6 +1,6 @@
 # Appendix K: RG flows in 2D
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 753
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/QFT/RG/TwoDimensionalFlows.lean`, `PhysicsLogic/QFT/CFT/TwoDimensional/SigmaModels.lean`
@@ -39,6 +39,11 @@
   `CalabiYauLandauGinzburgPhasePackage`,
   `AbelianDualityTwistedSuperpotentialMatch`,
   `CigarLiouvilleMirrorDuality`.
+- Physics-interface hardening pass in
+  `PhysicsLogic/QFT/RG/TwoDimensionalFlows.lean`:
+  replaced the CY/LG phase-lifting checklist flag with a claim-typed field
+  (`TwoDimensionalFlowClaim := Prop`) and removed the `= true` placeholder in
+  `CalabiYauLandauGinzburgPhaseFlow`.
 
 ## Subsections
 - [x] K.1 Landau-Ginzburg models (p.753)

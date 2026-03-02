@@ -1,6 +1,6 @@
 # Appendix C: Path integral quantization of gauge theories
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 672
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/QFT/BV/*`, `PhysicsLogic/QFT/PathIntegral/*`
@@ -24,6 +24,11 @@
   `GaugeOrbitQuotientPathIntegral`, `FaddeevPopovGaugeSliceData`,
   `BVMasterEquationExpansion`, `BVGaugeFixingFromFermion`,
   `WilsonianBVMasterPreservation`.
+- Physics-interface hardening pass in
+  `PhysicsLogic/QFT/BV/BatalinVilkovisky.lean`:
+  replaced the gauge-orbit Haar-normalization checklist flag with a claim-typed
+  field (`BVQuantizationClaim := Prop`) and removed the `= true` placeholder
+  from `GaugeOrbitQuotientPathIntegralPackage`.
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `bvFaddeevPopovGaugeSliceRegular`.

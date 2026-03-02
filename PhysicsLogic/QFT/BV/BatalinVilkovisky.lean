@@ -497,19 +497,22 @@ theorem faddeev_popov_gauge_slice_regular {F : Type*}
     FaddeevPopovGaugeSliceRegular data := by
   exact h_phys
 
+/-- Claim alias for Appendix-C gauge-orbit path-integral consistency statements. -/
+abbrev BVQuantizationClaim := Prop
+
 /-- Gauge-orbit quotient path-integral interface:
 gauge-slice data plus explicit `vol(G)` normalization and Haar-measure
 bookkeeping. -/
 structure GaugeOrbitQuotientPathIntegral (F : Type*) where
   gaugeSliceData : FaddeevPopovGaugeSliceData F
   gaugeGroupVolume : ℝ
-  haarMeasureNormalizationIncluded : Bool
+  haarMeasureNormalizationIncluded : BVQuantizationClaim
 
 /-- Consistency package for gauge-orbit quotient path-integral data. -/
 def GaugeOrbitQuotientPathIntegralPackage {F : Type*}
     (data : GaugeOrbitQuotientPathIntegral F) : Prop :=
   data.gaugeGroupVolume > 0 ∧
-  data.haarMeasureNormalizationIncluded = true ∧
+  data.haarMeasureNormalizationIncluded ∧
   FaddeevPopovGaugeSliceRegular data.gaugeSliceData
 
 /-- Build gauge-orbit quotient path-integral consistency from regular
@@ -520,7 +523,7 @@ theorem gauge_orbit_quotient_path_integral_package {F : Type*}
       AssumptionId.bvFaddeevPopovGaugeSliceRegular
       (FaddeevPopovGaugeSliceRegular data.gaugeSliceData))
     (h_vol : data.gaugeGroupVolume > 0)
-    (h_haar : data.haarMeasureNormalizationIncluded = true) :
+    (h_haar : data.haarMeasureNormalizationIncluded) :
     GaugeOrbitQuotientPathIntegralPackage data := by
   exact ⟨h_vol, h_haar,
     faddeev_popov_gauge_slice_regular data.gaugeSliceData h_phys⟩

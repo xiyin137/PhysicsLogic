@@ -69,6 +69,10 @@
 - `PhysicsLogic/QFT/CFT/TwoDimensional/SuperstringVertices.lean`:
   `NsnsPictureRaisingStateOperatorPackage` (state/operator encoding of
   the picture-raised fixed-vertex and integrated-vertex conversion equations).
+- `PhysicsLogic/QFT/CFT/TwoDimensional/SuperstringVertices.lean`:
+  physics-interface hardening replaced checklist booleans with claim-typed
+  fields (`SuperstringVertexClaim := Prop`) and removed `= true` placeholders
+  from NSNS picture-raising package predicates.
 - `PhysicsLogic/StringTheory/SuperstringExplicitComputations.lean`:
   `NsnsPictureRaisingPackage` now delegates to the CFT state/operator package.
 - `PhysicsLogic/StringTheory/SuperstringExplicitComputations.lean`:

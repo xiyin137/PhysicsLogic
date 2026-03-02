@@ -11,6 +11,8 @@ namespace PhysicsLogic.QFT.RG
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
+abbrev TwoDimensionalFlowClaim := Prop
+
 /-- Polynomial scalar potential data for 2D Landau-Ginzburg deformations. -/
 structure PolynomialPotentialData where
   maxDegree : ℕ
@@ -128,14 +130,14 @@ structure CalabiYauLgPhaseData where
   theta : ℝ
   totalCharge : ℤ
   irPhase : GlsmIRPhase
-  coulombLifted : Bool
+  coulombLifted : TwoDimensionalFlowClaim
 
 /-- Phase-flow interface between CY and LG orbifold regimes (including `θ`-lifting at `r=0`). -/
 def CalabiYauLandauGinzburgPhaseFlow (data : CalabiYauLgPhaseData) : Prop :=
   data.totalCharge = 0 ∧
   (0 < data.r → data.irPhase = GlsmIRPhase.calabiYau) ∧
   (data.r < 0 → data.irPhase = GlsmIRPhase.landauGinzburgOrbifold) ∧
-  (data.r = 0 ∧ data.theta ≠ 0 → data.coulombLifted = true)
+  (data.r = 0 ∧ data.theta ≠ 0 → data.coulombLifted)
 
 /-- Central-charge agreement interface for the CY/LG phase pair (`c = 3(k-2)`). -/
 def CalabiYauLandauGinzburgCentralCharge

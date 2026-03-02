@@ -6,6 +6,8 @@ namespace PhysicsLogic.QFT.CFT.TwoDimensional
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
+abbrev SuperstringVertexClaim := Prop
+
 /-- NSNS picture-raising data expressed as CFT state/operator relations.
 This captures the Section-08 relations around `\label{raisedfixedvop}` and
 `\label{ccgunfix}` in the stringbook tex source. -/
@@ -19,14 +21,14 @@ structure NsnsPictureRaisingStateOperatorData (H : Type*) [SMul ℂ H] where
   vertexMinusOneMinusOne : H
   vertexZeroZero : H
   matterPrimaryState : H
-  pcoCollisionRegular : Bool
-  etaXiTermsDropOutInSphereCorrelator : Bool
+  pcoCollisionRegular : SuperstringVertexClaim
+  etaXiTermsDropOutInSphereCorrelator : SuperstringVertexClaim
 
 /-- Picture-raised NSNS vertex relation:
 `V^(0,0) = lim X X̃ V^(-1,-1)` at the insertion. -/
 def NsnsPictureRaisedVertexEquation {H : Type*} [SMul ℂ H]
     (data : NsnsPictureRaisingStateOperatorData H) : Prop :=
-  data.pcoCollisionRegular = true ∧
+  data.pcoCollisionRegular ∧
     data.vertexZeroZero = data.pcoBar (data.pco data.vertexMinusOneMinusOne)
 
 /-- Integrated-vertex conversion relation from `b_{-1}\tilde b_{-1}` insertion:
@@ -43,7 +45,7 @@ def NsnsPictureRaisingStateOperatorPackage {H : Type*} [SMul ℂ H]
     (data : NsnsPictureRaisingStateOperatorData H) : Prop :=
   NsnsPictureRaisedVertexEquation data ∧
     NsnsIntegratedVertexConversionEquation data ∧
-    data.etaXiTermsDropOutInSphereCorrelator = true
+    data.etaXiTermsDropOutInSphereCorrelator
 
 /-- Assumed Section-08 NSNS picture-raising package in state/operator form. -/
 theorem nsns_picture_raising_state_operator_package
