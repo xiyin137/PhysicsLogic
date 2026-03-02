@@ -79,16 +79,20 @@ def expectedNullLevel (ℓ : ℕ) : ℕ :=
 structure ShorteningConditionsTheory where
   /-- Norm-squared functional on descendants (in a chosen 2-point pairing). -/
   descendantNormSq : ∀ {d : ℕ} {H : Type _}, Descendant d H → ℝ
+  /-- Selected first null descendant at the unitarity bound. -/
+  selectedNullDescendant : ∀ (d : ℕ) {H : Type _}
+    (O : QuasiPrimary d H) (ℓ : ℕ)
+    (_h_saturate : O.scaling_dim = ℓ + (d - 2 : ℝ) / 2),
+    Descendant d H
   /-- Null descendant at unitarity bound.
       When `Δ = (d-2)/2 + ℓ`, a descendant at the expected first-null level
       has vanishing norm, encoding multiplet shortening. -/
   null_state_at_unitarity_bound : ∀ (d : ℕ) {H : Type _}
     (O : QuasiPrimary d H) (ℓ : ℕ)
     (h_saturate : O.scaling_dim = ℓ + (d - 2 : ℝ) / 2),
-    ∃ (null_descendant : Descendant d H),
-      null_descendant.quasi_primary = O ∧
-      null_descendant.level = expectedNullLevel ℓ ∧
-      descendantNormSq null_descendant = 0
+    (selectedNullDescendant d O ℓ h_saturate).quasi_primary = O ∧
+    (selectedNullDescendant d O ℓ h_saturate).level = expectedNullLevel ℓ ∧
+    descendantNormSq (selectedNullDescendant d O ℓ h_saturate) = 0
 
 /-- Long multiplet: Δ > ℓ + (d-2)/2
     Generic case, full descendant tower -/
