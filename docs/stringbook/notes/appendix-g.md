@@ -30,6 +30,12 @@
   `FreeFieldCentralChargeAssignments`,
   `FreeFieldCentralChargeAssignmentsPackage`,
   `free_boson_plus_majorana_total_c`.
+- Added assumption-wired interfaces in `PhysicsLogic/QFT/CFT/TwoDimensional/Examples.lean`:
+  `FreeBosonVertexOperatorStateMap`,
+  `FreeBosonHigherGenusCorrelatorFormula`,
+  `FreeFermionNsRSectorConsistency`,
+  `SzegoKernelSpinStructurePropagator`,
+  `FreeFieldCentralCharges`.
 
 ## Assumption Candidates
 - Candidate new `AssumptionId`: `cft2dFreeBosonVertexOperatorStateMap`.

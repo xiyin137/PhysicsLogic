@@ -25,6 +25,24 @@ def inForwardTube {d : ℕ} [NeZero d] (n : ℕ) (z : Fin n → (Fin d → ℂ))
     let η : Fin d → ℝ := fun μ => (z k μ - prev μ).im
     inForwardCone η
 
+/-- Appendix-D analytic-continuation domain interface:
+the continuation domain for `n`-point functions is identified with the forward tube. -/
+def WightmanEuclideanAnalyticContinuationDomain {d : ℕ} [NeZero d]
+    (n : ℕ)
+    (domain : (Fin n → (Fin d → ℂ)) → Prop) : Prop :=
+  domain = inForwardTube n
+
+/-- Assumed Appendix-D forward-tube domain identification for Wightman-to-Euclidean
+analytic continuation. -/
+theorem wightman_euclidean_analytic_continuation_domain {d : ℕ} [NeZero d]
+    (n : ℕ)
+    (domain : (Fin n → (Fin d → ℂ)) → Prop)
+    (h_phys : PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.wightmanEuclideanAnalyticContinuationDomain
+      (WightmanEuclideanAnalyticContinuationDomain n domain)) :
+    WightmanEuclideanAnalyticContinuationDomain n domain := by
+  exact h_phys
+
 /-- A Wightman function with analytic continuation to the forward tube.
 
     The Wightman n-point function W_n, initially defined as a tempered distribution

@@ -1,7 +1,7 @@
 # Physics Assumptions Report
 
-- Registered assumptions: `251`
-- Assumptions referenced in non-Papers modules: `251`
+- Registered assumptions: `264`
+- Assumptions referenced in non-Papers modules: `264`
 - Assumptions with zero references outside registry: `0`
 
 | AssumptionId | Payload | Core refs | Papers refs | Total refs | Description |
@@ -45,14 +45,25 @@
 | `cft2dD1D5ConformalManifoldQuaternionicQuotient` | `qft.cft.2d.d1d5_conformal_manifold_quaternionic_quotient` | 2 | 0 | 2 | The D1-D5 conformal-manifold geometry package (`k = Q1Q5/(gcd(Q1,Q5))^2`, quaternionic local geometry `SO(5,4)/(SO(5)xSO(4))`, and `20=4x5` marginal-direction counting) is assumed in this abstraction layer. |
 | `cft2dD1D5SymmetricProductOrbifoldLocus` | `qft.cft.2d.d1d5_symmetric_product_orbifold_locus` | 2 | 0 | 2 | The D1-D5 symmetric-product-orbifold locus package (regular/singular distinction `Re(tau)=1/2` vs `Re(tau)=0` and arithmetic locus relation `(a tau + b)/(Q1 tau + Q5)=1/2+i/g'`) is assumed in this abstraction layer. |
 | `cft2dDefectFusionPentagon` | `qft.cft.2d.defect_fusion_pentagon` | 1 | 0 | 1 | Topological-defect fusion/junction data is assumed to satisfy pentagon-type consistency in this abstraction layer. |
+| `cft2dFreeBosonHigherGenusCorrelatorFormula` | `qft.cft.2d.free_boson_higher_genus_correlator_formula` | 1 | 0 | 1 | Higher-genus free-boson correlator formulas (with momentum-conservation constraints and period/prime-form data) are assumed in this abstraction layer. |
+| `cft2dFreeBosonVertexOperatorStateMap` | `qft.cft.2d.free_boson_vertex_operator_state_map` | 1 | 0 | 1 | The free-boson state/operator map for normal-ordered vertex operators is assumed in this abstraction layer. |
+| `cft2dFreeFermionNsRSectorConsistency` | `qft.cft.2d.free_fermion_ns_r_sector_consistency` | 1 | 0 | 1 | Consistency of free-fermion NS/R sector mode assignments and canonical central-charge normalization is assumed in this abstraction layer. |
+| `cft2dFreeFieldCentralCharges` | `qft.cft.2d.free_field_central_charges` | 1 | 0 | 1 | Canonical free-field central-charge assignments (`c=1` boson and `c=1/2` Majorana fermion) are assumed in this abstraction layer. |
 | `cft2dGaugedWzwCosetFlow` | `qft.cft.2d.gauged_wzw_coset_flow` | 2 | 0 | 2 | The gauged-WZW to coset/nonlinear-sigma-model correspondence in the IR is assumed in this abstraction layer. |
 | `cft2dLiouvilleDozzRecursion` | `qft.cft.2d.liouville_dozz_recursion` | 1 | 0 | 1 | Degenerate-field bootstrap recursion constraints leading to DOZZ-type Liouville structure constants are assumed in this abstraction layer. |
 | `cft2dLiouvilleMarginality` | `qft.cft.2d.liouville_marginality` | 1 | 0 | 1 | Marginality condition Q = b + 1/b for Liouville interaction and associated conformal fixed-point interpretation are assumed in this abstraction layer. |
 | `cft2dOrbifoldConformalManifoldDimensionFormula` | `qft.cft.2d.orbifold_conformal_manifold_dimension_formula` | 2 | 0 | 2 | The `C^2/Z_k` twisted-sector exactly-marginal counting relation (`k-1` twisted sectors and `4(k-1)` `(4,4)`-preserving marginal descendants) is assumed in this abstraction layer. |
 | `cft2dOrbifoldKTwoModuliFixedPointDistinction` | `qft.cft.2d.orbifold_k2_moduli_fixed_point_distinction` | 2 | 0 | 2 | The `k=2` orbifold-conformal-manifold package (`M̃₂=(R^3×S^1)/Z₂`, triplet ALE-resolution versus singlet `B`-period direction, and distinction of regular/singular fixed points) is assumed in this abstraction layer. |
+| `cft2dStressTensorOPEDefinesVirasoro` | `qft.cft.2d.stress_tensor_ope_defines_virasoro` | 1 | 0 | 1 | The Appendix-E derivation of Virasoro mode commutators from the stress-tensor OPE (`T(z)T(0)` central term and residue computation) is assumed in this abstraction layer. |
+| `cft2dSzegoKernelSpinStructurePropagator` | `qft.cft.2d.szego_kernel_spin_structure_propagator` | 1 | 0 | 1 | Spin-structure-dependent Szego-kernel propagator relations (including parity/zero-mode behavior) are assumed in this abstraction layer. |
+| `cft2dWeylAnomalyPolyakovFunctional` | `qft.cft.2d.weyl_anomaly_polyakov_functional` | 1 | 0 | 1 | The 2D CFT Weyl/trace-anomaly package (`T^a_a=-(c/12)R`) together with the Polyakov anomaly functional relation for partition-function ratios is assumed in this abstraction layer. |
 | `cft2dZamolodchikovMetricTwoPointNormalization` | `qft.cft.2d.zamolodchikov_metric_two_point_normalization` | 1 | 0 | 1 | The Zamolodchikov-metric package for exactly marginal operators (two-point normalization `⟨M_I M_J⟩ = G_IJ/\|z\|^4`, symmetry, and non-negative diagonal entries) is assumed in this abstraction layer. |
+| `cft2dZamolodchikovRecurrenceValidity` | `qft.cft.2d.zamolodchikov_recurrence_validity` | 1 | 0 | 1 | Validity of the Zamolodchikov recurrence framework for Virasoro conformal blocks (global-block limit plus pole/residue recursion) is assumed in this abstraction layer. |
 | `cftCrossRatiosPositiveFromPoints` | `qft.cft.cross_ratios_positive_from_points` | 1 | 0 | 1 | Computed CFT cross-ratios from the selected point configuration are in the positive region used by the bootstrap layer. |
+| `cftHigherGenusPantsDecompositionConsistency` | `qft.cft.higher_genus.pants_decomposition_consistency` | 1 | 0 | 1 | Higher-genus CFT consistency from pair-of-pants decomposition moves (sphere crossing plus torus modular covariance generating full consistency) is assumed in this abstraction layer. |
+| `cftRadialQuantizationOpeConvergence` | `qft.cft.radial_quantization_ope_convergence` | 1 | 0 | 1 | Convergence of radial-quantization-induced OPE expansions in the specified separation domain is assumed in this abstraction layer. |
 | `cftTDualWeightSymmetry` | `qft.cft.2d.t_dual_weight_symmetry` | 1 | 0 | 1 | Free-boson momentum/winding conformal weights obey the T-duality swap symmetry used in this abstraction layer. |
+| `cftTorusOnePointModularCovariance` | `qft.cft.torus_one_point_modular_covariance` | 1 | 0 | 1 | Modular covariance of torus one-point functions under `tau -> tau+1` and `tau -> -1/tau` is assumed in this abstraction layer. |
 | `conformalPreservesCausalStructure` | `spacetime.conformal_preserves_causal_structure` | 1 | 0 | 1 | Conformal rescaling preserves causal classification (timelike/spacelike/lightlike) in the current abstraction layer. |
 | `conformalPreservesNull` | `spacetime.conformal_preserves_null` | 1 | 0 | 1 | Conformal rescaling preserves null separation in the current abstraction layer. |
 | `flrwMetricWellFormed` | `gr.flrw_metric_well_formed` | 3 | 0 | 3 | FLRW metric data is treated as a valid Lorentzian metric package in this abstraction layer. |
@@ -101,6 +112,7 @@
 | `quantumSingletPauliCorrelation` | `quantum.singlet_pauli_correlation` | 1 | 2 | 3 | Singlet-state Pauli correlation formula is assumed in this abstraction layer. |
 | `quantumUnitaryPreservesNorm` | `quantum.unitary_preserves_norm` | 2 | 0 | 2 | Unitary norm preservation is assumed in this abstraction layer's quantum operator model. |
 | `reissnerNordstromMetricWellFormed` | `gr.reissner_nordstrom_metric_well_formed` | 2 | 0 | 2 | Reissner-Nordstrom metric data is treated as a valid Lorentzian metric package in this abstraction layer. |
+| `riemannSurfaceModuliPlumbingCoordinates` | `qft.cft.riemann_surface.moduli_plumbing_coordinates` | 1 | 0 | 1 | Plumbing-fixture coordinate description and corresponding genus-`h` moduli counting package for Riemann surfaces is assumed in this abstraction layer. |
 | `schwarzschildMetricWellFormed` | `gr.schwarzschild_metric_well_formed` | 5 | 0 | 5 | Schwarzschild metric data is treated as a valid Lorentzian metric package in this abstraction layer. |
 | `spatialRotationPreservesMetric` | `spacetime.spatial_rotation_preserves_metric` | 1 | 0 | 1 | The explicit spatial z-rotation matrix preserves the Minkowski inner product. |
 | `stringAdS3MixedFluxFiniteKWzwFourPointReduction` | `string.ads3.mixed_flux_finite_k_wzw_four_point_reduction` | 2 | 0 | 2 | The mixed-flux AdS3 finite-`k` WZW reduction package (RR-deformation mass-shift equation reduced to bosonic `SL(2)_{k+2}` and `SU(2)_{k-2}` four-point functions with a pair of fundamental and a pair of generic primaries, and large-`k` agreement with semiclassical pulsating-string shifts) is assumed in this abstraction layer. |
@@ -120,11 +132,11 @@
 | `stringAdSCftDictionary` | `string.adscft.dictionary` | 1 | 0 | 1 | The generating-functional AdS/CFT dictionary relation equating bulk partition data with boundary correlator data is assumed in this abstraction layer. |
 | `stringAdSCftParameterMap` | `string.adscft.parameter_map` | 1 | 0 | 1 | The AdS5/CFT4 parameter relations `g_B = g_YM^2/(2pi)`, `lambda = 2 g_YM^2 N`, and `R^4/alpha'^2 = lambda` are assumed in this abstraction layer. |
 | `stringAdSCftStateOperatorMap` | `string.adscft.state_operator_map` | 1 | 0 | 1 | The global-AdS/CFT state-operator map relation equating global energy with conformal dimension is assumed in this abstraction layer. |
-| `stringBackgroundBetaToSpacetimeEom` | `string.background.beta_to_spacetime_eom` | 1 | 0 | 1 | The link from vanishing worldsheet beta functions to spacetime effective equations is assumed in this abstraction layer. |
+| `stringBackgroundBetaToSpacetimeEom` | `string.background.beta_to_spacetime_eom` | 2 | 0 | 2 | The link from vanishing worldsheet beta functions to spacetime effective equations is assumed in this abstraction layer. |
 | `stringBackgroundCOneTachyonMassless` | `string.background.c1_tachyon_massless` | 1 | 0 | 1 | In the c=1 background layer, the asymptotic scalar mode is treated as massless (k0^2 = k1^2). |
 | `stringBackgroundWeylBetaVanishing` | `string.background.weyl_beta_vanishing` | 1 | 0 | 1 | Vanishing of sigma-model beta functions at a Weyl-invariant string background is assumed in this abstraction layer. |
-| `stringBosonicCriticalDimension` | `string.bosonic.critical_dimension_26` | 1 | 0 | 1 | Weyl-anomaly cancellation selecting the critical bosonic dimension D = 26 is assumed in this abstraction layer. |
-| `stringBosonicMassSpectrumFormula` | `string.bosonic.mass_spectrum_formula` | 1 | 0 | 1 | The bosonic closed-string mass-shell relation m^2 = 4/alpha' * (N - 1) is assumed in this abstraction layer. |
+| `stringBosonicCriticalDimension` | `string.bosonic.critical_dimension_26` | 2 | 0 | 2 | Weyl-anomaly cancellation selecting the critical bosonic dimension D = 26 is assumed in this abstraction layer. |
+| `stringBosonicMassSpectrumFormula` | `string.bosonic.mass_spectrum_formula` | 2 | 0 | 2 | The bosonic closed-string mass-shell relation m^2 = 4/alpha' * (N - 1) is assumed in this abstraction layer. |
 | `stringConifoldGeometryDeformedResolvedMetrics` | `string.conifold.geometry_deformed_resolved_metrics` | 1 | 0 | 1 | The conifold-geometry package (singular conifold with `T^{1,1}` base, deformed and resolved Ricci-flat branches, and flop exchange of the two small resolutions) is assumed in this abstraction layer. |
 | `stringConifoldSingularCftGlsmLiouvilleLimit` | `string.conifold.singular_cft_glsm_liouville_limit` | 1 | 0 | 1 | The singular-conifold CFT package (`U(1)` GLSM with two positive and two negative chiral charges, FI-controlled small resolutions, and conifold-point `N=2` Liouville infrared description) is assumed in this abstraction layer. |
 | `stringConifoldTypeIiaTransitionWrappedD2Hypermultiplet` | `string.conifold.type_iia_transition_wrapped_d2_hypermultiplet` | 1 | 0 | 1 | The type-IIA conifold-transition package (complexified Kahler modulus, perturbative cubic prepotential from PQ symmetry, wrapped-D2/D0 sectors, and EFT resolution of the singular point) is assumed in this abstraction layer. |
@@ -251,6 +263,7 @@
 | `tqftSu24FusionAxioms` | `qft.tqft.su24_fusion_axioms` | 3 | 0 | 3 | Coherence proof obligations for the explicit SU(2)_4 fusion-category instance are assumed in this abstraction layer. |
 | `tqftSu24RibbonAxioms` | `qft.tqft.su24_ribbon_axioms` | 2 | 0 | 2 | Braiding/twist coherence proof obligations for the explicit SU(2)_4 ribbon-category instance are assumed in this abstraction layer. |
 | `tqftZ3ModularAxioms` | `qft.tqft.z3_modular_axioms` | 6 | 2 | 8 | Coherence and modularity proof obligations for the explicit Z3 modular-category instance are assumed in this abstraction layer. |
+| `wightmanEuclideanAnalyticContinuationDomain` | `qft.wightman.euclidean_analytic_continuation_domain` | 1 | 0 | 1 | The forward-tube domain characterization for Lorentzian-to-Euclidean analytic continuation of Wightman data is assumed in this abstraction layer. |
 | `wightmanHaagTheorem` | `qft.wightman.haag_theorem` | 1 | 0 | 1 | Haag's unitary inequivalence conclusion holds in the current abstraction layer. |
 | `wightmanPctTheorem` | `qft.wightman.pct_theorem` | 1 | 0 | 1 | PCT symmetry relation for Wightman functions holds in the current abstraction layer. |
 | `wightmanReehSchlieder` | `qft.wightman.reeh_schlieder` | 1 | 0 | 1 | Reeh-Schlieder cyclicity/separating conclusion is assumed at this abstraction layer. |

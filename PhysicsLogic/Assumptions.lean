@@ -153,19 +153,18 @@ def conformalPreservesNull : String := "spacetime.conformal_preserves_null"
 def conformalPreservesCausalStructure : String := "spacetime.conformal_preserves_causal_structure"
 def cftCrossRatiosPositiveFromPoints : String := "qft.cft.cross_ratios_positive_from_points"
 def cftTDualWeightSymmetry : String := "qft.cft.2d.t_dual_weight_symmetry"
-def cft2dStressTensorOPEDefinesVirasoro : String :=
-  "qft.cft.2d.stress_tensor_ope_defines_virasoro"
-def cft2dWeylAnomalyPolyakovFunctional : String :=
-  "qft.cft.2d.weyl_anomaly_polyakov_functional"
+def cft2dStressTensorOPEDefinesVirasoro : String := "qft.cft.2d.stress_tensor_ope_defines_virasoro"
+def cft2dWeylAnomalyPolyakovFunctional : String := "qft.cft.2d.weyl_anomaly_polyakov_functional"
 def cft2dCrossingAssociativity : String := "qft.cft.2d.crossing_associativity"
-def cft2dZamolodchikovRecurrenceValidity : String :=
-  "qft.cft.2d.zamolodchikov_recurrence_validity"
-def riemannSurfaceModuliPlumbingCoordinates : String :=
-  "qft.cft.riemann_surface.moduli_plumbing_coordinates"
-def cftTorusOnePointModularCovariance : String :=
-  "qft.cft.torus_one_point_modular_covariance"
-def cftHigherGenusPantsDecompositionConsistency : String :=
-  "qft.cft.higher_genus.pants_decomposition_consistency"
+def cft2dZamolodchikovRecurrenceValidity : String := "qft.cft.2d.zamolodchikov_recurrence_validity"
+def riemannSurfaceModuliPlumbingCoordinates : String := "qft.cft.riemann_surface.moduli_plumbing_coordinates"
+def cftTorusOnePointModularCovariance : String := "qft.cft.torus_one_point_modular_covariance"
+def cftHigherGenusPantsDecompositionConsistency : String := "qft.cft.higher_genus.pants_decomposition_consistency"
+def cft2dFreeBosonVertexOperatorStateMap : String := "qft.cft.2d.free_boson_vertex_operator_state_map"
+def cft2dFreeBosonHigherGenusCorrelatorFormula : String := "qft.cft.2d.free_boson_higher_genus_correlator_formula"
+def cft2dFreeFermionNsRSectorConsistency : String := "qft.cft.2d.free_fermion_ns_r_sector_consistency"
+def cft2dSzegoKernelSpinStructurePropagator : String := "qft.cft.2d.szego_kernel_spin_structure_propagator"
+def cft2dFreeFieldCentralCharges : String := "qft.cft.2d.free_field_central_charges"
 def cft2dIsingSigmaFourPointCrossing : String :=
   "qft.cft.2d.ising_sigma_four_point_crossing"
 def cft2dDefectFusionPentagon : String := "qft.cft.2d.defect_fusion_pentagon"
@@ -286,6 +285,8 @@ def wightmanSpinStatistics : String := "qft.wightman.spin_statistics"
 def wightmanHaagTheorem : String := "qft.wightman.haag_theorem"
 def wightmanReehSchlieder : String := "qft.wightman.reeh_schlieder"
 def wightmanTemperedness : String := "qft.wightman.temperedness"
+def wightmanEuclideanAnalyticContinuationDomain : String := "qft.wightman.euclidean_analytic_continuation_domain"
+def cftRadialQuantizationOpeConvergence : String := "qft.cft.radial_quantization_ope_convergence"
 def aqftGnsExistence : String := "qft.aqft.gns_existence"
 def aqftReehSchlieder : String := "qft.aqft.reeh_schlieder"
 def aqftHaagTheorem : String := "qft.aqft.haag_theorem"
@@ -1041,6 +1042,16 @@ def assumptionRegistry : List AssumptionEntry :=
       "Modular covariance of torus one-point functions under `tau -> tau+1` and `tau -> -1/tau` is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cftHigherGenusPantsDecompositionConsistency,
       "Higher-genus CFT consistency from pair-of-pants decomposition moves (sphere crossing plus torus modular covariance generating full consistency) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dFreeBosonVertexOperatorStateMap,
+      "The free-boson state/operator map for normal-ordered vertex operators is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dFreeBosonHigherGenusCorrelatorFormula,
+      "Higher-genus free-boson correlator formulas (with momentum-conservation constraints and period/prime-form data) are assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dFreeFermionNsRSectorConsistency,
+      "Consistency of free-fermion NS/R sector mode assignments and canonical central-charge normalization is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dSzegoKernelSpinStructurePropagator,
+      "Spin-structure-dependent Szego-kernel propagator relations (including parity/zero-mode behavior) are assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cft2dFreeFieldCentralCharges,
+      "Canonical free-field central-charge assignments (`c=1` boson and `c=1/2` Majorana fermion) are assumed in this abstraction layer."⟩
   , ⟨AssumptionId.cft2dIsingSigmaFourPointCrossing,
       "Crossing consistency of the Ising spin-field four-point decomposition (including the sigma-sigma-epsilon structure-constant value in this abstraction layer) is assumed."⟩
   , ⟨AssumptionId.cft2dDefectFusionPentagon,
@@ -1199,6 +1210,10 @@ def assumptionRegistry : List AssumptionEntry :=
       "Reeh-Schlieder cyclicity/separating conclusion is assumed at this abstraction layer."⟩
   , ⟨AssumptionId.wightmanTemperedness,
       "Temperedness growth bound for Wightman distributions is assumed in the current abstraction layer."⟩
+  , ⟨AssumptionId.wightmanEuclideanAnalyticContinuationDomain,
+      "The forward-tube domain characterization for Lorentzian-to-Euclidean analytic continuation of Wightman data is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.cftRadialQuantizationOpeConvergence,
+      "Convergence of radial-quantization-induced OPE expansions in the specified separation domain is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.aqftGnsExistence,
       "GNS representation existence for states on local AQFT algebras is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.aqftReehSchlieder,

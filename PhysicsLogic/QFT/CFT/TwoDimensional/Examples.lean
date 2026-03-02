@@ -37,6 +37,27 @@ structure NormalOrderedVertexOperators2D (VertexOp : Type*) where
   ope_singular_exponent_formula : ∀ α β : ℝ,
     opeSingularExponent α β = α * β
 
+/-- Appendix-G state/operator map interface for free-boson vertex operators. -/
+def FreeBosonVertexOperatorStateMap
+    {VertexOp State : Type*}
+    (data : NormalOrderedVertexOperators2D VertexOp)
+    (stateToVertex : State → VertexOp)
+    (vertexToState : VertexOp → State) : Prop :=
+  (∀ s : State, vertexToState (stateToVertex s) = s) ∧
+    (∀ α : ℝ, ∃ s : State, stateToVertex s = data.vertex α)
+
+/-- Assumed free-boson state/operator map for normal-ordered vertex operators. -/
+theorem free_boson_vertex_operator_state_map
+    {VertexOp State : Type*}
+    (data : NormalOrderedVertexOperators2D VertexOp)
+    (stateToVertex : State → VertexOp)
+    (vertexToState : VertexOp → State)
+    (h_phys : PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.cft2dFreeBosonVertexOperatorStateMap
+      (FreeBosonVertexOperatorStateMap data stateToVertex vertexToState)) :
+    FreeBosonVertexOperatorStateMap data stateToVertex vertexToState := by
+  exact h_phys
+
 /-- Free-boson correlator data on a genus-`h` Riemann surface:
 Green-function/prime-form/period-matrix ingredients plus momentum conservation. -/
 structure FreeBosonGenusHCorrelatorData (Point : Type*) where
@@ -47,6 +68,21 @@ structure FreeBosonGenusHCorrelatorData (Point : Type*) where
   periodMatrixEntry : Fin genus → Fin genus → ℂ
   correlator : (Fin insertionCount → Point) → ℂ
   momentumConservationHolds : Bool
+
+/-- Appendix-G higher-genus free-boson correlator consistency marker. -/
+def FreeBosonHigherGenusCorrelatorFormula {Point : Type*}
+    (data : FreeBosonGenusHCorrelatorData Point) : Prop :=
+  data.momentumConservationHolds = true
+
+/-- Assumed higher-genus free-boson correlator package. -/
+theorem free_boson_higher_genus_correlator_formula
+    {Point : Type*}
+    (data : FreeBosonGenusHCorrelatorData Point)
+    (h_phys : PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.cft2dFreeBosonHigherGenusCorrelatorFormula
+      (FreeBosonHigherGenusCorrelatorFormula data)) :
+    FreeBosonHigherGenusCorrelatorFormula data := by
+  exact h_phys
 
 /-- Free boson central charge is always c = 1 -/
 def free_boson_central_charge : ℝ := 1
@@ -117,6 +153,21 @@ structure FreeFermionSectorData2D where
   ramondSpinFieldWeightFormula :
     sector = NSRSector.R → ramondSpinFieldWeight = 1 / 16
 
+/-- Appendix-G NS/R free-fermion consistency package. -/
+def FreeFermionNsRSectorConsistency
+    (data : FreeFermionSectorData2D) : Prop :=
+  (∀ r : ℚ, data.modeIndexPredicate r ↔ sectorCompatible data.sector r) ∧
+    data.fermionCentralCharge = 1 / 2
+
+/-- Assumed NS/R sector consistency for the free-fermion package. -/
+theorem free_fermion_ns_r_sector_consistency
+    (data : FreeFermionSectorData2D)
+    (h_phys : PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.cft2dFreeFermionNsRSectorConsistency
+      (FreeFermionNsRSectorConsistency data)) :
+    FreeFermionNsRSectorConsistency data := by
+  exact h_phys
+
 /-- Szego-kernel spin-structure interface for genus-dependent fermion propagators. -/
 structure SzegoKernelSpinStructureData (Point : Type*) where
   genus : ℕ
@@ -126,6 +177,23 @@ structure SzegoKernelSpinStructureData (Point : Type*) where
   hasFermionZeroMode : Bool
   zeroModeParityRule : (parity = SpinStructureParity.odd → hasFermionZeroMode = true) ∧
     (parity = SpinStructureParity.even → hasFermionZeroMode = false)
+
+/-- Appendix-G Szego-kernel spin-structure propagator consistency package. -/
+def SzegoKernelSpinStructurePropagator {Point : Type*}
+    (data : SzegoKernelSpinStructureData Point) : Prop :=
+  (∀ x y : Point, data.szegoKernel x y = -data.szegoKernel y x) ∧
+    ((data.parity = SpinStructureParity.odd → data.hasFermionZeroMode = true) ∧
+      (data.parity = SpinStructureParity.even → data.hasFermionZeroMode = false))
+
+/-- Assumed Szego-kernel spin-structure propagator package. -/
+theorem szego_kernel_spin_structure_propagator
+    {Point : Type*}
+    (data : SzegoKernelSpinStructureData Point)
+    (h_phys : PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.cft2dSzegoKernelSpinStructurePropagator
+      (SzegoKernelSpinStructurePropagator data)) :
+    SzegoKernelSpinStructurePropagator data := by
+  exact h_phys
 
 /-- Canonical free-field central-charge assignments from Appendix G:
 one free boson has `c=1`, one Majorana free fermion has `c=1/2`. -/
@@ -138,6 +206,19 @@ def FreeFieldCentralChargeAssignmentsPackage
     (data : FreeFieldCentralChargeAssignments) : Prop :=
   data.bosonCentralCharge = 1 ∧
   data.majoranaFermionCentralCharge = 1 / 2
+
+/-- Appendix-G canonical free-field central-charge interface. -/
+def FreeFieldCentralCharges (data : FreeFieldCentralChargeAssignments) : Prop :=
+  FreeFieldCentralChargeAssignmentsPackage data
+
+/-- Assumed canonical free-field central-charge package. -/
+theorem free_field_central_charges
+    (data : FreeFieldCentralChargeAssignments)
+    (h_phys : PhysicsLogic.PhysicsAssumption
+      PhysicsLogic.AssumptionId.cft2dFreeFieldCentralCharges
+      (FreeFieldCentralCharges data)) :
+    FreeFieldCentralCharges data := by
+  exact h_phys
 
 /-- One free boson + one Majorana fermion has total central charge `3/2`. -/
 theorem free_boson_plus_majorana_total_c

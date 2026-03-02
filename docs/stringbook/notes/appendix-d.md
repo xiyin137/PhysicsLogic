@@ -26,6 +26,11 @@
   `WightmanToEuclideanContinuation`.
 - Implemented in `PhysicsLogic/QFT/CFT/Basic.lean`:
   `StressTensorConformalCurrents`, `RadialQuantizationOPEDecomposition`.
+- Added assumption-wired interfaces:
+  `WightmanEuclideanAnalyticContinuationDomain`
+  in `PhysicsLogic/QFT/Euclidean/WickRotation.lean`,
+  and `RadialQuantizationOPEConvergence`
+  in `PhysicsLogic/QFT/CFT/Basic.lean`.
 
 ## Assumption Candidates
 - Reuse existing: `wightmanTemperedness`, `wightmanSpinStatistics`, `wightmanPctTheorem`.

@@ -6,6 +6,7 @@ import PhysicsLogic.SpaceTime.Minkowski
 import PhysicsLogic.SpaceTime.Conformal
 import PhysicsLogic.Symmetries.Poincare
 import PhysicsLogic.Symmetries.LieAlgebras
+import PhysicsLogic.Assumptions
 import Mathlib.Data.Complex.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Analysis.SpecialFunctions.Pow.Complex
@@ -333,6 +334,26 @@ correspondence data with OPE expansion/convergence data. -/
 structure RadialQuantizationOPEDecomposition (d : ℕ) where
   stateOperator : StateOperatorCorrespondence d
   ope : OPETheory d
+
+/-- Appendix-D convergence interface:
+the radial-quantization OPE converges in the standard separated-insertions domain. -/
+def RadialQuantizationOPEConvergence {d : ℕ}
+    (data : RadialQuantizationOPEDecomposition d) : Prop :=
+  ∀ (H : Type)
+    (φ_i φ_j : QuasiPrimary d H)
+    (x y : Fin d → ℝ)
+    (other_insertions : List (Fin d → ℝ)),
+    (∀ z ∈ other_insertions, euclideanDistance x y < euclideanDistance y z) →
+    ∃ (radius : ℝ), radius > 0 ∧ euclideanDistance x y < radius
+
+/-- Assumed Appendix-D convergence package for radial-quantization/OPE expansions. -/
+theorem radial_quantization_ope_convergence {d : ℕ}
+    (data : RadialQuantizationOPEDecomposition d)
+    (h_phys : PhysicsAssumption
+      AssumptionId.cftRadialQuantizationOpeConvergence
+      (RadialQuantizationOPEConvergence data)) :
+    RadialQuantizationOPEConvergence data := by
+  exact h_phys
 
 /- ============= COMPLETE CFT STRUCTURE ============= -/
 
