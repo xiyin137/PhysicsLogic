@@ -20,12 +20,8 @@ noncomputable def poincareImage (g : PoincareTransform) (O : Set SpaceTimePoint)
 
 /-- Poincaré composition -/
 noncomputable def poincareCompose
-    (h_lorentz_comp : ∀ Λ₁ Λ₂,
-      PhysicsLogic.PhysicsAssumption
-        PhysicsLogic.AssumptionId.lorentzComposePreservesMetric
-        (LorentzComposePreservesMetric Λ₁ Λ₂))
     (P₁ P₂ : PoincareTransform) : PoincareTransform where
-  lorentz := lorentzCompose P₁.lorentz P₂.lorentz (h_lorentz_comp P₁.lorentz P₂.lorentz)
+  lorentz := lorentzCompose P₁.lorentz P₂.lorentz
   translation := fun μ => P₁.translation μ + (P₁.lorentz.apply (fun ν => P₂.translation ν)) μ
 
 /-- Poincaré identity -/
@@ -43,13 +39,9 @@ noncomputable def poincareInverse
   lorentz := lorentzInverse P.lorentz (h_lorentz_inv P.lorentz)
   translation := fun μ => -((lorentzInverse P.lorentz (h_lorentz_inv P.lorentz)).apply P.translation) μ
 
-noncomputable def poincareMul
-    (h_lorentz_comp : ∀ Λ₁ Λ₂,
-      PhysicsLogic.PhysicsAssumption
-        PhysicsLogic.AssumptionId.lorentzComposePreservesMetric
-        (LorentzComposePreservesMetric Λ₁ Λ₂)) :
+noncomputable def poincareMul :
     PoincareTransform → PoincareTransform → PoincareTransform :=
-  fun P₁ P₂ => poincareCompose h_lorentz_comp P₁ P₂
+  fun P₁ P₂ => poincareCompose P₁ P₂
 
 noncomputable def poincareInv
     (h_lorentz_inv : ∀ Λ,
@@ -61,10 +53,6 @@ noncomputable def poincareInv
 
 /-- Poincaré group structure -/
 noncomputable def poincareGroup
-    (h_lorentz_comp : ∀ Λ₁ Λ₂,
-      PhysicsLogic.PhysicsAssumption
-        PhysicsLogic.AssumptionId.lorentzComposePreservesMetric
-        (LorentzComposePreservesMetric Λ₁ Λ₂))
     (h_lorentz_inv : ∀ Λ,
       PhysicsLogic.PhysicsAssumption
         PhysicsLogic.AssumptionId.lorentzInversePreservesMetric
@@ -73,22 +61,22 @@ noncomputable def poincareGroup
       PhysicsLogic.PhysicsAssumption
         PhysicsLogic.AssumptionId.poincareGroupMulAssoc
         (∀ a b c : PoincareTransform,
-          poincareMul h_lorentz_comp (poincareMul h_lorentz_comp a b) c =
-            poincareMul h_lorentz_comp a (poincareMul h_lorentz_comp b c)))
+          poincareMul (poincareMul a b) c =
+            poincareMul a (poincareMul b c)))
     (h_one_mul :
       PhysicsLogic.PhysicsAssumption
         PhysicsLogic.AssumptionId.poincareGroupOneMul
-        (∀ a : PoincareTransform, poincareMul h_lorentz_comp poincareIdentity a = a))
+        (∀ a : PoincareTransform, poincareMul poincareIdentity a = a))
     (h_mul_one :
       PhysicsLogic.PhysicsAssumption
         PhysicsLogic.AssumptionId.poincareGroupMulOne
-        (∀ a : PoincareTransform, poincareMul h_lorentz_comp a poincareIdentity = a))
+        (∀ a : PoincareTransform, poincareMul a poincareIdentity = a))
     (h_inv_mul_cancel :
       PhysicsLogic.PhysicsAssumption
         PhysicsLogic.AssumptionId.poincareGroupInvMulCancel
-        (∀ a : PoincareTransform, poincareMul h_lorentz_comp (poincareInv h_lorentz_inv a) a = poincareIdentity)) :
+        (∀ a : PoincareTransform, poincareMul (poincareInv h_lorentz_inv a) a = poincareIdentity)) :
     Group PoincareTransform where
-  mul := poincareMul h_lorentz_comp
+  mul := poincareMul
   one := poincareIdentity
   inv := poincareInv h_lorentz_inv
   mul_assoc := h_mul_assoc

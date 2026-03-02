@@ -2,6 +2,7 @@ import PhysicsLogic.SpaceTime.Metrics
 import PhysicsLogic.Assumptions
 import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 
 namespace PhysicsLogic.SpaceTime
 
@@ -89,10 +90,10 @@ noncomputable def LorentzTransformGen.id (d : ℕ) [NeZero d] : LorentzTransform
     intro x y
     simp [minkowskiInnerProductGen]
 
-/-- Properness marker predicate for Lorentz transformations.
-At this abstraction level we track the interface without committing to a
-determinant formalization. -/
-def IsProperLorentzGen {d : ℕ} [NeZero d] (_Λ : LorentzTransformGen d) : Prop := True
+/-- Properness predicate for Lorentz transformations:
+determinant one (`det Λ = 1`). -/
+def IsProperLorentzGen {d : ℕ} [NeZero d] (Λ : LorentzTransformGen d) : Prop :=
+  Matrix.det Λ.matrix = 1
 
 /-- Orthochronous marker predicate: forward time orientation is preserved. -/
 def IsOrthochronousLorentzGen {d : ℕ} [NeZero d] (Λ : LorentzTransformGen d) : Prop :=

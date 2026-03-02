@@ -235,10 +235,11 @@ structure CSOperatorMixing {d : ℕ} (rg : RGFramework d) where
 
     For SU(3): C_A = 3, C_F = 4/3, T_F = 1/2 -/
 noncomputable def qcdBeta0 (N_f : ℕ) : ℝ :=
-  (11 * 3 - 4 * (1/2) * N_f) / (16 * Real.pi^2)
+  (11 * 3 - 4 * (1 / 2 : ℝ) * (N_f : ℝ)) / (16 * Real.pi^2)
 
 noncomputable def qcdBeta1 (N_f : ℕ) : ℝ :=
-  (34 * 9 - 20 * 3 * (1/2) * N_f - 12 * (4/3) * (1/2) * N_f) / (16 * Real.pi^2)^2
+  (34 * 9 - 20 * 3 * (1 / 2 : ℝ) * (N_f : ℝ) -
+      12 * (4 / 3 : ℝ) * (1 / 2 : ℝ) * (N_f : ℝ)) / (16 * Real.pi^2)^2
 
 /-- QCD one-loop coefficient is positive for N_f < 33/2 = 16.5.
 
