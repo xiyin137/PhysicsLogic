@@ -11,26 +11,28 @@ set_option linter.unusedVariables false
 /-- Super-Polyakov gauge-fixed data package in the superconformal gauge.
 This abstracts the equations around `S[g, chi, X, psi]`, local worldsheet SUSY,
 super-Weyl symmetry, and the free `(X, psi)` CFT reduction. -/
-structure SuperPolyakovGaugeData where
+structure SuperPolyakovGaugeData (WorldsheetConfig : Type*) where
   localSusyVariation : ℂ
   superWeylVariation : ℂ
-  conformalGaugeAction : ℂ
-  freeMatterAction : ℂ
+  conformalGaugeAction : WorldsheetConfig → ℂ
+  freeMatterAction : WorldsheetConfig → ℂ
   spacetimeDimension : ℕ
   matterCentralCharge : ℚ
 
 /-- Super-Polyakov package:
 local SUSY and super-Weyl invariance hold, conformal gauge reduces to free fields,
 and the matter central charge obeys `c_m = (3/2) D`. -/
-def SuperPolyakovGaugePackage (data : SuperPolyakovGaugeData) : Prop :=
+def SuperPolyakovGaugePackage {WorldsheetConfig : Type*}
+    (data : SuperPolyakovGaugeData WorldsheetConfig) : Prop :=
   data.localSusyVariation = 0 ∧
   data.superWeylVariation = 0 ∧
-  data.conformalGaugeAction = data.freeMatterAction ∧
+  (∀ cfg : WorldsheetConfig, data.conformalGaugeAction cfg = data.freeMatterAction cfg) ∧
   data.matterCentralCharge = (3 / 2 : ℚ) * (data.spacetimeDimension : ℚ)
 
 /-- Assumed super-Polyakov gauge package from Section 6.1. -/
 theorem super_polyakov_gauge_package
-    (data : SuperPolyakovGaugeData)
+    {WorldsheetConfig : Type*}
+    (data : SuperPolyakovGaugeData WorldsheetConfig)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSuperstringPolyakovGaugePackage
       (SuperPolyakovGaugePackage data)) :
@@ -38,9 +40,9 @@ theorem super_polyakov_gauge_package
   exact h_phys
 
 /-- Superconformal-ghost data for the `(bc)(beta gamma)` system. -/
-structure SuperconformalGhostData where
-  betaGammaAction : ℂ
-  flatGaugeAction : ℂ
+structure SuperconformalGhostData (GhostConfig : Type*) where
+  betaGammaAction : GhostConfig → ℂ
+  flatGaugeAction : GhostConfig → ℂ
   betaGammaOpeSign : ℤ
   bcCentralCharge : ℤ
   betaGammaCentralCharge : ℤ
@@ -50,8 +52,9 @@ structure SuperconformalGhostData where
 /-- Ghost-system package:
 flat-gauge action reduction, `beta(z) gamma(0) ~ -1/z`, and total ghost
 central charge `c_gh = -15`. -/
-def SuperconformalGhostPackage (data : SuperconformalGhostData) : Prop :=
-  data.betaGammaAction = data.flatGaugeAction ∧
+def SuperconformalGhostPackage {GhostConfig : Type*}
+    (data : SuperconformalGhostData GhostConfig) : Prop :=
+  (∀ cfg : GhostConfig, data.betaGammaAction cfg = data.flatGaugeAction cfg) ∧
   data.betaGammaOpeSign = -1 ∧
   data.bcCentralCharge = -26 ∧
   data.betaGammaCentralCharge = 11 ∧
@@ -60,7 +63,8 @@ def SuperconformalGhostPackage (data : SuperconformalGhostData) : Prop :=
 
 /-- Assumed superconformal-ghost package from Section 6.2. -/
 theorem superconformal_ghost_package
-    (data : SuperconformalGhostData)
+    {GhostConfig : Type*}
+    (data : SuperconformalGhostData GhostConfig)
     (h_phys : PhysicsAssumption
       AssumptionId.stringSuperstringGhostSystemPackage
       (SuperconformalGhostPackage data)) :
