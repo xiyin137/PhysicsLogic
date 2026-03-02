@@ -1276,6 +1276,65 @@ theorem ads3_mixed_flux_rr_spectrum_correction_compositional_bridge_package
       data.qftCompositional h_qft
   exact ⟨h_string_pkg, h_qft_pkg, h_mu, h_alpha, h_delta_mu, h_delta_zero, h_dm2, h_a04⟩
 
+/-- Cross-lane data for mixed-flux RR-spectrum correction sourced from
+second-order RR-SFT compositional units. -/
+structure AdS3MixedFluxRrSpectrumFromSecondOrderBridgeData where
+  stringFromSecondOrder : AdS3MixedFluxRrSpectrumFromSecondOrderData
+  qftFromSecondOrder :
+    PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxRrSpectrumFromSecondOrderCftData
+
+/-- Bridge package for mixed-flux RR-spectrum correction sourced from
+second-order RR-SFT compositional units. -/
+def AdS3MixedFluxRrSpectrumFromSecondOrderBridgePackage
+    (data : AdS3MixedFluxRrSpectrumFromSecondOrderBridgeData) : Prop :=
+  AdS3MixedFluxMassShiftFromFourPointPackage data.stringFromSecondOrder.massShift /\
+  PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxMassShiftFromFourPointCftPackage
+    data.qftFromSecondOrder.massShift /\
+  data.stringFromSecondOrder.massShift.mu = data.qftFromSecondOrder.massShift.mu /\
+  data.stringFromSecondOrder.massShift.alphaPrime = data.qftFromSecondOrder.massShift.alphaPrime /\
+  data.stringFromSecondOrder.massShift.scalingDimensionMu =
+    data.qftFromSecondOrder.massShift.scalingDimensionMu /\
+  data.stringFromSecondOrder.massShift.scalingDimensionZero =
+    data.qftFromSecondOrder.massShift.scalingDimensionZero /\
+  data.stringFromSecondOrder.massShift.massSquaredShift =
+    data.qftFromSecondOrder.massShift.massSquaredShift /\
+  data.stringFromSecondOrder.massShift.fourPointAmplitude =
+    data.qftFromSecondOrder.massShift.fourPointAmplitude
+
+/-- Reconstruct the cross-lane mixed-flux RR-spectrum mass-shift bridge from
+second-order RR-SFT compositional units. -/
+theorem ads3_mixed_flux_rr_spectrum_from_second_order_bridge_package
+    (data : AdS3MixedFluxRrSpectrumFromSecondOrderBridgeData)
+    (h_string : AdS3MixedFluxRrSpectrumFromSecondOrderPackage data.stringFromSecondOrder)
+    (h_qft :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxRrSpectrumFromSecondOrderCftPackage
+        data.qftFromSecondOrder)
+    (h_mu : data.stringFromSecondOrder.massShift.mu = data.qftFromSecondOrder.massShift.mu)
+    (h_alpha :
+      data.stringFromSecondOrder.massShift.alphaPrime = data.qftFromSecondOrder.massShift.alphaPrime)
+    (h_delta_mu :
+      data.stringFromSecondOrder.massShift.scalingDimensionMu =
+        data.qftFromSecondOrder.massShift.scalingDimensionMu)
+    (h_delta_zero :
+      data.stringFromSecondOrder.massShift.scalingDimensionZero =
+        data.qftFromSecondOrder.massShift.scalingDimensionZero)
+    (h_dm2 :
+      data.stringFromSecondOrder.massShift.massSquaredShift =
+        data.qftFromSecondOrder.massShift.massSquaredShift)
+    (h_a04 :
+      data.stringFromSecondOrder.massShift.fourPointAmplitude =
+        data.qftFromSecondOrder.massShift.fourPointAmplitude) :
+    AdS3MixedFluxRrSpectrumFromSecondOrderBridgePackage data := by
+  have h_string_pkg :
+      AdS3MixedFluxMassShiftFromFourPointPackage data.stringFromSecondOrder.massShift :=
+    ads3_mixed_flux_mass_shift_from_second_order_compositional data.stringFromSecondOrder h_string
+  have h_qft_pkg :
+      PhysicsLogic.QFT.CFT.TwoDimensional.AdS3MixedFluxMassShiftFromFourPointCftPackage
+        data.qftFromSecondOrder.massShift :=
+    PhysicsLogic.QFT.CFT.TwoDimensional.ads3_mixed_flux_mass_shift_from_second_order_compositional_cft
+      data.qftFromSecondOrder h_qft
+  exact ⟨h_string_pkg, h_qft_pkg, h_mu, h_alpha, h_delta_mu, h_delta_zero, h_dm2, h_a04⟩
+
 /-- Cross-lane data for end-to-end matching of semiclassical pulsating and
 quantum RR-spectrum correction packages. -/
 structure AdS3MixedFluxSemiclassicalQuantumMatchBridgeData where

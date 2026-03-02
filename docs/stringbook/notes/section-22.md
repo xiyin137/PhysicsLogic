@@ -58,6 +58,7 @@
 - `AdS3MixedFluxRrTwoStringBracketPackage`
 - `AdS3MixedFluxSftRrSecondOrderCompositionalPackage`
 - `AdS3MixedFluxRrSpectrumCorrectionCompositionalPackage`
+- `AdS3MixedFluxRrSpectrumFromSecondOrderPackage`
 - `AdS3MixedFluxSemiclassicalQuantumMatchPackage`
 - `D1D5ConformalManifoldGeometryPackage` (QFT lane)
 - `D1D5AttractorTauGamma0Package` (QFT lane)
@@ -90,6 +91,7 @@
 - `AdS3MixedFluxRrTwoStringBracketCftPackage` (QFT lane)
 - `AdS3MixedFluxSftRrSecondOrderCompositionalCftPackage` (QFT lane)
 - `AdS3MixedFluxRrSpectrumCorrectionCompositionalCftPackage` (QFT lane)
+- `AdS3MixedFluxRrSpectrumFromSecondOrderCftPackage` (QFT lane)
 - `AdS3MixedFluxSemiclassicalQuantumMatchCftPackage` (QFT lane)
 - `AdS3BosonicWzwBridgePackage`
 - `AdS3SpectralMassShellBridgePackage`
@@ -111,6 +113,7 @@
 - `AdS3MixedFluxRrTwoStringBracketBridgePackage`
 - `AdS3MixedFluxSftRrSecondOrderCompositionalBridgePackage`
 - `AdS3MixedFluxRrSpectrumCorrectionCompositionalBridgePackage`
+- `AdS3MixedFluxRrSpectrumFromSecondOrderBridgePackage`
 - `AdS3MixedFluxSemiclassicalQuantumMatchBridgePackage`
 
 ## Assumption Candidates
