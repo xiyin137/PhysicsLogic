@@ -13,23 +13,78 @@ abbrev HeteroticClaim := Prop
 
 /-- Worldsheet field-content and gauge-fixing data for heterotic strings. -/
 structure HeteroticWorldsheetData where
+  spacetimeDimension : ℕ
   leftMovingFermionCount : ℕ
   rightMovingTargetFermionCount : ℕ
+  rightTargetFermionCount_matches_dimension :
+    rightMovingTargetFermionCount = spacetimeDimension
+  leftMatterCentralCharge : ℝ
+  rightMatterCentralCharge : ℝ
+  leftGhostCentralCharge : ℝ
+  rightGhostCentralCharge : ℝ
+  left_matter_formula :
+    leftMatterCentralCharge =
+      (spacetimeDimension : ℝ) + (leftMovingFermionCount : ℝ) / 2
+  right_matter_formula :
+    rightMatterCentralCharge =
+      (spacetimeDimension : ℝ) + (rightMovingTargetFermionCount : ℝ) / 2
+  left_ghost_formula : leftGhostCentralCharge = -26
+  right_ghost_formula : rightGhostCentralCharge = -15
+  left_central_charge_cancels : leftMatterCentralCharge + leftGhostCentralCharge = 0
+  right_central_charge_cancels : rightMatterCentralCharge + rightGhostCentralCharge = 0
   localChiralSupersymmetry : HeteroticClaim
   superconformalGaugeFixing01 : HeteroticClaim
   totalCentralChargeCancels : HeteroticClaim
   gravitationalAndWeylAnomalyCanceled : HeteroticClaim
 
 /-- Heterotic worldsheet package:
-chiral local supersymmetry with 32 left-moving fermions and a critical
-`(0,1)` gauge-fixed SCFT. -/
+chiral local supersymmetry with explicit left/right central-charge cancellation
+data for a critical `(0,1)` gauge-fixed SCFT. -/
 def HeteroticWorldsheetPackage (data : HeteroticWorldsheetData) : Prop :=
-  data.leftMovingFermionCount = 32 ∧
-  data.rightMovingTargetFermionCount = 10 ∧
   data.localChiralSupersymmetry ∧
   data.superconformalGaugeFixing01 ∧
   data.totalCentralChargeCancels ∧
   data.gravitationalAndWeylAnomalyCanceled
+
+/-- Right-moving central-charge cancellation implies critical target dimension `D=10`. -/
+theorem HeteroticWorldsheetData.spacetime_dimension_eq_ten
+    (data : HeteroticWorldsheetData) : (data.spacetimeDimension : ℝ) = 10 := by
+  have h_right_cancel :
+      (data.spacetimeDimension : ℝ) + (data.rightMovingTargetFermionCount : ℝ) / 2 - 15 = 0 := by
+    calc
+      (data.spacetimeDimension : ℝ) + (data.rightMovingTargetFermionCount : ℝ) / 2 - 15
+          = data.rightMatterCentralCharge + data.rightGhostCentralCharge := by
+            rw [data.right_matter_formula, data.right_ghost_formula]
+            ring
+      _ = 0 := data.right_central_charge_cancels
+  have h_right_count :
+      (data.rightMovingTargetFermionCount : ℝ) = (data.spacetimeDimension : ℝ) := by
+    norm_num [data.rightTargetFermionCount_matches_dimension]
+  nlinarith [h_right_cancel, h_right_count]
+
+/-- Left-moving central-charge cancellation then fixes the gauge-fermion count to `32`. -/
+theorem HeteroticWorldsheetData.left_moving_fermion_count_eq_thirty_two
+    (data : HeteroticWorldsheetData) : (data.leftMovingFermionCount : ℝ) = 32 := by
+  have h_left_cancel :
+      (data.spacetimeDimension : ℝ) + (data.leftMovingFermionCount : ℝ) / 2 - 26 = 0 := by
+    calc
+      (data.spacetimeDimension : ℝ) + (data.leftMovingFermionCount : ℝ) / 2 - 26
+          = data.leftMatterCentralCharge + data.leftGhostCentralCharge := by
+            rw [data.left_matter_formula, data.left_ghost_formula]
+            ring
+      _ = 0 := data.left_central_charge_cancels
+  have h_dim : (data.spacetimeDimension : ℝ) = 10 := data.spacetime_dimension_eq_ten
+  nlinarith [h_left_cancel, h_dim]
+
+/-- Nat-valued critical target-dimension consequence. -/
+theorem HeteroticWorldsheetData.spacetime_dimension_nat_eq_ten
+    (data : HeteroticWorldsheetData) : data.spacetimeDimension = 10 := by
+  exact Nat.cast_injective (by simpa using data.spacetime_dimension_eq_ten)
+
+/-- Nat-valued left-moving gauge-fermion count consequence. -/
+theorem HeteroticWorldsheetData.left_moving_fermion_count_nat_eq_thirty_two
+    (data : HeteroticWorldsheetData) : data.leftMovingFermionCount = 32 := by
+  exact Nat.cast_injective (by simpa using data.left_moving_fermion_count_eq_thirty_two)
 
 /-- Assumed heterotic worldsheet/chiral-supersymmetry package from Section 11.1. -/
 theorem heterotic_worldsheet_package
