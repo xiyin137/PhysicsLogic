@@ -17,20 +17,20 @@ set_option linter.unusedVariables false
 /-- One-loop planar spin-chain data in the `SU(2)` sector. -/
 structure OneLoopSpinChainData where
   chainLength : ℕ
-  tHooftCoupling : ℝ
-  permutationEigenvalue : Fin chainLength → ℝ
-  oneLoopHamiltonian : ℝ
-  anomalousDimension : ℝ
+  tHooftCoupling : DimensionlessCoupling
+  permutationEigenvalue : Fin chainLength → ScalingDimension
+  oneLoopHamiltonianEigenvalue : ScalingDimension
+  anomalousDimension : ScalingDimension
 
 /-- One-loop Heisenberg spin-chain package:
 `H_1 = (1/(8 pi^2)) sum_l (1-P_{l,l+1})` and `gamma^(1) = lambda H_1`. -/
 def OneLoopSpinChainPackage (data : OneLoopSpinChainData) : Prop :=
   data.chainLength > 0 ∧
   data.tHooftCoupling ≥ 0 ∧
-  data.oneLoopHamiltonian =
+  data.oneLoopHamiltonianEigenvalue =
     (1 / (8 * Real.pi ^ (2 : ℕ))) *
       (∑ ℓ : Fin data.chainLength, (1 - data.permutationEigenvalue ℓ)) ∧
-  data.anomalousDimension = data.tHooftCoupling * data.oneLoopHamiltonian
+  data.anomalousDimension = data.tHooftCoupling * data.oneLoopHamiltonianEigenvalue
 
 /-- Assumed one-loop `SU(2)` Heisenberg spin-chain package in planar `N=4` SYM. -/
 theorem one_loop_spin_chain_package
@@ -45,14 +45,16 @@ theorem one_loop_spin_chain_package
 structure SingleMagnonDispersionData where
   chainLength : ℕ
   modeNumber : ℤ
-  momentum : ℝ
-  oneLoopEnergy : ℝ
+  momentum : DimensionlessMomentum
+  oneLoopEnergy : DimensionlessEnergy
 
 /-- One-loop single-magnon dispersion package:
 `p = 2 pi n / L` and `epsilon(p) = (1/(2 pi^2)) sin^2(p/2)`. -/
 def SingleMagnonDispersionPackage (data : SingleMagnonDispersionData) : Prop :=
   data.chainLength > 0 ∧
-  data.momentum = (2 * Real.pi * (data.modeNumber : ℝ)) / (data.chainLength : ℝ) ∧
+  data.momentum =
+    (2 * Real.pi * (data.modeNumber : ScalingDimension)) /
+      (data.chainLength : ScalingDimension) ∧
   data.oneLoopEnergy =
     (1 / (2 * Real.pi ^ (2 : ℕ))) * Real.sin (data.momentum / 2) ^ (2 : ℕ)
 
@@ -97,12 +99,12 @@ theorem heisenberg_bethe_roots_package
 
 /-- BMN/pp-wave kinematics map data from global AdS charges. -/
 structure BmnPpWaveMapData where
-  mu : ℝ
-  adsRadius : ℝ
-  deltaMinusJ : ℝ
-  deltaPlusJ : ℝ
-  pPlus : ℝ
-  pMinus : ℝ
+  mu : ScalingDimension
+  adsRadius : LengthScale
+  deltaMinusJ : ScalingDimension
+  deltaPlusJ : ScalingDimension
+  pPlus : DimensionlessMomentum
+  pMinus : DimensionlessEnergy
 
 /-- BMN/pp-wave charge map package:
 `P_+ = -mu (Delta-J)` and `P_- = -(Delta+J)/(2 mu R^2)`. -/
@@ -126,10 +128,10 @@ structure PpWaveSpectrumData where
   modeCount : ℕ
   modeNumber : Fin modeCount → ℤ
   occupationNumber : Fin modeCount → ℕ
-  mu : ℝ
-  alphaPrimePplus : ℝ
-  modeFrequency : Fin modeCount → ℝ
-  pMinus : ℝ
+  mu : ScalingDimension
+  alphaPrimePplus : ScalingDimension
+  modeFrequency : Fin modeCount → DimensionlessEnergy
+  pMinus : DimensionlessEnergy
   levelMatchingCharge : ℤ
 
 /-- Lightcone pp-wave spectrum package:
@@ -160,9 +162,9 @@ theorem pp_wave_spectrum_package
 
 /-- Magnon data for centrally extended `su(2|2)` kinematics. -/
 structure CentrallyExtendedMagnonData where
-  momentum : ℝ
-  interpolatingCoupling : ℝ
-  excitationEnergy : ℝ
+  momentum : DimensionlessMomentum
+  interpolatingCoupling : DimensionlessCoupling
+  excitationEnergy : DimensionlessEnergy
 
 /-- All-order magnon dispersion package:
 `E(p) = sqrt(1 + 16 h(lambda)^2 sin^2(p/2))`. -/
@@ -185,8 +187,8 @@ theorem centrally_extended_magnon_dispersion
 
 /-- Weak-coupling map data for `h(lambda)`. -/
 structure WeakCouplingInterpolatingMapData where
-  tHooftCoupling : ℝ
-  interpolatingCoupling : ℝ
+  tHooftCoupling : DimensionlessCoupling
+  interpolatingCoupling : DimensionlessCoupling
 
 /-- Weak-coupling matching package:
 `h(lambda) = sqrt(lambda)/(4 pi)` in the one-loop normalization. -/
@@ -206,8 +208,8 @@ theorem weak_coupling_interpolating_map_package
 
 /-- Zhukovsky-variable data for magnon kinematics. -/
 structure ZhukovskyVariablesData where
-  momentum : ℝ
-  interpolatingCoupling : ℝ
+  momentum : DimensionlessMomentum
+  interpolatingCoupling : DimensionlessCoupling
   xPlus : ℂ
   xMinus : ℂ
 
@@ -256,9 +258,9 @@ theorem magnon_s_matrix_consistency_package
 
 /-- Cusp-anomalous-dimension data in the BES/ABA framework. -/
 structure CuspAnomalousDimensionData where
-  interpolatingCoupling : ℝ
-  besIntegralValue : ℝ
-  cuspAnomalousDimension : ℝ
+  interpolatingCoupling : DimensionlessCoupling
+  besIntegralValue : ScalingDimension
+  cuspAnomalousDimension : ScalingDimension
 
 /-- BES/ABA cusp package:
 `Gamma_cusp = 4 h^2 (1 + 4 h Int_BES)`. -/
@@ -279,9 +281,9 @@ theorem cusp_anomalous_dimension_package
 
 /-- Strong-coupling asymptotic data for the cusp anomalous dimension. -/
 structure CuspStrongCouplingData where
-  interpolatingCoupling : ℝ
-  cuspAnomalousDimension : ℝ
-  subleadingRemainder : ℝ
+  interpolatingCoupling : DimensionlessCoupling
+  cuspAnomalousDimension : ScalingDimension
+  subleadingRemainder : ScalingDimension
 
 /-- Strong-coupling cusp package:
 `Gamma_cusp = 2 h - (3 log 2)/(2 pi) + O(1/h)`,
@@ -305,7 +307,7 @@ theorem cusp_strong_coupling_package
 structure BetheYangSystemData where
   chainLength : ℕ
   levelICount : ℕ
-  momentum : Fin levelICount → ℝ
+  momentum : Fin levelICount → DimensionlessMomentum
   levelIScatteringFactor : Fin levelICount → Fin levelICount → ℂ
   levelIILevelIIIFactor : Fin levelICount → ℂ
   transferEigenvalue : Fin levelICount → ℂ
@@ -333,9 +335,9 @@ theorem bethe_yang_system_package
 /-- Bound-state magnon data. -/
 structure BoundStateDispersionData where
   boundCharge : ℕ
-  momentum : ℝ
-  interpolatingCoupling : ℝ
-  boundStateEnergy : ℝ
+  momentum : DimensionlessMomentum
+  interpolatingCoupling : DimensionlessCoupling
+  boundStateEnergy : DimensionlessEnergy
 
 /-- Bound-state dispersion package:
 for a `Q`-particle, `E = sqrt(Q^2 + 16 h(lambda)^2 sin^2(p/2))`. -/
