@@ -1,6 +1,6 @@
 # Section 17: Type I string theory and orientifolds
 
-- Status: initial extraction complete
+- Status: extraction complete; physics-interface hardening in progress
 - Source page start: 352
 - Source files: `references/stringbook/string notes.tex`, `references/stringbook/string notes.pdf`, `references/stringbook/stringrefs.bib`
 - Draft Lean target: `PhysicsLogic/StringTheory/TypeIOrientifolds.lean`
@@ -62,6 +62,14 @@
 - `TypeIBpsD1D5Package`
 - `TypeINonBpsD0Package`
 - `OrientifoldPlanePackage`
+
+## Formalization Progress
+- Implemented in `PhysicsLogic/StringTheory/TypeIOrientifolds.lean` with all
+  listed package units assumption-wired.
+- Physics-interface hardening pass:
+  replaced checklist booleans in `*Data` structures with claim-typed fields
+  (`TypeIOrientifoldClaim := Prop`) and removed `= true` placeholders from
+  package predicates.
 
 ## Assumption Candidates
 - Mapped `AssumptionId`: `stringTypeIUnorientedWorldsheetParityProjection`.
