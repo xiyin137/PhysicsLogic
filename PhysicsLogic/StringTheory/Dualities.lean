@@ -389,7 +389,7 @@ theorem heterotic_strong_coupling_interval_package
 
 /-- Horava-Witten bulk-boundary anomaly-inflow data. -/
 structure HoravaWittenBoundaryData (BulkField BoundaryField : Type*) where
-  effectiveActionFunctional : BulkField → BoundaryField → Complex
+  effectiveActionFunctional : BulkField → BoundaryField → ComplexActionValue
   boundaryConditionForG4IncludesGaugeAndCurvatureChernClasses : DualityClaim
   c3GaugeShiftCompensatesBoundaryGaugeVariation : DualityClaim
   bulkChernSimonsTermGeneratesBoundaryAnomalyInflow : DualityClaim

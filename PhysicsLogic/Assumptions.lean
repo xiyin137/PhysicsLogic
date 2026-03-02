@@ -1,3 +1,5 @@
+import PhysicsLogic.Units
+
 namespace PhysicsLogic
 
 /-- Explicit, labeled physics assumption.

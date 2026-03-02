@@ -17,7 +17,7 @@ structure ClassicalBosonicOsftBvData (OpenField : Type*) where
   cyclicOpenVerticesFromBoundaryModuliChains : OpenSftClaim
   geometricMasterEquationForOpenVerticesUsed : OpenSftClaim
   vertexNormalizationRecursionSatisfied : OpenSftClaim
-  classicalActionFunctional : OpenField → Complex
+  classicalActionFunctional : OpenField → ComplexActionValue
   actionInterpretedAsFunctionalNotScalarObservable : OpenSftClaim
 
 /-- Section 15.1.1 package:
@@ -99,7 +99,7 @@ theorem witten_cubic_osft_package
 structure OsftTachyonCondensationLevelData where
   tachyonModeIncludedInOpenStringFieldAnsatz : OpenSftClaim
   levelZeroPotentialHasNontrivialLocalExtremum : OpenSftClaim
-  levelZeroEnergyFractionCancellation : Real
+  levelZeroEnergyFractionCancellation : Dimless
   higherLevelTruncationImprovesTensionCancellation : OpenSftClaim
   exactTachyonVacuumExpectedToCancelFullBraneTension : OpenSftClaim
 

@@ -1,4 +1,5 @@
 import PhysicsLogic.ClassicalFieldTheory.Electromagnetic
+import PhysicsLogic.Units
 
 namespace PhysicsLogic.ClassicalFieldTheory
 
@@ -26,6 +27,6 @@ structure YMTopology (ymt : YangMillsTheory) where
   /-- Topological charge (Pontryagin index): Q = ∫ Tr(F ∧ F) -/
   topologicalCharge : ymt.YMField → ℤ
   /-- θ-vacuum angle -/
-  thetaVacuum : ℝ → Prop
+  thetaVacuum : ThetaAngle → Prop
 
 end PhysicsLogic.ClassicalFieldTheory

@@ -84,4 +84,20 @@ else
   status=1
 fi
 
+echo "[check] no approximate decimal literals in non-Papers core code"
+if ./scripts/check_no_approx_decimals_core.sh; then
+  echo "[ok] no approximate decimal literals in non-Papers core code"
+else
+  echo "[fail] approximate decimal literal check"
+  status=1
+fi
+
+echo "[check] global semantic typing guardrails (non-Papers)"
+if ./scripts/check_global_semantic_types.sh; then
+  echo "[ok] global semantic typing checks"
+else
+  echo "[fail] global semantic typing checks"
+  status=1
+fi
+
 exit "$status"

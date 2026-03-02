@@ -1,6 +1,7 @@
 import PhysicsLogic.SpaceTime.Curvature
 import PhysicsLogic.ClassicalFieldTheory.EnergyMomentum
 import PhysicsLogic.Assumptions
+import PhysicsLogic.Units
 
 namespace PhysicsLogic.GeneralRelativity
 
@@ -9,15 +10,15 @@ open SpaceTime ClassicalFieldTheory
 /-- Structure for fundamental constants of general relativity -/
 structure GRConstants where
   /-- Newton's gravitational constant G -/
-  G : ℝ
+  G : GravitationalCouplingScale
   /-- G is positive -/
   G_pos : G > 0
   /-- Speed of light c -/
-  c : ℝ
+  c : SpeedScale
   /-- c is positive -/
   c_pos : c > 0
   /-- Cosmological constant Λ -/
-  Λ : ℝ
+  Λ : CosmologicalConstantScale
 
 variable {metric : SpacetimeMetric}
 
@@ -45,15 +46,16 @@ structure EFETheory (consts : GRConstants) (metric : SpacetimeMetric) where
   curvature : CurvatureTheory metric
   /-- Einstein-Hilbert action functional:
       `S_EH[g] = (c⁴/16πG) ∫ (R[g] - 2Λ) √(-g) d⁴x`. -/
-  einsteinHilbertActionFunctional : SpacetimeMetric → ℝ
+  einsteinHilbertActionFunctional : SpacetimeMetric → ActionScale
   /-- Matter action functional `S_matter[g, T]` in this abstraction layer. -/
-  matterActionFunctional : TensorField 4 4 → SpacetimeMetric → ℝ
+  matterActionFunctional : TensorField 4 4 → SpacetimeMetric → ActionScale
   /-- EFE from variational principle: δS/δg_μν = 0 -/
   efe_from_variational_principle : ∀ (T : TensorField 4 4),
     satisfiesEFE consts curvature T
 
 /-- Total action: S = S_EH + S_matter -/
-noncomputable def totalAction (efe : EFETheory consts metric) (T : TensorField 4 4) : ℝ :=
+noncomputable def totalAction
+    (efe : EFETheory consts metric) (T : TensorField 4 4) : ActionScale :=
   efe.einsteinHilbertActionFunctional metric + efe.matterActionFunctional T metric
 
 /-- Contracted Bianchi identity implies energy-momentum conservation:

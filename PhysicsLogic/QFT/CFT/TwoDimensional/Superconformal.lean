@@ -87,7 +87,7 @@ theorem superspace11_derivative_algebra {S : Type*} [AddGroup S]
 structure N1SuperconformalData (H : Type*) [AddCommGroup H] [Module ℂ H] where
   L : ℚ → Endomorphism H
   G : ℚ → Endomorphism H
-  centralCharge : ℂ
+  centralCharge : CentralCharge
   sector : NSRSector
 
 /-- ${\cal N}=1$ SCA mode relations:
@@ -101,7 +101,8 @@ def N1SuperconformalModeAlgebra {H : Type*} [AddCommGroup H] [Module ℂ H]
   (∀ r s : ℚ, sectorCompatible data.sector r → sectorCompatible data.sector s →
     opAntiComm (data.G r) (data.G s) =
       (2 : ℂ) • data.L (r + s) +
-        ((data.centralCharge / 12) * (4 * (r : ℂ) ^ (2 : ℕ) - 1) * kroneckerDelta r (-s))
+        ((((data.centralCharge : ℂ) / 12) * (4 * (r : ℂ) ^ (2 : ℕ) - 1)) *
+          kroneckerDelta r (-s))
           • (1 : Endomorphism H))
 
 /-- Ramond zero-mode cylinder relation `L_0 - c/24 = G_0^2` in anticommutator form. -/
@@ -109,7 +110,7 @@ def N1RamondCylinderRelation {H : Type*} [AddCommGroup H] [Module ℂ H]
     (data : N1SuperconformalData H) : Prop :=
   data.sector = NSRSector.R →
     opAntiComm (data.G 0) (data.G 0) =
-      (2 : ℂ) • (data.L 0 - (data.centralCharge / 24) • (1 : Endomorphism H))
+      (2 : ℂ) • (data.L 0 - (((data.centralCharge : ℂ) / 24) • (1 : Endomorphism H)))
 
 /-- Combined ${\cal N}=1$ superconformal package used in this abstraction layer. -/
 def N1SuperconformalAlgebraPackage {H : Type*} [AddCommGroup H] [Module ℂ H]
@@ -171,7 +172,7 @@ structure N2SuperconformalData (H : Type*) [AddCommGroup H] [Module ℂ H] where
   Gplus : ℚ → Endomorphism H
   Gminus : ℚ → Endomorphism H
   J : ℚ → Endomorphism H
-  centralCharge : ℂ
+  centralCharge : CentralCharge
   sector : NSRSector
 
 /-- ${\cal N}=2$ SCA mode relations in operator form. -/
@@ -189,7 +190,8 @@ def N2SuperconformalModeAlgebra {H : Type*} [AddCommGroup H] [Module ℂ H]
     opAntiComm (data.Gplus r) (data.Gminus s) =
       (2 : ℂ) • data.L (r + s) +
         ((r : ℂ) - (s : ℂ)) • data.J (r + s) +
-        ((data.centralCharge / 3) * ((r : ℂ) ^ (2 : ℕ) - (1 / 4 : ℂ)) * kroneckerDelta r (-s))
+        ((((data.centralCharge : ℂ) / 3) * ((r : ℂ) ^ (2 : ℕ) - (1 / 4 : ℂ))) *
+          kroneckerDelta r (-s))
           • (1 : Endomorphism H)) ∧
   (∀ r s : ℚ, sectorCompatible data.sector r → sectorCompatible data.sector s →
     opAntiComm (data.Gplus r) (data.Gplus s) = 0) ∧
@@ -201,7 +203,7 @@ def N2SuperconformalModeAlgebra {H : Type*} [AddCommGroup H] [Module ℂ H]
     opComm (data.J n) (data.Gminus r) = -data.Gminus (n + r)) ∧
   (∀ m n : ℤ,
     opComm (data.J m) (data.J n) =
-      ((data.centralCharge / 3) * (m : ℂ) * kroneckerDelta m (-n))
+      (((data.centralCharge : ℂ) / 3) * (m : ℂ) * kroneckerDelta m (-n))
         • (1 : Endomorphism H))
 
 /-- Assumed Appendix-J ${\cal N}=2$ superconformal mode algebra. -/
@@ -256,13 +258,13 @@ structure SmallN4SuperconformalData (H : Type*) [AddCommGroup H] [Module ℂ H] 
   Jminus : ℚ → Endomorphism H
   Gplus : ℚ → Endomorphism H
   Gminus : ℚ → Endomorphism H
-  centralCharge : ℂ
+  centralCharge : CentralCharge
   sector : NSRSector
 
 /-- Selected small ${\cal N}=4$ SCA mode relations and level/central-charge relation. -/
 def SmallN4ModeAlgebra {H : Type*} [AddCommGroup H] [Module ℂ H]
     (data : SmallN4SuperconformalData H) : Prop :=
-  data.centralCharge = (6 : ℂ) * data.level ∧
+  (data.centralCharge : ℂ) = (6 : ℂ) * data.level ∧
   (∀ m n : ℤ,
     opComm (data.J3 m) (data.J3 n) =
       (((data.level : ℂ) / 2) * (m : ℂ) * kroneckerDelta m (-n))

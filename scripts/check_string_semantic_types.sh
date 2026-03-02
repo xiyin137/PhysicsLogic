@@ -90,4 +90,26 @@ else
   echo "[ok] scalar action field names are explicit"
 fi
 
+echo "[semantic-check] no raw scalar-typed physical scale fields (mass/coupling/radius/tension/energy/momentum/scale/length)"
+physical_scale_hits="$(
+  rg -n "^[[:space:]]+[A-Za-z_][A-Za-z0-9_']*[[:space:]]*:[[:space:]]*(ℂ|Complex|ℝ|Real)([[:space:]]|$)" \
+    PhysicsLogic/StringTheory --glob '*.lean' \
+  | while IFS= read -r line; do
+      name="$(printf "%s" "$line" | sed -E "s/^[^:]+:[0-9]+:[[:space:]]*([A-Za-z_][A-Za-z0-9_']*)[[:space:]]*:.*$/\\1/")"
+      lower="$(printf "%s" "$name" | tr '[:upper:]' '[:lower:]')"
+      if [[ "$lower" == *mass* || "$lower" == *coupling* || "$lower" == *radius* \
+            || "$lower" == *tension* || "$lower" == *energy* || "$lower" == *momentum* \
+            || "$lower" == *scale* || "$lower" == *length* ]]; then
+        printf "%s\n" "$line"
+      fi
+    done
+)"
+if [[ -n "$physical_scale_hits" ]]; then
+  echo "$physical_scale_hits"
+  echo "[fail] found raw scalar-typed physical scale fields in StringTheory"
+  status=1
+else
+  echo "[ok] no raw scalar-typed physical scale fields in StringTheory"
+fi
+
 exit "$status"

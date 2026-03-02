@@ -98,15 +98,15 @@ def UnitaryOp.applyPure {H : Type _} [QuantumStateSpace H]
 /-- Time evolution structure: a one-parameter family of unitaries satisfying group law -/
 structure TimeEvolution (H : Type _) [QuantumStateSpace H] where
   /-- Unitary at time t -/
-  U : ℝ → UnitaryOp H
+  U : TimeScale → UnitaryOp H
   /-- U(0) = I -/
   at_zero : ∀ ψ : H, (U 0).op ψ = ψ
   /-- Group law: U(s+t) = U(s)U(t) -/
-  composition : ∀ (s t : ℝ) (ψ : H), (U (s + t)).op ψ = (U s).op ((U t).op ψ)
+  composition : ∀ (s t : TimeScale) (ψ : H), (U (s + t)).op ψ = (U s).op ((U t).op ψ)
 
 /-- Apply time evolution to a state -/
 def TimeEvolution.evolve {H : Type _} [QuantumStateSpace H]
-    (T : TimeEvolution H) (t : ℝ) (ψ : H) : H :=
+    (T : TimeEvolution H) (t : TimeScale) (ψ : H) : H :=
   (T.U t).op ψ
 
 end PhysicsLogic.Quantum

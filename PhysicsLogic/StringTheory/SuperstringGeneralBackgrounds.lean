@@ -41,8 +41,8 @@ theorem nsr_sector_gso_package
 /-- NSNS worldsheet deformation data by integrated `(1,1)` superprimary insertions. -/
 structure NsnsScftDeformationData where
   Configuration : Type
-  actionFunctional : Configuration → ℂ
-  deformedActionFunctional : Configuration → ℂ
+  actionFunctional : Configuration → ComplexActionValue
+  deformedActionFunctional : Configuration → ComplexActionValue
   matterWeightLeft : ℚ
   matterWeightRight : ℚ
   preservesSuperconformalAtFirstOrder : SuperBackgroundClaim
@@ -69,8 +69,8 @@ theorem nsns_scft_deformation_package
 /-- Supersymmetric NSNS sigma-model background data. -/
 structure SupersymmetricNsnsNlsmData where
   Configuration : Type
-  actionFunctional : Configuration → ℂ
-  alphaPrime : ℝ
+  actionFunctional : Configuration → ComplexActionValue
+  alphaPrime : StringSlope
   hasMetricBackground : SuperBackgroundClaim
   hasBFieldBackground : SuperBackgroundClaim
   hasDilatonBackground : SuperBackgroundClaim
@@ -101,7 +101,7 @@ theorem supersymmetric_nsns_nlsm_package
 
 /-- Tree-level massless NSNS spacetime effective-action data in string frame. -/
 structure NsnsTreeEffectiveActionData where
-  alphaPrime : ℝ
+  alphaPrime : StringSlope
   einsteinTermCoefficient : ℚ
   hSquaredCoefficient : ℚ
   dilatonKineticCoefficient : ℚ
@@ -214,7 +214,7 @@ theorem calabi_yau_instanton_b_field_package
 /-- Green-Schwarz flat-background action and symmetry data. -/
 structure GreenSchwarzFlatActionData where
   Configuration : Type
-  actionFunctional : Configuration → ℂ
+  actionFunctional : Configuration → ComplexActionValue
   decomposesAsSOnePlusSTwo : SuperBackgroundClaim
   spacetimeSupersymmetryInvariant : SuperBackgroundClaim
   kappaSymmetryInvariant : SuperBackgroundClaim
