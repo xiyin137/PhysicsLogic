@@ -18,8 +18,8 @@ set_option linter.unusedVariables false
 
     These are conformally invariant combinations that parameterize the 4-point function -/
 structure CrossRatios where
-  u : ℝ
-  v : ℝ
+  u : ScalingDimension
+  v : ScalingDimension
   positive : u > 0 ∧ v > 0
 
 /-- Compute cross-ratios from four points (in Euclidean signature) -/
@@ -104,8 +104,9 @@ structure ConformalBlockDecompositionTheory where
       g_p^s(u,v) = ∑_q F_{pq}(Δ, ℓ) g_q^t(v,u)
       This is a computable function of external and internal dimensions -/
   crossingKernel : ∀ (d : ℕ)
-    (Δ_ext : ℝ)  -- external operator dimension
-    (p_dim p_spin q_dim q_spin : ℝ), ℂ
+    (Δ_ext : ScalingDimension)  -- external operator dimension
+    (p_dim : ScalingDimension) (p_spin : SpinLabel)
+    (q_dim : ScalingDimension) (q_spin : SpinLabel), ℂ
 
 /- ============= BOOTSTRAP EQUATIONS ============= -/
 
@@ -141,20 +142,20 @@ structure ConformalBlocksBootstrapTheory where
   /-- Conformal blocks are universal: determined by conformal symmetry alone
       Independent of which specific CFT -/
   conformalBlocksUniversal : ∀ (d : ℕ)
-    (Δ_ext : ℝ)  -- external dimension
-    (Δ_int : ℝ)  -- internal dimension
-    (ℓ : ℕ)      -- spin
+    (Δ_ext : ScalingDimension)  -- external dimension
+    (Δ_int : ScalingDimension)  -- internal dimension
+    (ℓ : SpinLabel)      -- spin
     (uv : CrossRatios), ℂ
   /-- Conformal blocks satisfy a second-order differential equation
       from the Casimir operator of the conformal algebra.
       This ODE/PDE determines the block function uniquely. -/
   conformal_block_differential_equation : ∀ (d : ℕ)
-    (Δ_ext Δ_int : ℝ)
-    (ℓ : ℕ)
+    (Δ_ext Δ_int : ScalingDimension)
+    (ℓ : SpinLabel)
     (block : CrossRatios → ℂ), Prop
   /-- Identity block: exchanging the identity operator gives trivial block
       g_{0,0}(u,v) = 1 for all cross-ratios -/
-  identity_block_value : ∀ (d : ℕ) (Δ_ext : ℝ) (uv : CrossRatios),
+  identity_block_value : ∀ (d : ℕ) (Δ_ext : ScalingDimension) (uv : CrossRatios),
     conformalBlocksUniversal d Δ_ext 0 0 uv = 1
 
 end PhysicsLogic.QFT.CFT.Bootstrap
