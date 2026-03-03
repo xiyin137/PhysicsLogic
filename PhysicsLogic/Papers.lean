@@ -8,5 +8,5 @@ import PhysicsLogic.Papers.GlimmJaffe
 import PhysicsLogic.Papers.Kolmogorov
 import PhysicsLogic.Papers.Phi4_2D
 import PhysicsLogic.Papers.VafaWitten
+import PhysicsLogic.Papers.WeinbergWitten
 import PhysicsLogic.Papers.cTheorem
-
