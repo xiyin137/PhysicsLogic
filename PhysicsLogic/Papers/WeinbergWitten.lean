@@ -53,6 +53,7 @@ namespace PhysicsLogic.Paper.WeinbergWitten
 
 open PhysicsLogic PhysicsLogic.Symmetries PhysicsLogic.Quantum SpaceTime
 open PhysicsLogic.QFT.Smatrix PhysicsLogic.QFT.Wightman PhysicsLogic.QFT.PathIntegral
+open scoped ComplexConjugate
 
 set_option autoImplicit false
 
@@ -232,6 +233,92 @@ structure TensorComponentRotationLaw
         rotationPhase (componentWeight μ ν).toReal θ *
           stressMatrixElement μ ν bra ket
 
+/-- A concrete rotation action on a one-particle state with a fixed phase
+weight.
+
+This packages the state-side input in the stringbook argument as actual
+unitaries on the Hilbert space rather than a bare proposition about matrix
+elements. -/
+structure StateRotationAction
+    (H : Type _) [QuantumStateSpace H]
+    (state : MasslessOneParticleState H)
+    (weight : ℝ) where
+  /-- The rotation unitary for each angle `θ`. -/
+  unitary : ℝ → UnitaryOp H
+  /-- The chosen state is an eigenvector of that rotation action. -/
+  phase_eigenvector :
+    ∀ θ, (unitary θ).op state.ket.vec = rotationPhase weight θ • state.ket.vec
+
+/-- The rotated pure state obtained from the stored unitary action. -/
+def StateRotationAction.rotatedState
+    {H : Type _} [QuantumStateSpace H]
+    {state : MasslessOneParticleState H} {weight : ℝ}
+    (action : StateRotationAction H state weight) (θ : ℝ) : PureState H :=
+  (action.unitary θ).applyPure state.ket
+
+/-- The rotated-state vector is the expected phase multiple of the original
+state vector. -/
+lemma StateRotationAction.rotatedState_vec
+    {H : Type _} [QuantumStateSpace H]
+    {state : MasslessOneParticleState H} {weight : ℝ}
+    (action : StateRotationAction H state weight) (θ : ℝ) :
+    (action.rotatedState θ).vec = rotationPhase weight θ • state.ket.vec :=
+  action.phase_eigenvector θ
+
+/-- A smeared field operator annihilates the zero vector. -/
+lemma SmearedFieldOperator.apply_zero
+    {H : Type _} [QuantumStateSpace H] {d : ℕ}
+    (A : SmearedFieldOperator H d) :
+    A.apply 0 = 0 := by
+  have h : A.apply 0 = A.apply 0 + A.apply 0 := by
+    simpa using A.linear (1 : ℂ) (0 : H) 0
+  have h' := congrArg (fun x : H => x - A.apply 0) h
+  simpa [sub_eq_add_neg, add_assoc, add_left_comm, add_comm] using h'.symm
+
+/-- A smeared field operator is homogeneous with respect to complex scalars. -/
+lemma SmearedFieldOperator.apply_smul
+    {H : Type _} [QuantumStateSpace H] {d : ℕ}
+    (A : SmearedFieldOperator H d) (a : ℂ) (ψ : H) :
+    A.apply (a • ψ) = a • A.apply ψ := by
+  simpa [SmearedFieldOperator.apply_zero] using A.linear a ψ 0
+
+/-- Rotation phases add in the expected way. -/
+lemma rotationPhase_add (a b θ : ℝ) :
+    rotationPhase a θ * rotationPhase b θ = rotationPhase (a + b) θ := by
+  calc
+    rotationPhase a θ * rotationPhase b θ
+      = Complex.exp (Complex.I * (((a * θ : ℝ) : ℂ))) *
+          Complex.exp (Complex.I * (((b * θ : ℝ) : ℂ))) := rfl
+    _ = Complex.exp
+          ((Complex.I * (((a * θ : ℝ) : ℂ))) +
+            (Complex.I * (((b * θ : ℝ) : ℂ)))) := by
+          rw [← Complex.exp_add]
+    _ = Complex.exp (Complex.I * ((((a + b) * θ : ℝ) : ℂ))) := by
+          congr 1
+          rw [show ((a + b) * θ : ℝ) = a * θ + b * θ by ring, Complex.ofReal_add, mul_add]
+    _ = rotationPhase (a + b) θ := rfl
+
+/-- Complex conjugation flips the sign of the rotation weight. -/
+lemma star_rotationPhase (a θ : ℝ) :
+    star (rotationPhase a θ) = rotationPhase (-a) θ := by
+  calc
+    star (rotationPhase a θ)
+      = Complex.exp (conj (Complex.I * (((a * θ : ℝ) : ℂ)))) := by
+          simpa [rotationPhase] using
+            (Complex.exp_conj (Complex.I * (((a * θ : ℝ) : ℂ)))).symm
+    _ = Complex.exp (Complex.I * ((((-a) * θ : ℝ) : ℂ))) := by
+          congr 1
+          rw [map_mul, Complex.conj_I, Complex.conj_ofReal]
+          calc
+            -Complex.I * (((a * θ : ℝ) : ℂ))
+              = Complex.I * (-(((a * θ : ℝ) : ℂ))) := by ring
+            _ = Complex.I * ((((-a) * θ : ℝ) : ℂ)) := by
+              congr 1
+              rw [← Complex.ofReal_neg]
+              congr 1
+              ring
+    _ = rotationPhase (-a) θ := rfl
+
 lemma rotationPhase_sub_mul (a b θ : ℝ) :
     rotationPhase (a - b) θ =
       rotationPhase a θ * Complex.exp (-(Complex.I * (((b * θ : ℝ) : ℂ)))) := by
@@ -342,7 +429,7 @@ def CurrentWeinbergWittenNoGo
 /-- Stress-tensor branch data for the stringbook rotation argument.
 
 `state` models `|p, h⟩`. The field `statePrime` models `|p', h⟩` in a frame with
-`\vec p' = -\vec p`. The fields `matrixElementHelicityPhase` and
+`\vec p' = -\vec p`. The fields `incomingRotation`, `outgoingRotation`, and
 `tensorRotationLaw` are the two sides of the book's covariance equation:
 
 `R_μ{}^ρ(θ) R_ν{}^σ(θ) ⟨p', h| T_{ρσ}(0) |p, h⟩ = e^{2 i h θ} ⟨p', h| T_{μν}(0) |p, h⟩`.
@@ -365,14 +452,14 @@ structure StressBranchSetup (H : Type _) [QuantumStateSpace H] where
   state : MasslessOneParticleState H
   /-- Outgoing massless one-particle state `|p', h⟩`. -/
   statePrime : MasslessOneParticleState H
+  /-- The incoming and outgoing states carry the same helicity label. -/
+  sameHelicity : statePrime.helicity = state.helicity
   /-- In the chosen Lorentz frame, the momenta are back-to-back. -/
   backToBackFrame : BackToBackSpatialMomenta state.momentum statePrime.momentum
   /-- Operator-valued stress tensor `T^{μν}(x)`. -/
   stressTensor : RankTwoTensorDistribution H
   /-- Off-forward matrix element `⟨p', h|T^{μν}(0)|p, h⟩`. -/
   stressMatrixElement : StressMatrixElementFunctional H
-  /-- Rotated off-forward matrix element in the special frame. -/
-  rotatedStressMatrixElement : Fin 4 → Fin 4 → ℝ → ComplexAmplitude
   /-- Concrete formula relating the matrix element to the stored stress tensor. -/
   matrixElementFromTensor :
     StressTensorMatrixElementFromField H stressTensor stressMatrixElement statePrime.ket state.ket
@@ -380,21 +467,37 @@ structure StressBranchSetup (H : Type _) [QuantumStateSpace H] where
   conservedMatrixElement :
     ConservedStressMatrixElement
       H stressMatrixElement statePrime.momentum state.momentum statePrime.ket state.ket
-  /-- Rotation around the momentum axis acts on the states with total phase `e^{2 i h θ}`. -/
-  matrixElementHelicityPhase :
-    ∀ μ ν θ,
-      rotatedStressMatrixElement μ ν θ =
-        rotationPhase (2 * state.helicity) θ *
-          stressMatrixElement μ ν statePrime.ket state.ket
+  /-- Rotation action on the incoming state `|p, h⟩`. -/
+  incomingRotation : StateRotationAction H state state.helicity
+  /-- Rotation action on the outgoing state `|p', h⟩`.
+
+  Because `\vec p' = -\vec p`, the ket transforms with the opposite phase
+  weight under rotations around the `\vec p` axis. -/
+  outgoingRotation : StateRotationAction H statePrime (-statePrime.helicity)
   /-- Fixed tensor-component weight assignment for the rotation action. -/
   tensorRotationLaw :
     TensorComponentRotationLaw
-      H stressMatrixElement statePrime.ket state.ket rotatedStressMatrixElement
+      H stressMatrixElement statePrime.ket state.ket
+      (fun μ ν θ =>
+        innerProduct
+          ((outgoingRotation.rotatedState θ).vec)
+          (((stressTensor μ ν).toSmeared matrixElementFromTensor.smearing).apply
+            ((incomingRotation.rotatedState θ).vec)))
 
 /-- The chosen off-forward stress-tensor matrix element is nonzero. -/
 def HasNonzeroStressMatrixElement
     {H : Type _} [QuantumStateSpace H] (setup : StressBranchSetup H) : Prop :=
   ∃ μ ν, setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket ≠ 0
+
+/-- Rotated off-forward stress-tensor matrix element constructed from the
+stored rotation actions on the bra/ket states. -/
+noncomputable def StressBranchSetup.rotatedStressMatrixElement
+    {H : Type _} [QuantumStateSpace H]
+    (setup : StressBranchSetup H) (μ ν : Fin 4) (θ : ℝ) : ComplexAmplitude :=
+  innerProduct
+    ((setup.outgoingRotation.rotatedState θ).vec)
+    (((setup.stressTensor μ ν).toSmeared setup.matrixElementFromTensor.smearing).apply
+      ((setup.incomingRotation.rotatedState θ).vec))
 
 /-! ## Current branch consequences -/
 
@@ -454,6 +557,47 @@ theorem spin_one_no_current_charge
 
 /-! ## Stress-tensor branch consequences -/
 
+/-- The rotation actions on the incoming and outgoing states produce the
+helicity phase `e^{2 i h θ}` for the off-forward stress-tensor matrix
+element. -/
+theorem stress_branch_matrix_element_helicity_phase
+    {H : Type _} [QuantumStateSpace H]
+    (setup : StressBranchSetup H)
+    (μ ν : Fin 4) (θ : ℝ) :
+    setup.rotatedStressMatrixElement μ ν θ =
+      rotationPhase (2 * setup.state.helicity) θ *
+        setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket := by
+  unfold StressBranchSetup.rotatedStressMatrixElement Quantum.innerProduct
+  rw [setup.outgoingRotation.rotatedState_vec, setup.incomingRotation.rotatedState_vec]
+  rw [SmearedFieldOperator.apply_smul, inner_smul_left, inner_smul_right]
+  have hphase :
+      star (rotationPhase (-setup.statePrime.helicity) θ) *
+          rotationPhase setup.state.helicity θ =
+        rotationPhase (2 * setup.state.helicity) θ := by
+    rw [star_rotationPhase, neg_neg, rotationPhase_add, setup.sameHelicity]
+    congr 1
+    ring
+  calc
+    star (rotationPhase (-setup.statePrime.helicity) θ) *
+        (rotationPhase setup.state.helicity θ *
+          innerProduct setup.statePrime.ket.vec
+            (((setup.stressTensor μ ν).toSmeared setup.matrixElementFromTensor.smearing).apply
+              setup.state.ket.vec))
+      = (star (rotationPhase (-setup.statePrime.helicity) θ) *
+          rotationPhase setup.state.helicity θ) *
+          innerProduct setup.statePrime.ket.vec
+            (((setup.stressTensor μ ν).toSmeared setup.matrixElementFromTensor.smearing).apply
+              setup.state.ket.vec) := by
+          ring
+    _ = rotationPhase (2 * setup.state.helicity) θ *
+          innerProduct setup.statePrime.ket.vec
+            (((setup.stressTensor μ ν).toSmeared setup.matrixElementFromTensor.smearing).apply
+              setup.state.ket.vec) := by
+          rw [hphase]
+    _ = rotationPhase (2 * setup.state.helicity) θ *
+          setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket := by
+          rw [setup.matrixElementFromTensor.matrix_element_eq μ ν]
+
 /-- A nonzero off-forward stress-tensor matrix element forces `2 h` to be one
 of the allowed tensor weights `-2, -1, 0, 1, 2`. -/
 theorem stress_branch_double_helicity_weight
@@ -466,15 +610,21 @@ theorem stress_branch_double_helicity_weight
   refine ⟨w, ?_⟩
   apply equal_weights_of_nonzero_rotation_component h_nonzero
   intro θ
+  have h_tensor :
+      setup.rotatedStressMatrixElement μ ν θ =
+        rotationPhase w.toReal θ *
+          setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket := by
+    simpa [StressBranchSetup.rotatedStressMatrixElement] using
+      setup.tensorRotationLaw.component_rotation μ ν θ
   calc
     rotationPhase (2 * setup.state.helicity) θ *
         setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket
       = setup.rotatedStressMatrixElement μ ν θ := by
           symm
-          exact setup.matrixElementHelicityPhase μ ν θ
+          exact stress_branch_matrix_element_helicity_phase setup μ ν θ
     _ = rotationPhase w.toReal θ *
         setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket :=
-      setup.tensorRotationLaw.component_rotation μ ν θ
+      h_tensor
 
 /-- Under the stringbook rotation argument, helicity is bounded by `1`. -/
 theorem stress_branch_helicity_bound
