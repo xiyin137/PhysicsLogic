@@ -20,7 +20,7 @@ Phase A and Phase B infrastructure work completed:
 - **Non-Papers `True` placeholders removed**: all structural `True` placeholders and vacuous `∃ ..., True` patterns removed from non-Papers modules.
 - **Automated guards added**:
   - `scripts/check_nonpapers_invariants.sh`
-  - `.github/workflows/ci.yml`
+  - temporary GitHub Actions workflow coverage for full builds
   - new `PhysicsLogic.Papers` aggregator target for full papers build
 
 Current build status:
@@ -35,7 +35,7 @@ Phase C hardening started:
 
 - Added strict non-Papers aggregator target: `PhysicsLogic.Core`.
 - Kept `PhysicsLogic.lean` as compatibility umbrella (`PhysicsLogic.Core` + `Papers.AMPS`).
-- CI now builds `PhysicsLogic.Core`, `PhysicsLogic.Papers`, and compatibility `PhysicsLogic`.
+- Build coverage was expanded to `PhysicsLogic.Core`, `PhysicsLogic.Papers`, and compatibility `PhysicsLogic`.
 - `scripts/check_nonpapers_invariants.sh` no longer depends on a brittle line-based exclusion for `True`; it now checks structural signature patterns (`: True`, `→ True`) in non-Papers modules.
 - Added diff-based no-regression guard: `scripts/check_no_new_nonpapers_sorry.sh` blocks newly introduced non-Papers `sorry`.
 - Added non-Papers `sorry` budget guard: `scripts/check_nonpapers_sorry_budget.sh` blocks count regressions vs baseline.
@@ -43,7 +43,7 @@ Phase C hardening started:
   - `PhysicsAssumption` wrapper (no extra proof power),
   - stable `AssumptionId.*` labels,
   - central `assumptionRegistry`.
-- Added CI guard `scripts/check_physics_assumptions_registry.sh` ensuring assumption labels are defined and registered.
+- Added guard `scripts/check_physics_assumptions_registry.sh` ensuring assumption labels are defined and registered.
 - Began rollout in core modules (`GeneralRelativity`, `QuantumInformation`, `QFT/Euclidean`, `QFT/RG`) by replacing implicit theorem placeholders with explicit labeled physical assumptions.
 
 This separates core framework stability from papers churn while preserving backwards compatibility for existing import paths.

@@ -123,15 +123,6 @@ Important:
 - do not run `lake build` with no target in this repo,
 - do not run `lake clean` (can invalidate downloaded caches and slow recovery).
 
-## CI Policy
-
-GitHub Actions workflow: `.github/workflows/ci.yml`.
-
-CI currently runs:
-- `lake build PhysicsLogic.Core`
-- `lake build PhysicsLogic.Papers`
-- `lake build PhysicsLogic`
-
 ## Contributor Guidelines
 
 When adding new results:
