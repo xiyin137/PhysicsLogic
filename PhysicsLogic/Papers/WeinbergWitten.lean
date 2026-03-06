@@ -213,6 +213,25 @@ lemma TensorRotationWeight.abs_toReal_le_two (w : TensorRotationWeight) :
     |w.toReal| ≤ (2 : ℝ) := by
   cases w <;> norm_num [TensorRotationWeight.toReal]
 
+/-- Concrete tensor-component rotation law around the momentum axis.
+
+This removes the existential slack from the earlier interface: each component
+`(μ, ν)` is assigned a fixed weight in `{-2,-1,0,1,2}`, and the rotated matrix
+element transforms with that weight for all angles. -/
+structure TensorComponentRotationLaw
+    (H : Type _) [QuantumStateSpace H]
+    (stressMatrixElement : StressMatrixElementFunctional H)
+    (bra ket : PureState H)
+    (rotatedStressMatrixElement : Fin 4 → Fin 4 → ℝ → ComplexAmplitude) where
+  /-- Rotation weight assigned to the tensor component `(μ, ν)`. -/
+  componentWeight : Fin 4 → Fin 4 → TensorRotationWeight
+  /-- The rotated component carries the assigned phase. -/
+  component_rotation :
+    ∀ μ ν θ,
+      rotatedStressMatrixElement μ ν θ =
+        rotationPhase (componentWeight μ ν).toReal θ *
+          stressMatrixElement μ ν bra ket
+
 lemma rotationPhase_sub_mul (a b θ : ℝ) :
     rotationPhase (a - b) θ =
       rotationPhase a θ * Complex.exp (-(Complex.I * (((b * θ : ℝ) : ℂ)))) := by
@@ -323,9 +342,8 @@ def CurrentWeinbergWittenNoGo
 /-- Stress-tensor branch data for the stringbook rotation argument.
 
 `state` models `|p, h⟩`. The field `statePrime` models `|p', h⟩` in a frame with
-`\vec p' = -\vec p`. The two fields `helicity_rotation_phase` and
-`tensor_component_has_weight` are the two sides of the book's covariance
-equation:
+`\vec p' = -\vec p`. The fields `matrixElementHelicityPhase` and
+`tensorRotationLaw` are the two sides of the book's covariance equation:
 
 `R_μ{}^ρ(θ) R_ν{}^σ(θ) ⟨p', h| T_{ρσ}(0) |p, h⟩ = e^{2 i h θ} ⟨p', h| T_{μν}(0) |p, h⟩`.
 
@@ -347,8 +365,6 @@ structure StressBranchSetup (H : Type _) [QuantumStateSpace H] where
   state : MasslessOneParticleState H
   /-- Outgoing massless one-particle state `|p', h⟩`. -/
   statePrime : MasslessOneParticleState H
-  /-- `|p', h⟩` carries the same helicity label as `|p, h⟩`. -/
-  statePrime_same_helicity : statePrime.helicity = state.helicity
   /-- In the chosen Lorentz frame, the momenta are back-to-back. -/
   backToBackFrame : BackToBackSpatialMomenta state.momentum statePrime.momentum
   /-- Operator-valued stress tensor `T^{μν}(x)`. -/
@@ -365,20 +381,15 @@ structure StressBranchSetup (H : Type _) [QuantumStateSpace H] where
     ConservedStressMatrixElement
       H stressMatrixElement statePrime.momentum state.momentum statePrime.ket state.ket
   /-- Rotation around the momentum axis acts on the states with total phase `e^{2 i h θ}`. -/
-  helicity_rotation_phase :
+  matrixElementHelicityPhase :
     ∀ μ ν θ,
       rotatedStressMatrixElement μ ν θ =
         rotationPhase (2 * state.helicity) θ *
           stressMatrixElement μ ν statePrime.ket state.ket
-  /-- Any nonzero tensor component has one of the five allowed tensor weights. -/
-  tensor_component_has_weight :
-    ∀ {μ ν},
-      stressMatrixElement μ ν statePrime.ket state.ket ≠ 0 →
-        ∃ w : TensorRotationWeight,
-          ∀ θ,
-            rotatedStressMatrixElement μ ν θ =
-              rotationPhase w.toReal θ *
-                stressMatrixElement μ ν statePrime.ket state.ket
+  /-- Fixed tensor-component weight assignment for the rotation action. -/
+  tensorRotationLaw :
+    TensorComponentRotationLaw
+      H stressMatrixElement statePrime.ket state.ket rotatedStressMatrixElement
 
 /-- The chosen off-forward stress-tensor matrix element is nonzero. -/
 def HasNonzeroStressMatrixElement
@@ -451,7 +462,7 @@ theorem stress_branch_double_helicity_weight
     (h_stress : HasNonzeroStressMatrixElement setup) :
     ∃ w : TensorRotationWeight, 2 * setup.state.helicity = w.toReal := by
   rcases h_stress with ⟨μ, ν, h_nonzero⟩
-  rcases setup.tensor_component_has_weight h_nonzero with ⟨w, hw⟩
+  let w := setup.tensorRotationLaw.componentWeight μ ν
   refine ⟨w, ?_⟩
   apply equal_weights_of_nonzero_rotation_component h_nonzero
   intro θ
@@ -460,10 +471,10 @@ theorem stress_branch_double_helicity_weight
         setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket
       = setup.rotatedStressMatrixElement μ ν θ := by
           symm
-          exact setup.helicity_rotation_phase μ ν θ
+          exact setup.matrixElementHelicityPhase μ ν θ
     _ = rotationPhase w.toReal θ *
         setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket :=
-      hw θ
+      setup.tensorRotationLaw.component_rotation μ ν θ
 
 /-- Under the stringbook rotation argument, helicity is bounded by `1`. -/
 theorem stress_branch_helicity_bound
