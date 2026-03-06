@@ -123,68 +123,14 @@ Important:
 - do not run `lake build` with no target in this repo,
 - do not run `lake clean` (can invalidate downloaded caches and slow recovery).
 
-## Invariant And Governance Scripts
-
-Scripts are under `scripts/`:
-- `assumptions_report.sh`
-- `check_global_semantic_types.sh`
-- `check_no_ambiguous_dimensionless_names.sh`
-- `check_no_approx_decimals_core.sh`
-- `check_no_hardcoded_critical_dimension_defs.sh`
-- `check_no_new_nonpapers_sorry.sh`
-- `check_nonpapers_invariants.sh`
-- `check_nonpapers_sorry_budget.sh`
-- `check_physics_assumption_usage.sh`
-- `check_physics_assumptions_registry.sh`
-- `check_qft_semantic_types.sh`
-- `check_string_semantic_types.sh`
-- `check_stringbook_appendix_imports.sh`
-- `check_stringbook_note_coverage.sh`
-- `stringbook_sync_notes.sh`
-- `update_assumptions_catalog.sh`
-
-Recommended local pre-push run:
-
-```bash
-./scripts/check_nonpapers_invariants.sh
-./scripts/check_physics_assumptions_registry.sh
-./scripts/check_physics_assumption_usage.sh
-./scripts/assumptions_report.sh /tmp/assumptions_report.md
-./scripts/update_assumptions_catalog.sh
-./scripts/check_no_new_nonpapers_sorry.sh
-./scripts/check_nonpapers_sorry_budget.sh
-lake build PhysicsLogic.Core
-```
-
 ## CI Policy
 
 GitHub Actions workflow: `.github/workflows/ci.yml`.
 
-CI enforces:
-- no explicit Lean `axiom` declarations,
-- no non-Papers `True` placeholders in declaration signatures,
-- no vacuous `∃ ..., True` non-Papers patterns,
-- no exact bare `field : Prop` in non-Papers structures,
-- stringbook appendix import coverage is complete and reachable,
-- stringbook note candidate coverage (units + assumptions) is tracked,
-- string-theory semantic typing guardrails pass,
-- qft semantic typing guardrails pass,
-- global semantic typing guardrails pass,
-- no approximate decimal literals in non-Papers core modules,
-- no hard-coded critical-dimension definitions in non-Papers core modules,
-- no ambiguous dimensionless field names in non-Papers core modules,
-- all `PhysicsAssumption` labels are defined,
-- all defined labels are listed in `assumptionRegistry`,
-- `AssumptionId` string payloads are unique,
-- no duplicate `AssumptionId` entries in `assumptionRegistry`,
-- no raw string literal IDs in non-Papers `PhysicsAssumption` uses,
-- assumptions usage report is generated and uploaded as CI artifact (`assumptions-report`),
-- committed `ASSUMPTIONS.md` catalog is kept in sync with source,
-- no newly added non-Papers `sorry`,
-- non-Papers `sorry` count does not regress (when PR baseline is available),
-- `lake build PhysicsLogic.Core`,
-- `lake build PhysicsLogic.Papers`,
-- `lake build PhysicsLogic`.
+CI currently runs:
+- `lake build PhysicsLogic.Core`
+- `lake build PhysicsLogic.Papers`
+- `lake build PhysicsLogic`
 
 ## Contributor Guidelines
 
@@ -197,7 +143,7 @@ When adding a new physical assumption:
 1. Add a new stable ID in `AssumptionId` (`PhysicsLogic/Assumptions.lean`).
 2. Add a concise description in `assumptionRegistry`.
 3. Use that ID at theorem/definition call sites.
-4. Run the assumption guard scripts.
+4. Build the affected targets locally before pushing.
 
 When touching non-Papers code:
 - do not introduce `axiom`,
