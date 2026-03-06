@@ -21,8 +21,9 @@ This module formalizes the logical core of the Weinberg-Witten no-go theorem
 
 1. **Current branch**: A massless one-particle state carrying nonzero charge
    of a Lorentz-covariant conserved 4-current must have helicity `|h| ≤ 1/2`.
-2. **Stress branch**: A massless one-particle state with nonzero matrix elements
-   of a Lorentz-covariant conserved stress tensor must have helicity `|h| ≤ 1`.
+2. **Stress branch**: A massless one-particle state with a nonzero rotation
+   eigenmode of an off-forward Lorentz-covariant conserved stress-tensor matrix
+   element must have helicity `|h| ≤ 1`.
 
 ## Formalization strategy
 
@@ -34,8 +35,8 @@ The stress branch is split into two pieces.
 1. The algebraic rotation argument from the stringbook prologue is proved in
    Lean: in a frame with `\vec p' = -\vec p`, the matrix element
    `⟨p', h| T_{μν}(0) |p, h⟩` picks up the helicity phase `e^{2 i h θ}` from
-   the states, while tensor covariance only allows rotation weights
-   `0, ±1, ±2`. This yields `|h| ≤ 1`.
+   the states, while an explicit nonzero tensor rotation eigenmode only allows
+   rotation weights `0, ±1, ±2`. This yields `|h| ≤ 1`.
 2. The final analytic bridge from the forward-limit normalization
    `⟨p', h|T_{μν}(0)|p, h⟩ → p_μ p_ν / ((2π)^3 p^0)` to a nonzero off-forward
    matrix element is not formalized here yet. This file stops at the algebraic
@@ -214,24 +215,46 @@ lemma TensorRotationWeight.abs_toReal_le_two (w : TensorRotationWeight) :
     |w.toReal| ≤ (2 : ℝ) := by
   cases w <;> norm_num [TensorRotationWeight.toReal]
 
-/-- Concrete tensor-component rotation law around the momentum axis.
+/-- A complex linear combination of off-forward stress-tensor components. -/
+noncomputable def tensorModeValue
+    {H : Type _} [QuantumStateSpace H]
+    (coeff : Fin 4 → Fin 4 → ComplexAmplitude)
+    (stressMatrixElement : StressMatrixElementFunctional H)
+    (bra ket : PureState H) : ComplexAmplitude :=
+  ∑ μ, ∑ ν, coeff μ ν * stressMatrixElement μ ν bra ket
 
-This removes the existential slack from the earlier interface: each component
-`(μ, ν)` is assigned a fixed weight in `{-2,-1,0,1,2}`, and the rotated matrix
-element transforms with that weight for all angles. -/
-structure TensorComponentRotationLaw
+/-- The same linear combination, evaluated on the rotated matrix element. -/
+noncomputable def rotatedTensorModeValue
+    (coeff : Fin 4 → Fin 4 → ComplexAmplitude)
+    (rotatedStressMatrixElement : Fin 4 → Fin 4 → ℝ → ComplexAmplitude)
+    (θ : ℝ) : ComplexAmplitude :=
+  ∑ μ, ∑ ν, coeff μ ν * rotatedStressMatrixElement μ ν θ
+
+/-- A nonzero rotation eigenmode of the off-forward stress-tensor matrix
+element.
+
+This is the honest representation-theoretic input on the tensor side of the
+stringbook argument: instead of pretending that each Cartesian component has a
+definite weight, we choose an explicit complex linear combination of tensor
+components that transforms with one allowed weight in `{-2,-1,0,1,2}`. -/
+structure TensorRotationEigenmode
     (H : Type _) [QuantumStateSpace H]
     (stressMatrixElement : StressMatrixElementFunctional H)
     (bra ket : PureState H)
     (rotatedStressMatrixElement : Fin 4 → Fin 4 → ℝ → ComplexAmplitude) where
-  /-- Rotation weight assigned to the tensor component `(μ, ν)`. -/
-  componentWeight : Fin 4 → Fin 4 → TensorRotationWeight
-  /-- The rotated component carries the assigned phase. -/
-  component_rotation :
-    ∀ μ ν θ,
-      rotatedStressMatrixElement μ ν θ =
-        rotationPhase (componentWeight μ ν).toReal θ *
-          stressMatrixElement μ ν bra ket
+  /-- Coefficients selecting a helicity-adapted tensor mode. -/
+  coeff : Fin 4 → Fin 4 → ComplexAmplitude
+  /-- Allowed weight carried by the selected mode. -/
+  weight : TensorRotationWeight
+  /-- The chosen mode is nonzero at `θ = 0`. -/
+  nonzero :
+    tensorModeValue coeff stressMatrixElement bra ket ≠ 0
+  /-- The rotated mode carries the assigned phase for all angles. -/
+  mode_rotation :
+    ∀ θ,
+      rotatedTensorModeValue coeff rotatedStressMatrixElement θ =
+        rotationPhase weight.toReal θ *
+          tensorModeValue coeff stressMatrixElement bra ket
 
 /-- A concrete rotation action on a one-particle state with a fixed phase
 weight.
@@ -430,15 +453,15 @@ def CurrentWeinbergWittenNoGo
 
 `state` models `|p, h⟩`. The field `statePrime` models `|p', h⟩` in a frame with
 `\vec p' = -\vec p`. The fields `incomingRotation`, `outgoingRotation`, and
-`tensorRotationLaw` are the two sides of the book's covariance equation:
+`tensorEigenmode` are the two sides of the book's covariance equation:
 
 `R_μ{}^ρ(θ) R_ν{}^σ(θ) ⟨p', h| T_{ρσ}(0) |p, h⟩ = e^{2 i h θ} ⟨p', h| T_{μν}(0) |p, h⟩`.
 
 The local-QFT ingredients (`stressTensor`, translation symmetry, conservation)
 remain visible in the interface even though the rotation proof of `|h| ≤ 1`
-only uses the phase-matching data. Opaque placeholder claims have been replaced
-by explicit momentum relations and explicit formulas tying matrix elements to
-the stored operator-valued distributions. -/
+only uses the phase-matching data. On the tensor side we now package an
+explicit nonzero rotation eigenmode, rather than assigning fixed weights to
+Cartesian components. -/
 structure StressBranchSetup (H : Type _) [QuantumStateSpace H] where
   /-- Ambient relativistic QFT in operator language. -/
   qft : WightmanQFT H 4
@@ -474,20 +497,15 @@ structure StressBranchSetup (H : Type _) [QuantumStateSpace H] where
   Because `\vec p' = -\vec p`, the ket transforms with the opposite phase
   weight under rotations around the `\vec p` axis. -/
   outgoingRotation : StateRotationAction H statePrime (-statePrime.helicity)
-  /-- Fixed tensor-component weight assignment for the rotation action. -/
-  tensorRotationLaw :
-    TensorComponentRotationLaw
+  /-- A chosen nonzero rotation eigenmode of the off-forward tensor matrix element. -/
+  tensorEigenmode :
+    TensorRotationEigenmode
       H stressMatrixElement statePrime.ket state.ket
       (fun μ ν θ =>
         innerProduct
           ((outgoingRotation.rotatedState θ).vec)
           (((stressTensor μ ν).toSmeared matrixElementFromTensor.smearing).apply
             ((incomingRotation.rotatedState θ).vec)))
-
-/-- The chosen off-forward stress-tensor matrix element is nonzero. -/
-def HasNonzeroStressMatrixElement
-    {H : Type _} [QuantumStateSpace H] (setup : StressBranchSetup H) : Prop :=
-  ∃ μ ν, setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket ≠ 0
 
 /-- Rotated off-forward stress-tensor matrix element constructed from the
 stored rotation actions on the bra/ket states. -/
@@ -598,41 +616,101 @@ theorem stress_branch_matrix_element_helicity_phase
           setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket := by
           rw [setup.matrixElementFromTensor.matrix_element_eq μ ν]
 
-/-- A nonzero off-forward stress-tensor matrix element forces `2 h` to be one
-of the allowed tensor weights `-2, -1, 0, 1, 2`. -/
+/-- The state-induced helicity phase extends from individual tensor components
+to the chosen tensor rotation eigenmode. -/
+theorem stress_branch_rotation_mode_helicity_phase
+    {H : Type _} [QuantumStateSpace H]
+    (setup : StressBranchSetup H) (θ : ℝ) :
+    rotatedTensorModeValue
+        setup.tensorEigenmode.coeff
+        setup.rotatedStressMatrixElement θ =
+      rotationPhase (2 * setup.state.helicity) θ *
+        tensorModeValue
+          setup.tensorEigenmode.coeff
+          setup.stressMatrixElement
+          setup.statePrime.ket
+          setup.state.ket := by
+  unfold rotatedTensorModeValue tensorModeValue
+  simp_rw [stress_branch_matrix_element_helicity_phase]
+  calc
+    ∑ μ, ∑ ν,
+        setup.tensorEigenmode.coeff μ ν *
+          (rotationPhase (2 * setup.state.helicity) θ *
+            setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket)
+      =
+        ∑ μ, ∑ ν,
+          rotationPhase (2 * setup.state.helicity) θ *
+            (setup.tensorEigenmode.coeff μ ν *
+              setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket) := by
+          refine Finset.sum_congr rfl ?_
+          intro μ _
+          refine Finset.sum_congr rfl ?_
+          intro ν _
+          ring
+    _ = ∑ μ,
+          rotationPhase (2 * setup.state.helicity) θ *
+            ∑ ν,
+              setup.tensorEigenmode.coeff μ ν *
+                setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket := by
+          refine Finset.sum_congr rfl ?_
+          intro μ _
+          rw [← Finset.mul_sum]
+    _ =
+        rotationPhase (2 * setup.state.helicity) θ *
+          ∑ μ, ∑ ν,
+            setup.tensorEigenmode.coeff μ ν *
+              setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket := by
+          rw [← Finset.mul_sum]
+
+/-- A nonzero tensor rotation eigenmode forces `2 h` to be one of the allowed
+tensor weights `-2, -1, 0, 1, 2`. -/
 theorem stress_branch_double_helicity_weight
     {H : Type _} [QuantumStateSpace H]
-    (setup : StressBranchSetup H)
-    (h_stress : HasNonzeroStressMatrixElement setup) :
+    (setup : StressBranchSetup H) :
     ∃ w : TensorRotationWeight, 2 * setup.state.helicity = w.toReal := by
-  rcases h_stress with ⟨μ, ν, h_nonzero⟩
-  let w := setup.tensorRotationLaw.componentWeight μ ν
+  let w := setup.tensorEigenmode.weight
   refine ⟨w, ?_⟩
-  apply equal_weights_of_nonzero_rotation_component h_nonzero
+  apply equal_weights_of_nonzero_rotation_component setup.tensorEigenmode.nonzero
   intro θ
   have h_tensor :
-      setup.rotatedStressMatrixElement μ ν θ =
+      rotatedTensorModeValue
+          setup.tensorEigenmode.coeff
+          setup.rotatedStressMatrixElement θ =
         rotationPhase w.toReal θ *
-          setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket := by
+          tensorModeValue
+            setup.tensorEigenmode.coeff
+            setup.stressMatrixElement
+            setup.statePrime.ket
+            setup.state.ket := by
     simpa [StressBranchSetup.rotatedStressMatrixElement] using
-      setup.tensorRotationLaw.component_rotation μ ν θ
+      setup.tensorEigenmode.mode_rotation θ
   calc
     rotationPhase (2 * setup.state.helicity) θ *
-        setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket
-      = setup.rotatedStressMatrixElement μ ν θ := by
+        tensorModeValue
+          setup.tensorEigenmode.coeff
+          setup.stressMatrixElement
+          setup.statePrime.ket
+          setup.state.ket
+      =
+        rotatedTensorModeValue
+          setup.tensorEigenmode.coeff
+          setup.rotatedStressMatrixElement θ := by
           symm
-          exact stress_branch_matrix_element_helicity_phase setup μ ν θ
+          exact stress_branch_rotation_mode_helicity_phase setup θ
     _ = rotationPhase w.toReal θ *
-        setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket :=
+        tensorModeValue
+          setup.tensorEigenmode.coeff
+          setup.stressMatrixElement
+          setup.statePrime.ket
+          setup.state.ket :=
       h_tensor
 
 /-- Under the stringbook rotation argument, helicity is bounded by `1`. -/
 theorem stress_branch_helicity_bound
     {H : Type _} [QuantumStateSpace H]
-    (setup : StressBranchSetup H)
-    (h_stress : HasNonzeroStressMatrixElement setup) :
+    (setup : StressBranchSetup H) :
     |setup.state.helicity| ≤ (1 : ℝ) := by
-  rcases stress_branch_double_helicity_weight setup h_stress with ⟨w, hw⟩
+  rcases stress_branch_double_helicity_weight setup with ⟨w, hw⟩
   have h_weight_bound : |2 * setup.state.helicity| ≤ (2 : ℝ) := by
     rw [hw]
     exact TensorRotationWeight.abs_toReal_le_two w
@@ -644,31 +722,28 @@ theorem stress_branch_helicity_bound
 /-- Under the stress-tensor branch, spin is bounded by `1`. -/
 theorem stress_branch_spin_bound
     {H : Type _} [QuantumStateSpace H]
-    (setup : StressBranchSetup H)
-    (h_stress : HasNonzeroStressMatrixElement setup) :
+    (setup : StressBranchSetup H) :
     setup.state.spin ≤ (1 : ℝ) := by
   calc
     setup.state.spin = |setup.state.helicity| := setup.state.spin_eq_abs_helicity
-    _ ≤ (1 : ℝ) := stress_branch_helicity_bound setup h_stress
+    _ ≤ (1 : ℝ) := stress_branch_helicity_bound setup
 
-/-- No-go form: a massless state with `spin > 1` cannot have nonzero
-off-forward stress-tensor matrix elements in the Weinberg-Witten frame. -/
-theorem no_stress_matrix_element_for_spin_gt_one
+/-- No-go form: no stress-branch setup with a nonzero rotation eigenmode can
+exist for a massless state with `spin > 1`. -/
+theorem no_stress_rotation_eigenmode_for_spin_gt_one
     {H : Type _} [QuantumStateSpace H]
     (setup : StressBranchSetup H)
     (h_spin : setup.state.spin > (1 : ℝ)) :
-    ¬ HasNonzeroStressMatrixElement setup := by
-  intro h_stress
-  linarith [stress_branch_spin_bound setup h_stress]
+    False := by
+  linarith [stress_branch_spin_bound setup]
 
-/-- Spin-2 corollary: a massless spin-2 particle (graviton) cannot have
-nonzero off-forward matrix elements of a Lorentz-covariant conserved stress
-tensor in the Weinberg-Witten rotation frame. -/
-theorem spin_two_no_stress_matrix_element
+/-- Spin-2 corollary: no stress-branch setup with a nonzero rotation eigenmode
+exists for a massless spin-2 particle in the Weinberg-Witten frame. -/
+theorem spin_two_no_stress_rotation_eigenmode
     {H : Type _} [QuantumStateSpace H]
     (setup : StressBranchSetup H)
     (h_spin_two : setup.state.spin = 2) :
-    ¬ HasNonzeroStressMatrixElement setup :=
-  no_stress_matrix_element_for_spin_gt_one setup (by linarith)
+    False :=
+  no_stress_rotation_eigenmode_for_spin_gt_one setup (by linarith)
 
 end PhysicsLogic.Paper.WeinbergWitten
