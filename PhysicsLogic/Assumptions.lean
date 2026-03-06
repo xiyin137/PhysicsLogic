@@ -802,6 +802,7 @@ def stringConifoldSingularCftGlsmLiouvilleLimit : String := "string.conifold.sin
 def stringMTheoryOrbifoldSingularityGaugeSector : String := "string.mtheory.orbifold_singularity_gauge_sector"
 def stringMTheoryGTwoConeBranchesAssociativeCycles : String := "string.mtheory.g2_cone_branches_associative_cycles"
 def stringMTheoryQuantumModuliCurveTrialityInvariant : String := "string.mtheory.quantum_moduli_curve_triality_invariant"
+def wwCurrentBranchHelicityBound : String := "papers.weinberg_witten.current_branch_helicity_bound"
 
 end AssumptionId
 
@@ -1862,6 +1863,8 @@ def assumptionRegistry : List AssumptionEntry :=
       "The M-theory `G_2` cone package (associative/coassociative form structure, triality-related three-cycle branches, and complex modulus from `C_3` period plus calibrated three-cycle volume) is assumed in this abstraction layer."⟩
   , ⟨AssumptionId.stringMTheoryQuantumModuliCurveTrialityInvariant,
       "The asymptotically conical M-theory quantum-moduli package (`eta_1 eta_2 eta_3 = -1`, triality symmetry, and curve `eta_2 (1-eta_3)=1` smoothly joining the three semiclassical branches) is assumed in this abstraction layer."⟩
+  , ⟨AssumptionId.wwCurrentBranchHelicityBound,
+      "Weinberg-Witten current branch no-go: for |h| > 1/2 the forward matrix element ⟨p,h|J^μ|p',h⟩ of a Lorentz-covariant conserved current vanishes, forcing Q = 0. Follows from Lorentz boost scaling E^{1-2|h|}."⟩
   ]
 
 end PhysicsLogic
