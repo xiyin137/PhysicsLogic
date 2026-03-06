@@ -9,6 +9,7 @@ import PhysicsLogic.QFT.PathIntegral
 import PhysicsLogic.Quantum
 import Mathlib.Analysis.Complex.Exponential
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+import Mathlib.Topology.Instances.Complex
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -37,10 +38,11 @@ The stress branch is split into two pieces.
    `⟨p', h| T_{μν}(0) |p, h⟩` picks up the helicity phase `e^{2 i h θ}` from
    the states, while an explicit nonzero tensor rotation eigenmode only allows
    rotation weights `0, ±1, ±2`. This yields `|h| ≤ 1`.
-2. The final analytic bridge from the forward-limit normalization
-   `⟨p', h|T_{μν}(0)|p, h⟩ → p_μ p_ν / ((2π)^3 p^0)` to a nonzero off-forward
-   matrix element is not formalized here yet. This file stops at the algebraic
-   rotation-weight obstruction.
+2. The final analytic bridge is recorded as typed sequence data:
+   a family `p'_n → p` of off-forward rotation-frame setups together with
+   continuity of a chosen tensor mode and the forward-limit normalization
+   `⟨p', h|T_{μν}(0)|p, h⟩ → p_μ p_ν / ((2π)^3 p^0)`. This yields the final
+   contradiction for local stress tensors when `spin > 1`.
 
 The structures connect to the project's QFT library:
 - `PureState H` and `OnShellMomentum` for one-particle states
@@ -230,14 +232,13 @@ noncomputable def rotatedTensorModeValue
     (θ : ℝ) : ComplexAmplitude :=
   ∑ μ, ∑ ν, coeff μ ν * rotatedStressMatrixElement μ ν θ
 
-/-- A nonzero rotation eigenmode of the off-forward stress-tensor matrix
-element.
+/-- A rotation mode of the off-forward stress-tensor matrix element.
 
 This is the honest representation-theoretic input on the tensor side of the
 stringbook argument: instead of pretending that each Cartesian component has a
 definite weight, we choose an explicit complex linear combination of tensor
 components that transforms with one allowed weight in `{-2,-1,0,1,2}`. -/
-structure TensorRotationEigenmode
+structure TensorRotationMode
     (H : Type _) [QuantumStateSpace H]
     (stressMatrixElement : StressMatrixElementFunctional H)
     (bra ket : PureState H)
@@ -246,15 +247,36 @@ structure TensorRotationEigenmode
   coeff : Fin 4 → Fin 4 → ComplexAmplitude
   /-- Allowed weight carried by the selected mode. -/
   weight : TensorRotationWeight
-  /-- The chosen mode is nonzero at `θ = 0`. -/
-  nonzero :
-    tensorModeValue coeff stressMatrixElement bra ket ≠ 0
   /-- The rotated mode carries the assigned phase for all angles. -/
   mode_rotation :
     ∀ θ,
       rotatedTensorModeValue coeff rotatedStressMatrixElement θ =
         rotationPhase weight.toReal θ *
           tensorModeValue coeff stressMatrixElement bra ket
+
+/-- A nonzero rotation eigenmode of the off-forward stress-tensor matrix
+element. -/
+structure TensorRotationEigenmode
+    (H : Type _) [QuantumStateSpace H]
+    (stressMatrixElement : StressMatrixElementFunctional H)
+    (bra ket : PureState H)
+    (rotatedStressMatrixElement : Fin 4 → Fin 4 → ℝ → ComplexAmplitude)
+    extends TensorRotationMode H stressMatrixElement bra ket rotatedStressMatrixElement where
+  /-- The chosen mode is nonzero at `θ = 0`. -/
+  nonzero :
+    tensorModeValue coeff stressMatrixElement bra ket ≠ 0
+
+/-- Forward-limit stress-tensor matrix element predicted by momentum
+normalization in the stringbook argument. -/
+noncomputable def forwardStressTensorEntry
+    (p : OnShellMomentum (0 : InvariantMass)) (μ ν : Fin 4) : ComplexAmplitude :=
+  ((((p.p μ * p.p ν) / (((2 * Real.pi) ^ (3 : ℕ)) * p.p 0) : ℝ)) : ℂ)
+
+/-- The forward-limit value of a chosen tensor rotation mode. -/
+noncomputable def forwardTensorModeValue
+    (coeff : Fin 4 → Fin 4 → ComplexAmplitude)
+    (p : OnShellMomentum (0 : InvariantMass)) : ComplexAmplitude :=
+  ∑ μ, ∑ ν, coeff μ ν * forwardStressTensorEntry p μ ν
 
 /-- A concrete rotation action on a one-particle state with a fixed phase
 weight.
@@ -453,16 +475,15 @@ def CurrentWeinbergWittenNoGo
 
 `state` models `|p, h⟩`. The field `statePrime` models `|p', h⟩` in a frame with
 `\vec p' = -\vec p`. The fields `incomingRotation`, `outgoingRotation`, and
-`tensorEigenmode` are the two sides of the book's covariance equation:
+`tensorMode` are the two sides of the book's covariance equation:
 
 `R_μ{}^ρ(θ) R_ν{}^σ(θ) ⟨p', h| T_{ρσ}(0) |p, h⟩ = e^{2 i h θ} ⟨p', h| T_{μν}(0) |p, h⟩`.
 
 The local-QFT ingredients (`stressTensor`, translation symmetry, conservation)
 remain visible in the interface even though the rotation proof of `|h| ≤ 1`
-only uses the phase-matching data. On the tensor side we now package an
-explicit nonzero rotation eigenmode, rather than assigning fixed weights to
-Cartesian components. -/
-structure StressBranchSetup (H : Type _) [QuantumStateSpace H] where
+only uses the phase-matching data. On the tensor side we package an explicit
+rotation mode, rather than assigning fixed weights to Cartesian components. -/
+structure StressRotationFrameSetup (H : Type _) [QuantumStateSpace H] where
   /-- Ambient relativistic QFT in operator language. -/
   qft : WightmanQFT H 4
   /-- Field-configuration space for the path-integral translation symmetry. -/
@@ -497,9 +518,9 @@ structure StressBranchSetup (H : Type _) [QuantumStateSpace H] where
   Because `\vec p' = -\vec p`, the ket transforms with the opposite phase
   weight under rotations around the `\vec p` axis. -/
   outgoingRotation : StateRotationAction H statePrime (-statePrime.helicity)
-  /-- A chosen nonzero rotation eigenmode of the off-forward tensor matrix element. -/
-  tensorEigenmode :
-    TensorRotationEigenmode
+  /-- A chosen rotation mode of the off-forward tensor matrix element. -/
+  tensorMode :
+    TensorRotationMode
       H stressMatrixElement statePrime.ket state.ket
       (fun μ ν θ =>
         innerProduct
@@ -507,15 +528,125 @@ structure StressBranchSetup (H : Type _) [QuantumStateSpace H] where
           (((stressTensor μ ν).toSmeared matrixElementFromTensor.smearing).apply
             ((incomingRotation.rotatedState θ).vec)))
 
+/-- Stress-tensor branch setup with a nonzero off-forward tensor rotation
+eigenmode. This is the precise off-forward input needed for the algebraic
+rotation obstruction. -/
+structure StressBranchSetup (H : Type _) [QuantumStateSpace H]
+    extends StressRotationFrameSetup H where
+  /-- The chosen tensor mode is nonzero off-forward. -/
+  tensorMode_nonzero :
+    tensorModeValue tensorMode.coeff stressMatrixElement statePrime.ket state.ket ≠ 0
+
 /-- Rotated off-forward stress-tensor matrix element constructed from the
 stored rotation actions on the bra/ket states. -/
-noncomputable def StressBranchSetup.rotatedStressMatrixElement
+noncomputable def StressRotationFrameSetup.rotatedStressMatrixElement
     {H : Type _} [QuantumStateSpace H]
-    (setup : StressBranchSetup H) (μ ν : Fin 4) (θ : ℝ) : ComplexAmplitude :=
+    (setup : StressRotationFrameSetup H) (μ ν : Fin 4) (θ : ℝ) : ComplexAmplitude :=
   innerProduct
     ((setup.outgoingRotation.rotatedState θ).vec)
     (((setup.stressTensor μ ν).toSmeared setup.matrixElementFromTensor.smearing).apply
       ((setup.incomingRotation.rotatedState θ).vec))
+
+/-- Convenience alias for the rotated matrix element on a nonzero stress branch
+setup. -/
+noncomputable def StressBranchSetup.rotatedStressMatrixElement
+    {H : Type _} [QuantumStateSpace H]
+    (setup : StressBranchSetup H) (μ ν : Fin 4) (θ : ℝ) : ComplexAmplitude :=
+  setup.toStressRotationFrameSetup.rotatedStressMatrixElement μ ν θ
+
+/-- Sequence-based forward-limit bridge for the stress-tensor branch.
+
+This packages the missing analytic step from the stringbook argument:
+
+1. choose a fixed incoming state `|p,h⟩`,
+2. choose off-forward rotation-frame data `|p'_n,h⟩` with `p'_n → p`,
+3. assume the chosen tensor mode is continuous along that sequence,
+4. identify the forward limit with the momentum-normalized value
+   `p_μ p_ν / ((2π)^3 p^0)` projected onto the same mode.
+
+The locality/wave-packet argument from the book is not re-proved here, but its
+mathematical output is now recorded as actual convergence data rather than a
+docstring remark. -/
+structure StressForwardLimitBridge (H : Type _) [QuantumStateSpace H] where
+  /-- Incoming massless one-particle state whose stress tensor is being tested. -/
+  targetState : MasslessOneParticleState H
+  /-- The local stress tensor shared across the off-forward family. -/
+  stressTensor : RankTwoTensorDistribution H
+  /-- Fixed tensor-mode coefficients used both off-forward and in the forward limit. -/
+  modeCoeff : Fin 4 → Fin 4 → ComplexAmplitude
+  /-- A sequence of off-forward rotation-frame setups approaching the forward limit. -/
+  offForward : ℕ → StressRotationFrameSetup H
+  /-- Each off-forward setup uses the same incoming state `|p,h⟩`. -/
+  incomingState_eq : ∀ n, (offForward n).state = targetState
+  /-- Each off-forward setup uses the same local stress tensor. -/
+  stressTensor_eq : ∀ n, (offForward n).stressTensor = stressTensor
+  /-- The chosen tensor-mode coefficients are fixed along the sequence. -/
+  modeCoeff_eq : ∀ n, (offForward n).tensorMode.coeff = modeCoeff
+  /-- The outgoing momentum approaches the incoming momentum componentwise. -/
+  outgoingMomentum_tendsto :
+    ∀ μ : Fin 4,
+      Filter.Tendsto
+        (fun n => (offForward n).statePrime.momentum.p μ)
+        Filter.atTop
+        (nhds (targetState.momentum.p μ))
+  /-- Continuity of the chosen off-forward tensor mode along `p'_n → p`. -/
+  modeValue_tendsto :
+    Filter.Tendsto
+      (fun n =>
+        tensorModeValue
+          modeCoeff
+          (offForward n).stressMatrixElement
+          (offForward n).statePrime.ket
+          (offForward n).state.ket)
+      Filter.atTop
+      (nhds (forwardTensorModeValue modeCoeff targetState.momentum))
+  /-- The momentum-normalized forward mode is nonzero. -/
+  forwardMode_nonzero :
+    forwardTensorModeValue modeCoeff targetState.momentum ≠ 0
+
+/-- The chosen off-forward tensor mode along the forward-limit sequence. -/
+noncomputable def StressForwardLimitBridge.offForwardModeValue
+    {H : Type _} [QuantumStateSpace H]
+    (bridge : StressForwardLimitBridge H) (n : ℕ) : ComplexAmplitude :=
+  tensorModeValue
+    bridge.modeCoeff
+    (bridge.offForward n).stressMatrixElement
+    (bridge.offForward n).statePrime.ket
+    (bridge.offForward n).state.ket
+
+/-- A nonzero forward limit forces some genuinely off-forward term in the
+sequence to have a nonzero tensor mode. -/
+theorem StressForwardLimitBridge.exists_nonzero_offForwardMode
+    {H : Type _} [QuantumStateSpace H]
+    (bridge : StressForwardLimitBridge H) :
+    ∃ n, bridge.offForwardModeValue n ≠ 0 := by
+  by_contra h_none
+  have h_zero : ∀ n, bridge.offForwardModeValue n = 0 := by
+    simpa [StressForwardLimitBridge.offForwardModeValue] using not_exists.mp h_none
+  have h_tendsto_zero :
+      Filter.Tendsto bridge.offForwardModeValue Filter.atTop (nhds (0 : ℂ)) := by
+    have h_eq :
+        bridge.offForwardModeValue = fun _ : ℕ => (0 : ℂ) := by
+      funext n
+      exact h_zero n
+    rw [h_eq]
+    exact tendsto_const_nhds
+  have h_unique :
+      (0 : ℂ) = forwardTensorModeValue bridge.modeCoeff bridge.targetState.momentum :=
+    tendsto_nhds_unique h_tendsto_zero bridge.modeValue_tendsto
+  exact bridge.forwardMode_nonzero h_unique.symm
+
+/-- Upgrade one nonzero term of the forward-limit sequence to a genuine
+stress-branch setup. -/
+def StressForwardLimitBridge.branchSetupAt
+    {H : Type _} [QuantumStateSpace H]
+    (bridge : StressForwardLimitBridge H) (n : ℕ)
+    (h_nonzero : bridge.offForwardModeValue n ≠ 0) :
+    StressBranchSetup H where
+  toStressRotationFrameSetup := bridge.offForward n
+  tensorMode_nonzero := by
+    rw [bridge.modeCoeff_eq n]
+    simpa [StressForwardLimitBridge.offForwardModeValue] using h_nonzero
 
 /-! ## Current branch consequences -/
 
@@ -580,12 +711,12 @@ helicity phase `e^{2 i h θ}` for the off-forward stress-tensor matrix
 element. -/
 theorem stress_branch_matrix_element_helicity_phase
     {H : Type _} [QuantumStateSpace H]
-    (setup : StressBranchSetup H)
+    (setup : StressRotationFrameSetup H)
     (μ ν : Fin 4) (θ : ℝ) :
     setup.rotatedStressMatrixElement μ ν θ =
       rotationPhase (2 * setup.state.helicity) θ *
         setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket := by
-  unfold StressBranchSetup.rotatedStressMatrixElement Quantum.innerProduct
+  unfold StressRotationFrameSetup.rotatedStressMatrixElement Quantum.innerProduct
   rw [setup.outgoingRotation.rotatedState_vec, setup.incomingRotation.rotatedState_vec]
   rw [SmearedFieldOperator.apply_smul, inner_smul_left, inner_smul_right]
   have hphase :
@@ -620,13 +751,13 @@ theorem stress_branch_matrix_element_helicity_phase
 to the chosen tensor rotation eigenmode. -/
 theorem stress_branch_rotation_mode_helicity_phase
     {H : Type _} [QuantumStateSpace H]
-    (setup : StressBranchSetup H) (θ : ℝ) :
+    (setup : StressRotationFrameSetup H) (θ : ℝ) :
     rotatedTensorModeValue
-        setup.tensorEigenmode.coeff
+        setup.tensorMode.coeff
         setup.rotatedStressMatrixElement θ =
       rotationPhase (2 * setup.state.helicity) θ *
         tensorModeValue
-          setup.tensorEigenmode.coeff
+          setup.tensorMode.coeff
           setup.stressMatrixElement
           setup.statePrime.ket
           setup.state.ket := by
@@ -634,13 +765,13 @@ theorem stress_branch_rotation_mode_helicity_phase
   simp_rw [stress_branch_matrix_element_helicity_phase]
   calc
     ∑ μ, ∑ ν,
-        setup.tensorEigenmode.coeff μ ν *
+        setup.tensorMode.coeff μ ν *
           (rotationPhase (2 * setup.state.helicity) θ *
             setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket)
       =
         ∑ μ, ∑ ν,
           rotationPhase (2 * setup.state.helicity) θ *
-            (setup.tensorEigenmode.coeff μ ν *
+            (setup.tensorMode.coeff μ ν *
               setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket) := by
           refine Finset.sum_congr rfl ?_
           intro μ _
@@ -650,7 +781,7 @@ theorem stress_branch_rotation_mode_helicity_phase
     _ = ∑ μ,
           rotationPhase (2 * setup.state.helicity) θ *
             ∑ ν,
-              setup.tensorEigenmode.coeff μ ν *
+              setup.tensorMode.coeff μ ν *
                 setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket := by
           refine Finset.sum_congr rfl ?_
           intro μ _
@@ -658,7 +789,7 @@ theorem stress_branch_rotation_mode_helicity_phase
     _ =
         rotationPhase (2 * setup.state.helicity) θ *
           ∑ μ, ∑ ν,
-            setup.tensorEigenmode.coeff μ ν *
+            setup.tensorMode.coeff μ ν *
               setup.stressMatrixElement μ ν setup.statePrime.ket setup.state.ket := by
           rw [← Finset.mul_sum]
 
@@ -668,38 +799,39 @@ theorem stress_branch_double_helicity_weight
     {H : Type _} [QuantumStateSpace H]
     (setup : StressBranchSetup H) :
     ∃ w : TensorRotationWeight, 2 * setup.state.helicity = w.toReal := by
-  let w := setup.tensorEigenmode.weight
+  let w := setup.tensorMode.weight
   refine ⟨w, ?_⟩
-  apply equal_weights_of_nonzero_rotation_component setup.tensorEigenmode.nonzero
+  apply equal_weights_of_nonzero_rotation_component setup.tensorMode_nonzero
   intro θ
   have h_tensor :
       rotatedTensorModeValue
-          setup.tensorEigenmode.coeff
+          setup.tensorMode.coeff
           setup.rotatedStressMatrixElement θ =
         rotationPhase w.toReal θ *
           tensorModeValue
-            setup.tensorEigenmode.coeff
+            setup.tensorMode.coeff
             setup.stressMatrixElement
             setup.statePrime.ket
             setup.state.ket := by
     simpa [StressBranchSetup.rotatedStressMatrixElement] using
-      setup.tensorEigenmode.mode_rotation θ
+      setup.tensorMode.mode_rotation θ
   calc
     rotationPhase (2 * setup.state.helicity) θ *
         tensorModeValue
-          setup.tensorEigenmode.coeff
+          setup.tensorMode.coeff
           setup.stressMatrixElement
           setup.statePrime.ket
           setup.state.ket
       =
         rotatedTensorModeValue
-          setup.tensorEigenmode.coeff
+          setup.tensorMode.coeff
           setup.rotatedStressMatrixElement θ := by
           symm
-          exact stress_branch_rotation_mode_helicity_phase setup θ
+          exact stress_branch_rotation_mode_helicity_phase
+            setup.toStressRotationFrameSetup θ
     _ = rotationPhase w.toReal θ *
         tensorModeValue
-          setup.tensorEigenmode.coeff
+          setup.tensorMode.coeff
           setup.stressMatrixElement
           setup.statePrime.ket
           setup.state.ket :=
@@ -745,5 +877,32 @@ theorem spin_two_no_stress_rotation_eigenmode
     (h_spin_two : setup.state.spin = 2) :
     False :=
   no_stress_rotation_eigenmode_for_spin_gt_one setup (by linarith)
+
+/-- Final Weinberg-Witten stress-branch contradiction.
+
+If a local stress tensor has a forward limit compatible with momentum
+normalization and the chosen tensor mode varies continuously along some
+off-forward sequence `p'_n → p`, then a massless particle with `spin > 1`
+cannot realize that data. -/
+theorem no_local_stress_tensor_for_spin_gt_one
+    {H : Type _} [QuantumStateSpace H]
+    (bridge : StressForwardLimitBridge H)
+    (h_spin : bridge.targetState.spin > (1 : ℝ)) :
+    False := by
+  rcases bridge.exists_nonzero_offForwardMode with ⟨n, hn⟩
+  let setup := bridge.branchSetupAt n hn
+  have h_setup_spin : setup.state.spin > (1 : ℝ) := by
+    dsimp [setup, StressForwardLimitBridge.branchSetupAt]
+    simpa [bridge.incomingState_eq n] using h_spin
+  exact no_stress_rotation_eigenmode_for_spin_gt_one setup h_setup_spin
+
+/-- Spin-2 corollary for the full stress-tensor branch including the
+forward-limit bridge. -/
+theorem spin_two_no_local_stress_tensor
+    {H : Type _} [QuantumStateSpace H]
+    (bridge : StressForwardLimitBridge H)
+    (h_spin_two : bridge.targetState.spin = 2) :
+    False :=
+  no_local_stress_tensor_for_spin_gt_one bridge (by linarith)
 
 end PhysicsLogic.Paper.WeinbergWitten
